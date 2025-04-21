@@ -1,7 +1,4 @@
-
-@extends('layouts.app')
-@section('content')
-
+<x-user::layouts.master>
     <div class="login mt-5 pt-5">
         <div class="container">
             <div class="row justify-content-center">
@@ -41,11 +38,6 @@
                             </button>
                         </div>
 
-                        <!-- <div class="text-center">أو</div>
-
-                        <button class="btn btn-danger rounded-pill my-3 btn-block disabled">تسجيل الدخول بواسطة جوجل</button>
-                        <button class="btn btn-primary rounded-pill my-3 btn-block disabled">تسجيل الدخول بواسطة فيسبوك</button> -->
-
                         <div class="text-center">
                             ليس لديك حساب؟ <a href="{{ route('register') }}">أنشئ حساباً.</a>
                         </div>
@@ -54,5 +46,4 @@
             </div>
         </div>
     </div>
-@endsection
-
+</x-user::layouts.master>

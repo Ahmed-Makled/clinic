@@ -1,14 +1,14 @@
 <?php
 
-namespace Database\Seeders;
+namespace Modules\User\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-class RoleSeeder extends Seeder
+class RolesAndPermissionsSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
@@ -21,10 +21,6 @@ class RoleSeeder extends Seeder
             'delete users',
             'manage roles',
             'manage permissions',
-            'manage doctors',
-            'view doctors',
-            'manage appointments',
-            'view appointments',
         ];
 
         foreach ($permissions as $permission) {
@@ -32,21 +28,20 @@ class RoleSeeder extends Seeder
         }
 
         // Create roles and assign permissions
-        $admin = Role::create(['name' => 'Administrator']);
-        $admin->givePermissionTo(Permission::all());
+        $superAdmin = Role::create(['name' => 'super-admin']);
+        $superAdmin->givePermissionTo(Permission::all());
 
-        $doctor = Role::create(['name' => 'Doctor']);
-        $doctor->givePermissionTo([
+        $admin = Role::create(['name' => 'admin']);
+        $admin->givePermissionTo([
             'view users',
-            'manage appointments',
-            'view appointments'
+            'create users',
+            'edit users',
+            'delete users'
         ]);
 
-        $patient = Role::create(['name' => 'Patient']);
-        $patient->givePermissionTo([
-            'view doctors',
-            'view appointments',
-            'manage appointments'
+        $user = Role::create(['name' => 'user']);
+        $user->givePermissionTo([
+            'view users'
         ]);
     }
 }
