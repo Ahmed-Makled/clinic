@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use $MODULE_NAMESPACE$\$STUDLY_NAME$\$CONTROLLER_NAMESPACE$\$STUDLY_NAME$Controller;
+use Modules\User\Http\Controllers\UserController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('user', $STUDLY_NAME$Controller::class)->names('user');
+    Route::apiResource('user', UserController::class)->names('user');
 });

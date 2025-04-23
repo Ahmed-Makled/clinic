@@ -1,4 +1,6 @@
-<x-user::layouts.master>
+@extends('user::layouts.master')
+
+@section('content')
     <div class="login mt-5 pt-5">
         <div class="container">
             <div class="row justify-content-center">
@@ -46,4 +48,4 @@
             </div>
         </div>
     </div>
-</x-user::layouts.master>
+@endsection

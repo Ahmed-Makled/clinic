@@ -19,9 +19,4 @@ Route::get('/search', function () {
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-
-
-Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('register', [RegisterController::class, 'register']);
-
 Route::get('/about', [AboutController::class, 'index'])->name('about');

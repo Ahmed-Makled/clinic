@@ -20,7 +20,10 @@
 <body class="{{ $classes ?? '' }}">
     @include('components.navbar')
 
-    {{ $slot }}
+    <!-- {{ $slot ?? '' }} -->
+    @hasSection('content')
+        @yield('content')
+    @endif
 
     @include('components.footer')
 </body>
