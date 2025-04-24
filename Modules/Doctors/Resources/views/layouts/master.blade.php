@@ -14,8 +14,7 @@
         <meta name="author" content="{{ $author ?? '' }}">
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 
         {{-- Vite CSS --}}
         {{-- {{ module_vite('build-doctors', 'resources/assets/sass/app.scss') }} --}}
