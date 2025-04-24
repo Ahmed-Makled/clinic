@@ -111,5 +111,17 @@ return [
         ],
     ],
 
+    'modules_config' => [
+        'admin' => [
+            'name' => 'Admin'
+        ],
+        'user' => [
+            'name' => 'User'
+        ],
+        'doctors' => [
+            'name' => 'Doctors'
+        ]
+    ],
+
     'activator' => 'file',
 ];

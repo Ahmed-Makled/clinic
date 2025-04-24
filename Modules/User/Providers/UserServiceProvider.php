@@ -12,7 +12,6 @@ class UserServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerTranslations();
-        $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
         $this->loadRoutesFrom(module_path($this->moduleName, 'Routes/web.php'));
@@ -21,16 +20,6 @@ class UserServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
-    }
-
-    protected function registerConfig()
-    {
-        $this->publishes([
-            module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php'),
-        ], 'config');
-        $this->mergeConfigFrom(
-            module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower
-        );
     }
 
     protected function registerViews()
@@ -43,7 +32,7 @@ class UserServiceProvider extends ServiceProvider
         ], ['views', $this->moduleNameLower . '-module-views']);
 
         $this->loadViewsFrom(array_merge([
-            resource_path('views'), // Add main app views path
+            resource_path('views'),
             $sourcePath
         ], $this->getPublishableViewPaths()), $this->moduleNameLower);
     }

@@ -35,6 +35,9 @@
         },
         "files": [
             "app/Helpers/functions.php"
+        ],
+        "classmap": [
+            "Modules/User/Entities/User.php"
         ]
     },
     "autoload-dev": {

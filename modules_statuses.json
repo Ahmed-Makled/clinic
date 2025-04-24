@@ -1,7 +1,5 @@
 {
     "User": true,
-    "TestModule": true,
     "Doctors": true,
-    "Dashboard": true,
     "Admin": true
 }
