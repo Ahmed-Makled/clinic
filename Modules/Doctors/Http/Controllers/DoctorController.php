@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Admin\Http\Controllers;
+namespace Modules\Doctors\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
@@ -122,7 +122,7 @@ class DoctorController extends Controller
         // Sync categories
         $doctor->categories()->sync($request->categories);
 
-        return redirect()->route('admin.doctors.index')
+        return redirect()->route('doctors.index')
             ->with('success', 'تم إضافة الطبيب بنجاح');
     }
 
@@ -203,7 +203,7 @@ class DoctorController extends Controller
 
         $doctor->categories()->sync($request->categories);
 
-        return redirect()->route('admin.doctors.index')
+        return redirect()->route('doctors.index')
             ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
     }
 
@@ -222,7 +222,7 @@ class DoctorController extends Controller
             User::where('id', $userId)->delete();
         }
 
-        return redirect()->route('admin.doctors.index')
+        return redirect()->route('doctors.index')
             ->with('success', 'تم حذف الطبيب بنجاح');
     }
 }

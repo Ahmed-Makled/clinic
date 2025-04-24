@@ -30,6 +30,6 @@ public function store(Request $request)
 
     $doctor->categories()->sync($request->categories);
 
-    return redirect()->route('admin.doctors.index')
+    return redirect()->route('doctors.index')
         ->with('success', 'تم إضافة الطبيب بنجاح');
 }

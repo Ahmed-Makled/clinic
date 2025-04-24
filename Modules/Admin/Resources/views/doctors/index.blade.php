@@ -3,7 +3,7 @@
 @section('title', 'إدارة الأطباء')
 
 @section('actions')
-    <a href="{{ route('admin.doctors.create') }}" class="btn btn-primary">
+    <a href="{{ route('doctors.create') }}" class="btn btn-primary">
         <i class="bi bi-plus-lg"></i> إضافة طبيب جديد
     </a>
 @endsection
@@ -53,15 +53,15 @@
                         <td>{{ $doctor->phone }}</td>
                         <td>
                             <div class="action-buttons">
-                            <a href="{{ route('admin.doctors.show', $doctor) }}"
+                            <a href="{{ route('doctors.show', $doctor) }}"
                                    class="btn-action btn-view">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="{{ route('admin.doctors.edit', $doctor) }}"
+                                <a href="{{ route('doctors.edit', $doctor) }}"
                                    class="btn-action btn-edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <form action="{{ route('admin.doctors.destroy', $doctor) }}"
+                                <form action="{{ route('doctors.destroy', $doctor) }}"
                                       method="POST"
                                       class="d-inline">
                                     @csrf

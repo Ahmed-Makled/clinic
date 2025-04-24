@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Doctors\Http\Controllers\DoctorsController;
+use Modules\Doctors\Http\Controllers\DoctorController;
 
 // Public route for viewing doctors
-Route::get('doctors', [DoctorsController::class, 'index'])->name('doctors.index');
+Route::get('doctors', [DoctorController::class, 'index'])->name('doctors.index');
 
 // Admin routes for managing doctors
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('doctors', DoctorsController::class)->except(['index'])->names('doctors');
+    Route::resource('doctors', DoctorController::class)->except(['index'])->names('doctors');
 });
