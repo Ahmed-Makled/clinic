@@ -5,137 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - @yield('title')</title>
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" as="style">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" as="style">
+
     <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="{{ asset('modules/admin/assets/css/tables.css') }}" rel="stylesheet">
+
+    <!-- Defer non-critical CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+
     <style>
+        /* Critical CSS */
         body {
             font-family: 'Tajawal', sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        .sidebar {
-            background: #2c3e50;
-            min-height: 100vh;
-        }
-
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, .8);
-            padding: 0.8rem 1rem;
-            border-radius: 0.375rem;
-            margin: 0.2rem 0;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar .nav-link:hover {
-            background: rgba(255, 255, 255, .1);
-            color: #fff;
-            transform: translateX(-5px);
-        }
-
-        .sidebar .nav-link.active {
-            background: #3498db;
-            color: #fff;
-            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
-        }
-
-        .content-wrapper {
-            /* background: #fff; */
-            /* border-radius: 0.5rem; */
-            /* box-shadow: 0 0 15px rgba(0,0,0,.05); */
-        }
-
-        .stats-card {
-            border: none;
-            border-radius: 0.5rem;
-            box-shadow: 0 0 15px rgba(0, 0, 0, .05);
-            transition: transform 0.2s;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .table-responsive {
-            border-radius: 0.5rem;
-        }
-
-        .btn-primary {
-            background: #3498db;
-            border: none;
-            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
-        }
-
-        .select2-container--default .select2-selection--multiple {
-            border-color: #ced4da;
-            border-radius: 0.375rem;
-        }
-
-        .select2-container--default.select2-container--focus .select2-selection--multiple {
-            border-color: #3498db;
-            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
-        }
-
-        .card {
-            border: none;
-            box-shadow: 0 0 15px rgba(0, 0, 0, .05);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, .1);
-        }
-
-        /* Custom Styles */
-        body {
             background-color: #F7F8FA;
-            font-family: 'Tajawal', sans-serif;
         }
-
         .sidebar {
-            background-color: #FFFFFF;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            z-index: 100;
+            padding: 0;
         }
-
         .sidebar .nav-link {
             color: #4A5568;
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            margin: 0.25rem 0.75rem;
-            transition: all 0.3s ease;
+            padding: .8rem 1.5rem;
+            font-weight: 500;
         }
-
-        .sidebar .nav-link:hover {
-            background-color: #EDF2F7;
-            color: #2D3748;
-        }
-
         .sidebar .nav-link.active {
             background-color: #EBF8FF;
             color: #3182CE;
         }
-
         .sidebar .nav-link i {
             font-size: 1.1rem;
         }
+        main {
+            margin-right: 16.666667%;
+        }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     @stack('styles')
 </head>
 
@@ -146,7 +62,7 @@
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
                 <div class="position-sticky pt-4">
                     <div class="text-center mb-4">
-                        <h5 style="color: #2D3748; font-weight: 600;">نظام إدارة العيادات</h5>
+                        <h5 style="color: #2D3748; font-weight: 600;">نظام حجز العيادات</h5>
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -206,7 +122,6 @@
                 @endif
 
 
-
                 @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
@@ -225,56 +140,18 @@
                 </div>
                 @endif
 
-                <div class=" p-4">
+                <div class="p-4 ">
                     @yield('content')
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        // Global initialization
-        $(document).ready(function() {
-            // Initialize Select2 Elements
-            $('.select2').select2({
-                theme: 'bootstrap-5',
-                dir: 'rtl'
-            });
-
-            // Delete confirmation
-            $('.delete-confirmation').on('click', function(e) {
-                e.preventDefault();
-                const form = $(this).closest('form');
-
-                Swal.fire({
-                    title: 'هل أنت متأكد؟',
-                    text: "لا يمكن التراجع عن هذا الإجراء!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3498db',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'نعم، احذف',
-                    cancelButtonText: 'إلغاء'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
-            });
-
-            // Auto-hide alerts
-            setTimeout(function() {
-                $('.alert').fadeOut('slow');
-            }, 5000);
-        });
-    </script>
+    <!-- Load scripts at the end -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.js"></script>
     @stack('scripts')
 </body>
 

@@ -9,64 +9,52 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-body">
-        <!-- Search Form -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <input type="text"
-                           class="form-control"
-                           id="searchInput"
-                           placeholder="ابحث عن طبيب...">
-                    <span class="input-group-text">
-                        <i class="bi bi-search"></i>
-                    </span>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" id="categoryFilter">
-                    <option value="">كل التخصصات</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+<div class="modern-table-container">
+    <div class="table-controls">
+        <div class="control-item">
+            <input type="text"
+                   class="search-input"
+                   id="searchInput"
+                   placeholder="ابحث عن طبيب...">
         </div>
+        <div class="control-item">
+            <select class="filter-select" id="categoryFilter">
+                <option value="">كل التخصصات</option>
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover" id="doctorsTable">
-                <thead>
+    <div class="table-responsive">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>الاسم</th>
+                    <th>التخصصات</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>رقم الهاتف</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($doctors as $doctor)
                     <tr>
-                        <th>الصورة</th>
-                        <th>الاسم</th>
-                        <th>التخصصات</th>
-                        <th>البريد الإلكتروني</th>
-                        <th>رقم الهاتف</th>
-                        <th>الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($doctors as $doctor)
-                    <tr>
-                        <td></td>
-                            <img src="{{ $doctor->image ? asset('storage/' . $doctor->image) : asset('images/default-doctor.png') }}"
-                                 alt="{{ $doctor->name }}"
-                                 class="rounded-circle"
-                                 width="40">
-                        </td>
+                        <td>{{ $doctor->id }}</td>
                         <td>{{ $doctor->name }}</td>
                         <td>
                             @foreach($doctor->categories as $category)
-                                <span class="badge bg-info">{{ $category->name }}</span>
+                                <span class="status-badge status-badge-pending">{{ $category->name }}</span>
                             @endforeach
                         </td>
                         <td>{{ $doctor->email }}</td>
                         <td>{{ $doctor->phone }}</td>
                         <td>
-                            <div class="btn-group">
+                            <div class="action-buttons">
                                 <a href="{{ route('admin.doctors.edit', $doctor) }}"
-                                   class="btn btn-sm btn-primary">
+                                   class="btn-action btn-edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <form action="{{ route('admin.doctors.destroy', $doctor) }}"
@@ -75,82 +63,81 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                            class="btn btn-sm btn-danger delete-confirmation">
+                                            class="btn-action btn-delete delete-confirmation">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
                             </div>
                         </td>
                     </tr>
-                    @empty
-                    <tr id="noResultsRow" class="d-none"></tr>
-                        <td colspan="6" class="text-center">لا توجد نتائج مطابقة للبحث</td>
+                @empty
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="bi bi-person-badge empty-state-icon"></i>
+                                <p class="empty-state-text">لا يوجد أطباء</p>
+                            </div>
+                        </td>
                     </tr>
-                    <tr id="noDataRow"></tr>
-                        <td colspan="6" class="text-center">لا يوجد أطباء حالياً</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
-        <div class="mt-4"></div>
-            {{ $doctors->links() }}
-        </div>
+    <div class="pagination-container">
+        {{ $doctors->links() }}
     </div>
 </div>
-@endsection
 
 @push('scripts')
 <script>
-$(document).ready(function() {
-    const searchInput = $('#searchInput');
-    const categoryFilter = $('#categoryFilter');
-    const doctorsTable = $('#doctorsTable tbody');
-    const noResultsRow = $('#noResultsRow');
-    const noDataRow = $('#noDataRow');
+document.addEventListener('DOMContentLoaded', function() {
+    // البحث المباشر
+    const searchInput = document.getElementById('searchInput');
+    const tableRows = document.querySelectorAll('.modern-table tbody tr');
 
-    function filterTable() {
-        const searchText = searchInput.val().toLowerCase();
-        const selectedCategory = categoryFilter.val();
-        let hasResults = false;
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
 
-        doctorsTable.find('tr').not('#noResultsRow, #noDataRow').each(function() {
-            const row = $(this);
-            const name = row.find('td:eq(1)').text().toLowerCase();
-            const email = row.find('td:eq(3)').text().toLowerCase();
-            const phone = row.find('td:eq(4)').text().toLowerCase();
-            const categories = row.find('td:eq(2) .badge').map(function() {
-                return $(this).text().toLowerCase();
-            }).get();
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
 
-            const matchesSearch = name.includes(searchText) ||
-                                email.includes(searchText) ||
-                                phone.includes(searchText) ||
-                                categories.some(category => category.includes(searchText));
+    // تصفية حسب التخصص
+    const categoryFilter = document.getElementById('categoryFilter');
 
-            const matchesCategory = !selectedCategory ||
-                                  categories.includes(categoryFilter.find('option:selected').text().toLowerCase());
+    categoryFilter.addEventListener('change', function(e) {
+        const categoryId = e.target.value;
 
-            if (matchesSearch && matchesCategory) {
-                row.show();
-                hasResults = true;
-            } else {
-                row.hide();
+        tableRows.forEach(row => {
+            if (!categoryId) {
+                row.style.display = '';
+                return;
+            }
+
+            const categories = row.querySelectorAll('td:nth-child(3) .status-badge');
+            let hasCategory = false;
+            categories.forEach(category => {
+                if (category.dataset.id === categoryId) {
+                    hasCategory = true;
+                }
+            });
+            row.style.display = hasCategory ? '' : 'none';
+        });
+    });
+
+    // تأكيد الحذف
+    document.querySelectorAll('.delete-confirmation').forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (!confirm('هل أنت متأكد من حذف هذا الطبيب؟')) {
+                e.preventDefault();
             }
         });
-
-        if (!hasResults) {
-            noResultsRow.removeClass('d-none');
-            noDataRow.addClass('d-none');
-        } else {
-            noResultsRow.addClass('d-none');
-            noDataRow.addClass('d-none');
-        }
-    }
-
-    searchInput.on('keyup', filterTable);
-    categoryFilter.on('change', filterTable);
+    });
 });
 </script>
 @endpush
+
+@endsection

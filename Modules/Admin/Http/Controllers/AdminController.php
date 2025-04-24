@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Doctor;
 use App\Models\User;
 use App\Models\Category;
+use App\Models\Appointment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -15,8 +16,8 @@ class AdminController extends Controller
     {
         // جمع الإحصائيات
         $stats = [
-            'doctors_count' => Doctor::count(),
-            'patients_count' => User::where('type', 'patient')->count(),
+            'doctors_count' => User::role('doctor')->count(),
+            'patients_count' => User::role('patient')->count(),
             'specialties_count' => Category::count(),
             'today_appointments' => 0 // سيتم تحديثه لاحقاً عندما نضيف جدول المواعيد
         ];
@@ -43,9 +44,9 @@ class AdminController extends Controller
     public function dashboard()
     {
         $stats = [
-            'doctors_count' => Doctor::count(),
-            'patients_count' => User::where('type', 'patient')->count(),
-            'appointments_count' => 0, // سيتم تحديثه لاحقاً عندما نضيف جدول المواعيد
+            'doctors_count' => User::role('doctor')->count(),
+            'patients_count' => User::role('patient')->count(),
+            'appointments_count' => Appointment::count(),
             'categories_count' => Category::count(),
         ];
 

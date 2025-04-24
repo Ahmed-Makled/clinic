@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\Carbon;
 
 class Appointment extends Model
 {
@@ -12,11 +13,17 @@ class Appointment extends Model
         'patient_id',
         'scheduled_at',
         'status',
-        'notes'
+        'notes',
+        'fees',
+        'is_paid',
+        'is_important'
     ];
 
     protected $casts = [
-        'scheduled_at' => 'datetime'
+        'scheduled_at' => 'datetime',
+        'fees' => 'decimal:2',
+        'is_paid' => 'boolean',
+        'is_important' => 'boolean'
     ];
 
     public function doctor(): BelongsTo
@@ -47,5 +54,28 @@ class Appointment extends Model
             'cancelled' => 'ملغي',
             default => 'غير معروف'
         };
+    }
+
+    public function getIsUpcomingAttribute(): bool
+    {
+        return $this->scheduled_at->isFuture() && $this->status === 'scheduled';
+    }
+
+    public function getIsTodayAttribute(): bool
+    {
+        return $this->scheduled_at->isToday();
+    }
+
+    public function scopeUpcoming($query)
+    {
+        return $query->where('scheduled_at', '>=', now())
+                    ->where('status', 'scheduled')
+                    ->orderBy('scheduled_at');
+    }
+
+    public function scopeToday($query)
+    {
+        return $query->whereDate('scheduled_at', Carbon::today())
+                    ->orderBy('scheduled_at');
     }
 }

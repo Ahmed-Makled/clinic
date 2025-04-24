@@ -11,7 +11,7 @@ class PatientController extends Controller
 {
     public function index()
     {
-        $patients = User::where('type', 'patient')->paginate(10);
+        $patients = User::role('patient')->paginate(10);
         return view('admin::patients.index', compact('patients'));
     }
 
