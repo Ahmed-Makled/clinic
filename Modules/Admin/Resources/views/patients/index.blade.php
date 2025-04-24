@@ -9,56 +9,63 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-body">
-        <!-- Search Form -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <input type="text"
-                           class="form-control"
-                           id="searchInput"
-                           placeholder="ابحث عن مريض...">
-                    <span class="input-group-text">
-                        <i class="bi bi-search"></i>
-                    </span>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" id="genderFilter">
-                    <option value="">كل الأنواع</option>
-                    <option value="male">ذكر</option>
-                    <option value="female">أنثى</option>
-                </select>
-            </div>
+<div class="modern-table-container">
+    <div class="table-controls">
+        <div class="control-item">
+            <input type="text"
+                   class="search-input"
+                   id="searchInput"
+                   placeholder="ابحث عن مريض...">
         </div>
+        <div class="control-item">
+            <select class="filter-select" id="genderFilter">
+                <option value="">كل الأنواع</option>
+                <option value="male">ذكر</option>
+                <option value="female">أنثى</option>
+            </select>
+        </div>
+    </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover" id="patientsTable">
-                <thead>
+    <div class="table-responsive">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>الاسم</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>رقم الهاتف</th>
+                    <th>النوع</th>
+                    <th>تاريخ الميلاد</th>
+                    <th>عدد المواعيد</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($patients as $patient)
                     <tr>
-                        <th>الاسم</th>
-                        <th>البريد الإلكتروني</th>
-                        <th>رقم الهاتف</th>
-                        <th>العنوان</th>
-                        <th>الجنس</th>
-                        <th>تاريخ الميلاد</th>
-                        <th>الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($patients as $patient)
-                    <tr>
+                        <td>{{ $patient->id }}</td>
                         <td>{{ $patient->name }}</td>
                         <td>{{ $patient->email }}</td>
                         <td>{{ $patient->phone }}</td>
-                        <td>{{ $patient->address ?: 'غير محدد' }}</td>
-                        <td>{{ $patient->gender == 'male' ? 'ذكر' : 'أنثى' }}</td>
-                        <td>{{ $patient->date_of_birth ? date('Y-m-d', strtotime($patient->date_of_birth)) : 'غير محدد' }}</td>
                         <td>
-                            <div class="btn-group">
+                            <span class="status-badge {{ $patient->gender == 'male' ? 'status-badge-active' : 'status-badge-pending' }}">
+                                {{ $patient->gender == 'male' ? 'ذكر' : 'أنثى' }}
+                            </span>
+                        </td>
+                        <td>{{ $patient->date_of_birth ? $patient->date_of_birth->format('Y-m-d') : '-' }}</td>
+                        <td>
+                            <span class="status-badge">
+                                {{ $patient->appointments_count ?? 0 }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ route('admin.patients.show', $patient) }}"
+                                   class="btn-action btn-view">
+                                    <i class="bi bi-eye"></i>
+                                </a>
                                 <a href="{{ route('admin.patients.edit', $patient) }}"
-                                   class="btn btn-sm btn-primary">
+                                   class="btn-action btn-edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <form action="{{ route('admin.patients.destroy', $patient) }}"
@@ -67,75 +74,75 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                            class="btn btn-sm btn-danger delete-confirmation">
+                                            class="btn-action btn-delete delete-confirmation">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
                             </div>
                         </td>
                     </tr>
-                    @empty
-                    <tr id="noResultsRow" class="d-none">
-                        <td colspan="7" class="text-center">لا توجد نتائج مطابقة للبحث</td>
+                @empty
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="bi bi-people empty-state-icon"></i>
+                                <p class="empty-state-text">لا يوجد مرضى</p>
+                            </div>
+                        </td>
                     </tr>
-                    <tr id="noDataRow"></tr>
-                        <td colspan="7" class="text-center">لا يوجد مرضى حالياً</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
-        <div class="mt-4">
-            {{ $patients->links() }}
-        </div>
+    <div class="pagination-container">
+        {{ $patients->links() }}
     </div>
 </div>
-@endsection
 
 @push('scripts')
 <script>
-$(document).ready(function() {}
-    const searchInput = $('#searchInput');
-    const genderFilter = $('#genderFilter');
-    const patientsTable = $('#patientsTable tbody');
-    const noResultsRow = $('#noResultsRow');
-    const noDataRow = $('#noDataRow');
+document.addEventListener('DOMContentLoaded', function() {
+    // البحث المباشر
+    const searchInput = document.getElementById('searchInput');
+    const tableRows = document.querySelectorAll('.modern-table tbody tr');
 
-    function filterTable() {
-        const searchText = searchInput.val().toLowerCase();
-        const selectedGender = genderFilter.val();
-        let hasResults = false;
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
 
-        patientsTable.find('tr').not('#noResultsRow, #noDataRow').each(function() {
-            const row = $(this);
-            const name = row.find('td:eq(0)').text().toLowerCase();
-            const email = row.find('td:eq(1)').text().toLowerCase();
-            const phone = row.find('td:eq(2)').text().toLowerCase();
-            const address = row.find('td:eq(3)').text().toLowerCase();
-            const gender = row.find('td:eq(4)').text() === 'ذكر' ? 'male' : 'female';
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
 
-            const matchesSearch = name.includes(searchText) ||
-                                email.includes(searchText) ||
-                                phone.includes(searchText) ||
-                                address.includes(searchText);
+    // تصفية حسب النوع
+    const genderFilter = document.getElementById('genderFilter');
 
-            const matchesGender = !selectedGender || gender === selectedGender;
+    genderFilter.addEventListener('change', function(e) {
+        const gender = e.target.value.toLowerCase();
 
-            if (matchesSearch && matchesGender) {
-                row.removeClass('d-none');
-                hasResults = true;
-            } else {
-                row.addClass('d-none');
+        tableRows.forEach(row => {
+            if (!gender) {
+                row.style.display = '';
+                return;
+            }
+
+            const genderCell = row.querySelector('td:nth-child(5)').textContent.toLowerCase();
+            row.style.display = genderCell.includes(gender) ? '' : 'none';
+        });
+    });
+
+    // تأكيد الحذف
+    document.querySelectorAll('.delete-confirmation').forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (!confirm('هل أنت متأكد من حذف هذا المريض؟')) {
+                e.preventDefault();
             }
         });
-
-        noResultsRow.toggleClass('d-none', hasResults);
-        noDataRow.addClass('d-none');
-    }
-
-    searchInput.on('keyup', filterTable);
-    genderFilter.on('change', filterTable);
+    });
 });
 </script>
 @endpush
+
+@endsection
