@@ -19,7 +19,7 @@ class User extends Authenticatable
 
     public function hasRole($role)
     {
-        return $this->roles()->where('slug', $role)->exists();
+        return $this->roles()->where('slug', $role)->orWhere('name', $role)->exists();
     }
 
     public function assignRole($role)
@@ -40,6 +40,7 @@ class User extends Authenticatable
         'email',
         'password',
         'phone_number',
+        'type',
     ];
 
     /**
@@ -63,5 +64,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isPatient()
+    {
+        return $this->type === 'patient';
+    }
+
+    public function isDoctor()
+    {
+        return $this->type === 'doctor';
+    }
+
+    public function isAdmin()
+    {
+        return $this->type === 'admin';
     }
 }

@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('doctors', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description')->nullable();
-            $table->string('avatar')->nullable();
+            $table->string('email')->unique();
+            $table->string('phone');
+            $table->text('bio')->nullable();
+            $table->string('image')->nullable();
             $table->string('governorate')->nullable();
             $table->string('address')->nullable();
             $table->string('city')->nullable();
@@ -23,7 +25,13 @@ return new class extends Migration
             $table->decimal('price', 8, 2)->nullable();
             $table->decimal('rating', 3, 1)->nullable();
             $table->integer('waiting_time')->nullable();
-            $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
+            $table->timestamps();
+        });
+
+        Schema::create('doctor_category', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('doctor_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -33,6 +41,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('doctor_category');
         Schema::dropIfExists('doctors');
     }
 };

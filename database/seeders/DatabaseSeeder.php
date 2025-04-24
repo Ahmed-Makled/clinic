@@ -2,21 +2,21 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Modules\User\Database\Seeders\UserDatabaseSeeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Sieed the application's database.
-     */
     public function run(): void
     {
+        // Create roles first
+        $this->call(RoleSeeder::class);
+
+        // Then create the admin user and assign role
+        $this->call(AdminSeeder::class);
+
+        // Other seeders
         $this->call([
-            RoleSeeder::class,
-            AdminSeeder::class,
-            UserDatabaseSeeder::class,
+            CategorySeeder::class,
         ]);
     }
 }

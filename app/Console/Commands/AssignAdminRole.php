@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Spatie\Permission\Models\Role;
 
 class AssignAdminRole extends Command
 {
@@ -14,7 +14,7 @@ class AssignAdminRole extends Command
     public function handle(): void
     {
         $userId = $this->argument('user_id');
-        $adminRole = Role::where('slug', 'admin')->first();
+        $adminRole = Role::where('name', 'admin')->first();
         $user = User::find($userId);
 
         if (!$user) {
@@ -27,7 +27,7 @@ class AssignAdminRole extends Command
             return;
         }
 
-        $user->roles()->sync([$adminRole->id]);
+        $user->assignRole($adminRole);
         $this->info("Successfully assigned admin role to user {$userId}.");
     }
 }

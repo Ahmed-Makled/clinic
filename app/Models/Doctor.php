@@ -13,10 +13,12 @@ class Doctor extends Model
 
     protected $fillable = [
         'name',
-        'description',
-        'avatar',
-        'governorate',
+        'email',
+        'phone',
+        'bio',
+        'image',
         'address',
+        'governorate',
         'city',
         'degree',
         'price',
@@ -28,8 +30,9 @@ class Doctor extends Model
 
     public $timestamps = true;
 
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class, 'doctor_category')
+                    ->withTimestamps();
     }
 }

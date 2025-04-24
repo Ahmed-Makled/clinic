@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary position-fixed" style="direction: ltr">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary position-fixed w-100" style="direction: ltr; z-index: 1030">
     <div class="container">
         <a class="navbar-brand font-weight-bold" href="{{ route('home') }}">
             <img src="{{ asset('images/logo.jpg') }}" class="rounded-pill" height="40" width="40" />
@@ -21,11 +21,32 @@
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> حسابى
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="">حسابى</a>
-                            <a class="dropdown-item" href="">تعديل البيانات</a>
+                            @if(auth()->check())
+                                {{-- Debug information --}}
+                                @php
+                                    $user = auth()->user();
+                                    $roles = $user->roles()->pluck('name')->toArray();
+                                @endphp
+                                <!-- User Roles: {{ implode(', ', $roles) }} -->
+                            @endif
+                            @if(auth()->user()->hasRole('Administrator'))
+                                <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                    <i class="bi bi-speedometer2 me-2"></i>لوحة التحكم
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            @endif
+                            <a class="dropdown-item" href="{{ route('profile') }}">
+                                <i class="bi bi-person me-2"></i>حسابى
+                            </a>
+                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                <i class="bi bi-gear me-2"></i>تعديل البيانات
+                            </a>
+                            <div class="dropdown-divider"></div>
                             <form method="POST" action="{{ route('logout') }}" class="d-inline">
                                 @csrf
-                                <button type="submit" class="dropdown-item">تسجيل الخروج</button>
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i>تسجيل الخروج
+                                </button>
                             </form>
                         </div>
                     </li>

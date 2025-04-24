@@ -19,11 +19,12 @@
 
 <body class="{{ $classes ?? '' }}">
     @include('components.navbar')
+    <div class="mt-5 pt-5">
+        @hasSection('content')
+            @yield('content')
+        @endif
+    </div>
 
-    <!-- {{ $slot ?? '' }} -->
-    @hasSection('content')
-        @yield('content')
-    @endif
 
     @include('components.footer')
 </body>

@@ -9,12 +9,9 @@ use Illuminate\Http\Request;
 
 class DoctorsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $doctors = Doctor::with('category')->get();
+        $doctors = Doctor::with('categories')->get();
         $categories = Category::all();
 
         return view('doctors::index', [
@@ -25,42 +22,86 @@ class DoctorsController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('doctors::create');
+        $categories = Category::all();
+        return view('doctors::create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {}
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:doctors',
+            'phone' => 'required|string|max:20',
+            'category_ids' => 'required|array',
+            'category_ids.*' => 'exists:categories,id',
+            'bio' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
 
-    /**
-     * Show the specified resource.
-     */
+        $doctor = Doctor::create($validated);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('doctors', 'public');
+            $doctor->image = $imagePath;
+            $doctor->save();
+        }
+
+        $doctor->categories()->sync($request->category_ids);
+
+        return redirect()->route('doctors.index')
+            ->with('success', 'تم إضافة الطبيب بنجاح');
+    }
+
     public function show($id)
     {
-        return view('doctors::show');
+        $doctor = Doctor::with('categories')->findOrFail($id);
+        return view('doctors::show', compact('doctor'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
-        return view('doctors::edit');
+        $doctor = Doctor::with('categories')->findOrFail($id);
+        $categories = Category::all();
+        return view('doctors::edit', compact('doctor', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id) {}
+    public function update(Request $request, $id)
+    {
+        $doctor = Doctor::findOrFail($id);
+        
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:doctors,email,' . $doctor->id,
+            'phone' => 'required|string|max:20',
+            'category_ids' => 'required|array',
+            'category_ids.*' => 'exists:categories,id',
+            'bio' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id) {}
+        $doctor->update($validated);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('doctors', 'public');
+            $doctor->image = $imagePath;
+            $doctor->save();
+        }
+
+        $doctor->categories()->sync($request->category_ids);
+
+        return redirect()->route('doctors.index')
+            ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
+    }
+
+    public function destroy($id)
+    {
+        $doctor = Doctor::findOrFail($id);
+        $doctor->categories()->detach();
+        $doctor->delete();
+
+        return redirect()->route('doctors.index')
+            ->with('success', 'تم حذف الطبيب بنجاح');
+    }
 }

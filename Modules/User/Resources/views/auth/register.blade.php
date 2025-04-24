@@ -1,65 +1,74 @@
-@extends('user::layouts.master')
+@extends('layouts.app')
 
 @section('content')
-    <div class="login mt-5 pt-5">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-4">
-                    <form method="POST" action="{{ route('register') }}" class="box bg-white shadow-sm rounded-xl p-4 mt-5">
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center align-items-center min-vh-75">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-body p-5">
+                    <h3 class="text-center mb-4">تسجيل حساب جديد</h3>
+
+                    <form method="POST" action="{{ route('register') }}">
                         @csrf
 
-                        <div class="text-center mb-4">
-                            <h1 class="h2">إنشاء حساب</h1>
-                            <p>أنشئ حساباً لتتمكن من الحجز وميزات أخرى.</p>
-                        </div>
-
-                        <div class="form-group">
-                            <input type="text" name="name" class="form-control rounded-pill @error('name') is-invalid @enderror"
-                                placeholder="أدخل إسمك" value="{{ old('name') }}" required autofocus />
+                        <div class="form-floating mb-4">
+                            <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus placeholder="الاسم">
+                            <label for="name">الاسم</label>
                             @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <input type="email" name="email" class="form-control rounded-pill @error('email') is-invalid @enderror"
-                                placeholder="أدخل بريدك الإلكترونى" value="{{ old('email') }}" required />
+                        <div class="form-floating mb-4">
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="your@email.com">
+                            <label for="email">البريد الإلكتروني</label>
                             @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <input type="text" name="phone_number" class="form-control rounded-pill @error('phone_number') is-invalid @enderror"
-                                placeholder="أدخل رقم الهاتف" value="{{ old('phone_number') }}" required />
+                        <div class="form-floating mb-4">
+                            <input id="phone_number" type="tel" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" value="{{ old('phone_number') }}" required autocomplete="tel" placeholder="رقم الهاتف">
+                            <label for="phone_number">رقم الهاتف</label>
                             @error('phone_number')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <input type="password" name="password" class="form-control rounded-pill @error('password') is-invalid @enderror"
-                                placeholder="أدخل كلمة مرور" required />
+                        <div class="form-floating mb-4">
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="كلمة المرور">
+                            <label for="password">كلمة المرور</label>
                             @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <input type="password" name="password_confirmation" class="form-control rounded-pill"
-                                placeholder="تأكيد كلمة المرور" required />
+                        <div class="form-floating mb-4">
+                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password" placeholder="تأكيد كلمة المرور">
+                            <label for="password-confirm">تأكيد كلمة المرور</label>
                         </div>
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary rounded-pill px-4 btn-block">أنشئ الحساب</button>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                تسجيل
+                            </button>
                         </div>
 
-                        <div class="text-center">
-                            تمتلك حساب بالفعل؟ <a href="{{ route('login') }}">تسجيل الدخول.</a>
+                        <div class="text-center mt-4">
+                            <p class="mb-0">لديك حساب بالفعل؟ <a href="{{ route('login') }}" class="text-primary text-decoration-none">سجل دخول</a></p>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 @endsection
