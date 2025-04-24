@@ -3,7 +3,7 @@
 namespace Modules\Admin\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use Modules\User\Entities\User;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -53,9 +53,10 @@ class PatientController extends Controller
             'gender' => $validated['gender'],
             'address' => $validated['address']
         ]);
-        // $doctorRole = Role::findByName('Patient', 'web');
-        // $user->assignRole($doctorRole);
 
+        // Assign patient role with web guard
+        $role = Role::findByName('Patient', 'web');
+        $user->assignRole($role);
 
         return redirect()->route('admin.patients.index')
             ->with('success', 'تم إضافة المريض بنجاح');
