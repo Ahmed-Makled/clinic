@@ -21,14 +21,16 @@
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> حسابى
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            @if(auth()->check())
-                                {{-- Debug information --}}
+                            <!-- @if(auth()->check())
                                 @php
                                     $user = auth()->user();
                                     $roles = $user->roles()->pluck('name')->toArray();
                                 @endphp
-                                <!-- User Roles: {{ implode(', ', $roles) }} -->
-                            @endif
+                                <div class="dropdown-item text-muted">
+                                    Roles: {{ implode(', ', $roles) }}
+                                </div>
+                                <div class="dropdown-divider"></div>
+                            @endif -->
                             @if(auth()->user()->hasRole('Administrator'))
                                 <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
                                     <i class="bi bi-speedometer2 me-2"></i>لوحة التحكم
@@ -38,9 +40,7 @@
                             <a class="dropdown-item" href="{{ route('profile') }}">
                                 <i class="bi bi-person me-2"></i>حسابى
                             </a>
-                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                <i class="bi bi-gear me-2"></i>تعديل البيانات
-                            </a>
+
                             <div class="dropdown-divider"></div>
                             <form method="POST" action="{{ route('logout') }}" class="d-inline">
                                 @csrf

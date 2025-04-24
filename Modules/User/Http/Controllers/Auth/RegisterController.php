@@ -41,6 +41,7 @@ class RegisterController extends Controller
             'email'    => $data['email'],
             'phone_number' => $data['phone_number'],
             'password' => Hash::make($data['password']),
+            'type' => 'patient'  // Set default type as patient for registrations
         ]);
     }
 }

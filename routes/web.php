@@ -21,3 +21,11 @@ Route::get('/search', function () {
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
+
+// Temporary diagnostic route to check roles
+Route::get('/check-roles', function () {
+    return [
+        'roles' => \Spatie\Permission\Models\Role::all()->toArray(),
+        'permissions' => \Spatie\Permission\Models\Permission::all()->toArray()
+    ];
+});

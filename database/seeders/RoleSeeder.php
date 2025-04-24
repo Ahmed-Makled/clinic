@@ -13,6 +13,10 @@ class RoleSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
+        // Delete existing permissions and roles to prevent duplicates
+        Permission::query()->delete();
+        Role::query()->delete();
+
         // Create permissions
         $permissions = [
             'view users',
@@ -22,31 +26,41 @@ class RoleSeeder extends Seeder
             'manage roles',
             'manage permissions',
             'manage doctors',
+            'manage patients',
             'view doctors',
             'manage appointments',
             'view appointments',
+
         ];
 
+        // Create all permissions with web guard
+        $createdPermissions = collect();
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            $createdPermissions->push(
+                Permission::create(['name' => $permission, 'guard_name' => 'web'])
+            );
         }
 
-        // Create roles and assign permissions
-        $admin = Role::create(['name' => 'Administrator']);
-        $admin->givePermissionTo(Permission::all());
+        // Create roles with web guard and assign created permissions
+        $admin = Role::create(['name' => 'Administrator', 'guard_name' => 'web']);
+        $admin->syncPermissions($createdPermissions);
 
-        $doctor = Role::create(['name' => 'Doctor']);
-        $doctor->givePermissionTo([
-            'view users',
-            'manage appointments',
-            'view appointments'
-        ]);
+        $doctor = Role::create(['name' => 'Doctor', 'guard_name' => 'web']);
+        $doctor->syncPermissions($createdPermissions->filter(function ($permission) {
+            return in_array($permission->name, [
+                'view users',
+                'manage appointments',
+                'view appointments'
+            ]);
+        }));
 
-        $patient = Role::create(['name' => 'Patient']);
-        $patient->givePermissionTo([
-            'view doctors',
-            'view appointments',
-            'manage appointments'
-        ]);
+        $patient = Role::create(['name' => 'Patient', 'guard_name' => 'web']);
+        $patient->syncPermissions($createdPermissions->filter(function ($permission) {
+            return in_array($permission->name, [
+                'view doctors',
+                'view appointments',
+                'manage appointments'
+            ]);
+        }));
     }
 }

@@ -11,11 +11,7 @@ class Category extends Model
 
     protected $table = 'categories';
 
-    protected $fillable = [
-        'name',
-    ];
-
-    public $timestamps = false;
+    protected $fillable = ['name'];
 
     public function doctors()
     {

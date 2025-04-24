@@ -13,6 +13,7 @@ class Patient extends Model
         'user_id',
         'date_of_birth',
         'gender',
+        'address',
         'medical_history',
         'emergency_contact',
         'blood_type',

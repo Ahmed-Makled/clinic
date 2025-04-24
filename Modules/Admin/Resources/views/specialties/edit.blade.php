@@ -3,41 +3,208 @@
 @section('title', 'تعديل التخصص')
 
 @section('content')
-<div class="card">
-    <div class="card-body">
-        <form action="{{ route('admin.specialties.update', $specialty) }}" method="POST">
-            @csrf
-            @method('PUT')
+    <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-header border-bottom py-3 mb-4">
+                    <h5 class="mb-0 ms-2">تعديل التخصص: {{ $specialty->name }}</h5>
+                </div>
+                <div class="card-body px-4 py-3">
+                    <form action="{{ route('admin.specialties.update', $specialty) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
 
-            <div class="mb-3">
-                <label for="name" class="form-label">اسم التخصص</label>
-                <input type="text"
-                       class="form-control @error('name') is-invalid @enderror"
-                       id="name"
-                       name="name"
-                       value="{{ old('name', $specialty->name) }}"
-                       required>
-                @error('name')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">اسم التخصص *</label>
+                                    <input type="text"
+                                           class="form-control @error('name') is-invalid @enderror"
+                                           id="name"
+                                           name="name"
+                                           value="{{ old('name', $specialty->name) }}"
+                                           required>
+                                    @error('name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-            <div class="mb-3">
-                <label for="description" class="form-label">الوصف</label>
-                <textarea class="form-control @error('description') is-invalid @enderror"
-                          id="description"
-                          name="description"
-                          rows="3">{{ old('description', $specialty->description) }}</textarea>
-                @error('description')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">الوصف</label>
+                                    <textarea class="form-control @error('description') is-invalid @enderror"
+                                              id="description"
+                                              name="description"
+                                              rows="4">{{ old('description', $specialty->description) }}</textarea>
+                                    @error('description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
 
-            <div class="text-end">
-                <a href="{{ route('admin.specialties.index') }}" class="btn btn-secondary">إلغاء</a>
-                <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">صورة التخصص</label>
+                                    <div class="image-preview-container mb-3">
+                                        <img src="{{ $specialty->image ? asset('storage/' . $specialty->image) : asset('images/placeholder.png') }}"
+                                             class="img-thumbnail preview-image"
+                                             id="imagePreview"
+                                             alt="{{ $specialty->name }}">
+                                    </div>
+                                    <input type="file"
+                                           class="form-control @error('image') is-invalid @enderror"
+                                           id="image"
+                                           name="image"
+                                           accept="image/*">
+                                    @error('image')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+
+                                    @if($specialty->image)
+                                        <div class="mt-2">
+                                            <div class="form-check">
+                                                <input type="checkbox"
+                                                       class="form-check-input"
+                                                       id="remove_image"
+                                                       name="remove_image"
+                                                       value="1">
+                                                <label class="form-check-label" for="remove_image">
+                                                    حذف الصورة الحالية
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary ms-1">حفظ التغييرات</button>
+                            <a href="{{ route('admin.specialties.index') }}" class="btn btn-label-secondary">إلغاء</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+
+@push('styles')
+<style>
+    .card {
+        background: #fff;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #566a7f;
+    }
+
+    .form-control,
+    .form-select {
+        padding: 0.6rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #d9dee3;
+        background-color: #fff;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0.25rem rgba(67, 94, 190, 0.1);
+    }
+
+    .btn {
+        padding: 0.6rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #364b98;
+        border-color: #364b98;
+        transform: translateY(-1px);
+        box-shadow: 0 0.125rem 0.25rem rgba(67, 94, 190, 0.3);
+    }
+
+    .btn-label-secondary {
+        color: #8592a3;
+        border: 1px solid #8592a3;
+        background: transparent;
+    }
+
+    .btn-label-secondary:hover {
+        background-color: #8592a3;
+        color: #fff;
+    }
+
+    .mb-3 {
+        margin-bottom: 1.5rem !important;
+    }
+
+    .image-preview-container {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .preview-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+    }
+
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    // Image preview
+    const imageInput = document.getElementById('image');
+    const imagePreview = document.getElementById('imagePreview');
+    const removeImage = document.getElementById('remove_image');
+
+    imageInput.addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+            }
+
+            reader.readAsDataURL(e.target.files[0]);
+
+            if (removeImage) {
+                removeImage.checked = false;
+            }
+        }
+    });
+
+    if (removeImage) {
+        removeImage.addEventListener('change', function() {
+            if (this.checked) {
+                imagePreview.src = "{{ asset('images/placeholder.png') }}";
+                imageInput.value = '';
+            }
+        });
+    }
+});
+</script>
+@endpush
 @endsection

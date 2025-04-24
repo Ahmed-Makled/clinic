@@ -15,8 +15,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone_number',
-        'type',
+        'phone_number'
     ];
 
     protected $hidden = [
@@ -32,18 +31,59 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Get the doctor record associated with the user.
+     */
+    public function doctor()
+    {
+        return $this->hasOne(Doctor::class);
+    }
+
+    /**
+     * Get the patient record associated with the user.
+     */
+    public function patient()
+    {
+        return $this->hasOne(Patient::class);
+    }
+
+    /**
+     * Check if the user is a patient.
+     */
     public function isPatient()
     {
-        return $this->type === 'patient';
+        return $this->hasRole('Patient');
     }
 
+    /**
+     * Get the patient record if this user is a patient.
+     */
+    public function getPatientRecord()
+    {
+        return $this->isPatient() ? $this->patient : null;
+    }
+
+    /**
+     * Check if the user is a doctor.
+     */
     public function isDoctor()
     {
-        return $this->type === 'doctor';
+        return $this->hasRole('Doctor');
+    }
+    
+    /**
+     * Get the doctor record if this user is a doctor.
+     */
+    public function getDoctorRecord()
+    {
+        return $this->isDoctor() ? $this->doctor : null;
     }
 
+    /**
+     * Check if the user is an admin.
+     */
     public function isAdmin()
     {
-        return $this->type === 'admin';
+        return $this->hasRole('Admin');
     }
 }

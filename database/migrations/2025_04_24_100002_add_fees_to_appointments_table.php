@@ -16,6 +16,11 @@ return new class extends Migration
             $table->boolean('is_paid')->default(false)->after('fees');
             $table->boolean('is_important')->default(false)->after('is_paid');
         });
+
+        Schema::table('doctors', function (Blueprint $table) {
+            $table->decimal('consultation_fee', 10, 2)->nullable()->after('price');
+            $table->integer('experience_years')->nullable()->after('consultation_fee');
+        });
     }
 
     /**
@@ -25,6 +30,10 @@ return new class extends Migration
     {
         Schema::table('appointments', function (Blueprint $table) {
             $table->dropColumn(['fees', 'is_paid', 'is_important']);
+        });
+
+        Schema::table('doctors', function (Blueprint $table) {
+            $table->dropColumn(['consultation_fee', 'experience_years']);
         });
     }
 };

@@ -27,6 +27,15 @@ class AdminDashboardController extends Controller
             }),
             'today_appointments' => Cache::remember('today_appointments', 300, function() {
                 return Appointment::whereDate('scheduled_at', Carbon::today())->count();
+            }),
+            'total_fees' => Cache::remember('total_fees', 3600, function() {
+                return Appointment::sum('fees');
+            }),
+            'paid_fees' => Cache::remember('paid_fees', 3600, function() {
+                return Appointment::where('is_paid', true)->sum('fees');
+            }),
+            'unpaid_fees' => Cache::remember('unpaid_fees', 3600, function() {
+                return Appointment::where('is_paid', false)->sum('fees');
             })
         ];
 

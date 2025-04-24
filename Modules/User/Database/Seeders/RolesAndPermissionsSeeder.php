@@ -24,14 +24,14 @@ class RolesAndPermissionsSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::create(['name' => $permission, 'guard_name' => 'web']);
         }
 
         // Create roles and assign permissions
-        $superAdmin = Role::create(['name' => 'super-admin']);
+        $superAdmin = Role::create(['name' => 'super-admin', 'guard_name' => 'web']);
         $superAdmin->givePermissionTo(Permission::all());
 
-        $admin = Role::create(['name' => 'admin']);
+        $admin = Role::create(['name' => 'admin', 'guard_name' => 'web']);
         $admin->givePermissionTo([
             'view users',
             'create users',
@@ -39,9 +39,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'delete users'
         ]);
 
-        $user = Role::create(['name' => 'user']);
+        $user = Role::create(['name' => 'user', 'guard_name' => 'web']);
         $user->givePermissionTo([
             'view users'
         ]);
+
+        // Create Patient role for clinic patients
+        $patient = Role::create(['name' => 'Patient', 'guard_name' => 'web']);
+        // Patients don't need any special permissions by default, but you can add them if needed
     }
 }

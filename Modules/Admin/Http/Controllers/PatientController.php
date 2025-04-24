@@ -4,14 +4,16 @@ namespace Modules\Admin\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class PatientController extends Controller
 {
     public function index()
     {
-        $patients = User::role('patient')->paginate(10);
+        $patients = User::role('Patient')->paginate(10);
         return view('admin::patients.index', compact('patients'));
     }
 
@@ -25,7 +27,7 @@ class PatientController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'phone' => 'required|string|max:20',
+            'phone_number' => 'required|string|max:20',
             'password' => 'required|min:6|confirmed',
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
@@ -35,7 +37,25 @@ class PatientController extends Controller
         $validated['password'] = Hash::make($validated['password']);
         $validated['type'] = 'patient';
 
-        User::create($validated);
+        // Create the user record
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone_number' => $validated['phone_number'],
+            'password' => $validated['password'],
+            'type' => $validated['type']
+        ]);
+
+        // Create the patient record
+        $patient = Patient::create([
+            'user_id' => $user->id,
+            'date_of_birth' => $validated['date_of_birth'],
+            'gender' => $validated['gender'],
+            'address' => $validated['address']
+        ]);
+
+        // Assign the patient role with web guard
+        $user->assignRole('Patient');
 
         return redirect()->route('admin.patients.index')
             ->with('success', 'تم إضافة المريض بنجاح');
@@ -51,7 +71,7 @@ class PatientController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $patient->id,
-            'phone' => 'required|string|max:20',
+            'phone_number' => 'required|string|max:20',
             'password' => 'nullable|min:6|confirmed',
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
@@ -64,7 +84,23 @@ class PatientController extends Controller
             unset($validated['password']);
         }
 
-        $patient->update($validated);
+        // Update user record
+        $patient->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone_number' => $validated['phone_number'],
+            'password' => $validated['password'] ?? $patient->password,
+        ]);
+
+        // Update or create patient record
+        Patient::updateOrCreate(
+            ['user_id' => $patient->id],
+            [
+                'date_of_birth' => $validated['date_of_birth'],
+                'gender' => $validated['gender'],
+                'address' => $validated['address']
+            ]
+        );
 
         return redirect()->route('admin.patients.index')
             ->with('success', 'تم تحديث بيانات المريض بنجاح');

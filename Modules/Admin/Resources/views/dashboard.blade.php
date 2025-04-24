@@ -73,6 +73,57 @@
                 </div>
             </div>
         </div>
+
+        <!-- بطاقة إجمالي الرسوم -->
+        <div class="col-md-3 mb-4">
+            <div class="card h-100" style="background-color: #FEFCE8; border: none; border-radius: 12px;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div>
+                            <p class="card-title mb-0" style="color: #2D3748; font-size: 1.1rem;">إجمالي الرسوم</p>
+                            <h3 class="display-6 fw-bold mb-0" style="color: #B45309;">{{ number_format($stats['total_fees'], 2) }} ج.م</h3>
+                        </div>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="background-color: #FEF3C7; width: 60px; height: 60px;">
+                            <i class="bi bi-currency-dollar fs-4" style="color: #B45309;line-height: 1.5rem"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- بطاقة الرسوم المدفوعة -->
+        <div class="col-md-3 mb-4">
+            <div class="card h-100" style="background-color: #ECFDF5; border: none; border-radius: 12px;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div>
+                            <p class="card-title mb-0" style="color: #2D3748; font-size: 1.1rem;">الرسوم المدفوعة</p>
+                            <h3 class="display-6 fw-bold mb-0" style="color: #047857;">{{ number_format($stats['paid_fees'], 2) }} ج.م</h3>
+                        </div>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="background-color: #D1FAE5; width: 60px; height: 60px;">
+                            <i class="bi bi-cash-stack fs-4" style="color: #047857;line-height: 1.5rem"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- بطاقة الرسوم المستحقة -->
+        <div class="col-md-3 mb-4">
+            <div class="card h-100" style="background-color: #FEF2F2; border: none; border-radius: 12px;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div>
+                            <p class="card-title mb-0" style="color: #2D3748; font-size: 1.1rem;">الرسوم المستحقة</p>
+                            <h3 class="display-6 fw-bold mb-0" style="color: #DC2626;">{{ number_format($stats['unpaid_fees'], 2) }} ج.م</h3>
+                        </div>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="background-color: #FEE2E2; width: 60px; height: 60px;">
+                            <i class="bi bi-cash fs-4" style="color: #DC2626;line-height: 1.5rem"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- الرسوم البيانية -->

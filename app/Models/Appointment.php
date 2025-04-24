@@ -2,12 +2,53 @@
 
 namespace App\Models;
 
+use App\Traits\HasStatus;
+use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
 
 class Appointment extends Model
 {
+    use HasStatus, Searchable;
+
+    /**
+     * The status column for this model.
+     */
+    const STATUS_COLUMN = 'status';
+
+    /**
+     * The valid statuses for this model.
+     */
+    const STATUSES = [
+        'scheduled',
+        'completed',
+        'cancelled'
+    ];
+
+    /**
+     * The status labels for human-readable display.
+     */
+    const STATUS_LABELS = [
+        'scheduled' => 'Scheduled',
+        'completed' => 'Completed',
+        'cancelled' => 'Cancelled'
+    ];
+
+    /**
+     * The status colors for UI display.
+     */
+    const STATUS_COLORS = [
+        'scheduled' => 'primary',
+        'completed' => 'success',
+        'cancelled' => 'danger'
+    ];
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'doctor_id',
         'patient_id',
@@ -19,6 +60,11 @@ class Appointment extends Model
         'is_important'
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
         'scheduled_at' => 'datetime',
         'fees' => 'decimal:2',
@@ -26,16 +72,51 @@ class Appointment extends Model
         'is_important' => 'boolean'
     ];
 
+    /**
+     * The attributes that should be appended to serialized outputs.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'status_text',
+        'status_color',
+        'is_upcoming',
+        'is_today',
+        'formatted_date',
+        'formatted_time'
+    ];
+
+    /**
+     * The attributes that should be searchable.
+     *
+     * @var array<int, string>
+     */
+    protected $searchable = [
+        'notes',
+        'status'
+    ];
+
+    /**
+     * Get the doctor that owns the appointment.
+     */
     public function doctor(): BelongsTo
     {
         return $this->belongsTo(Doctor::class);
     }
 
+    /**
+     * Get the patient that owns the appointment.
+     */
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
     }
 
+    /**
+     * Get the color associated with the appointment status.
+     *
+     * @return string
+     */
     public function getStatusColorAttribute(): string
     {
         return match($this->status) {
@@ -46,6 +127,11 @@ class Appointment extends Model
         };
     }
 
+    /**
+     * Get the localized text for the appointment status.
+     *
+     * @return string
+     */
     public function getStatusTextAttribute(): string
     {
         return match($this->status) {
@@ -56,16 +142,52 @@ class Appointment extends Model
         };
     }
 
+    /**
+     * Determine if the appointment is upcoming.
+     *
+     * @return bool
+     */
     public function getIsUpcomingAttribute(): bool
     {
         return $this->scheduled_at->isFuture() && $this->status === 'scheduled';
     }
 
+    /**
+     * Determine if the appointment is today.
+     *
+     * @return bool
+     */
     public function getIsTodayAttribute(): bool
     {
         return $this->scheduled_at->isToday();
     }
 
+    /**
+     * Get the formatted date for the appointment.
+     *
+     * @return string
+     */
+    public function getFormattedDateAttribute(): string
+    {
+        return format_date($this->scheduled_at, 'Y-m-d');
+    }
+
+    /**
+     * Get the formatted time for the appointment.
+     *
+     * @return string
+     */
+    public function getFormattedTimeAttribute(): string
+    {
+        return format_time($this->scheduled_at, 'h:i A');
+    }
+
+    /**
+     * Scope a query to only include upcoming appointments.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopeUpcoming($query)
     {
         return $query->where('scheduled_at', '>=', now())
@@ -73,9 +195,54 @@ class Appointment extends Model
                     ->orderBy('scheduled_at');
     }
 
+    /**
+     * Scope a query to only include today's appointments.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopeToday($query)
     {
         return $query->whereDate('scheduled_at', Carbon::today())
+                    ->orderBy('scheduled_at');
+    }
+
+    /**
+     * Scope a query to only include appointments for a specific doctor.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $doctorId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForDoctor($query, int $doctorId)
+    {
+        return $query->where('doctor_id', $doctorId);
+    }
+
+    /**
+     * Scope a query to only include appointments for a specific patient.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $patientId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForPatient($query, int $patientId)
+    {
+        return $query->where('patient_id', $patientId);
+    }
+
+    /**
+     * Scope a query to only include appointments within a date range.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $startDate
+     * @param string $endDate
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeBetweenDates($query, string $startDate, string $endDate)
+    {
+        return $query->whereDate('scheduled_at', '>=', $startDate)
+                    ->whereDate('scheduled_at', '<=', $endDate)
                     ->orderBy('scheduled_at');
     }
 }

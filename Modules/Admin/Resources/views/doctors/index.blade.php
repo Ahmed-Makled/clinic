@@ -53,6 +53,10 @@
                         <td>{{ $doctor->phone }}</td>
                         <td>
                             <div class="action-buttons">
+                            <a href="{{ route('admin.doctors.show', $doctor) }}"
+                                   class="btn-action btn-view">
+                                    <i class="bi bi-eye"></i>
+                                </a>
                                 <a href="{{ route('admin.doctors.edit', $doctor) }}"
                                    class="btn-action btn-edit">
                                     <i class="bi bi-pencil"></i>

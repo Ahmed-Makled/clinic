@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Modules\User\Entities\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AdminSeeder extends Seeder
 {
@@ -17,7 +18,8 @@ class AdminSeeder extends Seeder
             'phone_number' => '01066181943',
             'password' => Hash::make('password'),
         ]);
-        $admin->assignRole('Administrator');
+        $adminRole = Role::findByName('Administrator', 'web');
+        $admin->assignRole($adminRole);
 
         // Create second admin user
         $secondAdmin = User::create([
@@ -26,6 +28,6 @@ class AdminSeeder extends Seeder
             'phone_number' => '01066181942',
             'password' => Hash::make('01066181942'),
         ]);
-        $secondAdmin->assignRole('Administrator');
+        $secondAdmin->assignRole($adminRole);
     }
 }

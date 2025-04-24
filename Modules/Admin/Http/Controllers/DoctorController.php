@@ -4,21 +4,57 @@ namespace Modules\Admin\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
+use App\Models\User;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class DoctorController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $doctors = Doctor::with('categories')->paginate(10);
+        $query = Doctor::query();
+
+        // البحث حسب التخصص
+        if ($request->filled('category')) {
+            $query->whereHas('categories', function ($q) use ($request) {
+                $q->where('categories.id', $request->category);
+            });
+        }
+
+        // البحث حسب سنوات الخبرة
+        if ($request->filled('experience')) {
+            [$min, $max] = explode('-', $request->experience);
+            if ($max === '+') {
+                $query->where('experience_years', '>=', $min);
+            } else {
+                $query->whereBetween('experience_years', [$min, $max]);
+            }
+        }
+
+        // البحث حسب سعر الكشف
+        if ($request->filled('fee_min')) {
+            $query->where('price', '>=', $request->fee_min);
+        }
+        if ($request->filled('fee_max')) {
+            $query->where('price', '<=', $request->fee_max);
+        }
+
+        $doctors = $query->with(['categories', 'user'])
+                        ->latest()
+                        ->paginate(10)
+                        ->withQueryString();
+
         $categories = Category::all();
+
         return view('admin::doctors.index', compact('doctors', 'categories'));
     }
 
     public function create()
     {
         $categories = Category::all();
+
         return view('admin::doctors.create', compact('categories'));
     }
 
@@ -26,23 +62,65 @@ class DoctorController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:doctors',
+            'email' => 'required|email|unique:users',
             'phone' => 'required|string|max:20',
-            'category_ids' => 'required|array',
-            'category_ids.*' => 'exists:categories,id',
+            'password' => 'required|string|min:6|confirmed',
+            'price' => 'required|numeric|min:0',
+            'categories' => 'required|array|min:1',
+            'categories.*' => 'exists:categories,id',
+            'gender' => 'required|in:ذكر,انثي',
+            'experience_years' => 'nullable|integer|min:0',
             'bio' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'address1' => 'nullable|string',
+            'address2' => 'nullable|string',
+            'city' => 'nullable|string',
+            'district' => 'nullable|string',
+            'postal_code' => 'nullable|string'
+        ], [
+            'categories.required' => 'يجب اختيار تخصص واحد على الأقل',
+            'categories.min' => 'يجب اختيار تخصص واحد على الأقل',
+            'password.required' => 'كلمة المرور مطلوبة',
+            'password.min' => 'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
+            'password.confirmed' => 'كلمة المرور غير متطابقة',
+            'price.required' => 'سعر الكشف مطلوب',
+            'price.numeric' => 'سعر الكشف يجب أن يكون رقماً',
+            'price.min' => 'سعر الكشف يجب أن يكون أكبر من صفر'
         ]);
 
-        $doctor = Doctor::create($validated);
+        // Create user record first
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'phone_number' => $validated['phone'],
+            'type' => 'doctor'
+        ]);
 
+        // Assign doctor role
+        $doctorRole = Role::findByName('Doctor', '');
+        $user->assignRole($doctorRole);
+
+        // Create doctor record with user_id
+        $doctor = Doctor::create([
+            'user_id' => $user->id,
+            'bio' => $validated['bio'] ?? null,
+            'price' => $validated['price'],
+            'experience_years' => $validated['experience_years'] ?? null,
+            'gender' => $validated['gender'],
+            'address' => $validated['address1'] ?? null,
+            'city' => $validated['city'] ?? null,
+        ]);
+
+        // Handle image upload
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('doctors', 'public');
             $doctor->image = $imagePath;
             $doctor->save();
         }
 
-        $doctor->categories()->sync($request->category_ids);
+        // Sync categories
+        $doctor->categories()->sync($request->categories);
 
         return redirect()->route('admin.doctors.index')
             ->with('success', 'تم إضافة الطبيب بنجاح');
@@ -58,15 +136,61 @@ class DoctorController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:doctors,email,' . $doctor->id,
+            'email' => 'required|email|unique:users,email,' . ($doctor->user_id ?? 0),
             'phone' => 'required|string|max:20',
-            'category_ids' => 'required|array',
-            'category_ids.*' => 'exists:categories,id',
+            'categories' => 'required|array|min:1',
+            'categories.*' => 'required|exists:categories,id',
             'bio' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'gender' => 'required|in:ذكر,انثي',
+            'status' => 'nullable|boolean',
+            'address1' => 'nullable|string',
+            'address2' => 'nullable|string',
+            'city' => 'nullable|string',
+            'district' => 'nullable|string',
+            'postal_code' => 'nullable|string'
         ]);
 
-        $doctor->update($validated);
+        if (!isset($validated['status'])) {
+            $validated['status'] = false;
+        }
+        // Update user record if it exists
+        if ($doctor->user_id) {
+            $user = User::find($doctor->user_id);
+            if ($user) {
+                $user->update([
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
+                    'phone_number' => $validated['phone']
+                ]);
+            }
+        } else {
+            // If no user exists, create one
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make('password'), // Default password
+                'phone_number' => $validated['phone'],
+                'type' => 'doctor'
+            ]);
+
+            // Assign doctor role
+            $doctorRole = Role::findByName('Doctor', '');
+            $user->assignRole($doctorRole);
+
+            // Associate user with doctor
+            $doctor->user_id = $user->id;
+            $doctor->save();
+        }
+
+        // Update only doctor-specific fields
+        $doctor->update([
+            'bio' => $validated['bio'] ?? null,
+            'gender' => $validated['gender'],
+            'status' => $validated['status'] ?? false,
+            'address' => $validated['address1'] ?? null,
+            'city' => $validated['city'] ?? null,
+        ]);
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('doctors', 'public');
@@ -74,16 +198,33 @@ class DoctorController extends Controller
             $doctor->save();
         }
 
-        $doctor->categories()->sync($request->category_ids);
+        $doctor->categories()->sync($request->categories);
 
         return redirect()->route('admin.doctors.index')
             ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
     }
 
+    public function show(Doctor $doctor)
+    {
+        return view('admin::doctors.show', [
+            'doctor' => $doctor->load('categories'),
+            'title' => 'تفاصيل الطبيب'
+        ]);
+    }
+
     public function destroy(Doctor $doctor)
     {
         $doctor->categories()->detach();
+
+        // Get the user ID before deleting the doctor
+        $userId = $doctor->user_id;
+
         $doctor->delete();
+
+        // Delete the associated user if it exists
+        if ($userId) {
+            User::where('id', $userId)->delete();
+        }
 
         return redirect()->route('admin.doctors.index')
             ->with('success', 'تم حذف الطبيب بنجاح');

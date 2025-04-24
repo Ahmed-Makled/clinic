@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Patient;
+use App\Models\User;
+use App\Notifications\NewAppointmentNotification;
+use App\Notifications\AppointmentCancelledNotification;
+use App\Notifications\AppointmentCompletedNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -48,12 +52,13 @@ class AppointmentController extends Controller
             $query->where('doctor_id', $request->doctor_id);
         }
 
-        // الإحصائيات المالية
+        // الإحصائيات المالية والعامة
         $stats = [
-            'total_fees' => $query->sum('fees'),
-            'paid_fees' => $query->where('is_paid', true)->sum('fees'),
-            'unpaid_fees' => $query->where('is_paid', false)->sum('fees'),
-            'total_appointments' => $query->count(),
+            'total_fees' => Appointment::sum('fees'),
+            'paid_fees' => Appointment::where('is_paid', true)->sum('fees'),
+            'unpaid_fees' => Appointment::where('is_paid', false)->sum('fees'),
+            'total_appointments' => Appointment::count(),
+            'today_appointments' => Appointment::whereDate('scheduled_at', Carbon::today())->count()
         ];
 
         $appointments = $query->orderBy('scheduled_at', 'desc')->paginate(15);
@@ -99,6 +104,11 @@ class AppointmentController extends Controller
 
         $appointment = Appointment::create($validated);
 
+        // إرسال إشعار للمسؤولين
+        User::role('Administrator')->each(function($admin) use ($appointment) {
+            $admin->notify(new NewAppointmentNotification($appointment));
+        });
+
         return redirect()->route('admin.appointments.index')
             ->with('success', 'تم إضافة الموعد بنجاح');
     }
@@ -139,7 +149,23 @@ class AppointmentController extends Controller
             'is_important' => 'boolean'
         ]);
 
+        $oldStatus = $appointment->status;
         $appointment->update($validated);
+
+        // إرسال إشعارات عند تغيير حالة الموعد
+        if ($oldStatus !== $validated['status']) {
+            $notification = match($validated['status']) {
+                'cancelled' => new AppointmentCancelledNotification($appointment),
+                'completed' => new AppointmentCompletedNotification($appointment),
+                default => null
+            };
+
+            if ($notification) {
+                User::role('Administrator')->each(function($admin) use ($notification) {
+                    $admin->notify($notification);
+                });
+            }
+        }
 
         return redirect()->route('admin.appointments.index')
             ->with('success', 'تم تحديث الموعد بنجاح');
