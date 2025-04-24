@@ -17,13 +17,13 @@ return [
             'composer' => 'composer.json',
             'assets/js/app' => 'Resources/assets/js/app.js',
             'assets/sass/app' => 'Resources/assets/sass/app.scss',
-            'webpack' => 'webpack.mix.js',
+            'vite' => 'vite.config.js',
             'package' => 'package.json',
         ],
         'replacements' => [
             'routes/web' => ['LOWER_NAME', 'STUDLY_NAME'],
             'routes/api' => ['LOWER_NAME'],
-            'webpack' => ['LOWER_NAME'],
+            'vite' => ['LOWER_NAME'],  // Changed from 'webpack' to 'vite'
             'json' => ['LOWER_NAME', 'STUDLY_NAME', 'MODULE_NAMESPACE', 'PROVIDER_NAMESPACE'],
             'views/index' => ['LOWER_NAME'],
             'views/master' => ['LOWER_NAME', 'STUDLY_NAME'],
@@ -44,6 +44,7 @@ return [
         'modules' => base_path('Modules'),
         'assets' => public_path('modules'),
         'migration' => base_path('Modules/*/Database/Migrations'),
+        'app_folder' => app_path(),
         'generator' => [
             'config' => ['path' => 'Config', 'generate' => true],
             'command' => ['path' => 'Console', 'generate' => true],

@@ -47,7 +47,7 @@
                 </li>
 
                 <li class="nav-item {{ request()->is('doctors') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('home') }}">الأطباء</a>
+                    <a class="nav-link" href="{{ route('doctors.index') }}">الأطباء</a>
                 </li>
                 <li class="nav-item {{ request()->is('contact') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('contact') }} ">إتصل بنا</a>
