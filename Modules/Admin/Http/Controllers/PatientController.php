@@ -53,9 +53,9 @@ class PatientController extends Controller
             'gender' => $validated['gender'],
             'address' => $validated['address']
         ]);
+        // $doctorRole = Role::findByName('Patient', 'web');
+        // $user->assignRole($doctorRole);
 
-        // Assign the patient role with web guard
-        $user->assignRole('Patient');
 
         return redirect()->route('admin.patients.index')
             ->with('success', 'تم إضافة المريض بنجاح');
