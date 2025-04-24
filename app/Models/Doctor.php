@@ -13,6 +13,9 @@ class Doctor extends Model
 
     protected $fillable = [
         'user_id',
+        'name',
+        'email',
+        'phone',
         'bio',
         'image',
         'title',
@@ -23,7 +26,9 @@ class Doctor extends Model
         'city',
         'degree',
         'rating',
-        'waiting_time'
+        'waiting_time',
+        'gender',
+        'status'
     ];
 
     public $timestamps = true;

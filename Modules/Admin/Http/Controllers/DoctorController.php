@@ -4,7 +4,7 @@ namespace Modules\Admin\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
-use App\Models\User;
+use Modules\User\Entities\User;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -73,10 +73,7 @@ class DoctorController extends Controller
             'bio' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'address1' => 'nullable|string',
-            'address2' => 'nullable|string',
-            'city' => 'nullable|string',
-            'district' => 'nullable|string',
-            'postal_code' => 'nullable|string'
+            'city' => 'nullable|string'
         ], [
             'categories.required' => 'يجب اختيار تخصص واحد على الأقل',
             'categories.min' => 'يجب اختيار تخصص واحد على الأقل',
@@ -97,13 +94,16 @@ class DoctorController extends Controller
             'type' => 'doctor'
         ]);
 
-        // Assign doctor role
-        $doctorRole = Role::findByName('Doctor', '');
+        // Assign doctor role with web guard
+        $doctorRole = Role::findByName('Doctor', 'web');
         $user->assignRole($doctorRole);
 
-        // Create doctor record with user_id
+        // Create doctor record with user_id and name
         $doctor = Doctor::create([
             'user_id' => $user->id,
+            'name' => $validated['name'],  // Adding name field
+            'email' => $validated['email'], // Adding email field
+            'phone' => $validated['phone'], // Adding phone field
             'bio' => $validated['bio'] ?? null,
             'price' => $validated['price'],
             'experience_years' => $validated['experience_years'] ?? null,
@@ -174,8 +174,8 @@ class DoctorController extends Controller
                 'type' => 'doctor'
             ]);
 
-            // Assign doctor role
-            $doctorRole = Role::findByName('Doctor', '');
+            // Assign doctor role with web guard
+            $doctorRole = Role::findByName('Doctor', 'web');
             $user->assignRole($doctorRole);
 
             // Associate user with doctor
@@ -183,8 +183,11 @@ class DoctorController extends Controller
             $doctor->save();
         }
 
-        // Update only doctor-specific fields
+        // Update doctor record including duplicated fields
         $doctor->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
             'bio' => $validated['bio'] ?? null,
             'gender' => $validated['gender'],
             'status' => $validated['status'] ?? false,
@@ -204,13 +207,6 @@ class DoctorController extends Controller
             ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
     }
 
-    public function show(Doctor $doctor)
-    {
-        return view('admin::doctors.show', [
-            'doctor' => $doctor->load('categories'),
-            'title' => 'تفاصيل الطبيب'
-        ]);
-    }
 
     public function destroy(Doctor $doctor)
     {
