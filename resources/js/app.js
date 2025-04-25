@@ -6,63 +6,9 @@ import 'select2/dist/css/select2.css';
 
 window.$ = window.jQuery = jQuery;
 
-// Initialize Bootstrap components
-document.addEventListener('DOMContentLoaded', () => {
-    // Enable tooltips
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+// Wait for jQuery to be properly loaded
+jQuery(function ($) {
 
-    // Enable popovers
-    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-    popoverTriggerList.map(function (popoverTriggerEl) {
-        return new bootstrap.Popover(popoverTriggerEl);
-    });
-
-    // Enable dropdowns
-    const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
-    dropdownElementList.map(function (dropdownToggleEl) {
-        return new bootstrap.Dropdown(dropdownToggleEl);
-    });
-
-    // Initialize Select2
-    $('.form-select').select2({
-        theme: 'bootstrap-5',
-        width: '100%',
-        dir: 'rtl',
-        language: {
-            errorLoading: function () {
-                return 'لا يمكن تحميل النتائج';
-            },
-            inputTooLong: function (args) {
-                return 'الرجاء حذف ' + (args.input.length - args.maximum) + ' حرف';
-            },
-            inputTooShort: function (args) {
-                return 'الرجاء إضافة ' + (args.minimum - args.input.length) + ' حرف أو أكثر';
-            },
-            loadingMore: function () {
-                return 'جاري تحميل نتائج إضافية...';
-            },
-            maximumSelected: function (args) {
-                return 'تستطيع إختيار ' + args.maximum + ' بنود فقط';
-            },
-            noResults: function () {
-                return 'لم يتم العثور على أي نتائج';
-            },
-            searching: function () {
-                return 'جاري البحث…';
-            }
-        }
-    });
-
-    // Global Select2 initialization
-    $('select:not(.no-select2)').select2({
-        theme: 'bootstrap-5',
-        width: '100%',
-        templateResult: formatOption,
-        templateSelection: formatOption,
-    });
 
     // Format option with icon if available
     function formatOption(option) {
@@ -80,4 +26,20 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `);
     }
+
+    // Initialize Bootstrap components
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl);
+    });
+
+    const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+    dropdownElementList.map(function (dropdownToggleEl) {
+        return new bootstrap.Dropdown(dropdownToggleEl);
+    });
 });

@@ -10,6 +10,6 @@ Route::middleware(['web', 'auth:web'])->group(function () {
 });
 
 // Admin routes
-Route::middleware(['web', 'auth:web', 'role:Administrator'])->group(function () {
+Route::middleware(['web', 'auth:web', 'role:Admin'])->group(function () {
     Route::resource('appointments', AppointmentsController::class)->except(['store']);
 });

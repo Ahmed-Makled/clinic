@@ -42,7 +42,7 @@ class RoleSeeder extends Seeder
         }
 
         // Create roles with web guard and assign created permissions
-        $admin = Role::create(['name' => 'Administrator', 'guard_name' => 'web']);
+        $admin = Role::create(['name' => 'Admin', 'guard_name' => 'web']);
         $admin->syncPermissions($createdPermissions);
 
         $doctor = Role::create(['name' => 'Doctor', 'guard_name' => 'web']);

@@ -8,6 +8,6 @@ Route::get('/doctors/profiles', [DoctorsController::class, 'profiles'])->name('d
 Route::get('/doctors/{doctor}', [DoctorsController::class, 'show'])->name('doctors.show');
 
 // Admin routes
-Route::middleware(['web', 'auth:web', 'role:Administrator'])->group(function () {
+Route::middleware(['web', 'auth:web', 'role:Admin'])->group(function () {
     Route::resource('doctors', DoctorsController::class)->except(['show']);
 });

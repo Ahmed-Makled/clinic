@@ -10,7 +10,6 @@ body {
     font-size: .92rem;
     direction: rtl;
     text-align: right;
-    background-color: var(--light)
 }
 
 .border {

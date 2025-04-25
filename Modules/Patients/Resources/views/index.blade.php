@@ -208,16 +208,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // تحسين تهيئة Select2 مع الأيقونات
+    // تحسين تهيئة Select2
     $('#genderFilter').select2({
-        theme: 'bootstrap-5 gender',
+        theme: 'bootstrap-5',
         width: '100%',
         placeholder: 'اختر النوع',
         minimumResultsForSearch: Infinity,
         templateResult: formatGenderOption,
         templateSelection: formatGenderOption,
         dropdownParent: $('.gender-filter-wrapper')
-    });
+    }).addClass('select2-gender');
 
     // دالة تنسيق خيارات النوع
     function formatGenderOption(option) {

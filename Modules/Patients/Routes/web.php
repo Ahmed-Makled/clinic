@@ -5,6 +5,6 @@ use Modules\Patients\Http\Controllers\PatientController;
 
 
 
-Route::middleware(['web', 'auth:web', 'role:Administrator'])->group(function () {
+Route::middleware(['web', 'auth:web', 'role:Admin'])->group(function () {
     Route::resource('patients', PatientController::class);
 });

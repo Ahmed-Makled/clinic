@@ -15,7 +15,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone_number'
+        'phone_number',
+        'status'
     ];
 
     protected $hidden = [
@@ -70,7 +71,7 @@ class User extends Authenticatable
     {
         return $this->hasRole('Doctor');
     }
-    
+
     /**
      * Get the doctor record if this user is a doctor.
      */

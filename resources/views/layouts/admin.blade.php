@@ -299,59 +299,80 @@
         </div>
     </div>
 
-    <!-- Load scripts at the end -->
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.js"></script>
-
-    <!-- Select2 JS -->
+    <!-- Core Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.js"></script>
 
+    <!-- Notifications Script -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // تحديث عدد الإشعارات كل دقيقة
-        function updateNotificationsCount() {
-            fetch('/admin/notifications/count')
-                .then(response => response.json())
-                .then(data => {
-                    document.querySelector('.notifications-count').textContent = data.count;
-                });
-        }
+        // Initialize Select2 for all select elements
+        $('.select2').select2({
+            theme: 'bootstrap-5'
+        });
 
-        // تحميل الإشعارات عند فتح القائمة
+        // Initialize tooltips
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipTriggerList.forEach(tooltipTriggerEl => {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Notifications functionality
+        const notificationsCount = document.querySelector('.notifications-count');
         const notificationsDropdown = document.getElementById('notificationsDropdown');
-        notificationsDropdown.addEventListener('show.bs.dropdown', function () {
-            fetch('/admin/notifications')
-                .then(response => response.json())
-                .then(data => {
-                    const notificationsList = document.querySelector('.notifications-list');
-                    notificationsList.innerHTML = data.notifications.map(notification => `
-                        <div class="notification-item p-3 border-bottom ${notification.read_at ? '' : 'bg-light'}">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <i class="bi ${getNotificationIcon(notification.type)} fs-4"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <p class="mb-1">${notification.data.message}</p>
-                                    <small class="text-muted">${formatDate(notification.created_at)}</small>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('') || '<div class="p-3 text-center text-muted">لا توجد إشعارات</div>';
-                });
-        });
+        const markAllReadButton = document.querySelector('.mark-all-read');
 
-        // تعليم كل الإشعارات كمقروءة
-        document.querySelector('.mark-all-read').addEventListener('click', function() {
-            fetch('/admin/notifications/mark-all-read', { method: 'POST' })
-                .then(() => {
-                    updateNotificationsCount();
-                    document.querySelectorAll('.notification-item').forEach(item => {
-                        item.classList.remove('bg-light');
+        // Only initialize notifications if the elements exist
+        if (notificationsCount && notificationsDropdown) {
+            function updateNotificationsCount() {
+                fetch('/admin/notifications/count')
+                    .then(response => response.json())
+                    .then(data => {
+                        notificationsCount.textContent = data.count;
                     });
+            }
+
+            notificationsDropdown.addEventListener('show.bs.dropdown', function () {
+                fetch('/admin/notifications')
+                    .then(response => response.json())
+                    .then(data => {
+                        const notificationsList = document.querySelector('.notifications-list');
+                        if (notificationsList) {
+                            notificationsList.innerHTML = data.notifications.map(notification => `
+                                <div class="notification-item p-3 border-bottom ${notification.read_at ? '' : 'bg-light'}">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <i class="bi ${getNotificationIcon(notification.type)} fs-4"></i>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <p class="mb-1">${notification.data.message}</p>
+                                            <small class="text-muted">${formatDate(notification.created_at)}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('') || '<div class="p-3 text-center text-muted">لا توجد إشعارات</div>';
+                        }
+                    });
+            });
+
+            if (markAllReadButton) {
+                markAllReadButton.addEventListener('click', function() {
+                    fetch('/admin/notifications/mark-all-read', { method: 'POST' })
+                        .then(() => {
+                            updateNotificationsCount();
+                            document.querySelectorAll('.notification-item').forEach(item => {
+                                item.classList.remove('bg-light');
+                            });
+                        });
                 });
-        });
+            }
+
+            // Initial update and set interval
+            updateNotificationsCount();
+            setInterval(updateNotificationsCount, 60000);
+        }
 
         // Helper functions
         function getNotificationIcon(type) {
@@ -368,10 +389,6 @@
             const date = new Date(dateString);
             return date.toLocaleString('ar-EG');
         }
-
-        // Initial update and set interval
-        updateNotificationsCount();
-        setInterval(updateNotificationsCount, 60000);
     });
     </script>
     @stack('scripts')

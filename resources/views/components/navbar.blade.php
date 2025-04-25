@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg position-fixed w-100">
+<nav class="navbar navbar-expand-lg position-fixed w-100 top-0">
     <div class="container">
         <a class="navbar-brand fw-bold ms-0 me-4" href="{{ route('home') }}">
             <img src="{{ asset('images/logo-clinic.png') }}" class="logo-img" alt="Logo" />
@@ -37,7 +37,6 @@
             <div class="nav-auth d-flex align-items-center gap-3">
                 @guest
                     <a href="{{ route('login') }}" class="btn btn-outline-light px-4">تسجيل الدخول</a>
-                    <a href="{{ route('register') }}" class="btn btn-light px-4">التسجيل</a>
                 @else
                     <div class="dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
@@ -49,7 +48,7 @@
                             <span>{{ auth()->user()->name }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            @if(auth()->user()->hasRole('Administrator'))
+                            @if(auth()->user()->hasRole('Admin'))
                                 <li>
                                     <a class="dropdown-item" href="{{ route('dashboard.index') }}">
                                         <i class="bi bi-speedometer2 me-2"></i>لوحة التحكم

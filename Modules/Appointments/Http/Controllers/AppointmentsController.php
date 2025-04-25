@@ -120,8 +120,8 @@ class AppointmentsController extends Controller
             'is_paid' => false
         ]);
 
-        // Notify administrators about the new appointment
-        User::role('Administrator')->each(function($admin) use ($appointment) {
+        // Notify Admin about the new appointment
+        User::role('Admin')->each(function($admin) use ($appointment) {
             $admin->notify(new NewAppointmentNotification($appointment));
         });
 
@@ -177,7 +177,7 @@ class AppointmentsController extends Controller
             };
 
             if ($notification) {
-                User::role('Administrator')->each(function($admin) use ($notification) {
+                User::role('Admin')->each(function($admin) use ($notification) {
                     $admin->notify($notification);
                 });
             }
