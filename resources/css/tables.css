@@ -16,12 +16,12 @@
 }
 
 .modern-table thead th {
-    background-color: #F7FAFC;
-    color: #4A5568;
+    background-color: var(--bs-gray-100);
+    color: var(--bs-gray-700);
     font-weight: 600;
     padding: 1rem;
-    border-bottom: 2px solid #E2E8F0;
-    text-align: right;
+    border-bottom: 2px solid var(--bs-gray-200);
+    text-align: end;
     font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -32,13 +32,12 @@
 }
 
 .modern-table tbody tr:hover {
-    background-color: #F7FAFC;
-    transform: translateY(-1px);
+    background-color: var(--bs-gray-100);
 }
 
 .modern-table tbody td {
     padding: 1rem;
-    border-bottom: 1px solid #EDF2F7;
+    border-bottom: 1px solid var(--bs-gray-200);
     vertical-align: middle;
 }
 
@@ -53,18 +52,18 @@
 }
 
 .status-badge-active {
-    background-color: #C6F6D5;
-    color: #2F855A;
+    background-color: var(--bs-success-bg-subtle);
+    color: var(--bs-success);
 }
 
 .status-badge-inactive {
-    background-color: #FED7D7;
-    color: #C53030;
+    background-color: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger);
 }
 
 .status-badge-pending {
-    background-color: #FEEBC8;
-    color: #C05621;
+    background-color: var(--bs-warning-bg-subtle);
+    color: var(--bs-warning);
 }
 
 /* Action Buttons */
@@ -87,30 +86,30 @@
 }
 
 .btn-view {
-    background-color: #EBF8FF;
-    color: #3182CE;
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary);
 }
 
 .btn-view:hover {
-    background-color: #BEE3F8;
+    background-color: var(--bs-primary-border-subtle);
 }
 
 .btn-edit {
-    background-color: #E6FFFA;
-    color: #319795;
+    background-color: var(--bs-info-bg-subtle);
+    color: var(--bs-info);
 }
 
 .btn-edit:hover {
-    background-color: #B2F5EA;
+    background-color: var(--bs-info-border-subtle);
 }
 
 .btn-delete {
-    background-color: #FFF5F5;
-    color: #E53E3E;
+    background-color: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger);
 }
 
 .btn-delete:hover {
-    background-color: #FED7D7;
+    background-color: var(--bs-danger-border-subtle);
 }
 
 /* Pagination */
@@ -139,28 +138,28 @@
     padding: 0.5rem 0.75rem;
     min-width: 2rem;
     border-radius: 6px;
-    color: #4A5568;
+    color: var(--bs-gray-700);
     background-color: #fff;
-    border: 1px solid #E2E8F0;
+    border: 1px solid var(--bs-gray-200);
     text-decoration: none;
     transition: all 0.2s ease;
 }
 
 .page-link:hover {
-    background-color: #F7FAFC;
-    color: #2D3748;
-    border-color: #CBD5E0;
+    background-color: var(--bs-gray-100);
+    color: var(--bs-gray-900);
+    border-color: var(--bs-gray-300);
 }
 
 .page-item.active .page-link {
-    background-color: #4299E1;
+    background-color: var(--bs-primary);
     color: #fff;
-    border-color: #4299E1;
+    border-color: var(--bs-primary);
 }
 
 .page-item.disabled .page-link {
-    background-color: #F7FAFC;
-    color: #A0AEC0;
+    background-color: var(--bs-gray-100);
+    color: var(--bs-gray-500);
     cursor: not-allowed;
 }
 
@@ -194,12 +193,11 @@
 }
 
 .filter-select {
-    width: 100%;
     padding: 0.5rem 2rem 0.5rem 1rem;
-    border: 1px solid #E2E8F0;
+    border: 1px solid var(--bs-gray-300);
     border-radius: 6px;
-    background-color: #fff;
-    color: #2D3748;
+    width: 100%;
+    color: var(--bs-gray-900);
     appearance: none;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.5rem center;
@@ -208,8 +206,8 @@
 }
 
 .filter-select:focus {
-    border-color: #4299E1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.15);
     outline: none;
 }
 
@@ -217,13 +215,13 @@
 .empty-state {
     text-align: center;
     padding: 3rem 1.5rem;
-    color: #718096;
+    color: var(--bs-gray-600);
 }
 
 .empty-state-icon {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    color: #A0AEC0;
+    color: var(--bs-gray-500);
 }
 
 .empty-state-text {
@@ -248,8 +246,8 @@
 .loading-spinner {
     width: 2.5rem;
     height: 2.5rem;
-    border: 3px solid #E2E8F0;
-    border-top-color: #4299E1;
+    border: 3px solid var(--bs-gray-200);
+    border-top-color: var(--bs-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }

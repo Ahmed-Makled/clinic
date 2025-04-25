@@ -3,13 +3,13 @@
 @section('title', 'إضافة موعد جديد')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-fluid">
     <div class="card">
-        <div class="card-header border-bottom">
-            <h5 class="card-title mb-0">إضافة موعد جديد</h5>
+        <div class="card-header">
+            <h5 class="card-title">إضافة موعد جديد</h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('appointments.store') }}" class="row g-3">
+            <form method="POST" action="{{ route('appointments.store') }}" class="row g-3 needs-validation" novalidate>
                 @csrf
 
                 <div class="col-md-6">
@@ -87,18 +87,19 @@
                                min="0"
                                step="0.01">
                         <span class="input-group-text">جنيه</span>
+                        @error('fees')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
-                    @error('fees')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
                 </div>
 
                 <div class="col-md-6">
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <div class="form-check form-switch mt-2">
+                            <div class="form-check form-switch">
                                 <input class="form-check-input"
                                        type="checkbox"
+                                       role="switch"
                                        id="is_paid"
                                        name="is_paid"
                                        value="1"
@@ -107,9 +108,10 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-check form-switch mt-2">
+                            <div class="form-check form-switch">
                                 <input class="form-check-input"
                                        type="checkbox"
+                                       role="switch"
                                        id="is_important"
                                        name="is_important"
                                        value="1"
@@ -132,8 +134,8 @@
                 </div>
 
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary me-sm-3 me-1">حفظ</button>
-                    <a href="{{ route('appointments.index') }}" class="btn btn-label-secondary">إلغاء</a>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                    <a href="{{ route('appointments.index') }}" class="btn btn-secondary">إلغاء</a>
                 </div>
             </form>
         </div>
@@ -144,7 +146,17 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Add any JavaScript initialization here
+    // Enable form validation
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {}
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
 });
 </script>
 @endpush

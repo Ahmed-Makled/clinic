@@ -37,17 +37,22 @@
 
         .input-group {
             transition: all 0.3s ease;
-            border-radius: 8px;
-            overflow: hidden;
+
         }
 
         .input-group:focus-within {
             box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
         }
 
+        .form-control::placeholder {
+            text-align: right;
+            direction: rtl;
+        }
 
-
-
+        .form-control {
+            text-align: right;
+            direction: rtl;
+        }
 
         .form-control:focus {
             box-shadow: none;
@@ -111,7 +116,7 @@
                             <p class="text-muted">قم بتسجيل الدخول إلى حسابك</p>
                         </div>
 
-                        <form method="POST" action="{{ route('login') }}" dir="rtl">
+                        <form method="POST" action="{{ route('login') }}" autocomplete="off">
                             @csrf
 
                             <div class="mb-4">
@@ -133,7 +138,6 @@
                             <div class="mb-4">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <label for="password" class="form-label fw-medium">كلمة المرور</label>
-                                    <a href="{{ route('password.request') }}" class="forgot-password small">نسيت كلمة المرور؟</a>
                                 </div>
                                 <div class="input-group">
                                     <span class="input-group-text border-end-0">
@@ -148,11 +152,13 @@
                                 </div>
                             </div>
 
-                            <div class="mb-4">
+                            <div class="mb-4 d-flex align-items-center">
                                 <div class="form-check d-flex align-items-center">
-                                    <input type="checkbox" name="remember" id="remember" class="form-check-input">
-                                    <label class="form-check-label remember-me mr-4" for="remember">تذكرني</label>
+                                    <input type="checkbox" name="remember" id="remember" class="form-check-input m-0">
+                                    <label class="form-check-label remember-me ms-2" for="remember">تذكرني</label>
                                 </div>
+                                <a href="{{ route('password.request') }}" class="forgot-password small ms-auto">نسيت كلمة المرور؟</a>
+
                             </div>
 
                             <div class="d-grid mb-4">

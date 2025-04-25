@@ -12,13 +12,13 @@
 <div class="modern-table-container">
     <div class="table-controls">
         <div class="control-item">
-            <input type="text"
-                   class="search-input"
+            <input type="search"
+                   class="form-control search-input"
                    id="searchInput"
                    placeholder="ابحث عن طبيب...">
         </div>
         <div class="control-item">
-            <select class="filter-select" id="categoryFilter">
+            <select class="form-select filter-select" id="categoryFilter" aria-label="اختر التخصص">
                 <option value="">كل التخصصات</option>
                 @foreach($categories as $category)
                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -31,12 +31,12 @@
         <table class="modern-table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>الاسم</th>
-                    <th>التخصصات</th>
-                    <th>البريد الإلكتروني</th>
-                    <th>رقم الهاتف</th>
-                    <th>الإجراءات</th>
+                    <th scope="col">#</th>
+                    <th scope="col">الاسم</th>
+                    <th scope="col">التخصصات</th>
+                    <th scope="col">البريد الإلكتروني</th>
+                    <th scope="col">رقم الهاتف</th>
+                    <th scope="col">الإجراءات</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,19 +46,23 @@
                         <td>{{ $doctor->name }}</td>
                         <td>
                             @foreach($doctor->categories as $category)
-                                <span class="status-badge status-badge-pending">{{ $category->name }}</span>
+                                <span class="badge bg-info text-dark" data-id="{{ $category->id }}">{{ $category->name }}</span>
                             @endforeach
                         </td>
                         <td>{{ $doctor->email }}</td>
                         <td>{{ $doctor->phone }}</td>
                         <td>
                             <div class="action-buttons">
-                            <a href="{{ route('doctors.show', $doctor) }}"
-                                   class="btn-action btn-view">
+                                <a href="{{ route('doctors.show', $doctor) }}"
+                                   class="btn btn-sm btn-outline-primary"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-title="عرض التفاصيل">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a href="{{ route('doctors.edit', $doctor) }}"
-                                   class="btn-action btn-edit">
+                                   class="btn btn-sm btn-outline-secondary"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-title="تعديل">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <form action="{{ route('doctors.destroy', $doctor) }}"
@@ -67,7 +71,9 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                            class="btn-action btn-delete delete-confirmation">
+                                            class="btn btn-sm btn-outline-danger delete-confirmation"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-title="حذف">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
@@ -96,6 +102,12 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Enable tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
     // البحث المباشر
     const searchInput = document.getElementById('searchInput');
     const tableRows = document.querySelectorAll('.modern-table tbody tr');
@@ -121,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const categories = row.querySelectorAll('td:nth-child(3) .status-badge');
+            const categories = row.querySelectorAll('td:nth-child(3) .badge');
             let hasCategory = false;
             categories.forEach(category => {
                 if (category.dataset.id === categoryId) {
@@ -133,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // تأكيد الحذف
-    document.querySelectorAll('.delete-confirmation').forEach(button => {
+    document.querySelectorAll('.delete-confirmation').forEach(button => {}
         button.addEventListener('click', function(e) {
             if (!confirm('هل أنت متأكد من حذف هذا الطبيب؟')) {
                 e.preventDefault();
