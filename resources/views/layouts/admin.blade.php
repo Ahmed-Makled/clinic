@@ -130,8 +130,8 @@
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
-                                href="{{ route('admin.dashboard') }}">
+                            <a class="nav-link {{ request()->routeIs('dashboard.index') ? 'active' : '' }}"
+                                href="{{ route('dashboard.index') }}">
                                 <i class="bi bi-speedometer2 ms-2"></i>
                                 لوحة التحكم
                             </a>

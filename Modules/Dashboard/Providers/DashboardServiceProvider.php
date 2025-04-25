@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Admin\Providers;
+namespace Modules\Dashboard\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -8,13 +8,13 @@ use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-class AdminServiceProvider extends ServiceProvider
+class DashboardServiceProvider extends ServiceProvider
 {
     use PathNamespace;
 
-    protected string $name = 'Admin';
+    protected string $name = 'Dashboard';
 
-    protected string $nameLower = 'admin';
+    protected string $nameLower = 'dashboard';
 
     /**
      * Boot the application events.
@@ -34,6 +34,7 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
     }
 

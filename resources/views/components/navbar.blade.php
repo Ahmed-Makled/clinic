@@ -32,7 +32,7 @@
                                 <div class="dropdown-divider"></div>
                             @endif -->
                             @if(auth()->user()->hasRole('Administrator'))
-                                <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                <a class="dropdown-item" href="{{ route('dashboard.index') }}">
                                     <i class="bi bi-speedometer2 me-2"></i>لوحة التحكم
                                 </a>
                                 <div class="dropdown-divider"></div>
