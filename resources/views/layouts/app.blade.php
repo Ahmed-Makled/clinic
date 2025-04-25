@@ -31,7 +31,7 @@
 <body class="{{ $classes ?? '' }}">
     @include('components.navbar')
 
-    <main>
+    <main >
         @yield('content')
     </main>
 

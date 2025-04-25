@@ -186,26 +186,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 
-@push('styles')
-<style>
-    .form-select, .form-control {
-        padding: 0.6rem 0.75rem;
-    }
-
-    .input-group-text {
-        padding: 0.6rem 1rem;
-    }
-
-    .form-check-input:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-
-    .select2-container--bootstrap-5 .select2-selection {
-        min-height: calc(3.5rem + 2px);
-        padding: 1rem 0.75rem;
-    }
-</style>
-@endpush
 
 @endsection

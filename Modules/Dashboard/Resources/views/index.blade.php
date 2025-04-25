@@ -352,28 +352,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 
-@push('styles')
-<style>
-.card {
-    transition: transform 0.2s ease-in-out;
-}
-
-.card:hover {
-    transform: translateY(-4px);
-}
-
-.badge {
-    font-weight: 500;
-}
-
-.table th {
-    font-weight: 600;
-}
-
-.table > :not(:first-child) {
-    border-top: none;
-}
-</style>
-@endpush
-
 @endsection

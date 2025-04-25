@@ -216,27 +216,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 
-@push('styles')
-<style>
-    .table th {
-        font-weight: 600;
-    }
 
-    .btn-group > .btn {
-        padding: 0.375rem 0.5rem;
-    }
-
-    .badge {
-        font-weight: 500;
-    }
-
-    .table > :not(:first-child) {
-        border-top: none;
-    }
-
-    .table tbody tr:hover {
-        background-color: var(--bs-table-hover-bg);
-    }
-</style>
-@endpush
 @endsection

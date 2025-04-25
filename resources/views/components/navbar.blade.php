@@ -1,46 +1,75 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary position-fixed w-100" style="direction: ltr; z-index: 1030">
+<nav class="navbar navbar-expand-lg position-fixed w-100">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-            <img src="{{ asset('images/logo-clinic.png') }}" class="rounded-pill" height="50" width="50" />
+        <a class="navbar-brand fw-bold ms-0 me-4" href="{{ route('home') }}">
+            <img src="{{ asset('images/logo-clinic.png') }}" class="logo-img" alt="Logo" />
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto">
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <!-- Main Navigation -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ route('home') }}">
+                        <i class="bi bi-house me-1"></i>الرئيسية
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('doctors*') ? 'active' : '' }}" href="{{ route('doctors.profiles') }}">
+                        <i class="bi bi-person-vcard me-1"></i>الأطباء
+                    </a>
+                </li>
+                <li class="nav-item"></li></li>
+                    <a class="nav-link {{ request()->is('specialties*') ? 'active' : '' }}" href="{{ route('specialties.index') }}">
+                        <i class="bi bi-clipboard2-pulse me-1"></i>التخصصات
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('contact*') ? 'active' : '' }}" href="{{ route('contact') }}">
+                        <i class="bi bi-envelope me-1"></i>اتصل بنا
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Auth Buttons -->
+            <div class="nav-auth d-flex align-items-center gap-3">
                 @guest
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('login') ? 'active' : '' }}" style="border: 1px solid #FFF;"
-                            href="{{ route('login') }}">تسجيل الدخول</a>
-                    </li>
+                    <a href="{{ route('login') }}" class="btn btn-outline-light px-4">تسجيل الدخول</a>
+                    <a href="{{ route('register') }}" class="btn btn-light px-4">التسجيل</a>
                 @else
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false"> حسابى
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+                            <img src="{{ auth()->user()->avatar ?? asset('images/user-avatar.avif') }}"
+                                 class="rounded-circle"
+                                 width="32"
+                                 height="32"
+                                 alt="User Avatar">
+                            <span>{{ auth()->user()->name }}</span>
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <ul class="dropdown-menu dropdown-menu-end">
                             @if(auth()->user()->hasRole('Administrator'))
                                 <li>
                                     <a class="dropdown-item" href="{{ route('dashboard.index') }}">
                                         <i class="bi bi-speedometer2 me-2"></i>لوحة التحكم
                                     </a>
                                 </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
+                                <li><hr class="dropdown-divider"></li>
                             @endif
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile') }}">
-                                    <i class="bi bi-person me-2"></i>حسابى
+                                    <i class="bi bi-person me-2"></i>حسابي
                                 </a>
                             </li>
                             <li>
-                                <hr class="dropdown-divider">
+                                <a class="dropdown-item" href="{{ route('appointments.index') }}">
+                                    <i class="bi bi-calendar2-check me-2"></i>مواعيدي
+                                </a>
                             </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form method="POST" action="{{ route('logout') }}" class="d-inline w-100">
+                                <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="dropdown-item text-danger">
                                         <i class="bi bi-box-arrow-right me-2"></i>تسجيل الخروج
@@ -48,40 +77,108 @@
                                 </form>
                             </li>
                         </ul>
-                    </li>
+                    </div>
                 @endguest
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="specialtiesDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false"> التخصصات
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="specialtiesDropdown">
-                        @if(!empty($categories) && count($categories))
-                            @foreach($categories as $c)
-                                <li><a class="dropdown-item" href="{{ route('categories.show', $c->id) }}">{{ $c->name }}</a>
-                                </li>
-                            @endforeach
-                        @else
-                            <li><span class="dropdown-item text-muted">لا يوجد أقسام.</span></li>
-                        @endif
-                    </ul>
-                </li>
-
-                <li class="nav-item {{ request()->is('doctors') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('doctors.index') }}">الأطباء</a>
-                </li>
-                <li class="nav-item {{ request()->is('contact') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('contact') }} ">إتصل بنا</a>
-                </li>
-                <li class="nav-item {{ request()->is('about') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('about') }}">عن الموقع</a>
-                </li>
-                <li class="nav-item {{ request()->is('welcome') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('home') }}">الصفحة الرئيسية
-                        <span class="visually-hidden">(current)</span>
-                    </a>
-                </li>
-            </ul>
+            </div>
         </div>
     </div>
 </nav>
+
+<style>
+    .navbar {
+        background:#0d6efd;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        box-shadow: 0 1px 10px rgba(0,0,0,0.1);
+        z-index: 1030;
+    }
+
+    .navbar-brand {
+        padding: 0;
+    }
+
+    .logo-img {
+        height: 45px;
+        width: auto;
+        border-radius: 8px;
+    }
+
+    .nav-link {
+        color: rgba(255,255,255,0.9);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+        color: #fff;
+        background: rgba(255,255,255,0.1);
+    }
+
+    .nav-link i {
+        font-size: 0.875rem;
+    }
+
+    /* Auth Buttons */
+    .nav-auth .btn {
+        border-radius: 0.5rem;
+        font-weight: 500;
+        padding: 0.5rem 1.25rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-outline-light:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: transparent;
+    }
+
+    /* Dropdown Styles */
+    .dropdown-menu {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 0.5rem;
+    }
+
+    .dropdown-item {
+        padding: 0.6rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .dropdown-item i {
+        font-size: 0.875rem;
+        width: 1.25rem;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 991.98px) {
+        .navbar-collapse {
+            background: white;
+            margin: 1rem -1rem -0.75rem;
+            padding: 1rem;
+            border-radius: 1rem;
+        }
+
+        .nav-link {
+            color: #2d3748;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #0d6efd;
+            background: #f8f9fa;
+        }
+
+        .nav-auth {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+    }
+</style>

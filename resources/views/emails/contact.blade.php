@@ -11,7 +11,7 @@
             color: #333;
             direction: rtl;
         }
-        .container {
+        .container mt-5 py-5{
             max-width: 600px;
             margin: 20px auto;
             padding: 20px;

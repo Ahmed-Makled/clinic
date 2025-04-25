@@ -200,29 +200,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 
-@push('styles')
-<style>
-    .badge {
-        font-weight: 500;
-    }
-
-    .table th {
-        font-weight: 600;
-    }
-
-    .btn-group > .btn {
-        padding: 0.375rem 0.5rem;
-    }
-
-    .table > :not(:first-child) {
-        border-top: none;
-    }
-
-    .select2-container--bootstrap-5 .select2-selection {
-        min-height: calc(3.5rem + 2px);
-        padding: 1rem 0.75rem;
-    }
-</style>
-@endpush
 
 @endsection

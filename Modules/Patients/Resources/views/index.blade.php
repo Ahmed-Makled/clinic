@@ -23,11 +23,16 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <select class="form-select" id="genderFilter" aria-label="اختر النوع">
-                        <option value="">كل الأنواع</option>
-                        <option value="male">ذكر</option>
-                        <option value="female">أنثى</option>
-                    </select>
+                    <div class="form-group">
+
+                        <div class="gender-filter-wrapper">
+                            <select class="form-select select2-gender" id="genderFilter" aria-label="اختر النوع">
+                                <option value="">جميع الأنواع</option>
+                                <option value="male" data-icon="bi-gender-male" data-color="#0d6efd">ذكر</option>
+                                <option value="female" data-icon="bi-gender-female" data-color="#0dcaf0">أنثى</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -88,7 +93,8 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="btn-group">
+
+                            <div class="btn-group">
                                     <a href="{{ route('patients.show', $patient) }}"
                                        class="btn btn-sm btn-outline-primary"
                                        data-bs-toggle="tooltip"
@@ -114,6 +120,8 @@
                                         </button>
                                     </form>
                                 </div>
+
+
                             </td>
                         </tr>
                     @empty
@@ -136,6 +144,8 @@
     </div>
 </div>
 
+
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -143,13 +153,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => {
         new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-    // Initialize Select2 for better select boxes
-    $('#genderFilter').select2({
-        theme: 'bootstrap-5',
-        width: '100%',
-        placeholder: 'اختر النوع'
     });
 
     // Live search functionality
@@ -204,33 +207,61 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // تحسين تهيئة Select2 مع الأيقونات
+    $('#genderFilter').select2({
+        theme: 'bootstrap-5 gender',
+        width: '100%',
+        placeholder: 'اختر النوع',
+        minimumResultsForSearch: Infinity,
+        templateResult: formatGenderOption,
+        templateSelection: formatGenderOption,
+        dropdownParent: $('.gender-filter-wrapper')
+    });
+
+    // دالة تنسيق خيارات النوع
+    function formatGenderOption(option) {
+        if (!option.id) {
+            return option.text;
+        }
+
+        let icon = $(option.element).data('icon');
+        let color = $(option.element).data('color');
+
+        return $(`
+            <div class="gender-option">
+                <i class="bi ${icon}" style="color: ${color}"></i>
+                <span>${option.text}</span>
+            </div>
+        `);
+    }
+
+    // تحديث الفلترة مع تأثيرات انتقالية
+    $('#genderFilter').on('change', function() {
+        const gender = $(this).val();
+        const rows = $('.table tbody tr');
+
+        rows.each(function() {
+            const row = $(this);
+            const genderCell = row.find('td:nth-child(5)').text().trim().toLowerCase();
+
+            if (!gender || genderCell.includes(gender)) {
+                row.fadeIn(300);
+            } else {
+                row.fadeOut(300);
+            }
+        });
+    });
+
+    // تأثيرات إضافية عند التفاعل
+    $('#genderFilter').on('select2:open', function() {
+        setTimeout(() => {
+            $('.select2-results__options').addClass('animate__animated animate__fadeIn');
+        }, 0);
+    });
 });
 </script>
 @endpush
 
-@push('styles')
-<style>
-    .badge {
-        font-weight: 500;
-    }
-
-    .table th {
-        font-weight: 600;
-    }
-
-    .btn-group > .btn {
-        padding: 0.375rem 0.5rem;
-    }
-
-    .table > :not(:first-child) {
-        border-top: none;
-    }
-
-    .select2-container--bootstrap-5 .select2-selection {
-        min-height: calc(3.5rem + 2px);
-        padding: 1rem 0.75rem;
-    }
-</style>
-@endpush
 
 @endsection

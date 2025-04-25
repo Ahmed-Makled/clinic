@@ -149,24 +149,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 
-@push('styles')
-<style>
-    .badge {
-        font-weight: 500;
-    }
-
-    .table th {
-        font-weight: 600;
-    }
-
-    .btn-group > .btn {
-        padding: 0.375rem 0.5rem;
-    }
-
-    .table > :not(:first-child) {
-        border-top: none;
-    }
-</style>
-@endpush
-
 @endsection

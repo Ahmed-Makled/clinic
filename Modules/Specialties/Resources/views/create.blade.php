@@ -37,6 +37,33 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="parent_id" class="form-label">التخصص الرئيسي</label>
+                                    <select name="parent_id" id="parent_id" class="form-select" data-icon="bi-diagram-3" data-color="#0d6efd">
+                                        <option value="">اختر التخصص الرئيسي</option>
+                                        @foreach($specialties as $specialty)
+                                            <option value="{{ $specialty->id }}" data-icon="bi-folder">{{ $specialty->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="type" class="form-label">نوع التخصص</label>
+                                    <select name="type" id="type" class="form-select" data-icon="bi-tag" data-color="#198754" required>
+                                        <option value="general" data-icon="bi-stars">عام</option>
+                                        <option value="specialized" data-icon="bi-bookmark-star">متخصص</option>
+                                        <option value="subspecialty" data-icon="bi-diagram-2">تخصص فرعي</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="status" class="form-label">الحالة</label>
+                                    <select name="status" id="status" class="form-select" data-icon="bi-toggle2-on" data-color="#0dcaf0" required>
+                                        <option value="active" data-icon="bi-check-circle">نشط</option>
+                                        <option value="inactive" data-icon="bi-x-circle">غير نشط</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -50,72 +77,4 @@
         </div>
     </div>
 
-@push('styles')
-<style>
-    .card {
-        background: #fff;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .card:hover {
-        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08) !important;
-    }
-
-    .form-label {
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-        color: #566a7f;
-    }
-
-    .form-control,
-    .form-select {
-        padding: 0.6rem 1rem;
-        border-radius: 0.5rem;
-        border: 1px solid #d9dee3;
-        background-color: #fff;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0.25rem rgba(67, 94, 190, 0.1);
-    }
-
-    .btn {
-        padding: 0.6rem 1.5rem;
-        border-radius: 0.5rem;
-        font-weight: 500;
-        transition: all 0.2s ease-in-out;
-    }
-
-    .btn-primary {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-        color: #fff;
-    }
-
-    .btn-primary:hover {
-        background-color: #364b98;
-        border-color: #364b98;
-        transform: translateY(-1px);
-        box-shadow: 0 0.125rem 0.25rem rgba(67, 94, 190, 0.3);
-    }
-
-    .btn-label-secondary {
-        color: #8592a3;
-        border: 1px solid #8592a3;
-        background: transparent;
-    }
-
-    .btn-label-secondary:hover {
-        background-color: #8592a3;
-        color: #fff;
-    }
-
-    .mb-3 {
-        margin-bottom: 1.5rem !important;
-    }
-</style>
-@endpush
 @endsection

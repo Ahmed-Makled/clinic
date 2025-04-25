@@ -21,6 +21,13 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" media="print" onload="this.media='all'">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.css" rel="stylesheet" media="print" onload="this.media='all'">
 
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
     <style>
         /* Critical CSS */
         body {
@@ -150,20 +157,21 @@
         <div class="row">
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                <div class="position-sticky pt-4">
-                    <div class="text-center mb-4">
-                        <h5 style="color: #2D3748; font-weight: 600;">نظام حجز العيادات</h5>
+                <div class="position-sticky ">
+                    <div class="text-center">
+                        <img src="{{ asset('/favicon.ico') }}" width="120" height="120"   />
+                        <!-- <h5 style="color:rgb(1, 1, 1); font-weight: 600;">نظام حجز العيادات</h5> -->
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('dashboard.index') ? 'active' : '' }}"
+                            <a class="nav-link {{ request()->routeIs('dashboard.*') ? 'active' : '' }}"
                                 href="{{ route('dashboard.index') }}">
                                 <i class="bi bi-speedometer2 ms-2"></i>
                                 لوحة التحكم
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                            <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"
                                 href="{{ route('users.index') }}">
                                 <i class="bi bi-people ms-2"></i>
                                 المستخدمين
@@ -184,14 +192,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.appointments.*') ? 'active' : '' }}"
+                            <a class="nav-link {{ request()->routeIs('appointments.*') ? 'active' : '' }}"
                                 href="{{ route('appointments.index') }}">
                                 <i class="bi bi-calendar-check ms-2"></i>
                                 المواعيد
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.specialties.*') ? 'active' : '' }}"
+                            <a class="nav-link {{ request()->routeIs('specialties.*') ? 'active' : '' }}"
                                 href="{{ route('specialties.index') }}">
                                 <i class="bi bi-list-check ms-2"></i>
                                 التخصصات
@@ -296,6 +304,9 @@
     <script defer src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {

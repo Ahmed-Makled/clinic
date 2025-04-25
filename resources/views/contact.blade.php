@@ -81,43 +81,4 @@
     </div>
 </div>
 
-@push('styles')
-<style>
-    .icon-wrapper {
-        width: 60px;
-        height: 60px;
-        background: #f8f9fa;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .icon-wrapper i {
-        font-size: 1.5rem;
-        color: #0d6efd;
-    }
-
-    .input-group {
-        transition: all 0.3s ease;
-    }
-
-    .input-group:focus-within {
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        border-radius: 0.375rem;
-    }
-
-    .input-group-text {
-        background-color: transparent;
-    }
-
-    .form-control:focus {
-        box-shadow: none;
-    }
-
-    textarea.form-control {
-        resize: none;
-    }
-</style>
-@endpush
 @endsection

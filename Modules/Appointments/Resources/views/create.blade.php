@@ -79,6 +79,34 @@
                     @enderror
                 </div>
 
+                <div class="form-group mb-3">
+                    <label for="status" class="form-label">حالة الموعد</label>
+                    <select name="status" id="status" class="form-select" data-icon="bi-clock-history" data-color="#0d6efd">
+                        <option value="pending" data-icon="bi-clock">قيد الانتظار</option>
+                        <option value="confirmed" data-icon="bi-check-circle">مؤكد</option>
+                        <option value="completed" data-icon="bi-check-circle-fill">مكتمل</option>
+                        <option value="cancelled" data-icon="bi-x-circle">ملغي</option>
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="payment_status" class="form-label">حالة الدفع</label>
+                    <select name="payment_status" id="payment_status" class="form-select" data-icon="bi-credit-card" data-color="#198754">
+                        <option value="pending" data-icon="bi-hourglass">قيد الانتظار</option>
+                        <option value="paid" data-icon="bi-check2-circle">مدفوع</option>
+                        <option value="refunded" data-icon="bi-arrow-return-left">مسترجع</option>
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="payment_method" class="form-label">طريقة الدفع</label>
+                    <select name="payment_method" id="payment_method" class="form-select" data-icon="bi-wallet2" data-color="#6c757d">
+                        <option value="cash" data-icon="bi-cash">نقداً</option>
+                        <option value="card" data-icon="bi-credit-card">بطاقة ائتمان</option>
+                        <option value="wallet" data-icon="bi-phone">محفظة إلكترونية</option>
+                    </select>
+                </div>
+
                 <div class="col-md-6">
                     <label for="fees" class="form-label fw-medium">رسوم الكشف</label>
                     <div class="input-group">
@@ -178,24 +206,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 
-@push('styles')
-<style>
-    .form-select, .form-control {
-        padding: 0.6rem 0.75rem;
-    }
-
-    .input-group-text {
-        padding: 0.6rem 1rem;
-    }
-
-    .form-check-input:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-
-    .select2-container--bootstrap-5 .select2-selection {
-        min-height: calc(3.5rem + 2px);
-        padding: 1rem 0.75rem;
-    }
-</style>
-@endpush

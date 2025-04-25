@@ -93,24 +93,40 @@ class AppointmentsController extends Controller
     {
         $validated = $request->validate([
             'doctor_id' => 'required|exists:doctors,id',
-            'patient_id' => 'required|exists:patients,id',
-            'scheduled_at' => 'required|date|after:now',
-            'status' => 'required|in:scheduled,completed,cancelled',
+            'appointment_date' => 'required|date|after:yesterday',
+            'appointment_time' => 'required',
             'notes' => 'nullable|string|max:1000',
-            'fees' => 'nullable|numeric|min:0',
-            'is_paid' => 'boolean',
-            'is_important' => 'boolean'
+        ], [
+            'doctor_id.required' => 'يرجى اختيار الطبيب',
+            'appointment_date.required' => 'يرجى اختيار تاريخ الموعد',
+            'appointment_date.after' => 'يجب أن يكون تاريخ الموعد في المستقبل',
+            'appointment_time.required' => 'يرجى اختيار وقت الموعد',
         ]);
 
-        $appointment = Appointment::create($validated);
+        // Convert date and time to datetime
+        $scheduledAt = Carbon::parse($validated['appointment_date'] . ' ' . $validated['appointment_time']);
 
-        // إرسال إشعار للمسؤولين
+        // Get doctor's consultation fee
+        $doctor = Doctor::findOrFail($validated['doctor_id']);
+
+        // Create the appointment
+        $appointment = Appointment::create([
+            'doctor_id' => $validated['doctor_id'],
+            'patient_id' => auth()->user()->patient->id,
+            'scheduled_at' => $scheduledAt,
+            'status' => 'scheduled',
+            'notes' => $validated['notes'],
+            'fees' => $doctor->price,
+            'is_paid' => false
+        ]);
+
+        // Notify administrators about the new appointment
         User::role('Administrator')->each(function($admin) use ($appointment) {
             $admin->notify(new NewAppointmentNotification($appointment));
         });
 
-        return redirect()->route('appointments.index')
-            ->with('success', 'تم إضافة الموعد بنجاح');
+        return redirect()->route('appointments.show', $appointment)
+            ->with('success', 'تم حجز الموعد بنجاح، سيتم التواصل معك قريباً للتأكيد');
     }
 
     public function show(Appointment $appointment)
@@ -177,5 +193,16 @@ class AppointmentsController extends Controller
 
         return redirect()->route('appointments.index')
             ->with('success', 'تم حذف الموعد بنجاح');
+    }
+
+    /**
+     * Show the appointment booking form.
+     */
+    public function book(Doctor $doctor)
+    {
+        // Get available time slots
+        $timeSlots = get_appointment_time_slots(30, '09:00', '17:00');
+
+        return view('appointments::book', compact('doctor', 'timeSlots'));
     }
 }

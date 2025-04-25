@@ -2883,7 +2883,7 @@
                     "homepage": "https://www.php-fig.org/"
                 }
             ],
-            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "description": "Common container mt-5 py-5Interface (PHP FIG PSR-11)",
             "homepage": "https://github.com/php-fig/container",
             "keywords": [
                 "PSR-11",

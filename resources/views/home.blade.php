@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<header class="header position-relative vh-100">
+<header class="header position-relative vh-100 mt-n5">
     <div class="overlay position-absolute w-100 h-100">
         <div class="container mt-5 py-5 text-white">
             <div class="row justify-content-center">
@@ -47,31 +47,31 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="border rounded p-3 mx-2">
                                     <label class="mb-3 text-muted">أنا أبحث عن طبيب</label>
-                                    <select name="category" id="category" class="form-select">
+                                    <select name="category" id="category" class="form-select" data-icon="bi-briefcase-medical" data-color="#0d6efd">
                                         <option value="">إختر التخصص</option>
                                         @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        <option value="{{ $category->id }}" data-icon="bi-heart-pulse">{{ $category->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="border rounded p-3 mx-2">
                                     <label class="mb-3 text-muted">فى محافظة</label>
-                                    <select name="governorate" id="governorate" class="form-select">
+                                    <select name="governorate" id="governorate" class="form-select" data-icon="bi-geo-alt" data-color="#198754">
                                         <option value="all">كل المحافظات</option>
                                         @foreach(config('governorates') as $key => $value)
-                                        <option value="{{ $key }}">{{ $value }}</option>
+                                        <option value="{{ $key }}" data-icon="bi-pin-map">{{ $value }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="border rounded p-3 mx-2">
                                     <label class="mb-3 text-muted">فى منطقة</label>
-                                    <select name="area" id="area" disabled class="form-select">
-                                        <option>كل المناطق</option>
+                                    <select name="area" id="area" disabled class="form-select" data-icon="bi-geo" data-color="#6c757d">
+                                        <option value="">كل المناطق</option>
                                     </select>
                                 </div>
                                 <div class="border rounded p-3 mx-2">
                                     <label class="mb-3 text-muted">الأطباء</label>
-                                    <select name="doctors" id="doctors" disabled class="form-select">
+                                    <select name="doctors" id="doctors" disabled class="form-select" data-icon="bi-person-vcard" data-color="#0dcaf0">
                                         <option value="">إختر الطبيب</option>
                                     </select>
                                 </div>

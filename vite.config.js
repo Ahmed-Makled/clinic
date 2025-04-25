@@ -30,7 +30,11 @@ export default defineConfig({
             '@auth': '/Modules/Auth/Resources/assets/js',
             '@users': '/Modules/Users/Resources/assets/js',
             '@appointments': '/Modules/Appointments/Resources/assets/js',
-            '@specialties': '/Modules/Specialties/Resources/assets/js'
+            '@specialties': '/Modules/Specialties/Resources/assets/js',
+            '$': 'jQuery'
         }
+    },
+    optimizeDeps: {
+        include: ['jquery', 'select2']
     }
 });

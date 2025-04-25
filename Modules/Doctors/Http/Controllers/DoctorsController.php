@@ -7,11 +7,12 @@ use App\Models\Doctor;
 use Modules\Users\Entities\Users;
 use App\Models\Category;
 use App\Models\User;
+use App\Repositories\AppointmentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
-class DoctorController extends Controller
+class DoctorsController extends Controller
 {
     public function index(Request $request)
     {
@@ -49,14 +50,13 @@ class DoctorController extends Controller
 
         $categories = Category::all();
 
-        return view('doctors.index', compact('doctors', 'categories'));
+        return view('doctors::index', compact('doctors', 'categories'));
     }
 
     public function create()
     {
         $categories = Category::all();
-
-        return view('doctors::create', compact('categories'));
+        return view('doctors::create', compact('doctor', 'categories'));
     }
 
     public function store(Request $request)
@@ -130,7 +130,7 @@ class DoctorController extends Controller
     public function edit(Doctor $doctor)
     {
         $categories = Category::all();
-        return view(' doctors::edit', compact('doctor', 'categories'));
+        return view('doctors::edit', compact('doctor', 'categories'));
     }
 
     public function update(Request $request, Doctor $doctor)
@@ -208,6 +208,45 @@ class DoctorController extends Controller
             ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
     }
 
+    public function profiles(Request $request)
+    {
+        $query = Doctor::query();
+
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->whereHas('categories', function ($q) use ($request) {
+                $q->where('categories.id', $request->category);
+            });
+        }
+
+        // Filter by experience
+        if ($request->filled('experience')) {
+            [$min, $max] = explode('-', $request->experience);
+            if ($max === '+') {
+                $query->where('experience_years', '>=', $min);
+            } else {
+                $query->whereBetween('experience_years', [$min, $max]);
+            }
+        }
+
+        // Filter by consultation fee
+        if ($request->filled('fee_min')) {
+            $query->where('price', '>=', $request->fee_min);
+        }
+        if ($request->filled('fee_max')) {
+            $query->where('price', '<=', $request->fee_max);
+        }
+
+        $doctors = $query->with(['categories', 'user'])
+            ->where('status', true)
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
+
+        $categories = Category::all();
+
+        return view('doctors::profiles', compact('doctors', 'categories'));
+    }
 
     public function destroy(Doctor $doctor)
     {
@@ -225,5 +264,15 @@ class DoctorController extends Controller
 
         return redirect()->route('doctors.index')
             ->with('success', 'تم حذف الطبيب بنجاح');
+    }
+
+    /**
+     * Display the specified doctor.
+     */
+    public function show(Doctor $doctor)
+    {
+        $doctor->load(['categories', 'user']);
+        $appointments = app(AppointmentRepository::class)->findByDoctorAndDate($doctor->id, now());
+        return view('doctors::show', compact('doctor', 'appointments'));
     }
 }

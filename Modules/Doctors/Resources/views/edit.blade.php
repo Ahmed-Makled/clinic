@@ -187,6 +187,48 @@
                             </div>
                         </div>
 
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="categories" class="form-label">التخصصات</label>
+                                <select name="categories[]" id="categories" class="form-select" data-icon="bi-briefcase-medical" data-color="#0d6efd" multiple required>
+                                    @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" data-icon="bi-heart-pulse" {{ in_array($category->id, $doctor->categories->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="governorate" class="form-label">المحافظة</label>
+                                <select name="governorate" id="governorate" class="form-select" data-icon="bi-geo-alt" data-color="#198754" required>
+                                    <option value="">اختر المحافظة</option>
+                                    @foreach(config('governorates') as $key => $value)
+                                    <option value="{{ $key }}" data-icon="bi-pin-map" {{ $doctor->governorate == $key ? 'selected' : '' }}>
+                                        {{ $value }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="area" class="form-label">المنطقة</label>
+                                <select name="area" id="area" class="form-select" data-icon="bi-geo" data-color="#6c757d" required>
+                                    <option value="">اختر المنطقة</option>
+                                    <option value="{{ $doctor->area }}" selected>{{ $doctor->area }}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">الحالة</label>
+                                <select name="status" id="status" class="form-select" data-icon="bi-toggle2-on" data-color="#0dcaf0" required>
+                                    <option value="active" data-icon="bi-check-circle" {{ $doctor->status == 'active' ? 'selected' : '' }}>نشط</option>
+                                    <option value="inactive" data-icon="bi-x-circle" {{ $doctor->status == 'inactive' ? 'selected' : '' }}>غير نشط</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary ms-1">حفظ التغييرات</button>
                             <a href="{{ route('doctors.show', $doctor) }}" class="btn btn-label-secondary">إلغاء</a>
@@ -197,107 +239,4 @@
         </div>
     </div>
 
-@push('styles')
-<style>
-    /* تحسينات تصميم البطاقة والنموذج */
-    .card {
-        background: #fff;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .card:hover {
-        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08) !important;
-    }
-
-    .form-label {
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-        color: #566a7f;
-    }
-
-    .form-control,
-    .form-select {
-        padding: 0.6rem 1rem;
-        border-radius: 0.5rem;
-        border: 1px solid #d9dee3;
-        background-color: #fff;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .section-divider {
-        position: relative;
-        padding-bottom: 0.5rem;
-    }
-
-    .section-title {
-        color: #0d6efd;
-        font-weight: 600;
-        margin-bottom: 0;
-        position: relative;
-        display: inline-block;
-        padding-bottom: 0.5rem;
-    }
-
-    .section-title::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        height: 2px;
-        background-color: #0d6efd;
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0.25rem rgba(67, 94, 190, 0.1);
-    }
-
-    .form-check-input:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-
-    .btn {
-        padding: 0.6rem 1.5rem;
-        border-radius: 0.5rem;
-        font-weight: 500;
-        transition: all 0.2s ease-in-out;
-    }
-
-    .btn-primary {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-        color: #fff;
-    }
-
-    .btn-primary:hover {
-        background-color: #364b98;
-        border-color: #364b98;
-        transform: translateY(-1px);
-        box-shadow: 0 0.125rem 0.25rem rgba(67, 94, 190, 0.3);
-    }
-
-    .btn-label-secondary {
-        color: #8592a3;
-        border: 1px solid #8592a3;
-        background: transparent;
-    }
-
-    .btn-label-secondary:hover {
-        background-color: #8592a3;
-        color: #fff;
-    }
-
-    .input-group-text {
-        background-color: #f5f5f9;
-        border-color: #d9dee3;
-    }
-
-    .text-muted {
-        font-size: 0.875rem;
-    }
-</style>
-@endpush
 @endsection
