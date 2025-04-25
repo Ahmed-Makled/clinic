@@ -163,7 +163,7 @@
 
                             <div class="d-grid mb-4">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-box-arrow-in-right ms-2"></i>تسجيل الدخول
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>تسجيل الدخول
                                 </button>
                             </div>
 
