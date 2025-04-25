@@ -14,6 +14,8 @@ export default defineConfig({
                 // Main app assets
                 'resources/css/bootstrap.min.css',
                 'resources/css/app.css',
+                'resources/css/tables.css',  // Fixed the filename here
+
                 'resources/js/app.js',
 
                 // Module assets

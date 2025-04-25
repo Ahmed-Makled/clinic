@@ -1,28 +1,52 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="{{ $description ?? config('app.description', '') }}">
     <title>{{ $title ?? config('app.name') }}</title>
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Core CSS -->
     @vite([
-    'resources/css/bootstrap.min.css',
-    'resources/css/app.css',
-    'resources/js/app.js'
+        'resources/css/bootstrap.min.css',
+        'resources/css/app.css',
+        'resources/js/app.js'
     ])
+
+    <!-- Additional CSS -->
+    @stack('styles')
 </head>
 
 <body class="{{ $classes ?? '' }}">
     @include('components.navbar')
 
-    @yield('content')
+    <main>
+        @yield('content')
+    </main>
 
     @include('components.footer')
 
-</body>
+    <!-- Core Scripts -->
+    <script>
+        window.Laravel = {!! json_encode([
+            'csrfToken' => csrf_token(),
+            'baseUrl' => url('/'),
+            'locale' => app()->getLocale(),
+        ]) !!};
+    </script>
 
+    <!-- Additional Scripts -->
+    @stack('scripts')
+</body>
 </html>

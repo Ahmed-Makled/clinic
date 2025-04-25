@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    protected $redirectTo = '/';
+
     public function showLoginForm()
     {
         return view('auth::login');
@@ -16,18 +18,24 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ], [
+            'email.required' => 'البريد الإلكتروني مطلوب',
+            'email.email' => 'يرجى إدخال بريد إلكتروني صحيح',
+            'password.required' => 'كلمة المرور مطلوبة'
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('/');
+            return redirect()->intended($this->redirectTo);
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->withInput($request->only('email', 'remember'));
+        return back()
+            ->withInput($request->only('email', 'remember'))
+            ->withErrors([
+                'email' => 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+            ]);
     }
 
     public function logout(Request $request)
@@ -35,6 +43,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+
+        return redirect('/')->with('status', 'تم تسجيل الخروج بنجاح');
     }
 }
