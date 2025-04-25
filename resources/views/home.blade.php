@@ -3,10 +3,10 @@
 @section('content')
 <header class="header position-relative vh-100">
     <div class="overlay position-absolute w-100 h-100">
-        <div class="container mt-5 pt-5 text-white">
+        <div class="container mt-5 py-5 text-white">
             <div class="row justify-content-center">
                 <div class="col-9">
-                    <h1 class="font-weight-bold my-4">اسهل طريقة لحجز احسن واكبر <span class="text-primary">دكاترة</span> في مصر</h1>
+                    <h1 class="fw-bold my-4">اسهل طريقة لحجز احسن واكبر <span class="text-primary">دكاترة</span> في مصر</h1>
                     <p>احجز أونلاين أو كلم 77777</p>
                 </div>
             </div>
@@ -19,7 +19,7 @@
             <div class="tabs shadow bg-white text-dark">
                 <div class="d-flex">
                     <div class="w-50 pt-4">
-                        <div class="line text-center font-weight-bold pb-4" data-tab-name="call">
+                        <div class="line text-center fw-bold pb-4" data-tab-name="call">
                             <span>
                                 مكالمة دكتور <i class="fas fa-phone"></i><br>
                                 كشف عبر مكاملة مع الدكتور
@@ -27,7 +27,7 @@
                         </div>
                     </div>
                     <div class="w-50 pt-4">
-                        <div class="line active text-center font-weight-bold pb-4" data-tab-name="reserve">
+                        <div class="line active text-center fw-bold pb-4" data-tab-name="reserve">
                             <span>
                                 احجز دكتور <i class="far fa-calendar-plus"></i> <br>
                                 الفحص او الاجراء
@@ -38,46 +38,46 @@
 
                 <div class="tabs-container">
                     <div class="p-4 text-center" style="display: none" id="call">
-                        مكالمة مع دكتور <i class="uil-phone"></i>
-                        <button class="btn btn-primary btn-lg rounded-pill">Call <i class="uil-phone"></i></button>
+                        مكالمة مع دكتور <i class="bi bi-telephone"></i>
+                        <button class="btn btn-primary btn-lg rounded-pill">Call <i class="bi bi-telephone"></i></button>
                     </div>
 
                     <div class="p-4" id="reserve">
                         <form id="search" action="{{ route('search') }}" method="GET">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div style="border: 1px solid #e6e6e6" class="p-3 mx-2">
+                                <div class="border rounded p-3 mx-2">
                                     <label class="mb-3 text-muted">أنا أبحث عن طبيب</label>
-                                    <select name="category" id="category" class="custom-select border">
+                                    <select name="category" id="category" class="form-select">
                                         <option value="">إختر التخصص</option>
                                         @foreach($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div style="border: 1px solid #e6e6e6" class="p-3 mx-2">
+                                <div class="border rounded p-3 mx-2">
                                     <label class="mb-3 text-muted">فى محافظة</label>
-                                    <select name="governorate" id="governorate" class="custom-select border">
+                                    <select name="governorate" id="governorate" class="form-select">
                                         <option value="all">كل المحافظات</option>
                                         @foreach(config('governorates') as $key => $value)
                                         <option value="{{ $key }}">{{ $value }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div style="border: 1px solid #e6e6e6" class="p-3 mx-2">
+                                <div class="border rounded p-3 mx-2">
                                     <label class="mb-3 text-muted">فى منطقة</label>
-                                    <select name="area" id="area" disabled class="custom-select border">
+                                    <select name="area" id="area" disabled class="form-select">
                                         <option>كل المناطق</option>
                                     </select>
                                 </div>
-                                <div style="border: 1px solid #e6e6e6" class="p-3 mx-2">
+                                <div class="border rounded p-3 mx-2">
                                     <label class="mb-3 text-muted">الأطباء</label>
-                                    <select name="doctors" id="doctors" disabled class="custom-select border">
+                                    <select name="doctors" id="doctors" disabled class="form-select">
                                         <option value="">إختر الطبيب</option>
                                     </select>
                                 </div>
-                                <div class="border p-3 mx-2">
+                                <div class="border rounded p-3 mx-2">
                                     <button type="submit" class="btn btn-success btn-lg">
-                                        بحث <i class="uil-search"></i>
+                                        بحث <i class="bi bi-search"></i>
                                     </button>
                                 </div>
                             </div>
@@ -88,7 +88,7 @@
         </div>
     </div>
 
-    <div id="mySlide" class="carousel slide overflow-hidden h-100" data-ride="carousel">
+    <div id="mySlide" class="carousel slide overflow-hidden h-100" data-bs-ride="carousel">
         <div class="carousel-item h-100 active">
             <img src="{{ asset('images/slide3.jpg') }}" class="d-block w-100 h-100" />
         </div>

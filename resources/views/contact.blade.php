@@ -1,63 +1,123 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5 pt-5">
+<div class="container mt-5 py-5">
     <div class="row justify-content-center">
-        <div class="col-4">
-            <form method="POST" action="{{ route('contact.store') }}" class="shadow-sm p-4 mt-5">
+        <div class="col-md-6 col-lg-4">
+            <form method="POST" action="{{ route('contact.store') }}" class="card shadow-sm border-0">
                 @csrf
+                <div class="card-body p-4">
+                    @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
 
-                @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-                @endif
+                    <div class="text-center mb-4">
+                        <div class="icon-wrapper mb-3">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <h1 class="h3 mb-2">إتصل بنا</h1>
+                        <p class="text-muted">إذا كان لديك أى تساؤلات، أرسل لنا رسالة</p>
+                    </div>
 
-                <div class="text-center mb-4">
-                    <h1 class="h2 mb-3">إتصل بنا</h1>
-                    <p>إذا كان لديك أى تساؤلات، أرسل لنا رسالة</p>
-                </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="bi bi-person"></i></span>
+                            <input type="text" name="name"
+                                class="form-control border-start-0 @error('name') is-invalid @enderror"
+                                placeholder="أدخل إسمك" value="{{ old('name') }}" required />
+                            @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <input type="text" name="name" class="form-control rounded-pill @error('name') is-invalid @enderror"
-                        placeholder="أدخل إسمك" value="{{ old('name') }}" required />
-                    @error('name')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="bi bi-envelope"></i></span>
+                            <input type="email" name="email"
+                                class="form-control border-start-0 @error('email') is-invalid @enderror"
+                                placeholder="أدخل بريدك الإلكترونى" value="{{ old('email') }}" required />
+                            @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <input type="email" name="email" class="form-control rounded-pill @error('email') is-invalid @enderror"
-                        placeholder="أدخل بريدك الإلكترونى" value="{{ old('email') }}" required />
-                    @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="bi bi-chat-left-text"></i></span>
+                            <input type="text" name="subject"
+                                class="form-control border-start-0 @error('subject') is-invalid @enderror"
+                                placeholder="موضوع الرسالة" value="{{ old('subject') }}" required />
+                            @error('subject')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <input type="text" name="subject" class="form-control rounded-pill @error('subject') is-invalid @enderror"
-                        placeholder="موضوع الرسالة" value="{{ old('subject') }}" required />
-                    @error('subject')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <div class="mb-4">
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="bi bi-chat-text"></i></span>
+                            <textarea name="message" rows="4"
+                                class="form-control border-start-0 @error('message') is-invalid @enderror"
+                                placeholder="أدخل الرسالة" required>{{ old('message') }}</textarea>
+                            @error('message')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <textarea name="message" rows="3" class="form-control @error('message') is-invalid @enderror"
-                        style="border-radius: .5rem" placeholder="أدخل الرسالة" required>{{ old('message') }}</textarea>
-                    @error('message')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary rounded-pill px-4 btn-block">
-                        أرسل الرسالة <i class="fas fa-paper-plane"></i>
-                    </button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-send me-2"></i>أرسل الرسالة
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+@push('styles')
+<style>
+    .icon-wrapper {
+        width: 60px;
+        height: 60px;
+        background: #f8f9fa;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .icon-wrapper i {
+        font-size: 1.5rem;
+        color: #0d6efd;
+    }
+
+    .input-group {
+        transition: all 0.3s ease;
+    }
+
+    .input-group:focus-within {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        border-radius: 0.375rem;
+    }
+
+    .input-group-text {
+        background-color: transparent;
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+    }
+
+    textarea.form-control {
+        resize: none;
+    }
+</style>
+@endpush
 @endsection

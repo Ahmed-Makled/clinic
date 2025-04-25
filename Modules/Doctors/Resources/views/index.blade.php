@@ -4,113 +4,146 @@
 
 @section('actions')
     <a href="{{ route('doctors.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-lg"></i> إضافة طبيب جديد
+        <i class="bi bi-plus-lg me-1"></i> إضافة طبيب جديد
     </a>
 @endsection
 
 @section('content')
-<div class="modern-table-container">
-    <div class="table-controls">
-        <div class="control-item">
-            <input type="search"
-                   class="form-control search-input"
-                   id="searchInput"
-                   placeholder="ابحث عن طبيب...">
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="search"
+                               class="form-control"
+                               id="searchInput"
+                               placeholder="ابحث عن طبيب...">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-select" id="categoryFilter" aria-label="اختر التخصص">
+                        <option value="">كل التخصصات</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
         </div>
-        <div class="control-item">
-            <select class="form-select filter-select" id="categoryFilter" aria-label="اختر التخصص">
-                <option value="">كل التخصصات</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                @endforeach
-            </select>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">الاسم</th>
+                        <th scope="col">التخصصات</th>
+                        <th scope="col">البريد الإلكتروني</th>
+                        <th scope="col">رقم الهاتف</th>
+                        <th scope="col">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($doctors as $doctor)
+                        <tr>
+                            <td>{{ $doctor->id }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @if($doctor->image)
+                                        <img src="{{ asset($doctor->image) }}"
+                                             class="rounded-circle me-2"
+                                             width="32"
+                                             height="32"
+                                             alt="{{ $doctor->name }}">
+                                    @else
+                                        <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
+                                             style="width: 32px; height: 32px">
+                                            <i class="bi bi-person text-secondary"></i>
+                                        </div>
+                                    @endif
+                                    <div>{{ $doctor->name }}</div>
+                                </div>
+                            </td>
+                            <td>
+                                @foreach($doctor->categories as $category)
+                                    <span class="badge bg-info bg-opacity-10 text-info"
+                                          data-id="{{ $category->id }}">
+                                        {{ $category->name }}
+                                    </span>
+                                @endforeach
+                            </td>
+                            <td>{{ $doctor->email }}</td>
+                            <td>{{ $doctor->phone }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ route('doctors.show', $doctor) }}"
+                                       class="btn btn-sm btn-outline-primary"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="عرض التفاصيل">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{{ route('doctors.edit', $doctor) }}"
+                                       class="btn btn-sm btn-outline-secondary"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="تعديل">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form action="{{ route('doctors.destroy', $doctor) }}"
+                                          method="POST"
+                                          class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger delete-confirmation"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-title="حذف">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="bi bi-person-badge display-6 d-block mb-3"></i>
+                                    <p class="h5">لا يوجد أطباء</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-    </div>
 
-    <div class="table-responsive">
-        <table class="modern-table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">الاسم</th>
-                    <th scope="col">التخصصات</th>
-                    <th scope="col">البريد الإلكتروني</th>
-                    <th scope="col">رقم الهاتف</th>
-                    <th scope="col">الإجراءات</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($doctors as $doctor)
-                    <tr>
-                        <td>{{ $doctor->id }}</td>
-                        <td>{{ $doctor->name }}</td>
-                        <td>
-                            @foreach($doctor->categories as $category)
-                                <span class="badge bg-info text-dark" data-id="{{ $category->id }}">{{ $category->name }}</span>
-                            @endforeach
-                        </td>
-                        <td>{{ $doctor->email }}</td>
-                        <td>{{ $doctor->phone }}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="{{ route('doctors.show', $doctor) }}"
-                                   class="btn btn-sm btn-outline-primary"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-title="عرض التفاصيل">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                <a href="{{ route('doctors.edit', $doctor) }}"
-                                   class="btn btn-sm btn-outline-secondary"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-title="تعديل">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <form action="{{ route('doctors.destroy', $doctor) }}"
-                                      method="POST"
-                                      class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="btn btn-sm btn-outline-danger delete-confirmation"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-title="حذف">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6">
-                            <div class="empty-state">
-                                <i class="bi bi-person-badge empty-state-icon"></i>
-                                <p class="empty-state-text">لا يوجد أطباء</p>
-                            </div>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <div class="pagination-container">
-        {{ $doctors->links() }}
+        <div class="d-flex justify-content-center mt-4">
+            {{ $doctors->links() }}
+        </div>
     </div>
 </div>
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Enable tooltips
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
+    // Initialize tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // البحث المباشر
+    // Initialize Select2 for better select boxes
+    $('#categoryFilter').select2({
+        theme: 'bootstrap-5',
+        width: '100%',
+        placeholder: 'اختر التخصص'
+    });
+
+    // Live search functionality
     const searchInput = document.getElementById('searchInput');
-    const tableRows = document.querySelectorAll('.modern-table tbody tr');
+    const tableRows = document.querySelectorAll('.table tbody tr');
 
     searchInput.addEventListener('input', function(e) {
         const searchTerm = e.target.value.toLowerCase();
@@ -121,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // تصفية حسب التخصص
+    // Category filter functionality
     const categoryFilter = document.getElementById('categoryFilter');
 
     categoryFilter.addEventListener('change', function(e) {
@@ -134,26 +167,62 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const categories = row.querySelectorAll('td:nth-child(3) .badge');
-            let hasCategory = false;
-            categories.forEach(category => {
-                if (category.dataset.id === categoryId) {
-                    hasCategory = true;
-                }
-            });
+            const hasCategory = Array.from(categories).some(category =>
+                category.dataset.id === categoryId
+            );
             row.style.display = hasCategory ? '' : 'none';
         });
     });
 
-    // تأكيد الحذف
-    document.querySelectorAll('.delete-confirmation').forEach(button => {}
+    // Delete confirmation using SweetAlert2
+    document.querySelectorAll('.delete-confirmation').forEach(button => {
         button.addEventListener('click', function(e) {
-            if (!confirm('هل أنت متأكد من حذف هذا الطبيب؟')) {
-                e.preventDefault();
-            }
+            e.preventDefault();
+            const form = this.closest('form');
+
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'سيتم حذف هذا الطبيب نهائياً',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         });
     });
 });
 </script>
+@endpush
+
+@push('styles')
+<style>
+    .badge {
+        font-weight: 500;
+    }
+
+    .table th {
+        font-weight: 600;
+    }
+
+    .btn-group > .btn {
+        padding: 0.375rem 0.5rem;
+    }
+
+    .table > :not(:first-child) {
+        border-top: none;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection {
+        min-height: calc(3.5rem + 2px);
+        padding: 1rem 0.75rem;
+    }
+</style>
 @endpush
 
 @endsection

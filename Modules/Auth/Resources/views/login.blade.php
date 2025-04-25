@@ -103,7 +103,7 @@
 
 @section('content')
 <div class="login-wrapper">
-    <div class="container mt-5 pt-5">
+    <div class="container mt-5 py-5">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
                 <div class="card border-0 shadow-lg login-card">
@@ -126,7 +126,7 @@
                                         <i class="bi bi-envelope text-muted"></i>
                                     </span>
                                     <input type="email" name="email" id="email"
-                                        class="form-control border-start-0 ps-0 @error('email') is-invalid @enderror"
+                                        class="form-control border-start-0 ps-2 @error('email') is-invalid @enderror"
                                         value="{{ old('email') }}" required autofocus
                                         placeholder="أدخل بريدك الإلكتروني">
                                     @error('email')
@@ -144,7 +144,7 @@
                                         <i class="bi bi-lock text-muted"></i>
                                     </span>
                                     <input type="password" name="password" id="password"
-                                        class="form-control border-start-0 ps-0 @error('password') is-invalid @enderror"
+                                        class="form-control border-start-0 ps-2 @error('password') is-invalid @enderror"
                                         required placeholder="أدخل كلمة المرور">
                                     @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>

@@ -25,7 +25,7 @@
                                     <i class="bi bi-envelope text-muted"></i>
                                 </span>
                                 <input type="email" name="email" id="email"
-                                    class="form-control border-start-0 ps-0 @error('email') is-invalid @enderror"
+                                    class="form-control border-start-0 ps-2 @error('email') is-invalid @enderror"
                                     value="{{ $email ?? old('email') }}" required autofocus>
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -40,7 +40,7 @@
                                     <i class="bi bi-lock text-muted"></i>
                                 </span>
                                 <input type="password" name="password" id="password"
-                                    class="form-control border-start-0 ps-0 @error('password') is-invalid @enderror"
+                                    class="form-control border-start-0 ps-2 @error('password') is-invalid @enderror"
                                     required>
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -55,7 +55,7 @@
                                     <i class="bi bi-lock text-muted"></i>
                                 </span>
                                 <input type="password" name="password_confirmation" id="password-confirm"
-                                    class="form-control border-start-0 ps-0" required>
+                                    class="form-control border-start-0 ps-2 " required>
                             </div>
                         </div>
 

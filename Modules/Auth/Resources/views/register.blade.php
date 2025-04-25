@@ -83,7 +83,7 @@
 
 @section('content')
 <div class="login-wrapper">
-    <div class="container mt-5 pt-5">
+    <div class="container mt-5 py-5">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
                 <div class="card border-0 shadow-lg login-card">
@@ -106,7 +106,7 @@
                                         <i class="bi bi-person text-muted"></i>
                                     </span>
                                     <input type="text" name="name" id="name"
-                                        class="form-control border-start-0 ps-0 @error('name') is-invalid @enderror"
+                                        class="form-control border-start-0 ps-2 @error('name') is-invalid @enderror"
                                         value="{{ old('name') }}" required autofocus
                                         placeholder="أدخل اسمك الكامل">
                                     @error('name')
@@ -122,7 +122,7 @@
                                         <i class="bi bi-envelope text-muted"></i>
                                     </span>
                                     <input type="email" name="email" id="email"
-                                        class="form-control border-start-0 ps-0 @error('email') is-invalid @enderror"
+                                        class="form-control border-start-0 ps-2 @error('email') is-invalid @enderror"
                                         value="{{ old('email') }}" required
                                         placeholder="أدخل بريدك الإلكتروني">
                                     @error('email')
@@ -138,7 +138,7 @@
                                         <i class="bi bi-phone text-muted"></i>
                                     </span>
                                     <input type="tel" name="phone_number" id="phone_number"
-                                        class="form-control border-start-0 ps-0 @error('phone_number') is-invalid @enderror"
+                                        class="form-control border-start-0 ps-2 @error('phone_number') is-invalid @enderror"
                                         value="{{ old('phone_number') }}" required
                                         placeholder="أدخل رقم هاتفك">
                                     @error('phone_number')
@@ -154,7 +154,7 @@
                                         <i class="bi bi-lock text-muted"></i>
                                     </span>
                                     <input type="password" name="password" id="password"
-                                        class="form-control border-start-0 ps-0 @error('password') is-invalid @enderror"
+                                        class="form-control border-start-0 ps-2 @error('password') is-invalid @enderror"
                                         required placeholder="أدخل كلمة المرور">
                                     @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -169,7 +169,7 @@
                                         <i class="bi bi-lock-fill text-muted"></i>
                                     </span>
                                     <input type="password" name="password_confirmation" id="password_confirmation"
-                                        class="form-control border-start-0 ps-0"
+                                        class="form-control border-start-0 ps-2 "
                                         required placeholder="أعد إدخال كلمة المرور">
                                 </div>
                             </div>

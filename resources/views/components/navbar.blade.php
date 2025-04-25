@@ -1,11 +1,10 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary position-fixed w-100" style="direction: ltr; z-index: 1030">
     <div class="container">
         <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-            <img src="{{ asset('images/logo.jpg') }}" class="rounded-pill" height="40" width="40" />
+            <img src="{{ asset('images/logo-clinic.png') }}" class="rounded-pill" height="50" width="50" />
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -13,7 +12,8 @@
             <ul class="navbar-nav me-auto">
                 @guest
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('login') ? 'active' : '' }}" style="border: 1px solid #FFF;" href="{{ route('login') }}">تسجيل الدخول</a>
+                        <a class="nav-link {{ request()->is('login') ? 'active' : '' }}" style="border: 1px solid #FFF;"
+                            href="{{ route('login') }}">تسجيل الدخول</a>
                     </li>
                 @else
                     <li class="nav-item dropdown">
@@ -27,14 +27,18 @@
                                         <i class="bi bi-speedometer2 me-2"></i>لوحة التحكم
                                     </a>
                                 </li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                             @endif
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile') }}">
                                     <i class="bi bi-person me-2"></i>حسابى
                                 </a>
                             </li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}" class="d-inline w-100">
                                     @csrf
@@ -54,7 +58,8 @@
                     <ul class="dropdown-menu" aria-labelledby="specialtiesDropdown">
                         @if(!empty($categories) && count($categories))
                             @foreach($categories as $c)
-                                <li><a class="dropdown-item" href="{{ route('categories.show', $c->id) }}">{{ $c->name }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('categories.show', $c->id) }}">{{ $c->name }}</a>
+                                </li>
                             @endforeach
                         @else
                             <li><span class="dropdown-item text-muted">لا يوجد أقسام.</span></li>

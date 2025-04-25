@@ -29,7 +29,7 @@
                                     <i class="bi bi-envelope text-muted"></i>
                                 </span>
                                 <input type="email" name="email" id="email"
-                                    class="form-control border-start-0 ps-0 @error('email') is-invalid @enderror"
+                                    class="form-control border-start-0 ps-2 @error('email') is-invalid @enderror"
                                     value="{{ old('email') }}" required autofocus>
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
