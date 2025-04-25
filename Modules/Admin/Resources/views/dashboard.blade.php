@@ -1,4 +1,4 @@
-@extends('admin::layouts.master')
+@extends('layouts.admin')
 
 @section('content')
 <div class="container" style="background-color: #F7F8FA; font-family: 'Tajawal', sans-serif;">
@@ -175,7 +175,7 @@
                                         </span>
                                     </td>
                                     <td></td>
-                                        <a href="{{ route('admin.appointments.show', $activity) }}" class="btn btn-sm btn-outline-primary"></a>
+                                        <a href="{{ route('appointments.show', $activity) }}" class="btn btn-sm btn-outline-primary"></a>
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     </td>

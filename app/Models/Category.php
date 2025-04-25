@@ -11,11 +11,21 @@ class Category extends Model
 
     protected $table = 'categories';
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'slug',
+        'description'
+    ];
 
     public function doctors()
     {
         return $this->belongsToMany(Doctor::class, 'doctor_category')
                     ->withTimestamps();
+    }
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = $value;
+        $this->attributes['slug'] = \Str::slug($value);
     }
 }

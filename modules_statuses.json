@@ -1,5 +1,9 @@
 {
-    "User": true,
     "Doctors": true,
-    "Admin": true
+    "Admin": true,
+    "Patients": true,
+    "Auth": true,
+    "Users": true,
+    "Specialties": true,
+    "Appointments": true
 }

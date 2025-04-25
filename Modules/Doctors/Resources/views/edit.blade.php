@@ -1,4 +1,4 @@
-@extends('admin::layouts.master')
+@extends('layouts.admin')
 
 @section('content')
     <div class="content-wrapper">
@@ -8,7 +8,7 @@
                     <h5 class="mb-0 ms-2">تعديل بيانات الطبيب</h5>
                 </div>
                 <div class="card-body px-4 py-3">
-                    <form method="POST" action="{{ route('admin.doctors.update', $doctor) }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('doctors.update', $doctor) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 

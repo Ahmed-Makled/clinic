@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use Illuminate\Support\Facades\Config;
 
 class PageController extends Controller
@@ -22,6 +21,15 @@ class PageController extends Controller
         return view('about', [
             'title' => 'About Us',
             'classes' => 'bg-white'
+        ]);
+    }
+
+    public function profile()
+    {
+        return view('profile', [
+            'title' => 'My Profile',
+            'classes' => 'bg-white',
+            'user' => auth()->user()
         ]);
     }
 }

@@ -4,8 +4,9 @@ namespace Modules\Doctors\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
-use Modules\User\Entities\User;
+use Modules\Users\Entities\Users;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -42,20 +43,20 @@ class DoctorController extends Controller
         }
 
         $doctors = $query->with(['categories', 'user'])
-                        ->latest()
-                        ->paginate(10)
-                        ->withQueryString();
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         $categories = Category::all();
 
-        return view('admin::doctors.index', compact('doctors', 'categories'));
+        return view('doctors.index', compact('doctors', 'categories'));
     }
 
     public function create()
     {
         $categories = Category::all();
 
-        return view('admin::doctors.create', compact('categories'));
+        return view('doctors::create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -129,7 +130,7 @@ class DoctorController extends Controller
     public function edit(Doctor $doctor)
     {
         $categories = Category::all();
-        return view('admin::doctors.edit', compact('doctor', 'categories'));
+        return view(' doctors::edit', compact('doctor', 'categories'));
     }
 
     public function update(Request $request, Doctor $doctor)
