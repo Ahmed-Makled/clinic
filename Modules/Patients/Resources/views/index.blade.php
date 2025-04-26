@@ -65,30 +65,30 @@
                                 </div>
                             </td>
                             <td>{{ $patient->email }}</td>
-                            <td>{{ $patient->phone }}</td>
+                            <td>{{ $patient->phone_number }}</td>
                             <td>
-                                @if($patient->gender == 'male')
+                                @if($patient->patient?->gender == 'male')
                                     <span class="badge bg-primary bg-opacity-10 text-primary">
                                         <i class="bi bi-gender-male me-1"></i>ذكر
                                     </span>
                                 @else
-                                    <span class="badge bg-info bg-opacity-10 text-info">
+                                    <span class="badge bg-pink bg-opacity-10 text-pink" style="background-color: rgba(219, 68, 136, 0.1) !important; color: #db4488 !important;">
                                         <i class="bi bi-gender-female me-1"></i>أنثى
                                     </span>
                                 @endif
                             </td>
                             <td>
-                                @if($patient->date_of_birth)
+                                @if($patient->patient?->date_of_birth)
                                     <div class="d-flex align-items-center">
                                         <i class="bi bi-calendar3 me-2 text-muted"></i>
-                                        {{ $patient->date_of_birth->format('Y-m-d') }}
+                                        {{ $patient->patient->date_of_birth->format('Y-m-d') }}
                                     </div>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
                             <td>
-                                <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                <span class="badge bg-secondary bg-opacity-10 text-primary">
                                     {{ $patient->appointments_count ?? 0 }} موعد
                                 </span>
                             </td>

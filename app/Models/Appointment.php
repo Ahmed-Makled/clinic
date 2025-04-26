@@ -30,9 +30,9 @@ class Appointment extends Model
      * The status labels for human-readable display.
      */
     const STATUS_LABELS = [
-        'scheduled' => 'Scheduled',
-        'completed' => 'Completed',
-        'cancelled' => 'Cancelled'
+        'scheduled' => 'في الانتظار',
+        'completed' => 'مكتمل',
+        'cancelled' => 'ملغي'
     ];
 
     /**
@@ -55,7 +55,6 @@ class Appointment extends Model
         'scheduled_at',
         'status',
         'notes',
-        'fees',
         'is_paid',
         'is_important'
     ];
@@ -95,6 +94,20 @@ class Appointment extends Model
         'notes',
         'status'
     ];
+
+    /**
+     * Boot the model.
+     */
+    protected static function booted()
+    {
+        static::creating(function ($appointment) {
+            // عند إنشاء موعد جديد، نقوم بتعيين الرسوم تلقائياً من سعر الكشف المحدد للطبيب
+            if (!$appointment->fees) {
+                $doctor = Doctor::find($appointment->doctor_id);
+                $appointment->fees = $doctor->consultation_fee;
+            }
+        });
+    }
 
     /**
      * Get the doctor that owns the appointment.

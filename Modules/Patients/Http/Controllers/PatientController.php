@@ -14,7 +14,7 @@ class PatientController extends Controller
 {
     public function index()
     {
-        $patients = User::role('Patient')->paginate(10);
+        $patients = User::role('Patient')->with('patient')->paginate(10);
         return view('patients::index', compact('patients'));
     }
 
@@ -74,24 +74,16 @@ class PatientController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $patient->id,
             'phone_number' => 'required|string|max:20',
-            'password' => 'nullable|min:6|confirmed',
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
             'gender' => 'required|in:male,female'
         ]);
-
-        if (!empty($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
-        } else {
-            unset($validated['password']);
-        }
 
         // Update user record
         $patient->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone_number' => $validated['phone_number'],
-            'password' => $validated['password'] ?? $patient->password,
         ]);
 
         // Update or create patient record

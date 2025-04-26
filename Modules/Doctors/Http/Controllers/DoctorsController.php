@@ -182,10 +182,11 @@ class DoctorsController extends Controller
             'gender' => $validated['gender'],
             'status' => $status,
             'address' => $validated['address'] ?? null,
-            'governorate_id' => $validated['governorate_id'],
-            'city_id' => $validated['city_id'],
+            'consultation_fee' => $validated['consultation_fee'],
             'waiting_time' => $validated['waiting_time'],
-            'consultation_fee' => $validated['consultation_fee']
+            'experience_years' => $validated['experience_years'] ?? null,
+            'governorate_id' => $validated['governorate_id'],
+            'city_id' => $validated['city_id']
         ]);
 
         // Sync categories

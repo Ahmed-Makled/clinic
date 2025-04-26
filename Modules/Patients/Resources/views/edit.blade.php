@@ -10,7 +10,7 @@
                     <h5 class="mb-0 ms-2">تعديل بيانات المريض</h5>
                 </div>
                 <div class="card-body px-4 py-3">
-                    <form method="POST" action="{{ route('admin.patients.update', $patient) }}" class="needs-validation" novalidate>
+                    <form method="POST" action="{{ route('patients.update', $patient) }}" class="needs-validation" novalidate>
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -52,26 +52,6 @@
                                     @error('phone_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">كلمة المرور الجديدة</label>
-                                    <input type="password"
-                                           class="form-control @error('password') is-invalid @enderror"
-                                           id="password"
-                                           name="password">
-                                    <small class="text-muted">اتركه فارغاً إذا كنت لا تريد تغيير كلمة المرور</small>
-                                    @error('password')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="password_confirmation" class="form-label">تأكيد كلمة المرور الجديدة</label>
-                                    <input type="password"
-                                           class="form-control"
-                                           id="password_confirmation"
-                                           name="password_confirmation">
                                 </div>
                             </div>
 
@@ -138,17 +118,6 @@ $(document).ready(function() {
             event.stopPropagation();
         }
 
-        // Optional password match validation (only if password is being changed)
-        const password = $('#password').val();
-        const confirmation = $('#password_confirmation').val();
-
-        if (password && password !== confirmation) {
-            event.preventDefault();
-            $('#password_confirmation').addClass('is-invalid')
-                .siblings('.invalid-feedback')
-                .text('كلمة المرور غير متطابقة');
-        }
-
         // Phone number format validation
         const phone = $('#phone_number').val();
         const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
@@ -173,21 +142,6 @@ $(document).ready(function() {
     });
 
     // Real-time validation
-    $('#password_confirmation').on('input', function() {
-        const password = $('#password').val();
-        const confirmation = $(this).val();
-
-        if (password && password !== confirmation) {
-            $(this).addClass('is-invalid')
-                .removeClass('is-valid')
-                .siblings('.invalid-feedback')
-                .text('كلمة المرور غير متطابقة');
-        } else {
-            $(this).removeClass('is-invalid')
-                .addClass('is-valid');
-        }
-    });
-
     $('#phone_number').on('input', function() {
         const phone = $(this).val();
         const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
