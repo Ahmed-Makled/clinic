@@ -218,6 +218,186 @@
 
     @push('styles')
         <style>
+            /* Stat Cards Enhancement */
+            .stat-card {
+                background: white;
+                border-radius: 15px;
+                border: none;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .stat-card .card-body {
+                padding: 1.5rem;
+                position: relative;
+                z-index: 1;
+            }
+
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 12px;
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                position: relative;
+            }
+
+            .stat-icon::after {
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: inherit;
+                border-radius: inherit;
+                opacity: 0.3;
+                transform: scale(1.6);
+                z-index: -1;
+            }
+
+            .stat-value {
+                font-size: 1.8rem;
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+                color: #2c3e50;
+            }
+
+            .stat-label {
+                font-size: 1rem;
+                font-weight: 600;
+                margin-bottom: 0.75rem;
+                color: #64748b;
+            }
+
+            /* Stat card variants */
+            .stat-card.success .stat-icon { background-color: #e6f4ea; color: #34d399; }
+            .stat-card.warning .stat-icon { background-color: #fef3c7; color: #f59e0b; }
+            .stat-card.info .stat-icon { background-color: #e0f2fe; color: #0ea5e9; }
+            
+            .stat-card small {
+                font-size: 0.875rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+            }
+
+            .stat-card .bi {
+                font-size: 1.1rem;
+            }
+
+            /* Adding subtle pattern background */
+            .stat-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0);
+                background-size: 20px 20px;
+                opacity: 0.5;
+                z-index: 0;
+            }
+
+            /* Progress indicators animation */
+            @keyframes countUp {
+                from { transform: translateY(10px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+
+            .stat-value {
+                animation: countUp 0.5s ease-out forwards;
+            }
+
+            /* Data Visualization Cards */
+            .stat-card {
+                position: relative;
+                overflow: hidden;
+                border: none;
+                background: white;
+                transition: transform var(--transition-speed) ease;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .stat-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: var(--primary-color);
+                border-radius: 4px 4px 0 0;
+            }
+
+            .stat-card.success::before {
+                background: var(--success-color);
+            }
+
+            .stat-card.warning::before {
+                background: var(--warning-color);
+            }
+
+            .stat-card.danger::before {
+                background: var(--danger-color);
+            }
+
+            .stat-card .stat-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                transition: all var(--transition-speed) ease;
+            }
+
+            .stat-card:hover .stat-icon {
+                transform: scale(1.1);
+            }
+
+            .stat-card .stat-value {
+                font-size: 1.75rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: var(--primary-color);
+            }
+
+            .stat-card .stat-label {
+                color: var(--secondary-color);
+                font-size: 0.875rem;
+                margin-bottom: 0;
+            }
+
+            .stat-card .stat-change {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+                font-size: 0.875rem;
+                margin-top: 0.5rem;
+            }
+
+            .stat-card .stat-change.positive {
+                color: var (--success-color);
+            }
+
+            .stat-card .stat-change.negative {
+                color: var(--danger-color);
+            }
+
             /* Chart Containers */
             .chart-container {
                 position: relative;
