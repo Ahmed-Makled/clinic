@@ -22,13 +22,30 @@
 @section('content')
 <div class="card shadow-sm">
     <div class="card-body">
-        <div class="mb-4">
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input type="search"
-                       class="form-control"
-                       id="searchInput"
-                       placeholder="ابحث عن تخصص...">
+        <div class="filters mb-4">
+            <div class="row g-3">
+                <div class="col-md-10">
+                    <label for="searchInput" class="form-label">اسم التخصص</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="search"
+                               class="form-control"
+                               id="searchInput"
+                               name="search"
+                               placeholder="ادخل اسم التخصص..."
+                               value="{{ request('search') }}">
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="btn btn-primary w-100" id="applyFilters">
+                        <i class="bi bi-funnel-fill me-1"></i>
+                        تطبيق
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -117,9 +134,60 @@
     </div>
 </div>
 
+@push('styles')
+<style>
+    .form-label {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        color: var(--bs-gray-700);
+    }
+
+    .filters {
+        background: var(--bs-gray-100);
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        width: '100%'
+    });
+
+    // Get filter elements
+    const searchInput = document.getElementById('searchInput');
+    const applyFiltersBtn = document.getElementById('applyFilters');
+
+    // Update filters function
+    function updateFilters() {
+        const params = new URLSearchParams(window.location.search);
+
+        if (searchInput?.value) params.set('search', searchInput.value);
+
+        // Remove empty values
+        for (const [key, value] of params.entries()) {
+            if (!value) params.delete(key);
+        }
+
+        // Update URL with new filters
+        window.location.href = `${window.location.pathname}?${params.toString()}`;
+    }
+
+    // Add event listener for apply button
+    applyFiltersBtn.addEventListener('click', updateFilters);
+
+    // Add event listener for Enter key in search
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            updateFilters();
+        }
+    });
+
     // Initialize tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => {
@@ -127,7 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Live search functionality
-    const searchInput = document.getElementById('searchInput');
     const tableRows = document.querySelectorAll('.table tbody tr');
 
     searchInput.addEventListener('input', function() {

@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\Searchable;
 
 class Doctor extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $table = 'doctors';
 
@@ -32,6 +33,14 @@ class Doctor extends Model
         'experience_years',
         'gender',
         'status'
+    ];
+
+    protected $searchable = [
+        'name',
+        'email',
+        'phone',
+        'bio',
+        'description'
     ];
 
     public $timestamps = true;

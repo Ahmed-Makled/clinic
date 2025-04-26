@@ -19,41 +19,34 @@ class DoctorsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Doctor::query();
+        $query = Doctor::with(['categories', 'user']);
 
-        // البحث حسب التخصص
-        if ($request->filled('category')) {
-            $query->whereHas('categories', function ($q) use ($request) {
-                $q->where('categories.id', $request->category);
+        // تطبيق فلتر البحث
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // تطبيق فلتر التخصص
+        if ($request->filled('category_filter')) {
+            $query->whereHas('categories', function($q) use ($request) {
+                $q->where('categories.id', $request->category_filter);
             });
         }
 
-        // البحث حسب سنوات الخبرة
-        if ($request->filled('experience')) {
-            [$min, $max] = explode('-', $request->experience);
-            if ($max === '+') {
-                $query->where('experience_years', '>=', $min);
-            } else {
-                $query->whereBetween('experience_years', [$min, $max]);
-            }
+        // تطبيق فلتر الحالة
+        if ($request->filled('status_filter')) {
+            $status = $request->status_filter === '1' ? true : false;
+            $query->where('status', $status);
         }
 
-        // البحث حسب سعر الكشف
-        if ($request->filled('fee_min')) {
-            $query->where('consultation_fee', '>=', $request->fee_min);
-        }
-        if ($request->filled('fee_max')) {
-            $query->where('consultation_fee', '<=', $request->fee_max);
-        }
-
-        $doctors = $query->with(['categories', 'user', 'governorate', 'city'])
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
-
+        $doctors = $query->latest()->paginate(10);
         $categories = Category::all();
 
-        return view('doctors::index', compact('doctors', 'categories'));
+        return view('doctors::index', [
+            'doctors' => $doctors,
+            'categories' => $categories,
+            'title' => 'الأطباء'
+        ]);
     }
 
     public function create()

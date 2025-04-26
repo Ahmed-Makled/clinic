@@ -19,28 +19,52 @@
 
 @section('content')
 <div class="card shadow-sm">
-    <div class="card-body position-relative px-3 py-2">
-        <!-- Refined Filters Section -->
-        <div class="filters mb-3">
-            <div class="row g-2">
-                <div class="col-md-6">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text border-0 bg-light">
-                            <i class="bi bi-search opacity-75"></i>
+    <div class="card-body position-relative">
+        <!-- Enhanced Filters -->
+        <div class="filters mb-4">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="searchInput" class="form-label">اسم الدكتور</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-search"></i>
                         </span>
                         <input type="search"
-                               class="form-control form-control-sm py-2 ps-2 border-0 bg-light"
+                               class="form-control"
                                id="searchInput"
-                               placeholder="ابحث عن طبيب...">
+                               name="search"
+                               placeholder="ادخل اسم الدكتور..."
+                               value="{{ request('search') }}">
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <select class="form-select form-select-sm bg-light border-0" id="categoryFilter">
+
+                <div class="col-md-3">
+                    <label for="categoryFilter" class="form-label">التخصص</label>
+                    <select class="form-select select2" id="categoryFilter" name="category_filter">
                         <option value="">الكل</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            <option value="{{ $category->id }}" {{ request('category_filter') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
                         @endforeach
                     </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label">الحالة</label>
+                    <select class="form-select select2" id="statusFilter" name="status_filter">
+                        <option value="">الكل</option>
+                        <option value="1" {{ request('status_filter') === '1' ? 'selected' : '' }}>نشط</option>
+                        <option value="0" {{ request('status_filter') === '0' ? 'selected' : '' }}>غير نشط</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="btn btn-primary w-100" id="applyFilters">
+                        <i class="bi bi-funnel-fill me-1"></i>
+                        تطبيق
+                    </button>
                 </div>
             </div>
         </div>
@@ -268,84 +292,102 @@
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+.form-label {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    color: var(--bs-gray-700);
+}
+
+.filters {
+    background: var(--bs-gray-100);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+}
+
 </style>
 @endpush
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize tooltips with a slight delay
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(tooltipTriggerEl => {
-        new bootstrap.Tooltip(tooltipTriggerEl, {
-            delay: { show: 300, hide: 100 }
-        });
-    });
-
-    const searchInput = document.getElementById('searchInput');
-    const categoryFilter = document.getElementById('categoryFilter');
-    const tableRows = document.querySelectorAll('.table tbody tr');
-    const loadingOverlay = document.querySelector('.loading-overlay');
-
-    // Enhanced search with debounce
-    let searchTimeout;
-    searchInput.addEventListener('input', function(e) {
-        clearTimeout(searchTimeout);
-        const searchTerm = e.target.value.toLowerCase();
-
-        loadingOverlay.classList.remove('d-none');
-
-        searchTimeout = setTimeout(() => {
-            tableRows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips with a slight delay
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltipTriggerList.forEach(tooltipTriggerEl => {
+                new bootstrap.Tooltip(tooltipTriggerEl, {
+                    delay: { show: 300, hide: 100 }
+                });
             });
 
-            loadingOverlay.classList.add('d-none');
-        }, 300);
-    });
+            // Initialize Select2
+            $('.select2').select2({
+                theme: 'bootstrap-5',
+                width: '100%'
+            });
 
-    // Category filter with animation
-    categoryFilter.addEventListener('change', function(e) {
-        const categoryId = e.target.value;
-        loadingOverlay.classList.remove('d-none');
+            // Get filter elements
+            const searchInput = document.getElementById('searchInput');
+            const categoryFilter = document.getElementById('categoryFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const applyFiltersBtn = document.getElementById('applyFilters');
 
-        setTimeout(() => {
-            tableRows.forEach(row => {
-                if (!categoryId) {
-                    row.style.display = '';
-                    return;
+            // Update filters function
+            function updateFilters() {
+                const params = new URLSearchParams(window.location.search);
+
+                // Only add search parameter if it has a value
+                if (searchInput?.value.trim()) {
+                    params.set('search', searchInput.value.trim());
+                } else {
+                    params.delete('search');
                 }
 
-                const categoryBadges = row.querySelectorAll('.badge[data-id]');
-                const hasCategory = Array.from(categoryBadges).some(badge =>
-                    badge.dataset.id === categoryId
-                );
-                row.style.display = hasCategory ? '' : 'none';
+                // Only add category filter if not "All"
+                if (categoryFilter?.value) {
+                    params.set('category_filter', categoryFilter.value);
+                } else {
+                    params.delete('category_filter');
+                }
+
+                // Only add status filter if not "All"
+                if (statusFilter?.value) {
+                    params.set('status_filter', statusFilter.value);
+                } else {
+                    params.delete('status_filter');
+                }
+
+                // Update URL with new filters
+                window.location.href = `${window.location.pathname}?${params.toString()}`;
+            }
+
+            // Add event listener for apply button
+            applyFiltersBtn.addEventListener('click', updateFilters);
+
+            // Add event listener for Enter key in search
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    updateFilters();
+                }
             });
 
-            loadingOverlay.classList.add('d-none');
-        }, 300);
-    });
+            // Delete confirmation with enhanced UX
+            const deleteForms = document.querySelectorAll('.delete-form');
+            deleteForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
 
-    // Delete confirmation with enhanced UX
-    const deleteForms = document.querySelectorAll('.delete-form');
-    deleteForms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+                    const doctor = this.closest('tr').querySelector('.fw-medium').textContent;
 
-            const doctor = this.closest('tr').querySelector('.fw-medium').textContent;
-
-            if (confirm(`هل أنت متأكد من حذف الطبيب "${doctor}"؟`)) {
-                const submitBtn = form.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-                form.submit();
-            }
+                    if (confirm(`هل أنت متأكد من حذف الطبيب "${doctor}"؟`)) {
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                        form.submit();
+                    }
+                });
+            });
         });
-    });
-});
-</script>
-@endpush
+    </script>
+    @endpush
 
 @endsection

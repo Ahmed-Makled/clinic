@@ -22,31 +22,48 @@
 @section('content')
 <div class="card shadow-sm">
     <div class="card-body position-relative">
-        <div class="mb-4">
+        <div class="filters mb-4">
             <div class="row g-3">
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <label for="searchInput" class="form-label">اسم المريض</label>
                     <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <span class="input-group-text">
+                            <i class="bi bi-search"></i>
+                        </span>
                         <input type="search"
                                class="form-control"
                                id="searchInput"
-                               placeholder="ابحث عن مريض...">
+                               name="search"
+                               placeholder="ادخل اسم المريض..."
+                               value="{{ request('search') }}">
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <select class="form-select select2" id="genderFilter">
+
+                <div class="col-md-4">
+                    <label for="genderFilter" class="form-label">النوع</label>
+                    <select class="form-select select2" id="genderFilter" name="gender_filter">
                         <option value="">الكل</option>
-                        <option value="male">ذكر</option>
-                        <option value="female">أنثى</option>
+                        <option value="male" {{ request('gender_filter') === 'male' ? 'selected' : '' }}>ذكر</option>
+                        <option value="female" {{ request('gender_filter') === 'female' ? 'selected' : '' }}>أنثى</option>
                     </select>
                 </div>
+
                 <div class="col-md-3">
-                    <select class="form-select select2" id="sortFilter">
-                        <option value="latest">الأحدث</option>
-                        <option value="oldest">الأقدم</option>
-                        <option value="name">الاسم</option>
-                        <option value="appointments">عدد المواعيد</option>
+                    <label for="sortFilter" class="form-label">ترتيب حسب</label>
+                    <select class="form-select select2" id="sortFilter" name="sort">
+                        <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>الأحدث</option>
+                        <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>الأقدم</option>
+                        <option value="name" {{ request('sort') === 'name' ? 'selected' : '' }}>الاسم</option>
+                        <option value="appointments" {{ request('sort') === 'appointments' ? 'selected' : '' }}>عدد المواعيد</option>
                     </select>
+                </div>
+
+                <div class="col-md-1">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="button" class="btn btn-primary w-100" id="applyFilters">
+                        <i class="bi bi-funnel-fill me-1"></i>
+                        تطبيق
+                    </button>
                 </div>
             </div>
         </div>
@@ -171,6 +188,22 @@
     </div>
 </div>
 
+@push('styles')
+<style>
+    .form-label {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        color: var(--bs-gray-700);
+    }
+
+    .filters {
+        background: var(--bs-gray-100);
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -180,15 +213,45 @@ document.addEventListener('DOMContentLoaded', function() {
         width: '100%'
     });
 
+    // Get filter elements
+    const searchInput = document.getElementById('searchInput');
+    const genderFilter = document.getElementById('genderFilter');
+    const sortFilter = document.getElementById('sortFilter');
+    const applyFiltersBtn = document.getElementById('applyFilters');
+
+    // Update filters function
+    function updateFilters() {
+        const params = new URLSearchParams(window.location.search);
+
+        if (searchInput?.value) params.set('search', searchInput.value);
+        if (genderFilter?.value) params.set('gender_filter', genderFilter.value);
+        if (sortFilter?.value) params.set('sort', sortFilter.value);
+
+        // Remove empty values
+        for (const [key, value] of params.entries()) {
+            if (!value) params.delete(key);
+        }
+
+        // Update URL with new filters
+        window.location.href = `${window.location.pathname}?${params.toString()}`;
+    }
+
+    // Add event listener for apply button
+    applyFiltersBtn.addEventListener('click', updateFilters);
+
+    // Add event listener for Enter key in search
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            updateFilters();
+        }
+    });
+
     // Initialize tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => {
         new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    const searchInput = document.getElementById('searchInput');
-    const genderFilter = document.getElementById('genderFilter');
-    const sortFilter = document.getElementById('sortFilter');
     const tableRows = document.querySelectorAll('.table tbody tr');
     const loadingOverlay = document.querySelector('.loading-overlay');
 
