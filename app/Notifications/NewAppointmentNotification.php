@@ -42,7 +42,8 @@ class NewAppointmentNotification extends Notification
             'doctor_name' => $this->appointment->doctor->name,
             'patient_name' => $this->appointment->patient->name,
             'scheduled_at' => $this->appointment->scheduled_at,
-            'type' => 'new_appointment'
+            'type' => 'new_appointment',
+            'message' => "موعد جديد للمريض {$this->appointment->patient->name} مع الدكتور {$this->appointment->doctor->name}"
         ];
     }
 }

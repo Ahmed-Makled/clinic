@@ -42,7 +42,8 @@ class AppointmentCompletedNotification extends Notification
             'doctor_name' => $this->appointment->doctor->name,
             'patient_name' => $this->appointment->patient->name,
             'scheduled_at' => $this->appointment->scheduled_at,
-            'type' => 'appointment_completed'
+            'type' => 'appointment_completed',
+            'message' => "تم اكتمال موعد المريض {$this->appointment->patient->name} مع الدكتور {$this->appointment->doctor->name}"
         ];
     }
 }

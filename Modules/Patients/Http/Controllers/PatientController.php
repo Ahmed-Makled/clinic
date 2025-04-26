@@ -9,6 +9,9 @@ use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use App\Notifications\NewPatientNotification;
+use App\Notifications\PatientUpdatedNotification;
+use App\Notifications\PatientDeletedNotification;
 
 class PatientController extends Controller
 {
@@ -59,6 +62,11 @@ class PatientController extends Controller
         $role = Role::findByName('Patient', 'web');
         $user->assignRole($role);
 
+        // Send notification to admins
+        User::role('Admin')->each(function($admin) use ($patient) {
+            $admin->notify(new NewPatientNotification($patient));
+        });
+
         return redirect()->route('patients.index')
             ->with('success', 'تم إضافة المريض بنجاح');
     }
@@ -83,18 +91,20 @@ class PatientController extends Controller
         $patient->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'phone_number' => $validated['phone_number'],
+            'phone_number' => $validated['phone_number']
         ]);
 
-        // Update or create patient record
-        Patient::updateOrCreate(
-            ['user_id' => $patient->id],
-            [
-                'date_of_birth' => $validated['date_of_birth'],
-                'gender' => $validated['gender'],
-                'address' => $validated['address']
-            ]
-        );
+        // Update patient record
+        $patient->patient->update([
+            'date_of_birth' => $validated['date_of_birth'],
+            'gender' => $validated['gender'],
+            'address' => $validated['address']
+        ]);
+
+        // Send notification to admins
+        User::role('Admin')->each(function($admin) use ($patient) {
+            $admin->notify(new PatientUpdatedNotification($patient->patient));
+        });
 
         return redirect()->route('patients.index')
             ->with('success', 'تم تحديث بيانات المريض بنجاح');
@@ -102,7 +112,14 @@ class PatientController extends Controller
 
     public function destroy(User $patient)
     {
+        $patientName = $patient->name;
         $patient->delete();
+
+        // Send notification to admins
+        User::role('Admin')->each(function($admin) use ($patientName) {
+            $admin->notify(new PatientDeletedNotification($patientName));
+        });
+
         return redirect()->route('patients.index')
             ->with('success', 'تم حذف المريض بنجاح');
     }

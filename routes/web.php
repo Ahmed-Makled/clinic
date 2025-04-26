@@ -23,10 +23,21 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
 
 // Notifications Routes
-Route::prefix('admin')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/notifications', function () {
+        $notifications = auth()->user()->notifications()->latest()->limit(10)->get()->map(function($notification) {
+            return [
+                'id' => $notification->id,
+                'type' => $notification->type,
+                'data' => $notification->data,
+                'read_at' => $notification->read_at,
+                'created_at' => $notification->created_at->diffForHumans(),
+                'message' => $notification->data['message'] ?? 'إشعار جديد'
+            ];
+        });
+
         return response()->json([
-            'notifications' => auth()->user()->notifications()->limit(10)->get()
+            'notifications' => $notifications
         ]);
     });
 

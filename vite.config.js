@@ -12,8 +12,9 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
-                'resources/js/app.js',
                 'resources/css/global.css',
+                'resources/js/admin-navbar.js',
+                'resources/js/app.js'
             ],
             refresh: true,
             buildDirectory: 'build'

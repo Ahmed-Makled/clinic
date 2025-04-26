@@ -11,6 +11,9 @@ use App\Repositories\AppointmentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use App\Notifications\NewDoctorNotification;
+use App\Notifications\DoctorUpdatedNotification;
+use App\Notifications\DoctorDeletedNotification;
 
 class DoctorsController extends Controller
 {
@@ -105,6 +108,7 @@ class DoctorsController extends Controller
             'waiting_time' => $validated['waiting_time'],
             'experience_years' => $validated['experience_years'] ?? null,
             'gender' => $validated['gender'],
+            'status' => true,
             'address' => $validated['address'] ?? null,
             'governorate_id' => $validated['governorate_id'],
             'city_id' => $validated['city_id'],
@@ -118,6 +122,11 @@ class DoctorsController extends Controller
 
         // Sync categories
         $doctor->categories()->sync($request->categories);
+
+        // Send notification to admins
+        User::role('Admin')->each(function($admin) use ($doctor) {
+            $admin->notify(new NewDoctorNotification($doctor));
+        });
 
         return redirect()->route('doctors.index')
             ->with('success', 'تم إضافة الطبيب بنجاح');
@@ -192,6 +201,11 @@ class DoctorsController extends Controller
         // Sync categories
         $doctor->categories()->sync($request->categories);
 
+        // Send notification to admins
+        User::role('Admin')->each(function($admin) use ($doctor) {
+            $admin->notify(new DoctorUpdatedNotification($doctor));
+        });
+
         return redirect()->route('doctors.index')
             ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
     }
@@ -246,6 +260,7 @@ class DoctorsController extends Controller
 
     public function destroy(Doctor $doctor)
     {
+        $doctorName = $doctor->name;
         $doctor->categories()->detach();
 
         // Get the user ID before deleting the doctor
@@ -257,6 +272,11 @@ class DoctorsController extends Controller
         if ($userId) {
             User::where('id', $userId)->delete();
         }
+
+        // Send notification to admins
+        User::role('Admin')->each(function($admin) use ($doctorName) {
+            $admin->notify(new DoctorDeletedNotification($doctorName));
+        });
 
         return redirect()->route('doctors.index')
             ->with('success', 'تم حذف الطبيب بنجاح');

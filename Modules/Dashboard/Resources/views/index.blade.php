@@ -219,113 +219,76 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Appointments Chart
-    const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
-    new Chart(appointmentsCtx, {
-        type: 'line',
-        data: {
-            labels: @json($chartData['labels']),
-            datasets: [{
-                label: 'المواعيد',
-                data: @json($chartData['appointments']),
-                borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
-                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-bg-subtle'),
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
+    const appointmentsCtx = document.getElementById('appointmentsChart');
+    if (appointmentsCtx) {
+        new Chart(appointmentsCtx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: @json($chartData['labels']),
+                datasets: [{
+                    label: 'المواعيد',
+                    data: @json($chartData['appointments']),
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+                    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-bg-subtle'),
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 
     // Specialties Chart
-    const specialtiesCtx = document.getElementById('specialtiesChart').getContext('2d');
-    new Chart(specialtiesCtx, {
-        type: 'doughnut',
-        data: {
-            labels: @json($chartData['specialtyLabels']),
-            datasets: [{
-                data: @json($chartData['specialtyCounts']),
-                backgroundColor: [
-                    getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
-                    getComputedStyle(document.documentElement).getPropertyValue('--success-color'),
-                    getComputedStyle(document.documentElement).getPropertyValue('--warning-color'),
-                    getComputedStyle(document.documentElement).getPropertyValue('--info-color'),
-                    getComputedStyle(document.documentElement).getPropertyValue('--danger-color')
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20
+    const specialtiesCtx = document.getElementById('specialtiesChart');
+    if (specialtiesCtx) {
+        new Chart(specialtiesCtx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: @json($chartData['specialtyLabels']),
+                datasets: [{
+                    data: @json($chartData['specialtyCounts']),
+                    backgroundColor: [
+                        getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
+                        getComputedStyle(document.documentElement).getPropertyValue('--success-color'),
+                        getComputedStyle(document.documentElement).getPropertyValue('--warning-color'),
+                        getComputedStyle(document.documentElement).getPropertyValue('--info-color'),
+                        getComputedStyle(document.documentElement).getPropertyValue('--danger-color')
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20
+                        }
                     }
-                }
+                },
+                cutout: '70%'
             }
-        }
-    });
-});
-</script>
-
-<style>
-.activity-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-}
-
-.activity-icon.bg-success {
-    background: var(--success-bg-subtle);
-    color: var(--success-color);
-}
-
-.activity-icon.bg-warning {
-    background: var(--warning-bg-subtle);
-    color: var(--warning-color);
-}
-
-.activity-icon.bg-danger {
-    background: var(--danger-bg-subtle);
-    color: var(--danger-color);
-}
-
-.quick-stat {
-    position: relative;
-}
-
-.progress {
-    background-color: var(--border-color);
-    overflow: hidden;
-    border-radius: 12px;
-}
-
-.progress-bar {
-    background-color: var(--primary-color);
-    transition: width 0.6s ease;
-}
-</style>
+        });
+    }
+});</script>
 @endpush
-
 @endsection

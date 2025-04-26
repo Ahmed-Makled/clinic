@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>لوحة التحكم - @yield('title')</title>
 
     <!-- Preload critical assets -->
@@ -355,7 +356,7 @@
 
         .main-header .notifications-dropdown .dropdown-header {
             background: var(--primary-bg-subtle);
-            color: var(--primary-color);
+            color: var (--primary-color);
             font-weight: 600;
             padding: 1rem;
             border-bottom: 1px solid var(--border-color);
@@ -417,7 +418,7 @@
         }
 
         .notification-item.unread {
-            background: var(--primary-bg-subtle);
+            background: var (--primary-bg-subtle);
         }
 
         .notification-item.unread:hover {
@@ -471,7 +472,7 @@
 
         .card-header {
             background: transparent;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var (--border-color);
             padding: 1.25rem 1.5rem;
         }
 
@@ -880,6 +881,96 @@
         .form-control.is-invalid~.invalid-feedback {
             display: block;
         }
+
+        /* Enhanced Notification Button Styles */
+        .notification-btn {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--primary-bg-subtle);
+            color: var(--primary-color);
+            border: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .notification-btn:hover {
+            transform: translateY(-2px);
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 10px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Enhanced Notification Dropdown Styles */
+        .notifications-dropdown {
+            margin-top: 0.75rem !important;
+            border: none !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+            border-radius: 16px !important;
+            padding: 0 !important;
+            min-width: 320px !important;
+        }
+
+        .notification-header {
+            background: var(--primary-bg-subtle);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .notification-item {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: all var(--transition-speed) ease;
+            background: white;
+        }
+
+        .notification-item:hover {
+            background: var(--primary-bg-subtle);
+        }
+
+        .notification-item.unread {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .notification-item.unread:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: var (--primary-bg-subtle);
+            color: var(--primary-color);
+        }
     </style>
 </head>
 
@@ -902,7 +993,7 @@
 
 
             <!-- Main Navigation -->
-            <div class="nav-wrapper">
+            <div class="nav-wrapper mt-3">
                 <ul class="nav flex-column">
                     <!-- Dashboard -->
                     <li class="nav-item">
@@ -1026,100 +1117,87 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Enhanced Header -->
+            <!-- Main Header -->
             <header class="main-header">
-                <div class="d-flex align-items-center justify-content-between w-100">
+                <div class="d-flex align-items-center  w-100">
+                    <!-- Right Side (Actions) -->
+                    <div class="d-flex align-items-center  ms-auto">
+                        <!-- Search Toggle (Mobile) -->
+                        <button class="btn btn-icon btn-light d-lg-none" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#mobileSearch">
+                            <i class="bi bi-search"></i>
+                        </button>
 
 
-                    <!-- Right Header Actions -->
-                    <div class=" d-flex align-items-center gap-3">
-                        <!-- Quick Actions -->
+
+                        <!-- Notifications -->
                         <div class="dropdown">
-                            <button class="btn btn-light btn-icon" type="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-plus-lg"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <h6 class="dropdown-header">إضافة سريع</h6>
-                                <a class="dropdown-item" href="{{ route('appointments.create') }}">
-                                    <i class="bi bi-calendar-plus text-primary"></i>
-                                    موعد جديد
-                                </a>
-                                <a class="dropdown-item" href="{{ route('doctors.create') }}">
-                                    <i class="bi bi-person-plus text-success"></i>
-                                    طبيب جديد
-                                </a>
-                                <a class="dropdown-item" href="{{ route('patients.create') }}">
-                                    <i class="bi bi-person-plus text-info"></i>
-                                    مريض جديد
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Enhanced Notifications -->
-                        <div class="dropdown">
-                            <button class="btn btn-light btn-icon position-relative" type="button"
-                                id="notificationsDropdown" data-bs-toggle="dropdown">
+                            <button class="btn notification-btn" type="button" data-bs-toggle="dropdown"
+                                data-bs-auto-close="outside" aria-label="الإشعارات">
                                 <i class="bi bi-bell"></i>
-                                <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notifications-count d-none">
-                                    0
-                                </span>
+                                <span class="notification-badge d-none">0</span>
                             </button>
-                            <div class="dropdown-menu dropdown-menu-end notifications-dropdown">
-                                <div class="notification-header">
-                                    <h6>
-                                        <i class="bi bi-bell"></i>
-                                        الإشعارات
-                                    </h6>
+                            <div class="dropdown-menu notifications-dropdown">
+                                <div
+                                    class="notifications-header d-flex align-items-center justify-content-between p-3 border-bottom">
+                                    <h6 class="mb-0">الإشعارات</h6>
                                     <button class="btn btn-sm btn-light mark-all-read" title="تعليم الكل كمقروء">
                                         <i class="bi bi-check2-all"></i>
                                     </button>
                                 </div>
                                 <div class="notifications-list">
-                                    <!-- Notifications will be dynamically inserted here -->
-                                </div>
-                                <div class="notification-footer">
-                                    <a href="#" class="btn btn-light btn-sm">
-                                        عرض كل الإشعارات
-                                    </a>
+                                    <!-- Notifications will be inserted here -->
                                 </div>
                             </div>
                         </div>
 
                         <!-- User Profile -->
                         <div class="dropdown">
-                            <button class="btn btn-light btn-icon" type="button" data-bs-toggle="dropdown">
-                                <div class="user-avatar-sm">
-                                    {{ substr(auth()->user()->name, 0, 1) }}
-                                </div>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <div class="px-4 py-3">
-                                    <span class="d-block fw-bold">{{ auth()->user()->name }}</span>
-                                    <span class="d-block small text-muted">{{ auth()->user()->email }}</span>
-                                </div>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="">
-                                    <i class="bi bi-person me-2"></i>
-                                    الملف الشخصي
-                                </a>
-                                <a class="dropdown-item" href="">
-                                    <i class="bi bi-gear me-2"></i>
-                                    الإعدادات
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="bi bi-box-arrow-right me-2"></i>
-                                        تسجيل الخروج
-                                    </button>
-                                </form>
-                            </div>
+                            <a class="nav-link  d-flex align-items-center gap-2 p-0" href="#" role="button" data-bs-toggle="dropdown">
+                                <img src="{{ auth()->user()->avatar ?? asset('images/user-avatar.avif') }}"
+                                     class="rounded-circle"
+                                     width="32"
+                                     height="32"
+                                     alt="User Avatar">
+                                <span>{{ auth()->user()->name }}</span>
+                            </a>
+                            {{-- <ul class="dropdown-menu dropdown-menu-end">
+                                @if(auth()->user()->hasRole('Admin'))
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('dashboard.index') }}">
+                                            <i class="bi bi-speedometer2 me-2"></i>لوحة التحكم
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                @endif
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('profile') }}">
+                                        <i class="bi bi-person me-2"></i>حسابي
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('appointments.index') }}">
+                                        <i class="bi bi-calendar2-check me-2"></i>مواعيدي
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i>تسجيل الخروج
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul> --}}
                         </div>
                     </div>
                 </div>
+
+
             </header>
+
+            <!-- Secondary Header (Context Navigation) -->
 
             <div class="page-header p-3">
                 <div class="d-flex justify-content-between align-items-center">
@@ -1175,153 +1253,258 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        // Initialize notifications functionality
+        function getNotificationIcon(type) {
+            const icons = {
+                'App\\Notifications\\NewAppointmentNotification': {
+                    icon: 'bi-calendar-plus',
+                    class: 'primary'
+                },
+                'App\\Notifications\\AppointmentCancelledNotification': {
+                    icon: 'bi-calendar-x',
+                    class: 'danger'
+                },
+                'App\\Notifications\\AppointmentCompletedNotification': {
+                    icon: 'bi-calendar-check',
+                    class: 'success'
+                },
+                'App\\Notifications\\NewDoctorNotification': {
+                    icon: 'bi-person-plus',
+                    class: 'primary'
+                },
+                'App\\Notifications\\DoctorUpdatedNotification': {
+                    icon: 'bi-person-gear',
+                    class: 'info'
+                },
+                'App\\Notifications\\DoctorDeletedNotification': {
+                    icon: 'bi-person-x',
+                    class: 'danger'
+                },
+                'App\\Notifications\\NewPatientNotification': {
+                    icon: 'bi-person-add',
+                    class: 'primary'
+                },
+                'App\\Notifications\\PatientUpdatedNotification': {
+                    icon: 'bi-person-gear',
+                    class: 'info'
+                },
+                'App\\Notifications\\PatientDeletedNotification': {
+                    icon: 'bi-person-x',
+                    class: 'danger'
+                }
+            };
+            return icons[type] || { icon: 'bi-bell', class: 'primary' };
+        }
+
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diff = now - new Date(date);
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (days > 0) return `منذ ${days} يوم`;
+            if (hours > 0) return `منذ ${hours} ساعة`;
+            if (minutes > 0) return `منذ ${minutes} دقيقة`;
+            return 'الآن';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
             // Initialize Select2
             $('.select2').select2({
                 theme: 'bootstrap-5'
             });
 
+            // Enhanced Sidebar Toggle
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarCollapseBtn = document.querySelector('.sidebar-collapse-btn');
+            const tooltips = [];
+
             // Initialize tooltips
-            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-            tooltipTriggerList.forEach(tooltipTriggerEl => {
-                new bootstrap.Tooltip(tooltipTriggerEl);
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                try {
+                    if (el) {
+                        tooltips.push(new bootstrap.Tooltip(el, {
+                            delay: { show: 300, hide: 100 },
+                            animation: true,
+                            container: 'body',
+                            trigger: 'hover'
+                        }));
+                    }
+                } catch (error) {
+                    console.warn('Error initializing tooltip:', error);
+                }
             });
 
-            // Mobile sidebar toggle
-            const sidebarToggle = document.querySelector('.sidebar-toggle');
-            const sidebar = document.querySelector('.sidebar');
-
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('show');
-                });
-            }
-
             // Notifications functionality
-            const notificationsCount = document.querySelector('.notifications-count');
-            const notificationsDropdown = document.getElementById('notificationsDropdown');
+            const notificationsButton = document.querySelector('.notification-btn');
+            const notificationsCount = document.querySelector('.notification-badge');
+            const notificationsDropdown = document.querySelector('.notifications-dropdown');
             const markAllReadButton = document.querySelector('.mark-all-read');
             const notificationsList = document.querySelector('.notifications-list');
 
+            // Initialize dropdown with Bootstrap
+            if (notificationsButton) {
+                new bootstrap.Dropdown(notificationsButton, {
+                    autoClose: 'outside'
+                });
+            }
+
             function updateNotificationsCount() {
+                if (!notificationsCount) return;
+
                 fetch('/admin/notifications/count')
                     .then(response => response.json())
                     .then(data => {
-                        notificationsCount.textContent = data.count;
-                        if (data.count > 0) {
-                            notificationsCount.classList.remove('d-none');
-                        } else {
-                            notificationsCount.classList.add('d-none');
+                        if (notificationsCount) {
+                            notificationsCount.textContent = data.count;
+                            notificationsCount.classList.toggle('d-none', data.count === 0);
                         }
-                    });
-            }
-
-            function getNotificationIcon(type) {
-                const icons = {
-                    'App\\Notifications\\NewAppointment': {
-                        icon: 'bi-calendar-plus',
-                        class: 'primary'
-                    },
-                    'App\\Notifications\\AppointmentCancelled': {
-                        icon: 'bi-calendar-x',
-                        class: 'danger'
-                    },
-                    'App\\Notifications\\AppointmentCompleted': {
-                        icon: 'bi-calendar-check',
-                        class: 'success'
-                    }
-                };
-                return icons[type] || { icon: 'bi-bell', class: 'primary' };
-            }
-
-            function formatTimeAgo(date) {
-                const now = new Date();
-                const diff = now - new Date(date);
-                const minutes = Math.floor(diff / 60000);
-                const hours = Math.floor(minutes / 60);
-                const days = Math.floor(hours / 24);
-
-                if (days > 0) return `منذ ${days} يوم`;
-                if (hours > 0) return `منذ ${hours} ساعة`;
-                if (minutes > 0) return `منذ ${minutes} دقيقة`;
-                return 'الآن';
+                    })
+                    .catch(error => console.error('Error updating notifications:', error));
             }
 
             if (notificationsDropdown) {
-                notificationsDropdown.addEventListener('show.bs.dropdown', function () {
+                notificationsButton.addEventListener('click', function() {
                     fetch('/admin/notifications')
                         .then(response => response.json())
                         .then(data => {
-                            if (data.notifications.length === 0) {
+                            if (!notificationsList) return;
+
+                            if (!data.notifications || data.notifications.length === 0) {
                                 notificationsList.innerHTML = `
-                                <div class="text-center p-4 text-muted">
-                                    <i class="bi bi-bell-slash fs-2 mb-2"></i>
-                                    <p class="mb-0">لا توجد إشعارات</p>
-                                </div>
-                            `;
+                                    <div class="text-center p-4 text-muted">
+                                        <i class="bi bi-bell-slash fs-2 mb-2 d-block"></i>
+                                        <p class="mb-0">لا توجد إشعارات</p>
+                                    </div>
+                                `;
                                 return;
                             }
 
                             notificationsList.innerHTML = data.notifications.map(notification => {
                                 const iconData = getNotificationIcon(notification.type);
                                 return `
-                                <div class="notification-item ${notification.read_at ? '' : 'unread'}">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notification-icon ${iconData.class}">
-                                            <i class="bi ${iconData.icon}"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <p class="mb-1">${notification.data.message}</p>
-                                            <small class="text-muted">${formatTimeAgo(notification.created_at)}</small>
+                                    <div class="notification-item ${notification.read_at ? '' : 'unread'}">
+                                        <div class="d-flex align-items-center">
+                                            <div class="notification-icon ${iconData.class}">
+                                                <i class="bi ${iconData.icon}"></i>
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <p class="mb-1">${notification.data.message}</p>
+                                                <small class="text-muted">${formatTimeAgo(notification.created_at)}</small>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            `;
+                                `;
                             }).join('');
+                        })
+                        .catch(error => {
+                            console.error('Error fetching notifications:', error);
+                            if (notificationsList) {
+                                notificationsList.innerHTML = `
+                                    <div class="text-center p-4 text-danger">
+                                        <i class="bi bi-exclamation-circle fs-2 mb-2 d-block"></i>
+                                        <p class="mb-0">حدث خطأ في تحميل الإشعارات</p>
+                                    </div>
+                                `;
+                            }
                         });
                 });
             }
 
+            // Mark all as read functionality
             if (markAllReadButton) {
-                markAllReadButton.addEventListener('click', function () {
+                markAllReadButton.addEventListener('click', function(e) {
+                    e.preventDefault();
                     fetch('/admin/notifications/mark-all-read', {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         }
                     })
-                        .then(() => {
-                            updateNotificationsCount();
-                            document.querySelectorAll('.notification-item').forEach(item => {
-                                item.classList.remove('unread');
-                            });
-                        });
+                    .then(() => {
+                        updateNotificationsCount();
+                        document.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
+                    })
+                    .catch(error => console.error('Error marking notifications as read:', error));
                 });
             }
 
-            // Initial notifications count update
+            // Initial count update and periodic refresh
             updateNotificationsCount();
-
-            // Update notifications count every minute
             setInterval(updateNotificationsCount, 60000);
 
-            // Add this to your existing DOMContentLoaded event
+            // Mobile navigation
             const navbarToggler = document.querySelector('.navbar-toggler');
             const sidebarOverlay = document.querySelector('.sidebar-overlay');
 
-            if (navbarToggler) {
+            if (navbarToggler && sidebarOverlay) {
                 navbarToggler.addEventListener('click', () => {
                     sidebar.classList.toggle('show');
                     sidebarOverlay.classList.toggle('show');
+                    document.body.classList.toggle('sidebar-active');
                 });
-            }
 
-            if (sidebarOverlay) {
                 sidebarOverlay.addEventListener('click', () => {
                     sidebar.classList.remove('show');
                     sidebarOverlay.classList.remove('show');
+                    document.body.classList.remove('sidebar-active');
                 });
             }
+
+            // Handle sidebar collapse
+            if (sidebarCollapseBtn) {
+                sidebarCollapseBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('collapsed');
+                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+
+                    const icon = sidebarCollapseBtn.querySelector('i');
+                    icon.classList.toggle('bi-chevron-right');
+                    icon.classList.toggle('bi-chevron-left');
+
+                    // Handle tooltips
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                        const tooltip = bootstrap.Tooltip.getInstance(el);
+                        if (tooltip) {
+                            tooltip[sidebar.classList.contains('collapsed') ? 'enable' : 'disable']();
+                        }
+                    });
+                });
+
+                // Restore sidebar state
+                if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                    sidebar.classList.add('collapsed');
+                    const icon = sidebarCollapseBtn.querySelector('i');
+                    icon.classList.remove('bi-chevron-right');
+                    icon.classList.add('bi-chevron-left');
+                }
+            }
+
+            // Mobile swipe gestures
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            document.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+
+            document.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchEndX - touchStartX;
+                const SWIPE_THRESHOLD = 50;
+
+                if (Math.abs(diff) > SWIPE_THRESHOLD) {
+                    if (diff > 0) { // Right swipe
+                        sidebar.classList.add('show');
+                        sidebarOverlay.classList.add('show');
+                        document.body.classList.add('sidebar-active');
+                    } else { // Left swipe
+                        sidebar.classList.remove('show');
+                        sidebarOverlay.classList.remove('show');
+                        document.body.classList.remove('sidebar-active');
+                    }
+                }
+            }, false);
         });
     </script>
 

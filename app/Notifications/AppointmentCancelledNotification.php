@@ -42,7 +42,8 @@ class AppointmentCancelledNotification extends Notification
             'doctor_name' => $this->appointment->doctor->name,
             'patient_name' => $this->appointment->patient->name,
             'scheduled_at' => $this->appointment->scheduled_at,
-            'type' => 'appointment_cancelled'
+            'type' => 'appointment_cancelled',
+            'message' => "تم إلغاء موعد المريض {$this->appointment->patient->name} مع الدكتور {$this->appointment->doctor->name}"
         ];
     }
 }
