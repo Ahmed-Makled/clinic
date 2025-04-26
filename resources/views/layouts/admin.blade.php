@@ -95,7 +95,7 @@
         }
 
         .sidebar-user {
-            padding: 1.5rem;
+            padding: 1rem;
             border-bottom: 1px solid #e5e7eb;
             margin-bottom: 1rem;
         }
@@ -834,8 +834,7 @@
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-brand py-3">
-                <img src="{{ asset('/favicon.ico') }}" alt="Logo" class="img-fluid" style="max-height: 40px;" />
-                <h5 class="mb-0 ms-2 d-none d-lg-block">{{ config('app.name') }}</h5>
+                <img src="{{ asset('/favicon.ico') }}" alt="Logo" class="img-fluid" style="width:120px;height: 120px;" />
             </div>
 
             <div class="sidebar-user">
