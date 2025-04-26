@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +32,7 @@
 <body class="{{ $classes ?? '' }}">
     @include('components.navbar')
 
-    <main   >
+    <main>
         @yield('content')
     </main>
 
@@ -40,13 +41,13 @@
     <!-- Core Scripts -->
     <script>
         window.Laravel = {!! json_encode([
-            'csrfToken' => csrf_token(),
-            'baseUrl' => url('/'),
-            'locale' => app()->getLocale(),
-        ]) !!};
+    'csrfToken' => csrf_token(),
+    'baseUrl' => url('/'),
+    'locale' => app()->getLocale(),
+]) !!};
     </script>
 
-    <!-- Additional Scripts -->
     @stack('scripts')
 </body>
+
 </html>

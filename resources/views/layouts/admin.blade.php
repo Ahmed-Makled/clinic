@@ -1153,43 +1153,13 @@
 
                         <!-- User Profile -->
                         <div class="dropdown">
-                            <a class="nav-link  d-flex align-items-center gap-2 p-0" href="#" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-link  d-flex align-items-center gap-2 p-0" href="#" role="button"
+                                data-bs-toggle="dropdown">
                                 <img src="{{ auth()->user()->avatar ?? asset('images/user-avatar.avif') }}"
-                                     class="rounded-circle"
-                                     width="32"
-                                     height="32"
-                                     alt="User Avatar">
+                                    class="rounded-circle" width="32" height="32" alt="User Avatar">
                                 <span>{{ auth()->user()->name }}</span>
                             </a>
-                            {{-- <ul class="dropdown-menu dropdown-menu-end">
-                                @if(auth()->user()->hasRole('Admin'))
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('dashboard.index') }}">
-                                            <i class="bi bi-speedometer2 me-2"></i>لوحة التحكم
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                @endif
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('profile') }}">
-                                        <i class="bi bi-person me-2"></i>حسابي
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('appointments.index') }}">
-                                        <i class="bi bi-calendar2-check me-2"></i>مواعيدي
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="bi bi-box-arrow-right me-2"></i>تسجيل الخروج
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul> --}}
+
                         </div>
                     </div>
                 </div>
@@ -1309,7 +1279,7 @@
             return 'الآن';
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Initialize Select2
             $('.select2').select2({
                 theme: 'bootstrap-5'
@@ -1365,7 +1335,7 @@
             }
 
             if (notificationsDropdown) {
-                notificationsButton.addEventListener('click', function() {
+                notificationsButton.addEventListener('click', function () {
                     fetch('/admin/notifications')
                         .then(response => response.json())
                         .then(data => {
@@ -1414,7 +1384,7 @@
 
             // Mark all as read functionality
             if (markAllReadButton) {
-                markAllReadButton.addEventListener('click', function(e) {
+                markAllReadButton.addEventListener('click', function (e) {
                     e.preventDefault();
                     fetch('/admin/notifications/mark-all-read', {
                         method: 'POST',
@@ -1422,11 +1392,11 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         }
                     })
-                    .then(() => {
-                        updateNotificationsCount();
-                        document.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
-                    })
-                    .catch(error => console.error('Error marking notifications as read:', error));
+                        .then(() => {
+                            updateNotificationsCount();
+                            document.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
+                        })
+                        .catch(error => console.error('Error marking notifications as read:', error));
                 });
             }
 
@@ -1508,113 +1478,114 @@
         });
     </script>
 
-    @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // Enhanced Sidebar Toggle
-                const sidebar = document.querySelector('.sidebar');
-                const sidebarCollapseBtn = document.querySelector('.sidebar-collapse-btn');
-                const tooltips = [];
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Enhanced Sidebar Toggle
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarCollapseBtn = document.querySelector('.sidebar-collapse-btn');
+            const tooltips = [];
 
-                // Initialize all tooltips with enhanced options
-                document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-                    tooltips.push(new bootstrap.Tooltip(el, {
-                        delay: { show: 300, hide: 100 },
-                        animation: true,
-                        container: 'body'
-                    }));
+            // Initialize all tooltips with enhanced options
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                tooltips.push(new bootstrap.Tooltip(el, {
+                    delay: { show: 300, hide: 100 },
+                    animation: true,
+                    container: 'body'
+                }));
+            });
+
+            // Handle sidebar collapse
+            if (sidebarCollapseBtn) {
+                sidebarCollapseBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('collapsed');
+
+                    // Store preference
+                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+
+                    // Update collapse button icon
+                    const icon = sidebarCollapseBtn.querySelector('i');
+                    icon.classList.toggle('bi-chevron-right');
+                    icon.classList.toggle('bi-chevron-left');
+
+                    // Handle tooltips
+                    if (sidebar.classList.contains('collapsed')) {
+                        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                            const tooltip = bootstrap.Tooltip.getInstance(el);
+                            if (tooltip) {
+                                tooltip.enable();
+                            }
+                        });
+                    } else {
+                        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                            const tooltip = bootstrap.Tooltip.getInstance(el);
+                            if (tooltip) {
+                                tooltip.disable();
+                            }
+                        });
+                    }
                 });
 
-                // Handle sidebar collapse
-                if (sidebarCollapseBtn) {
-                    sidebarCollapseBtn.addEventListener('click', () => {
-                        sidebar.classList.toggle('collapsed');
-
-                        // Store preference
-                        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-
-                        // Update collapse button icon
-                        const icon = sidebarCollapseBtn.querySelector('i');
-                        icon.classList.toggle('bi-chevron-right');
-                        icon.classList.toggle('bi-chevron-left');
-
-                        // Handle tooltips
-                        if (sidebar.classList.contains('collapsed')) {
-                            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-                                const tooltip = bootstrap.Tooltip.getInstance(el);
-                                if (tooltip) {
-                                    tooltip.enable();
-                                }
-                            });
-                        } else {
-                            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-                                const tooltip = bootstrap.Tooltip.getInstance(el);
-                                if (tooltip) {
-                                    tooltip.disable();
-                                }
-                            });
-                        }
-                    });
-
-                    // Restore sidebar state
-                    if (localStorage.getItem('sidebarCollapsed') === 'true') {
-                        sidebar.classList.add('collapsed');
-                        const icon = sidebarCollapseBtn.querySelector('i');
-                        icon.classList.remove('bi-chevron-right');
-                        icon.classList.add('bi-chevron-left');
-                    }
+                // Restore sidebar state
+                if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                    sidebar.classList.add('collapsed');
+                    const icon = sidebarCollapseBtn.querySelector('i');
+                    icon.classList.remove('bi-chevron-right');
+                    icon.classList.add('bi-chevron-left');
                 }
+            }
 
-                // Enhanced Mobile Navigation
-                const mobileToggle = document.querySelector('.navbar-toggler');
-                const sidebarOverlay = document.querySelector('.sidebar-overlay');
+            // Enhanced Mobile Navigation
+            const mobileToggle = document.querySelector('.navbar-toggler');
+            const sidebarOverlay = document.querySelector('.sidebar-overlay');
 
-                if (mobileToggle && sidebarOverlay) {
-                    mobileToggle.addEventListener('click', () => {
-                        sidebar.classList.toggle('show');
-                        sidebarOverlay.classList.toggle('show');
-                        document.body.classList.toggle('sidebar-active');
-                    });
+            if (mobileToggle && sidebarOverlay) {
+                mobileToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('show');
+                    sidebarOverlay.classList.toggle('show');
+                    document.body.classList.toggle('sidebar-active');
+                });
 
-                    sidebarOverlay.addEventListener('click', () => {
+                sidebarOverlay.addEventListener('click', () => {
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
+                    document.body.classList.remove('sidebar-active');
+                });
+            }
+
+            // Add swipe gesture support for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            document.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+
+            document.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+
+            function handleSwipe() {
+                const SWIPE_THRESHOLD = 50;
+                const diff = touchEndX - touchStartX;
+
+                if (Math.abs(diff) > SWIPE_THRESHOLD) {
+                    if (diff > 0) { // Right swipe
+                        sidebar.classList.add('show');
+                        sidebarOverlay.classList.add('show');
+                        document.body.classList.add('sidebar-active');
+                    } else { // Left swipe
                         sidebar.classList.remove('show');
                         sidebarOverlay.classList.remove('show');
                         document.body.classList.remove('sidebar-active');
-                    });
-                }
-
-                // Add swipe gesture support for mobile
-                let touchStartX = 0;
-                let touchEndX = 0;
-
-                document.addEventListener('touchstart', e => {
-                    touchStartX = e.changedTouches[0].screenX;
-                }, false);
-
-                document.addEventListener('touchend', e => {
-                    touchEndX = e.changedTouches[0].screenX;
-                    handleSwipe();
-                }, false);
-
-                function handleSwipe() {
-                    const SWIPE_THRESHOLD = 50;
-                    const diff = touchEndX - touchStartX;
-
-                    if (Math.abs(diff) > SWIPE_THRESHOLD) {
-                        if (diff > 0) { // Right swipe
-                            sidebar.classList.add('show');
-                            sidebarOverlay.classList.add('show');
-                            document.body.classList.add('sidebar-active');
-                        } else { // Left swipe
-                            sidebar.classList.remove('show');
-                            sidebarOverlay.classList.remove('show');
-                            document.body.classList.remove('sidebar-active');
-                        }
                     }
                 }
-            });
-        </script>
-    @endpush
+            }
+        });
+    </script>
+
+    @stack('scripts')
+
 </body>
 
 </html>

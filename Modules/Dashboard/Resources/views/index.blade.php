@@ -214,20 +214,29 @@
     </div>
 </div>
 
+
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Appointments Chart
-    const appointmentsCtx = document.getElementById('appointmentsChart');
-    if (appointmentsCtx) {
-        new Chart(appointmentsCtx.getContext('2d'), {
+    let appointmentsChart;
+
+    // Function to initialize or update appointments chart
+    function initAppointmentsChart(data) {
+        const appointmentsCtx = document.getElementById('appointmentsChart');
+        if (!appointmentsCtx) return;
+
+        if (appointmentsChart) {
+            appointmentsChart.destroy();
+        }
+
+        appointmentsChart = new Chart(appointmentsCtx.getContext('2d'), {
             type: 'line',
             data: {
-                labels: @json($chartData['labels']),
+                labels: data.labels,
                 datasets: [{
                     label: 'المواعيد',
-                    data: @json($chartData['appointments']),
+                    data: data.appointments,
                     borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'),
                     backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-bg-subtle'),
                     fill: true,
@@ -255,7 +264,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Specialties Chart
+    // Initialize charts with initial data
+    initAppointmentsChart(@json($chartData));
+
+    // Initialize specialties chart
     const specialtiesCtx = document.getElementById('specialtiesChart');
     if (specialtiesCtx) {
         new Chart(specialtiesCtx.getContext('2d'), {
@@ -289,6 +301,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Handle period switching
+    const periodButtons = document.querySelectorAll('[data-period]');
+    periodButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            // Update active state
+            periodButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            // Fetch new data
+            const period = this.dataset.period;
+            try {
+                const response = await fetch(`/dashboard/chart-data?period=${period}`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+                const data = await response.json();
+                initAppointmentsChart(data);
+            } catch (error) {
+                console.error('Error updating chart:', error);
+            }
+        });
+    });
 });</script>
 @endpush
+
+
 @endsection
