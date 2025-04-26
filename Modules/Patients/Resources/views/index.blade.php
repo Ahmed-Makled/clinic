@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-md-3">
                     <select class="form-select select2" id="genderFilter">
-                        <option value="">كل الأنواع</option>
+                        <option value="">الكل</option>
                         <option value="male">ذكر</option>
                         <option value="female">أنثى</option>
                     </select>

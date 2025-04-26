@@ -26,50 +26,61 @@
             <div class="filters mb-4">
                 <div class="row g-3">
                     <div class="col-md-3">
+                        <label for="dateFilter" class="form-label">تاريخ الموعد</label>
                         <select name="date_filter" class="form-select select2" id="dateFilter">
-                            <option value="">كل المواعيد</option>
+                            <option value="">الكل</option>
                             <option value="today" {{ request('date_filter') === 'today' ? 'selected' : '' }}>اليوم</option>
-                            <option value="upcoming" {{ request('date_filter') === 'upcoming' ? 'selected' : '' }}>المواعيد
-                                القادمة</option>
-                            <option value="past" {{ request('date_filter') === 'past' ? 'selected' : '' }}>المواعيد السابقة
-                            </option>
-                            <option value="week" {{ request('date_filter') === 'week' ? 'selected' : '' }}>هذا الأسبوع
-                            </option>
-                            <option value="month" {{ request('date_filter') === 'month' ? 'selected' : '' }}>هذا الشهر
-                            </option>
+                            <option value="upcoming" {{ request('date_filter') === 'upcoming' ? 'selected' : '' }}>المواعيد القادمة</option>
+                            <option value="past" {{ request('date_filter') === 'past' ? 'selected' : '' }}>المواعيد السابقة</option>
+                            <option value="week" {{ request('date_filter') === 'week' ? 'selected' : '' }}>هذا الأسبوع</option>
+                            <option value="month" {{ request('date_filter') === 'month' ? 'selected' : '' }}>هذا الشهر</option>
                         </select>
                     </div>
 
                     <div class="col-md-3">
+                        <label for="statusFilter" class="form-label">حالة الموعد</label>
                         <select name="status_filter" class="form-select select2" id="statusFilter">
-                            <option value="">كل الحالات</option>
-                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>قيد الانتظار
-                            </option>
-                            <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>مؤكد</option>
-                            <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>مكتمل</option>
-                            <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>ملغي</option>
+                            <option value="">الكل</option>
+                            <option value="pending" {{ request('status_filter') === 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
+                            <option value="confirmed" {{ request('status_filter') === 'confirmed' ? 'selected' : '' }}>مؤكد</option>
+                            <option value="completed" {{ request('status_filter') === 'completed' ? 'selected' : '' }}>مكتمل</option>
+                            <option value="cancelled" {{ request('status_filter') === 'cancelled' ? 'selected' : '' }}>ملغي</option>
                         </select>
                     </div>
 
                     <div class="col-md-3">
+                        <label for="doctorFilter" class="form-label">الطبيب المعالج</label>
                         <select name="doctor_filter" class="form-select select2" id="doctorFilter">
-                            <option value="">كل الأطباء</option>
+                            <option value="">الكل</option>
                             @foreach($doctors as $doctor)
-                                <option value="{{ $doctor->id }}" {{ request('doctor_id') == $doctor->id ? 'selected' : '' }}>
+                                <option value="{{ $doctor->id }}" {{ request('doctor_filter') == $doctor->id ? 'selected' : '' }}>
                                     {{ $doctor->name }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-2">
+                        <label for="searchInput" class="form-label">اسم المريض</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="bi bi-search"></i>
                             </span>
-                            <input type="search" class="form-control" id="searchInput" placeholder="ابحث عن مريض..."
-                                value="{{ request('search') }}">
+                            <input type="search"
+                                   class="form-control"
+                                   id="searchInput"
+                                   name="search"
+                                   placeholder="اسم المريض..."
+                                   value="{{ request('search') }}">
                         </div>
+                    </div>
+
+                    <div class="col-md-1">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" class="btn btn-primary w-100 d-flex align-items-center" id="applyFilters">
+                            <i class="bi bi-funnel-fill me-1"></i>
+                            تطبيق
+                        </button>
                     </div>
                 </div>
             </div>
@@ -232,31 +243,43 @@
                     width: '100%'
                 });
 
-                // Filter handling
-                const filterForm = document.createElement('form');
-                filterForm.method = 'GET';
+                // الحصول على عناصر الفلتر
+                const dateFilter = document.getElementById('dateFilter');
+                const statusFilter = document.getElementById('statusFilter');
+                const doctorFilter = document.getElementById('doctorFilter');
+                const searchInput = document.getElementById('searchInput');
+                const applyFiltersBtn = document.getElementById('applyFilters');
 
-                ['dateFilter', 'statusFilter', 'doctorFilter'].forEach(filterId => {
-                    const filter = document.getElementById(filterId);
-                    if (filter) {
-                        filter.addEventListener('change', () => filterForm.submit());
+                // دالة لتحديث الفلاتر
+                function updateFilters() {
+                    const params = new URLSearchParams(window.location.search);
+
+                    // تحديث قيم الفلاتر
+                    if (dateFilter?.value) params.set('date_filter', dateFilter.value);
+                    if (statusFilter?.value) params.set('status_filter', statusFilter.value);
+                    if (doctorFilter?.value) params.set('doctor_filter', doctorFilter.value);
+                    if (searchInput?.value) params.set('search', searchInput.value);
+
+                    // إزالة القيم الفارغة
+                    for (const [key, value] of params.entries()) {
+                        if (!value) params.delete(key);
+                    }
+
+                    // تحديث الرابط مع الفلاتر الجديدة
+                    window.location.href = `${window.location.pathname}?${params.toString()}`;
+                }
+
+                // إضافة مستمع الحدث لزر تطبيق الفلاتر
+                applyFiltersBtn.addEventListener('click', updateFilters);
+
+                // إضافة مستمع حدث للبحث عند الضغط على Enter
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        updateFilters();
                     }
                 });
 
-                // Search handling
-                const searchInput = document.getElementById('searchInput');
-                let searchTimeout;
-
-                if (searchInput) {
-                    searchInput.addEventListener('input', (e) => {
-                        clearTimeout(searchTimeout);
-                        searchTimeout = setTimeout(() => {
-                            filterForm.submit();
-                        }, 500);
-                    });
-                }
-
-                // Initialize tooltips
+                // تفعيل tooltips
                 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
                 tooltipTriggerList.forEach(tooltipTriggerEl => {
                     new bootstrap.Tooltip(tooltipTriggerEl);
@@ -265,11 +288,16 @@
         </script>
 
         <style>
+            .form-label {
+                font-size: 0.875rem;
+                margin-bottom: 0.5rem;
+                color: var(--bs-gray-700);
+            }
+
             .filters {
-                background: var(--background-color);
-                border-radius: var(--border-radius);
-                padding: 1rem;
-                margin: -1rem -1rem 1rem -1rem;
+                background: var(--bs-gray-100);
+                border-radius: 0.5rem;
+                padding: 1.25rem;
             }
 
             .table th {

@@ -36,7 +36,7 @@
                 </div>
                 <div class="col-md-6">
                     <select class="form-select form-select-sm bg-light border-0" id="categoryFilter">
-                        <option value="">كل التخصصات</option>
+                        <option value="">الكل</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach

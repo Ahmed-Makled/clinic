@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-md-6">
                         <select class="form-select" id="roleFilter" aria-label="اختر الدور">
-                            <option value="">كل الأدوار</option>
+                            <option value="">الكل</option>
                             @foreach($roles as $role)
                                 <option value="{{ $role->name }}">{{ $role->name }}</option>
                             @endforeach

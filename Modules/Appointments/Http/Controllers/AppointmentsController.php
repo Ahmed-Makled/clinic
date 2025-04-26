@@ -26,13 +26,19 @@ class AppointmentsController extends Controller
         if ($request->filled('date_filter')) {
             switch ($request->date_filter) {
                 case 'today':
-                    $query->today();
+                    $query->whereDate('scheduled_at', Carbon::today());
                     break;
                 case 'upcoming':
-                    $query->upcoming();
+                    $query->where('scheduled_at', '>=', Carbon::now());
+                    break;
+                case 'past':
+                    $query->where('scheduled_at', '<', Carbon::now());
                     break;
                 case 'week':
-                    $query->whereBetween('scheduled_at', [now(), now()->addWeek()]);
+                    $query->whereBetween('scheduled_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+                case 'month':
+                    $query->whereBetween('scheduled_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
                     break;
                 case 'custom':
                     if ($request->filled('start_date')) {
@@ -46,13 +52,20 @@ class AppointmentsController extends Controller
         }
 
         // تصفية حسب الحالة
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        if ($request->filled('status_filter')) {
+            $query->where('status', $request->status_filter);
         }
 
         // تصفية حسب الطبيب
-        if ($request->filled('doctor_id')) {
-            $query->where('doctor_id', $request->doctor_id);
+        if ($request->filled('doctor_filter')) {
+            $query->where('doctor_id', $request->doctor_filter);
+        }
+
+        // البحث حسب اسم المريض
+        if ($request->filled('search')) {
+            $query->whereHas('patient', function($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->search . '%');
+            });
         }
 
         // الإحصائيات المالية والعامة
@@ -72,8 +85,9 @@ class AppointmentsController extends Controller
             'doctors' => $doctors,
             'stats' => $stats,
             'date_filter' => $request->date_filter,
-            'status_filter' => $request->status,
-            'doctor_filter' => $request->doctor_id,
+            'status_filter' => $request->status_filter,
+            'doctor_filter' => $request->doctor_filter,
+            'search' => $request->search,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'title' => 'المواعيد'
