@@ -116,11 +116,11 @@
                             </td>
                             <td>
                                 @if($patient->patient?->gender == 'male')
-                                    <span class="badge bg-primary bg-opacity-10 text-primary">
+                                    <span class=" text-primary">
                                         <i class="bi bi-gender-male me-1"></i>ذكر
                                     </span>
                                 @else
-                                    <span class="badge bg-pink bg-opacity-10" style="color: #db4488">
+                                    <span class="" style="color: #db4488">
                                         <i class="bi bi-gender-female me-1"></i>أنثى
                                     </span>
                                 @endif
@@ -137,7 +137,7 @@
                                 @endif
                             </td>
                             <td>
-                                <span class="badge bg-info bg-opacity-10 text-info">
+                                <span class="badge bg-secondary bg-opacity-10 text-dark">
                                     {{ $patient->appointments_count ?? 0 }} موعد
                                 </span>
                             </td>
@@ -271,18 +271,16 @@ document.addEventListener('DOMContentLoaded', function() {
             params.delete('sort');
         }
 
-        // تحديث الرابط مع الفلاتر
+        // Update URL with new filters
         window.location.href = `${window.location.pathname}?${params.toString()}`;
     }
 
-    // Add event listener for apply button
-    applyFiltersBtn.addEventListener('click', updateFilters);
+    // Add event listeners
+    applyFiltersBtn?.addEventListener('click', updateFilters);
 
-    // Add event listener for Enter key in search
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            updateFilters();
-        }
+    // Handle Enter key in search
+    searchInput?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') updateFilters();
     });
 
     // Initialize tooltips
@@ -291,101 +289,17 @@ document.addEventListener('DOMContentLoaded', function() {
         new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    const tableRows = document.querySelectorAll('.table tbody tr');
-    const loadingOverlay = document.querySelector('.loading-overlay');
-
-    // Live search functionality with debounce
-    let searchTimeout;
-    searchInput.addEventListener('input', function(e) {
-        clearTimeout(searchTimeout);
-        const searchTerm = e.target.value.toLowerCase();
-
-        searchTimeout = setTimeout(() => {
-            tableRows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        }, 300);
-    });
-
-    // Gender filter functionality
-    genderFilter.addEventListener('change', function(e) {
-        const gender = e.target.value;
-        loadingOverlay.classList.remove('d-none');
-
-        tableRows.forEach(row => {
-            if (!gender) {
-                row.style.display = '';
-                return;
-            }
-
-            const genderBadge = row.querySelector('.badge i');
-            const isMatch = gender === 'male' ?
-                genderBadge?.classList.contains('bi-gender-male') :
-                genderBadge?.classList.contains('bi-gender-female');
-
-            row.style.display = isMatch ? '' : 'none';
-        });
-
-        setTimeout(() => {
-            loadingOverlay.classList.add('d-none');
-        }, 300);
-    });
-
-    // Sort functionality
-    sortFilter.addEventListener('change', function(e) {
-        const sortBy = e.target.value;
-        const tbody = document.querySelector('.table tbody');
-        const rows = Array.from(tableRows);
-        loadingOverlay.classList.remove('d-none');
-
-        rows.sort((a, b) => {
-            switch(sortBy) {
-                case 'name':
-                    const nameA = a.querySelector('.fw-medium').textContent;
-                    const nameB = b.querySelector('.fw-medium').textContent;
-                    return nameA.localeCompare(nameB);
-                case 'appointments':
-                    const apptsA = parseInt(a.querySelector('.badge.bg-info')?.textContent);
-                    const apptsB = parseInt(b.querySelector('.badge.bg-info')?.textContent);
-                    return apptsB - apptsA;
-                case 'oldest':
-                    return a.querySelector('td:first-child').textContent -
-                           b.querySelector('td:first-child').textContent;
-                default: // latest
-                    return b.querySelector('td:first-child').textContent -
-                           a.querySelector('td:first-child').textContent;
-            }
-        });
-
-        rows.forEach(row => tbody.appendChild(row));
-
-        setTimeout(() => {
-            loadingOverlay.classList.add('d-none');
-        }, 300);
-    });
-
-    // Delete confirmation
-    const deleteForms = document.querySelectorAll('.delete-form');
-    deleteForms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const patient = this.closest('tr').querySelector('.fw-medium').textContent.trim();
-            deleteForm.action = this.action;
-            document.querySelector('#deleteModal .patient-name').textContent = patient;
-            deleteModal.show();
-        });
-    });
-
     // Handle delete confirmation
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
     const deleteForm = document.getElementById('deleteForm');
+    const deleteForms = document.querySelectorAll('.delete-form');
+
     deleteForms.forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            const patient = this.closest('tr').querySelector('.fw-medium').textContent;
+            const patientName = this.closest('tr').querySelector('.fw-medium').textContent.trim();
             deleteForm.action = this.action;
-            document.querySelector('#deleteModal .patient-name').textContent = patient;
+            document.querySelector('#deleteModal .patient-name').textContent = patientName;
             deleteModal.show();
         });
     });

@@ -15,9 +15,49 @@ use App\Notifications\PatientDeletedNotification;
 
 class PatientController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $patients = User::role('Patient')->with('patient')->paginate(10);
+        $query = User::role('Patient')->with('patient')->withCount('appointments');
+
+        // Search filter
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%')
+                  ->orWhere('phone_number', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Gender filter
+        if ($request->filled('gender_filter')) {
+            $query->whereHas('patient', function($q) use ($request) {
+                $q->where('gender', $request->gender_filter);
+            });
+        }
+
+        // Sort filter
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'latest':
+                    $query->latest();
+                    break;
+                case 'oldest':
+                    $query->oldest();
+                    break;
+                case 'name':
+                    $query->orderBy('name');
+                    break;
+                case 'appointments':
+                    $query->orderByDesc('appointments_count');
+                    break;
+                default:
+                    $query->latest();
+            }
+        } else {
+            $query->latest();
+        }
+
+        $patients = $query->paginate(10)->withQueryString();
         return view('patients::index', compact('patients'));
     }
 

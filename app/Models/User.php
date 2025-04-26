@@ -49,6 +49,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all appointments for this user through their patient record.
+     */
+    public function appointments()
+    {
+        return $this->hasManyThrough(Appointment::class, Patient::class);
+    }
+
+    /**
      * Check if the user is a patient.
      */
     public function isPatient()
