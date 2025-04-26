@@ -103,7 +103,7 @@
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('specialties.destroy', $specialty) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('specialties.destroy', $specialty) }}" method="POST" class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-action btn-delete delete-confirmation"
@@ -130,6 +130,36 @@
 
         <div class="d-flex justify-content-center mt-4">
             {{ $specialties->links() }}
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal Template -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تأكيد الحذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>هل أنت متأكد من حذف تخصص "<span class="specialty-name fw-bold"></span>"؟</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    لا يمكن التراجع عن هذا الإجراء.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                <form id="deleteForm" action="" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>
+                        حذف
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -209,26 +239,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Delete confirmation using SweetAlert2
-    document.querySelectorAll('.delete-confirmation').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const form = this.closest('form');
+    // Handle delete confirmation
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const deleteForm = document.getElementById('deleteForm');
+    const deleteForms = document.querySelectorAll('.delete-form');
 
-            Swal.fire({
-                title: 'هل أنت متأكد؟',
-                text: 'سيتم حذف هذا التخصص نهائياً',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'نعم، احذف',
-                cancelButtonText: 'إلغاء'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const specialty = this.closest('tr').querySelector('.d-flex.align-items-center div:last-child').textContent.trim();
+            deleteForm.action = this.action;
+            document.querySelector('#deleteModal .specialty-name').textContent = specialty;
+            deleteModal.show();
         });
     });
 });

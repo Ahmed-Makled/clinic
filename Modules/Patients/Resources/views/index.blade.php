@@ -188,6 +188,36 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal Template -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تأكيد الحذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>هل أنت متأكد من حذف المريض "<span class="patient-name fw-bold"></span>"؟</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    لا يمكن التراجع عن هذا الإجراء.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                <form id="deleteForm" action="" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>
+                        حذف
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('styles')
 <style>
     .form-label {
@@ -331,12 +361,23 @@ document.addEventListener('DOMContentLoaded', function() {
     deleteForms.forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            if (confirm('هل أنت متأكد من حذف هذا المريض؟')) {
-                const submitBtn = form.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-                form.submit();
-            }
+            const patient = this.closest('tr').querySelector('.fw-medium').textContent.trim();
+            deleteForm.action = this.action;
+            document.querySelector('#deleteModal .patient-name').textContent = patient;
+            deleteModal.show();
+        });
+    });
+
+    // Handle delete confirmation
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const deleteForm = document.getElementById('deleteForm');
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const patient = this.closest('tr').querySelector('.fw-medium').textContent;
+            deleteForm.action = this.action;
+            document.querySelector('#deleteModal .patient-name').textContent = patient;
+            deleteModal.show();
         });
     });
 });

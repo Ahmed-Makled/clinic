@@ -119,7 +119,7 @@
                                             data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-action btn-delete delete-confirmation"
@@ -149,142 +149,115 @@
             </div>
         </div>
     </div>
+</div>
 
-    @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // Initialize tooltips
-                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-                tooltipTriggerList.forEach(tooltipTriggerEl => {
-                    new bootstrap.Tooltip(tooltipTriggerEl);
-                });
+<!-- Delete Confirmation Modal Template -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تأكيد الحذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>هل أنت متأكد من حذف المستخدم "<span class="user-name fw-bold"></span>"؟</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    لا يمكن التراجع عن هذا الإجراء.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                <form id="deleteForm" action="" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>
+                        حذف
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-                // Initialize Select2 for better select boxes
-                $('#roleFilter').select2({
-                    theme: 'bootstrap-5',
-                    width: '100%',
-                    placeholder: 'اختر الدور'
-                });
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        width: '100%'
+    });
 
-                // Live search functionality
-                const searchInput = document.getElementById('searchInput');
-                const tableRows = document.querySelectorAll('.table tbody tr');
+    // Get filter elements
+    const searchInput = document.getElementById('searchInput');
+    const roleFilter = document.getElementById('roleFilter');
+    const applyFiltersBtn = document.getElementById('applyFilters');
 
-                searchInput.addEventListener('input', function (e) {
-                    const searchTerm = e.target.value.toLowerCase();
+    // Update filters function
+    function updateFilters() {
+        const params = new URLSearchParams(window.location.search);
 
-                    tableRows.forEach(row => {
-                        const text = row.textContent.toLowerCase();
-                        row.style.display = text.includes(searchTerm) ? '' : 'none';
-                    });
-                });
+        if (searchInput?.value.trim()) {
+            params.set('search', searchInput.value.trim());
+        } else {
+            params.delete('search');
+        }
 
-                // Role filter functionality
-                const roleFilter = document.getElementById('roleFilter');
+        if (roleFilter?.value) {
+            params.set('role', roleFilter.value);
+        } else {
+            params.delete('role');
+        }
 
-                roleFilter.addEventListener('change', function (e) {
-                    const roleValue = e.target.value.toLowerCase();
+        window.location.href = `${window.location.pathname}?${params.toString()}`;
+    }
 
-                    tableRows.forEach(row => {
-                        if (!roleValue) {
-                            row.style.display = '';
-                            return;
-                        }
+    // Add event listeners
+    applyFiltersBtn?.addEventListener('click', updateFilters);
+    searchInput?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') updateFilters();
+    });
 
-                        const roles = row.querySelectorAll('td:nth-child(5) .badge');
-                        const hasRole = Array.from(roles).some(role =>
-                            role.textContent.toLowerCase().includes(roleValue)
-                        );
-                        row.style.display = hasRole ? '' : 'none';
-                    });
-                });
+    // Initialize tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
-                // Delete confirmation using SweetAlert2
-                document.querySelectorAll('.delete-confirmation').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const form = this.closest('form');
+    // Handle delete confirmation
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const deleteForm = document.getElementById('deleteForm');
+    const deleteForms = document.querySelectorAll('.delete-form');
 
-                        Swal.fire({
-                            title: 'هل أنت متأكد؟',
-                            text: 'سيتم حذف هذا المستخدم نهائياً',
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#dc3545',
-                            cancelButtonColor: '#6c757d',
-                            confirmButtonText: 'نعم، احذف',
-                            cancelButtonText: 'إلغاء'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                form.submit();
-                            }
-                        });
-                    });
-                });
-            });
-        </script>
-        <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Initialize Select2
-                    $('.select2').select2({
-                        theme: 'bootstrap-5',
-                        width: '100%'
-                    });
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userName = this.closest('tr').querySelector('.fw-medium').textContent.trim();
+            deleteForm.action = this.action;
+            document.querySelector('#deleteModal .user-name').textContent = userName;
+            deleteModal.show();
+        });
+    });
+});
+</script>
+@endpush
 
-                    // Get filter elements
-                    const searchInput = document.getElementById('searchInput');
-                    const roleFilter = document.getElementById('roleFilter');
-                    const applyFiltersBtn = document.getElementById('applyFilters');
+@push('styles')
+    <style>
+            .form-label {
+                font-size: 0.875rem;
+                margin-bottom: 0.5rem;
+                color: var(--bs-gray-700);
+            }
 
-                    // Update filters function
-                    function updateFilters() {
-                        const params = new URLSearchParams(window.location.search);
-
-                        if (searchInput?.value) params.set('search', searchInput.value);
-                        if (roleFilter?.value) params.set('role_filter', roleFilter.value);
-
-                        // Remove empty values
-                        for (const [key, value] of params.entries()) {
-                            if (!value) params.delete(key);
-                        }
-
-                        // Update URL with new filters
-                        window.location.href = `${window.location.pathname}?${params.toString()}`;
-                    }
-
-                    // Add event listener for apply button
-                    applyFiltersBtn.addEventListener('click', updateFilters);
-
-                    // Add event listener for Enter key in search
-                    searchInput.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            updateFilters();
-                        }
-                    });
-
-                    // Initialize tooltips
-                    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-                    tooltipTriggerList.forEach(tooltipTriggerEl => {
-                        new bootstrap.Tooltip(tooltipTriggerEl);
-                    });
-                });
-            </script>
-    @endpush
-
-    @push('styles')
-        <style>
-                .form-label {
-                    font-size: 0.875rem;
-                    margin-bottom: 0.5rem;
-                    color: var(--bs-gray-700);
-                }
-
-                .filters {
-                    background: var(--bs-gray-100);
-                    border-radius: 0.5rem;
-                    padding: 1.25rem;
-                }
-            </style>
-    @endpush
+            .filters {
+                background: var(--bs-gray-100);
+                border-radius: 0.5rem;
+                padding: 1.25rem;
+            }
+        </style>
+@endpush
 
 @endsection

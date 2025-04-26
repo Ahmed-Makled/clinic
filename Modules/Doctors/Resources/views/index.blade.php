@@ -201,6 +201,36 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal Template -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تأكيد الحذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>هل أنت متأكد من حذف الطبيب "<span class="doctor-name fw-bold"></span>"؟</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    لا يمكن التراجع عن هذا الإجراء.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                <form id="deleteForm" action="" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>
+                        حذف
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('styles')
 <style>
 /* Refined Typography */
@@ -311,7 +341,7 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize tooltips with a slight delay
+            // Initialize tooltips
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             tooltipTriggerList.forEach(tooltipTriggerEl => {
                 new bootstrap.Tooltip(tooltipTriggerEl, {
@@ -335,21 +365,21 @@
             function updateFilters() {
                 const params = new URLSearchParams(window.location.search);
 
-                // Only add search parameter if it has a value
+                // Handle search
                 if (searchInput?.value.trim()) {
                     params.set('search', searchInput.value.trim());
                 } else {
                     params.delete('search');
                 }
 
-                // Only add category filter if not "All"
+                // Handle category filter
                 if (categoryFilter?.value) {
                     params.set('category_filter', categoryFilter.value);
                 } else {
                     params.delete('category_filter');
                 }
 
-                // Only add status filter if not "All"
+                // Handle status filter
                 if (statusFilter?.value) {
                     params.set('status_filter', statusFilter.value);
                 } else {
@@ -361,33 +391,31 @@
             }
 
             // Add event listener for apply button
-            applyFiltersBtn.addEventListener('click', updateFilters);
+            applyFiltersBtn?.addEventListener('click', updateFilters);
 
             // Add event listener for Enter key in search
-            searchInput.addEventListener('keypress', function(e) {
+            searchInput?.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     updateFilters();
                 }
             });
 
-            // Delete confirmation with enhanced UX
+            // Handle delete confirmation
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            const deleteForm = document.getElementById('deleteForm');
             const deleteForms = document.querySelectorAll('.delete-form');
+
             deleteForms.forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
-
-                    const doctor = this.closest('tr').querySelector('.fw-medium').textContent;
-
-                    if (confirm(`هل أنت متأكد من حذف الطبيب "${doctor}"؟`)) {
-                        const submitBtn = form.querySelector('button[type="submit"]');
-                        submitBtn.disabled = true;
-                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-                        form.submit();
-                    }
+                    const doctor = this.closest('tr').querySelector('.fw-medium').textContent.trim();
+                    deleteForm.action = this.action;
+                    document.querySelector('#deleteModal .doctor-name').textContent = doctor;
+                    deleteModal.show();
                 });
             });
         });
     </script>
-    @endpush
+@endpush
 
 @endsection
