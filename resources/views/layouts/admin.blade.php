@@ -1157,18 +1157,6 @@
             return icons[type] || { icon: 'bi-bell', class: 'primary' };
         }
 
-        function formatTimeAgo(date) {
-            const now = new Date();
-            const diff = now - new Date(date);
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-
-            if (days > 0) return `منذ ${days} يوم`;
-            if (hours > 0) return `منذ ${hours} ساعة`;
-            if (minutes > 0) return `منذ ${minutes} دقيقة`;
-            return 'الآن';
-        }
 
         document.addEventListener('DOMContentLoaded', function () {
             // Initialize Select2
@@ -1252,7 +1240,7 @@
                                             </div>
                                             <div class="flex-grow-1 ms-3">
                                                 <p class="mb-1">${notification.data.message}</p>
-                                                <small class="text-muted">${formatTimeAgo(notification.created_at)}</small>
+                                                <small class="text-muted">${notification.created_at}</small>
                                             </div>
                                         </div>
                                     </div>
