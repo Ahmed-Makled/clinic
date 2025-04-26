@@ -2,9 +2,20 @@
 
 @section('title', 'التخصصات')
 
+@section('header_icon')
+<i class="bi bi-heart-pulse text-primary me-2 fs-5"></i>
+@endsection
+
+@section('breadcrumbs')
+<li class="breadcrumb-item">
+    <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
+</li>
+<li class="breadcrumb-item active">التخصصات</li>
+@endsection
+
 @section('actions')
-    <a href="{{ route('specialties.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-lg me-1"></i> إضافة تخصص جديد
+    <a href="{{ route('specialties.create') }}" class="btn btn-primary btn-sm px-3">
+        <i class="bi bi-plus-lg me-1"></i> إضافة
     </a>
 @endsection
 

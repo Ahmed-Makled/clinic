@@ -58,8 +58,8 @@
                                     <label class="mb-3 text-muted">فى محافظة</label>
                                     <select name="governorate" id="governorate" class="form-select" data-icon="bi-geo-alt" data-color="#198754">
                                         <option value="all">كل المحافظات</option>
-                                        @foreach(config('governorates') as $key => $value)
-                                        <option value="{{ $key }}" data-icon="bi-pin-map">{{ $value }}</option>
+                                        @foreach(\App\Models\Governorate::all() as $governorate)
+                                            <option value="{{ $governorate->id }}" data-icon="bi-pin-map">{{ $governorate->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

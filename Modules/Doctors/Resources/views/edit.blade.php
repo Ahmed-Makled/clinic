@@ -1,5 +1,19 @@
 @extends('layouts.admin')
 
+@section('header_icon')
+<i class="bi bi-person-badge text-primary me-2 fs-5"></i>
+@endsection
+
+@section('breadcrumbs')
+<li class="breadcrumb-item">
+    <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
+</li>
+<li class="breadcrumb-item">
+    <a href="{{ route('doctors.index') }}" class="text-decoration-none">الأطباء</a>
+</li>
+<li class="breadcrumb-item active">تعديل طبيب</li>
+@endsection
+
 @section('content')
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
@@ -75,7 +89,7 @@
 
                         <!-- المعلومات المهنية -->
                         <div class="section-divider mb-4 mt-4">
-                            <h6 class="section-title">المعلومات المهنية</h6>
+                            <h6 class="section-title text-primary fw-bold">المعلومات المهنية</h6>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">

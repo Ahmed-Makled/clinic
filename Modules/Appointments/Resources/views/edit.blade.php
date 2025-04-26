@@ -2,6 +2,20 @@
 
 @section('title', 'تعديل موعد')
 
+@section('header_icon')
+<i class="bi bi-calendar2-check text-primary me-2 fs-5"></i>
+@endsection
+
+@section('breadcrumbs')
+<li class="breadcrumb-item">
+    <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
+</li>
+<li class="breadcrumb-item">
+    <a href="{{ route('appointments.index') }}" class="text-decoration-none">المواعيد</a>
+</li>
+<li class="breadcrumb-item active">تعديل موعد</li>
+@endsection
+
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="card shadow-sm">

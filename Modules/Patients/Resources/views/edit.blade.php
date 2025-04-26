@@ -1,5 +1,19 @@
 @extends('layouts.admin')
 
+@section('header_icon')
+<i class="bi bi-person-vcard text-primary me-2 fs-5"></i>
+@endsection
+
+@section('breadcrumbs')
+<li class="breadcrumb-item">
+    <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
+</li>
+<li class="breadcrumb-item">
+    <a href="{{ route('patients.index') }}" class="text-decoration-none">المرضى</a>
+</li>
+<li class="breadcrumb-item active">تعديل مريض</li>
+@endsection
+
 @section('title', 'تعديل بيانات المريض')
 
 @section('content')

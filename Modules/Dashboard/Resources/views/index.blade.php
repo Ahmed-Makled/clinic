@@ -2,6 +2,14 @@
 
 @section('title', 'لوحة التحكم')
 
+@section('header_icon')
+<i class="bi bi-speedometer2 text-primary me-2 fs-5"></i>
+@endsection
+
+@section('breadcrumbs')
+<li class="breadcrumb-item active">لوحة التحكم</li>
+@endsection
+
 @section('content')
 <!-- Statistics Cards -->
 <div class="row g-3 mb-4">

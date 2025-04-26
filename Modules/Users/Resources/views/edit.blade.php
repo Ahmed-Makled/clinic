@@ -1,5 +1,19 @@
 @extends('layouts.admin')
 
+@section('header_icon')
+<i class="bi bi-people text-primary me-2 fs-5"></i>
+@endsection
+
+@section('breadcrumbs')
+<li class="breadcrumb-item">
+    <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
+</li>
+<li class="breadcrumb-item">
+    <a href="{{ route('users.index') }}" class="text-decoration-none">المستخدمين</a>
+</li>
+<li class="breadcrumb-item active">تعديل مستخدم</li>
+@endsection
+
 @section('content')
 <div class="row justify-content-center">
     <div class="col-lg-8">

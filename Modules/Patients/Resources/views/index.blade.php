@@ -2,9 +2,20 @@
 
 @section('title', 'إدارة المرضى')
 
+@section('header_icon')
+<i class="bi bi-person-vcard text-primary me-2 fs-5"></i>
+@endsection
+
+@section('breadcrumbs')
+<li class="breadcrumb-item">
+    <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
+</li>
+<li class="breadcrumb-item active">المرضى</li>
+@endsection
+
 @section('actions')
-    <a href="{{ route('patients.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-lg me-1"></i> إضافة مريض جديد
+    <a href="{{ route('patients.create') }}" class="btn btn-primary btn-sm px-3">
+        <i class="bi bi-plus-lg me-1"></i> إضافة
     </a>
 @endsection
 

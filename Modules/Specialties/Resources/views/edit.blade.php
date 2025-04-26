@@ -2,6 +2,20 @@
 
 @section('title', 'تعديل التخصص')
 
+@section('header_icon')
+<i class="bi bi-heart-pulse text-primary me-2 fs-5"></i>
+@endsection
+
+@section('breadcrumbs')
+<li class="breadcrumb-item">
+    <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
+</li>
+<li class="breadcrumb-item">
+    <a href="{{ route('specialties.index') }}" class="text-decoration-none">التخصصات</a>
+</li>
+<li class="breadcrumb-item active">تعديل تخصص</li>
+@endsection
+
 @section('content')
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
