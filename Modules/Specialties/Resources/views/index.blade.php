@@ -29,6 +29,7 @@
                         <th scope="col">اسم التخصص</th>
                         <th scope="col">عدد الأطباء</th>
                         <th scope="col">الوصف</th>
+                        <th scope="col">الحالة</th>
                         <th scope="col">الإجراءات</th>
                     </tr>
                 </thead>
@@ -56,6 +57,20 @@
                                 </span>
                             </td>
                             <td>
+
+                                @if($specialty->status)
+                                <span class="status-badge active">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    نشط
+                                </span>
+                            @else
+                                <span class="status-badge inactive">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    غير نشط
+                                </span>
+                            @endif
+                            </td>
+                            <td>
                                 <div class="action-buttons">
                                     <a href="{{ route('specialties.edit', $specialty) }}" class="btn-action btn-edit"
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل">
@@ -74,7 +89,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-5">
+                            <td colspan="6" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="bi bi-list-check display-6 d-block mb-3"></i>
                                     <p class="h5">لا توجد تخصصات</p>

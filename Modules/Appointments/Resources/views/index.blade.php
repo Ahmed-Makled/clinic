@@ -89,10 +89,14 @@
                             </td>
                             <td>{{ number_format($appointment->fees, 2) }} ج.م</td>
                             <td>
+
+
+
+
                                 @if($appointment->is_paid)
-                                    <span class="badge bg-success">مدفوع</span>
+                                    <span class="status-badge active">مدفوع</span>
                                 @else
-                                    <span class="badge bg-warning text-dark">غير مدفوع</span>
+                                    <span class="status-badge inactive">غير مدفوع</span>
                                 @endif
                             </td>
                             <td>

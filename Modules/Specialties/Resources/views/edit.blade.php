@@ -41,35 +41,10 @@
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label for="parent_id" class="form-label">التخصص الرئيسي</label>
-                                    <select name="parent_id" id="parent_id" class="form-select" data-icon="bi-diagram-3" data-color="#0d6efd">
-                                        <option value="">اختر التخصص الرئيسي</option>
-                                        @foreach($specialties as $parentSpecialty)
-                                            @if($parentSpecialty->id !== $specialty->id)
-                                                <option value="{{ $parentSpecialty->id }}"
-                                                        data-icon="bi-folder"
-                                                        {{ $specialty->parent_id == $parentSpecialty->id ? 'selected' : '' }}>
-                                                    {{ $parentSpecialty->name }}
-                                                </option>
-                                            @endif
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="type" class="form-label">نوع التخصص</label>
-                                    <select name="type" id="type" class="form-select" data-icon="bi-tag" data-color="#198754" required>
-                                        <option value="general" data-icon="bi-stars" {{ $specialty->type == 'general' ? 'selected' : '' }}>عام</option>
-                                        <option value="specialized" data-icon="bi-bookmark-star" {{ $specialty->type == 'specialized' ? 'selected' : '' }}>متخصص</option>
-                                        <option value="subspecialty" data-icon="bi-diagram-2" {{ $specialty->type == 'subspecialty' ? 'selected' : '' }}>تخصص فرعي</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group mb-3">
                                     <label for="status" class="form-label">الحالة</label>
-                                    <select name="status" id="status" class="form-select" data-icon="bi-toggle2-on" data-color="#0dcaf0" required>
-                                        <option value="active" data-icon="bi-check-circle" {{ $specialty->status == 'active' ? 'selected' : '' }}>نشط</option>
-                                        <option value="inactive" data-icon="bi-x-circle" {{ $specialty->status == 'inactive' ? 'selected' : '' }}>غير نشط</option>
+                                    <select name="status" id="status" class="form-select" required>
+                                        <option value="active" {{ $specialty->status == 'active' ? 'selected' : '' }}>نشط</option>
+                                        <option value="inactive" {{ $specialty->status == 'inactive' ? 'selected' : '' }}>غير نشط</option>
                                     </select>
                                 </div>
                             </div>
@@ -84,5 +59,4 @@
             </div>
         </div>
     </div>
-
 @endsection

@@ -5,7 +5,6 @@ namespace Modules\Specialties\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class SpecialtyController extends Controller
 {
@@ -29,7 +28,8 @@ class SpecialtyController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'status' => 'required|in:active,inactive'
         ]);
 
         Category::create($validated);
@@ -50,7 +50,8 @@ class SpecialtyController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $specialty->id,
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'status' => 'required|in:active,inactive'
         ]);
 
         $specialty->update($validated);

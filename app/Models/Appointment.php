@@ -39,9 +39,9 @@ class Appointment extends Model
      * The status colors for UI display.
      */
     const STATUS_COLORS = [
-        'scheduled' => 'primary',
-        'completed' => 'success',
-        'cancelled' => 'danger'
+        'scheduled' => 'warning bg-opacity-10 text-warning',    // خلفية صفراء فاتحة مع نص برتقالي
+        'completed' => 'success bg-opacity-10 text-success',    // خلفية خضراء فاتحة مع نص أخضر
+        'cancelled' => 'secondary bg-opacity-10 text-secondary' // خلفية رمادية فاتحة مع نص رمادي
     ];
 
     /**
@@ -132,12 +132,7 @@ class Appointment extends Model
      */
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
-            'scheduled' => 'info',
-            'completed' => 'success',
-            'cancelled' => 'danger',
-            default => 'secondary'
-        };
+        return static::STATUS_COLORS[$this->status] ?? 'secondary';
     }
 
     /**
