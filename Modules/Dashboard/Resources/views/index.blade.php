@@ -5,6 +5,7 @@
 @section('content')
 <!-- Statistics Cards -->
 <div class="row g-3 mb-4">
+    <!-- Doctors Stats -->
     <div class="col-md-6 col-lg-3">
         <div class="stat-card">
             <div class="card-body">
@@ -13,10 +14,12 @@
                 </div>
                 <h3 class="stat-value">{{ $stats['doctors'] }}</h3>
                 <p class="stat-label">الأطباء</p>
+                <small class="text-muted">{{ $stats['active_doctors'] }} طبيب نشط</small>
             </div>
         </div>
     </div>
 
+    <!-- Patients Stats -->
     <div class="col-md-6 col-lg-3">
         <div class="stat-card success">
             <div class="card-body">
@@ -25,10 +28,19 @@
                 </div>
                 <h3 class="stat-value">{{ $stats['patients'] }}</h3>
                 <p class="stat-label">المرضى</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        <i class="bi bi-gender-male"></i> {{ $stats['male_patients'] }}
+                    </small>
+                    <small class="text-muted">
+                        <i class="bi bi-gender-female"></i> {{ $stats['female_patients'] }}
+                    </small>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Financial Stats -->
     <div class="col-md-6 col-lg-3">
         <div class="stat-card warning">
             <div class="card-body">
@@ -37,10 +49,19 @@
                 </div>
                 <h3 class="stat-value">{{ number_format($stats['total_fees']) }} ج.م</h3>
                 <p class="stat-label">إجمالي الرسوم</p>
+                <div class="d-flex justify-content-between">
+                    <small class="text-success">
+                        <i class="bi bi-check-circle"></i> {{ number_format($stats['paid_fees']) }} ج.م
+                    </small>
+                    <small class="text-danger">
+                        <i class="bi bi-clock"></i> {{ number_format($stats['unpaid_fees']) }} ج.م
+                    </small>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Appointments Stats -->
     <div class="col-md-6 col-lg-3">
         <div class="stat-card info">
             <div class="card-body">
@@ -49,6 +70,7 @@
                 </div>
                 <h3 class="stat-value">{{ $stats['today_appointments'] }}</h3>
                 <p class="stat-label">مواعيد اليوم</p>
+                <small class="text-muted">{{ $stats['upcoming_appointments'] }} موعد قادم</small>
             </div>
         </div>
     </div>
@@ -91,7 +113,7 @@
     </div>
 </div>
 
-<!-- Recent Activity and Quick Stats -->
+<!-- Activity and Performance -->
 <div class="row g-3">
     <!-- Recent Activity -->
     <div class="col-md-8">
@@ -137,43 +159,46 @@
         </div>
     </div>
 
-    <!-- Quick Stats -->
+    <!-- Performance Stats -->
     <div class="col-md-4">
         <div class="card shadow-sm">
             <div class="card-header bg-transparent">
                 <h5 class="mb-0">
                     <i class="bi bi-lightning-charge me-2"></i>
-                    إحصائيات سريعة
+                    مؤشرات الأداء
                 </h5>
             </div>
             <div class="card-body">
+                <!-- Completed Appointments Rate -->
                 <div class="quick-stat mb-4">
                     <div class="d-flex justify-content-between mb-1">
                         <span>نسبة المواعيد المكتملة</span>
-                        <span class="text-success">75%</span>
+                        <span class="text-success">{{ $stats['completed_rate'] }}%</span>
                     </div>
                     <div class="progress" style="height: 6px;">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ $stats['completed_rate'] }}%"></div>
                     </div>
                 </div>
 
+                <!-- Payment Collection Rate -->
                 <div class="quick-stat mb-4">
                     <div class="d-flex justify-content-between mb-1">
-                        <span>نسبة الرسوم المحصلة</span>
-                        <span class="text-primary">80%</span>
+                        <span>نسبة تحصيل الرسوم</span>
+                        <span class="text-primary">{{ $stats['payment_rate'] }}%</span>
                     </div>
                     <div class="progress" style="height: 6px;">
-                        <div class="progress-bar" role="progressbar" style="width: 80%"></div>
+                        <div class="progress-bar" role="progressbar" style="width: {{ $stats['payment_rate'] }}%"></div>
                     </div>
                 </div>
 
+                <!-- Today's Progress -->
                 <div class="quick-stat">
                     <div class="d-flex justify-content-between mb-1">
-                        <span>رضا المرضى</span>
-                        <span class="text-warning">90%</span>
+                        <span>إنجاز مواعيد اليوم</span>
+                        <span class="text-warning">{{ $stats['today_completion_rate'] }}%</span>
                     </div>
                     <div class="progress" style="height: 6px;">
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: 90%"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ $stats['today_completion_rate'] }}%"></div>
                     </div>
                 </div>
             </div>

@@ -9,56 +9,6 @@
 @endsection
 
 @section('content')
-<div class="row g-3 mb-4">
-    <div class="col-md-6 col-lg-3">
-        <div class="stat-card">
-            <div class="card-body">
-                <div class="stat-icon bg-primary-subtle text-primary">
-                    <i class="bi bi-person-badge"></i>
-                </div>
-                <h3 class="stat-value">{{ $doctors->total() }}</h3>
-                <p class="stat-label">إجمالي الأطباء</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-3">
-        <div class="stat-card success">
-            <div class="card-body">
-                <div class="stat-icon bg-success-subtle text-success">
-                    <i class="bi bi-check-circle"></i>
-                </div>
-                <h3 class="stat-value">{{ $doctors->where('status', 1)->count() }}</h3>
-                <p class="stat-label">الأطباء النشطون</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-3">
-        <div class="stat-card warning">
-            <div class="card-body">
-                <div class="stat-icon bg-warning-subtle text-warning">
-                    <i class="bi bi-calendar-check"></i>
-                </div>
-                <h3 class="stat-value">{{ \App\Models\Appointment::whereDate('scheduled_at', today())->count() }}</h3>
-                <p class="stat-label">مواعيد اليوم</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-3">
-        <div class="stat-card info">
-            <div class="card-body">
-                <div class="stat-icon bg-info-subtle text-info">
-                    <i class="bi bi-list-check"></i>
-                </div>
-                <h3 class="stat-value">{{ \App\Models\Category::count() }}</h3>
-                <p class="stat-label">التخصصات</p>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="card shadow-sm">
     <div class="card-body position-relative">
         <div class="mb-4">
