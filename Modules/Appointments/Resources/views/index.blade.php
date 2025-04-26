@@ -104,7 +104,7 @@
                                     {{ $appointment->status_text }}
                                 </span>
                                 @if($appointment->is_important)
-                                    <span class="badge bg-warning text-dark">
+                                    <span class="badge bg-danger text-white">
                                         <i class="bi bi-star-fill"></i>
                                     </span>
                                 @endif

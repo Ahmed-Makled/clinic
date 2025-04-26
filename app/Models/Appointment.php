@@ -39,9 +39,9 @@ class Appointment extends Model
      * The status colors for UI display.
      */
     const STATUS_COLORS = [
-        'scheduled' => 'warning bg-opacity-10 text-warning',    // خلفية صفراء فاتحة مع نص برتقالي
-        'completed' => 'success bg-opacity-10 text-success',    // خلفية خضراء فاتحة مع نص أخضر
-        'cancelled' => 'secondary bg-opacity-10 text-secondary' // خلفية رمادية فاتحة مع نص رمادي
+        'scheduled' => 'warning bg-subtle text-warning-emphasis',   // لون برتقالي فاتح للانتظار مع نص داكن
+        'completed' => 'success bg-subtle text-success-emphasis',   // لون أخضر فاتح للمكتمل مع نص داكن
+        'cancelled' => 'danger bg-subtle text-danger-emphasis'      // لون أحمر فاتح للملغي مع نص داكن
     ];
 
     /**
