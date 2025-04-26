@@ -143,15 +143,10 @@ class DoctorsController extends Controller
             'waiting_time' => 'nullable|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'gender' => 'required|in:ذكر,انثي',
-            'status' => 'nullable|boolean',
             'address' => 'nullable|string',
             'governorate_id' => 'required|exists:governorates,id',
             'city_id' => 'required|exists:cities,id',
         ]);
-
-        if (!isset($validated['status'])) {
-            $validated['status'] = false;
-        }
 
         // Update user record if it exists
         if ($doctor->user_id) {
@@ -167,12 +162,15 @@ class DoctorsController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image
+            // Delete old image first
             $doctor->deleteImage();
-
             // Upload and save new image
             $doctor->image = Doctor::uploadImage($request->file('image'));
+            $doctor->save();
         }
+
+        // Handle status field - convert checkbox value to boolean
+        $status = $request->has('status');
 
         // Update doctor record
         $doctor->update([
@@ -182,7 +180,7 @@ class DoctorsController extends Controller
             'bio' => $validated['bio'] ?? null,
             'description' => $validated['description'] ?? null,
             'gender' => $validated['gender'],
-            'status' => $validated['status'] ?? false,
+            'status' => $status,
             'address' => $validated['address'] ?? null,
             'governorate_id' => $validated['governorate_id'],
             'city_id' => $validated['city_id'],

@@ -150,11 +150,11 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                @if($doctor->image && Storage::exists($doctor->image))
-                                    <div class="current-image">
+                                @if($doctor->image)
+                                    <div class="current-image mb-3">
                                         <img src="{{ Storage::url($doctor->image) }}"
-                                        onerror="this.onerror=null; this.src='{{ asset('images/default-doctor.png') }}';"
-                                            alt="الصورة الحالية" class="mb-2">
+                                            onerror="this.src='{{ asset('images/default-doctor.png') }}'"
+                                            alt="الصورة الحالية" class="mb-2" style="max-width: 200px; border-radius: 8px;">
                                         <div class="text-muted">الصورة الحالية</div>
                                     </div>
                                 @endif
@@ -171,7 +171,7 @@
                                     </div>
 
                                     <div class="image-preview d-none" id="imagePreview">
-                                        <img src="#" alt="معاينة الصورة">
+                                        <img src="#" alt="معاينة الصورة" style="max-width: 200px; border-radius: 8px;">
                                         <span class="remove-image" title="حذف الصورة">&times;</span>
                                     </div>
 

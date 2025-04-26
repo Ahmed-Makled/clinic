@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="doctor-page pt-5 mt-5">
     <div class="container">
         <div class="row">
@@ -31,6 +32,11 @@
                         @for ($i = 0; $i < 5; $i++)
                             <i class="uil-star" style="color: {{ $i < $doctor->rating ? '#ffbd45' : '#aaa' }}"></i>
                         @endfor
+                    </div>
+                    <div class="mt-3">
+                        @foreach($doctor->categories as $category)
+                            <span class="badge category-badge-{{ $loop->index % 6 }}">{{ $category->name }}</span>
+                        @endforeach
                     </div>
                 </div>
             </div>

@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+
+
     <div class="container">
         @if (session('message'))
             <div class="alert alert-info">
@@ -117,6 +119,10 @@
                                 </p>
                                 <p>{{ Str::limit($doctor->description ?? '', 150) }}</p>
                             </div>
+
+                            @foreach($doctor->categories as $category)
+                                <span class="badge category-badge-{{ $category->id % 6 }}">{{ $category->name }}</span>
+                            @endforeach
 
                             <a href="{{ route('doctors.show', $doctor) }}" class="btn btn-primary rounded-pill px-3">
                                 إقرأ المزيد <i class="uil-angle-left"></i>

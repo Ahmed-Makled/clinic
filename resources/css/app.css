@@ -138,7 +138,7 @@ input[type=email], input[type=number], input[type=tel], input[type=url]{
     left: -35px;
     top: 13px;
     width: 125px;
-    transform: rotate(-45deg)
+
 }
 
 .sidebar ul li i {

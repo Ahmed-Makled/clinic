@@ -42,10 +42,12 @@
                         <th scope="col">التخصصات</th>
                         <th scope="col">البريد الإلكتروني</th>
                         <th scope="col">رقم الهاتف</th>
+                        <th scope="col">الحاله</th>
                         <th scope="col">الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
+
                     @forelse($doctors as $doctor)
                         <tr>
                             <td>{{ $doctor->id }}</td>
@@ -69,7 +71,7 @@
                             </td>
                             <td>
                                 @foreach($doctor->categories as $category)
-                                    <span class="badge bg-info bg-opacity-10 text-info"
+                                    <span class="badge category-badge-{{ $category->id % 6 }}"
                                           data-id="{{ $category->id }}">
                                         {{ $category->name }}
                                     </span>
@@ -77,6 +79,20 @@
                             </td>
                             <td>{{ $doctor->email }}</td>
                             <td>{{ $doctor->phone }}</td>
+                            <td>
+                                @if($doctor->status)
+                                <span class="status-badge active">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    نشط
+                                </span>
+                            @else
+                                <span class="status-badge inactive">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    غير نشط
+                                </span>
+                            @endif
+                            </td>
+
                             <td>
                                 <div class="action-buttons">
                                     <a href="{{ route('doctors.show', $doctor) }}" class="btn-action btn-view"
@@ -191,6 +207,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<style>
+
+</style>
 @endpush
 
 
