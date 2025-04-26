@@ -778,38 +778,6 @@
             color: var(--danger-color);
         }
 
-        /* Chart Containers */
-        .chart-container {
-            position: relative;
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            height: 100%;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chart-container .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .chart-container .chart-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin: 0;
-        }
-
-        .chart-container .chart-body {
-            flex-grow: 1;
-            position: relative;
-        }
-
-
         /* Animation Keyframes */
         @keyframes spinner {
             to {
@@ -972,6 +940,8 @@
             color: var(--primary-color);
         }
     </style>
+    <!-- Additional CSS -->
+    @stack('styles')
 </head>
 
 <body>
@@ -1211,7 +1181,7 @@
                 </div>
             @endif
 
-            <div class="content px-3">
+            <div class="content px-3 pb-3">
                 @yield('content')
             </div>
         </div>
