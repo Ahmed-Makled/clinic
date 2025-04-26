@@ -22,6 +22,26 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 
 Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
 
+// Notifications Routes
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+    Route::get('/notifications', function () {
+        return response()->json([
+            'notifications' => auth()->user()->notifications()->limit(10)->get()
+        ]);
+    });
+
+    Route::get('/notifications/count', function () {
+        return response()->json([
+            'count' => auth()->user()->unreadNotifications()->count()
+        ]);
+    });
+
+    Route::post('/notifications/mark-all-read', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return response()->json(['success' => true]);
+    });
+});
+
 // Temporary diagnostic route to check roles
 Route::get('/check-roles', function () {
     return [

@@ -9,11 +9,68 @@
 @endsection
 
 @section('content')
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="card-body">
+                <div class="stat-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h3 class="stat-value">{{ $patients->total() }}</h3>
+                <p class="stat-label">إجمالي المرضى</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card success">
+            <div class="card-body">
+                <div class="stat-icon bg-success-subtle text-success">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <h3 class="stat-value">{{ \App\Models\Appointment::count() }}</h3>
+                <p class="stat-label">إجمالي المواعيد</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card warning">
+            <div class="card-body">
+                <div class="stat-icon bg-warning-subtle text-warning">
+                    <i class="bi bi-gender-ambiguous"></i>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-gender-male me-1"></i>{{ $maleCount ?? 0 }}
+                    </span>
+                    <span class="badge bg-pink bg-opacity-10" style="color: #db4488">
+                        <i class="bi bi-gender-female me-1"></i>{{ $femaleCount ?? 0 }}
+                    </span>
+                </div>
+                <p class="stat-label">توزيع الجنس</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card info">
+            <div class="card-body">
+                <div class="stat-icon bg-info-subtle text-info">
+                    <i class="bi bi-calendar-week"></i>
+                </div>
+                <h3 class="stat-value">{{ \App\Models\Appointment::whereDate('scheduled_at', today())->count() }}</h3>
+                <p class="stat-label">مواعيد اليوم</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card shadow-sm">
-    <div class="card-body">
+    <div class="card-body position-relative">
         <div class="mb-4">
             <div class="row g-3">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-search"></i></span>
                         <input type="search"
@@ -22,24 +79,27 @@
                                placeholder="ابحث عن مريض...">
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-
-                        <div class="gender-filter-wrapper">
-                            <select class="form-select select2-gender" id="genderFilter" aria-label="اختر النوع">
-                                <option value="">جميع الأنواع</option>
-                                <option value="male" data-icon="bi-gender-male" data-color="#0d6efd">ذكر</option>
-                                <option value="female" data-icon="bi-gender-female" data-color="#0dcaf0">أنثى</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="col-md-3">
+                    <select class="form-select select2" id="genderFilter">
+                        <option value="">كل الأنواع</option>
+                        <option value="male">ذكر</option>
+                        <option value="female">أنثى</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select select2" id="sortFilter">
+                        <option value="latest">الأحدث</option>
+                        <option value="oldest">الأقدم</option>
+                        <option value="name">الاسم</option>
+                        <option value="appointments">عدد المواعيد</option>
+                    </select>
                 </div>
             </div>
         </div>
 
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
+            <table class="table table-hover align-middle data-table">
+                <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">الاسم</th>
@@ -58,21 +118,38 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
-                                         style="width: 32px; height: 32px">
+                                         style="width: 40px; height: 40px">
                                         <i class="bi bi-person text-secondary"></i>
                                     </div>
-                                    <div>{{ $patient->name }}</div>
+                                    <div>
+                                        <div class="fw-medium">{{ $patient->name }}</div>
+                                        @if($patient->patient?->blood_type)
+                                            <span class="badge bg-danger bg-opacity-10 text-danger">
+                                                <i class="bi bi-droplet-fill me-1"></i>{{ $patient->patient->blood_type }}
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
                             </td>
-                            <td>{{ $patient->email }}</td>
-                            <td>{{ $patient->phone_number }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-envelope text-muted me-2"></i>
+                                    {{ $patient->email }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-phone text-muted me-2"></i>
+                                    {{ $patient->phone_number }}
+                                </div>
+                            </td>
                             <td>
                                 @if($patient->patient?->gender == 'male')
                                     <span class="badge bg-primary bg-opacity-10 text-primary">
                                         <i class="bi bi-gender-male me-1"></i>ذكر
                                     </span>
                                 @else
-                                    <span class="badge bg-pink bg-opacity-10 text-pink" style="background-color: rgba(219, 68, 136, 0.1) !important; color: #db4488 !important;">
+                                    <span class="badge bg-pink bg-opacity-10" style="color: #db4488">
                                         <i class="bi bi-gender-female me-1"></i>أنثى
                                     </span>
                                 @endif
@@ -82,13 +159,14 @@
                                     <div class="d-flex align-items-center">
                                         <i class="bi bi-calendar3 me-2 text-muted"></i>
                                         {{ $patient->patient->date_of_birth->format('Y-m-d') }}
+                                        <small class="text-muted ms-2">({{ $patient->patient->age }} سنة)</small>
                                     </div>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
                             <td>
-                                <span class="badge bg-secondary bg-opacity-10 text-primary">
+                                <span class="badge bg-info bg-opacity-10 text-info">
                                     {{ $patient->appointments_count ?? 0 }} موعد
                                 </span>
                             </td>
@@ -102,10 +180,10 @@
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('patients.destroy', $patient) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('patients.destroy', $patient) }}" method="POST" class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-action btn-delete delete-confirmation"
+                                        <button type="submit" class="btn-action btn-delete"
                                             data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="حذف">
                                             <i class="bi bi-trash"></i>
                                         </button>
@@ -115,10 +193,11 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-5">
-                                <div class="text-muted">
-                                    <i class="bi bi-people display-6 d-block mb-3"></i>
-                                    <p class="h5">لا يوجد مرضى</p>
+                            <td colspan="8" class="text-center py-4">
+                                <div class="empty-state">
+                                    <i class="bi bi-people empty-state-icon"></i>
+                                    <p class="empty-state-text">لا يوجد مرضى</p>
+                                    <p class="empty-state-subtext">قم بإضافة مريض جديد من خلال الزر أعلاه</p>
                                 </div>
                             </td>
                         </tr>
@@ -130,38 +209,53 @@
         <div class="d-flex justify-content-center mt-4">
             {{ $patients->links() }}
         </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay d-none">
+            <div class="loading-spinner"></div>
+        </div>
     </div>
 </div>
-
-
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        width: '100%'
+    });
+
     // Initialize tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(tooltipTriggerEl => {
         new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Live search functionality
     const searchInput = document.getElementById('searchInput');
+    const genderFilter = document.getElementById('genderFilter');
+    const sortFilter = document.getElementById('sortFilter');
     const tableRows = document.querySelectorAll('.table tbody tr');
+    const loadingOverlay = document.querySelector('.loading-overlay');
 
+    // Live search functionality with debounce
+    let searchTimeout;
     searchInput.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
         const searchTerm = e.target.value.toLowerCase();
 
-        tableRows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchTerm) ? '' : 'none';
-        });
+        searchTimeout = setTimeout(() => {
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }, 300);
     });
 
     // Gender filter functionality
-    const genderFilter = document.getElementById('genderFilter');
-
     genderFilter.addEventListener('change', function(e) {
-        const gender = e.target.value.toLowerCase();
+        const gender = e.target.value;
+        loadingOverlay.classList.remove('d-none');
 
         tableRows.forEach(row => {
             if (!gender) {
@@ -169,88 +263,67 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const genderCell = row.querySelector('td:nth-child(5)').textContent.toLowerCase();
-            row.style.display = genderCell.includes(gender) ? '' : 'none';
+            const genderBadge = row.querySelector('.badge i');
+            const isMatch = gender === 'male' ?
+                genderBadge?.classList.contains('bi-gender-male') :
+                genderBadge?.classList.contains('bi-gender-female');
+
+            row.style.display = isMatch ? '' : 'none';
         });
+
+        setTimeout(() => {
+            loadingOverlay.classList.add('d-none');
+        }, 300);
     });
 
-    // Delete confirmation using SweetAlert2
-    document.querySelectorAll('.delete-confirmation').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const form = this.closest('form');
+    // Sort functionality
+    sortFilter.addEventListener('change', function(e) {
+        const sortBy = e.target.value;
+        const tbody = document.querySelector('.table tbody');
+        const rows = Array.from(tableRows);
+        loadingOverlay.classList.remove('d-none');
 
-            Swal.fire({
-                title: 'هل أنت متأكد؟',
-                text: 'سيتم حذف هذا المريض نهائياً',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'نعم، احذف',
-                cancelButtonText: 'إلغاء'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
-        });
-    });
-
-    // تحسين تهيئة Select2
-    $('#genderFilter').select2({
-        theme: 'bootstrap-5',
-        width: '100%',
-        placeholder: 'اختر النوع',
-        minimumResultsForSearch: Infinity,
-        templateResult: formatGenderOption,
-        templateSelection: formatGenderOption,
-        dropdownParent: $('.gender-filter-wrapper')
-    }).addClass('select2-gender');
-
-    // دالة تنسيق خيارات النوع
-    function formatGenderOption(option) {
-        if (!option.id) {
-            return option.text;
-        }
-
-        let icon = $(option.element).data('icon');
-        let color = $(option.element).data('color');
-
-        return $(`
-            <div class="gender-option">
-                <i class="bi ${icon}" style="color: ${color}"></i>
-                <span>${option.text}</span>
-            </div>
-        `);
-    }
-
-    // تحديث الفلترة مع تأثيرات انتقالية
-    $('#genderFilter').on('change', function() {
-        const gender = $(this).val();
-        const rows = $('.table tbody tr');
-
-        rows.each(function() {
-            const row = $(this);
-            const genderCell = row.find('td:nth-child(5)').text().trim().toLowerCase();
-
-            if (!gender || genderCell.includes(gender)) {
-                row.fadeIn(300);
-            } else {
-                row.fadeOut(300);
+        rows.sort((a, b) => {
+            switch(sortBy) {
+                case 'name':
+                    const nameA = a.querySelector('.fw-medium').textContent;
+                    const nameB = b.querySelector('.fw-medium').textContent;
+                    return nameA.localeCompare(nameB);
+                case 'appointments':
+                    const apptsA = parseInt(a.querySelector('.badge.bg-info')?.textContent);
+                    const apptsB = parseInt(b.querySelector('.badge.bg-info')?.textContent);
+                    return apptsB - apptsA;
+                case 'oldest':
+                    return a.querySelector('td:first-child').textContent -
+                           b.querySelector('td:first-child').textContent;
+                default: // latest
+                    return b.querySelector('td:first-child').textContent -
+                           a.querySelector('td:first-child').textContent;
             }
         });
+
+        rows.forEach(row => tbody.appendChild(row));
+
+        setTimeout(() => {
+            loadingOverlay.classList.add('d-none');
+        }, 300);
     });
 
-    // تأثيرات إضافية عند التفاعل
-    $('#genderFilter').on('select2:open', function() {
-        setTimeout(() => {
-            $('.select2-results__options').addClass('animate__animated animate__fadeIn');
-        }, 0);
+    // Delete confirmation
+    const deleteForms = document.querySelectorAll('.delete-form');
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (confirm('هل أنت متأكد من حذف هذا المريض؟')) {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                form.submit();
+            }
+        });
     });
 });
 </script>
 @endpush
-
 
 @endsection
