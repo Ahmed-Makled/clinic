@@ -6,10 +6,22 @@
         <div class="row">
             <div class="col-7">
                 <div class="border bg-white p-4">
-                    <div class="text-center border-bottom pb-4 mb-4">
-                        <img src="{{ asset('assets/images/' . $doctor->avatar) }}" class="rounded-pill img-thumbnail" width="100" alt="{{ $doctor->name }}">
+                    <div class="doctor-profile text-center mb-4">
+                        @if($doctor->image)
+                            <img src="{{ Storage::url($doctor->image) }}"
+                            onerror="this.onerror=null; this.src='{{ asset('images/default-doctor.png') }}';"
+
+                                 alt="{{ $doctor->name }}"
+                                 class="rounded-circle img-thumbnail mb-3"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        @else
+                            <img src="{{ asset('images/default-doctor.png') }}"
+                                 alt="صورة افتراضية"
+                                 class="rounded-circle img-thumbnail mb-3"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        @endif
+                        <h4 class="mb-1">{{ $doctor->name }}</h4>
                     </div>
-                    <h4>{{ $doctor->name }}</h4>
                     <p>{{ $doctor->description }}</p>
                     <p class="">
                         <i class="uil-award"></i>ال {{ $doctor->degree }}

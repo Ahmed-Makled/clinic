@@ -10,7 +10,10 @@
                     <h5 class="card-title">معلومات الطبيب</h5>
                     <div class="text-center mb-3">
                         @if($doctor->image)
-                            <img src="{{ Storage::url($doctor->image) }}" alt="{{ $doctor->name }}" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                            <img src="{{ Storage::url($doctor->image) }}" alt="{{ $doctor->name }}"
+                            onerror="this.onerror=null; this.src='{{ asset('images/default-doctor.png') }}';"
+
+                            class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                         @else
                             <img src="{{ asset('images/default-doctor.jpg') }}" alt="Doctor" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                         @endif

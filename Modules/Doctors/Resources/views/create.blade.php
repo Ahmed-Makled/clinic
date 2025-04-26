@@ -8,51 +8,29 @@
                     <h5 class="mb-0 ms-2">إضافة طبيب</h5>
                 </div>
                 <div class="card-body px-4 py-3">
-                    <form method="POST" action="{{ route('doctors.store') }}" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <form method="POST" action="{{ route('doctors.store') }}" enctype="multipart/form-data"
+                        class="needs-validation" novalidate>
                         @csrf
 
                         <!-- المعلومات الأساسية -->
                         <div class="section-divider mb-4">
-                            <h6 class="section-title">المعلومات الأساسية</h6>
+                            <h6 class="section-title text-primary bold">المعلومات الأساسية</h6>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
-                                <label class="form-label" for="name">الإسم الأول *</label>
-                                <input type="text"
-                                       class="form-control @error('name') is-invalid @enderror"
-                                       id="name"
-                                       name="name"
-                                       value="{{ old('name') }}"
-                                       placeholder="الإسم الأول"
-                                       required />
+                                <label class="form-label" for="name">الإسم *</label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
+                                    name="name" value="{{ old('name') }}" placeholder="اسم الطبيب" required />
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="mb-3 col-md-6">
-                                <label class="form-label" for="lastname">الإسم الأخير *</label>
-                                <input type="text"
-                                       class="form-control @error('lastname') is-invalid @enderror"
-                                       id="lastname"
-                                       name="lastname"
-                                       value="{{ old('lastname') }}"
-                                       placeholder="الإسم الأخير"
-                                       required />
-                                @error('lastname')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3 col-md-6">
                                 <label class="form-label" for="email">البريد الإلكتروني *</label>
-                                <input type="email"
-                                       class="form-control @error('email') is-invalid @enderror"
-                                       id="email"
-                                       name="email"
-                                       value="{{ old('email') }}"
-                                       placeholder="البريد الإلكتروني"
-                                       required />
+                                <input type="email" style="direction: rtl;"
+                                    class="form-control @error('email') is-invalid @enderror" id="email" name="email"
+                                    value="{{ old('email') }}" placeholder="البريد الإلكتروني" required />
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -60,36 +38,19 @@
 
                             <div class="mb-3 col-md-6">
                                 <label class="form-label" for="password">كلمة المرور *</label>
-                                <input type="password"
-                                       class="form-control @error('password') is-invalid @enderror"
-                                       id="password"
-                                       name="password"
-                                       required />
+                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    id="password" name="password" required />
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="mb-3 col-md-6">
-                                <label class="form-label" for="password_confirmation">تأكيد كلمة المرور *</label>
-                                <input type="password"
-                                       class="form-control"
-                                       id="password_confirmation"
-                                       name="password_confirmation"
-                                       required />
-                            </div>
-
-                            <div class="mb-3 col-md-6">
                                 <label class="form-label" for="phone">رقم الهاتف *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">+20</span>
-                                    <input type="text"
-                                           class="form-control @error('phone') is-invalid @enderror"
-                                           id="phone"
-                                           name="phone"
-                                           value="{{ old('phone') }}"
-                                           placeholder="ادخل رقم الهاتف"
-                                           required />
+                                    <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone"
+                                        name="phone" value="{{ old('phone') }}" placeholder="ادخل رقم الهاتف" required />
                                 </div>
                                 @error('phone')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -124,159 +85,133 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="categories" class="form-label">التخصصات</label>
-                                <select name="categories[]" id="categories" class="form-select" data-icon="bi-briefcase-medical" data-color="#0d6efd" multiple required>
+                                <select name="categories[]" id="categories" class="form-select"
+                                    data-icon="bi-briefcase-medical" data-color="#0d6efd" required>
+                                    <option value="">اختر التخصص</option>
                                     @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" data-icon="bi-heart-pulse">{{ $category->name }}</option>
+                                        <option value="{{ $category->id }}" data-icon="bi-heart-pulse">{{ $category->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="governorate" class="form-label">المحافظة</label>
-                                <select name="governorate" id="governorate" class="form-select" data-icon="bi-geo-alt" data-color="#198754" required>
-                                    <option value="">اختر المحافظة</option>
-                                    @foreach(config('governorates') as $key => $value)
-                                    <option value="{{ $key }}" data-icon="bi-pin-map">{{ $value }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="area" class="form-label">المنطقة</label>
-                                <select name="area" id="area" class="form-select" data-icon="bi-geo" data-color="#6c757d" required>
-                                    <option value="">اختر المنطقة</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="status" class="form-label">الحالة</label>
-                                <select name="status" id="status" class="form-select" data-icon="bi-toggle2-on" data-color="#0dcaf0" required>
-                                    <option value="active" data-icon="bi-check-circle">نشط</option>
-                                    <option value="inactive" data-icon="bi-x-circle">غير نشط</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label class="form-label" for="experience_years">سنوات الخبرة *</label>
-                                <input type="number"
-                                       class="form-control @error('experience_years') is-invalid @enderror"
-                                       id="experience_years"
-                                       name="experience_years"
-                                       value="{{ old('experience_years') }}"
-                                       placeholder="عدد سنوات الخبرة"
-                                       min="0"
-                                       required />
+                                <input type="number" style="direction: rtl"
+                                    class="form-control @error('experience_years') is-invalid @enderror"
+                                    id="experience_years" name="experience_years" value="{{ old('experience_years') }}"
+                                    placeholder="عدد سنوات الخبرة" min="0" required />
                                 @error('experience_years')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="price">سعر الكشف (جنيه) *</label>
-                                <div class="input-group">
-                                    <input type="number"
-                                           class="form-control @error('price') is-invalid @enderror"
-                                           id="price"
-                                           name="price"
-                                           value="{{ old('price') }}"
-                                           placeholder="سعر الكشف"
-                                           min="0"
-                                           required />
-                                    <span class="input-group-text">جنيه</span>
-                                </div>
-                                @error('price')
+                            <div class="mb-3 col-md-12">
+                                <label class="form-label" for="description">وصف الطبيب</label>
+                                <textarea class="form-control @error('description') is-invalid @enderror"
+                                    id="description" name="description" rows="4"
+                                    placeholder="اكتب وصفاً مختصراً عن الطبيب وخبراته">{{ old('description') }}</textarea>
+                                @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label" for="consultation_fee">سعر الكشف (جنيه) *</label>
+                                <div class="input-group">
+                                    <input type="number" style="direction: rtl"
+                                        class="form-control @error('consultation_fee') is-invalid @enderror"
+                                        id="consultation_fee" name="consultation_fee" value="{{ old('consultation_fee') }}"
+                                        placeholder="سعر الكشف" min="0" required />
+                                    <span class="input-group-text">جنيه</span>
+                                </div>
+                                @error('consultation_fee')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label" for="waiting_time">مدة الإنتظار (بالدقائق)</label>
+                                <div class="input-group">
+                                    <input type="number" style="direction: rtl"
+                                        class="form-control @error('waiting_time') is-invalid @enderror" id="waiting_time"
+                                        name="waiting_time" value="{{ old('waiting_time') }}" placeholder="مدة الإنتظار"
+                                        min="0" />
+                                    <span class="input-group-text">دقيقة</span>
+                                </div>
+                                @error('waiting_time')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                         </div>
 
                         <!-- الصورة الشخصية -->
                         <div class="section-divider mb-4 mt-4">
-                            <h6 class="section-title">الصورة الشخصية</h6>
+                            <h6 class="section-title text-primary fw-bold">الصورة الشخصية</h6>
                         </div>
                         <div class="row">
-                            <div class="mb-3">
-                                <label class="form-label" for="image">صورة شخصية</label>
-                                <input type="file"
-                                       class="form-control @error('image') is-invalid @enderror"
-                                       id="image"
-                                       name="image"
-                                       accept="image/*" />
-                                <small class="text-muted">يفضل رفع صورة بأبعاد 400×400 بيكسل</small>
-                                @error('image')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <div class="col-12">
+                                <div class="image-upload-zone" id="dropZone">
+                                    <input type="file" class="d-none @error('image') is-invalid @enderror"
+                                        id="image" name="image" accept="image/jpeg,image/png,image/jpg,image/webp" />
+
+                                    <div class="upload-placeholder" style="cursor: pointer;">
+                                        <i class="bi bi-cloud-upload upload-icon"></i>
+                                        <h6 class="mb-2">اسحب الصورة هنا أو انقر للاختيار</h6>
+                                        <small class="text-muted d-block">يفضل رفع صورة بأبعاد 400×400 بيكسل</small>
+                                        <small class="text-muted d-block">الصيغ المدعومة: JPG, JPEG, PNG, WEBP</small>
+                                    </div>
+
+                                    <div class="image-preview d-none" id="imagePreview">
+                                        <img src="#" alt="معاينة الصورة">
+                                        <span class="remove-image" title="حذف الصورة">&times;</span>
+                                    </div>
+
+                                    @error('image')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
 
                         <!-- معلومات العنوان -->
                         <div class="section-divider mb-4 mt-4">
-                            <h6 class="section-title">معلومات العنوان</h6>
+                            <h6 class="section-title text-primary fw-bold">معلومات العنوان</h6>
                         </div>
                         <div class="row">
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="address1">العنوان 1</label>
-                                <input type="text"
-                                       class="form-control @error('address1') is-invalid @enderror"
-                                       id="address1"
-                                       name="address1"
-                                       value="{{ old('address1') }}"
-                                       placeholder="العنوان 1" />
-                                @error('address1')
+                            <div class="col-md-6">
+                                <label for="governorate_id" class="form-label">المحافظة *</label>
+                                <select name="governorate_id" id="governorate_id" class="form-select" data-icon="bi-geo-alt"
+                                    data-color="#198754" required>
+                                    <option value="">اختر المحافظة</option>
+                                    @foreach($governorates as $governorate)
+                                        <option value="{{ $governorate->id }}" data-icon="bi-pin-map"
+                                            {{ old('governorate_id') == $governorate->id ? 'selected' : '' }}>
+                                            {{ $governorate->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('governorate_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="mb-3 col-md-6">
-                                <label class="form-label" for="address2">العنوان 2</label>
-                                <input type="text"
-                                       class="form-control @error('address2') is-invalid @enderror"
-                                       id="address2"
-                                       name="address2"
-                                       value="{{ old('address2') }}"
-                                       placeholder="العنوان 2" />
-                                @error('address2')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="city">المدينة</label>
-                                <select class="form-select @error('city') is-invalid @enderror"
-                                        name="city"
-                                        id="city">
+                                <label class="form-label" for="city_id">المدينة *</label>
+                                <select class="form-select @error('city_id') is-invalid @enderror" name="city_id" id="city_id" required>
                                     <option value="">اختر المدينة</option>
-                                    <option value="القاهرة" {{ old('city') == 'القاهرة' ? 'selected' : '' }}>القاهرة</option>
-                                    <option value="الإسكندرية" {{ old('city') == 'الإسكندرية' ? 'selected' : '' }}>الإسكندرية</option>
                                 </select>
-                                @error('city')
+                                @error('city_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="district">المنطقة</label>
-                                <select class="form-select @error('district') is-invalid @enderror"
-                                        name="district"
-                                        id="district">
-                                    <option value="">اختر المنطقة</option>
-                                </select>
-                                @error('district')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="postal_code">الرمز البريدي</label>
-                                <input type="text"
-                                       class="form-control @error('postal_code') is-invalid @enderror"
-                                       id="postal_code"
-                                       name="postal_code"
-                                       value="{{ old('postal_code') }}"
-                                       placeholder="الرمز البريدي" />
-                                @error('postal_code')
+                            <div class="mb-3 col-12">
+                                <label class="form-label" for="address">العنوان</label>
+                                <input type="text" class="form-control @error('address') is-invalid @enderror"
+                                    id="address" name="address" value="{{ old('address') }}" placeholder="العنوان" />
+                                @error('address')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -292,52 +227,160 @@
         </div>
     </div>
 
-
-@push('scripts')
-<script>
-$(document).ready(function() {
-    // Form validation
-    const form = $('form');
-
-    form.on('submit', function(event) {
-        if (!this.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-
-        // Password match validation
-        const password = $('#password').val();
-        const confirmation = $('#password_confirmation').val();
-
-        if (password !== confirmation) {
-            event.preventDefault();
-            $('#password_confirmation').addClass('is-invalid')
-                .siblings('.invalid-feedback')
-                .text('كلمة المرور غير متطابقة');
-        }
-
-        $(this).addClass('was-validated');
-    });
-
-    // Real-time password confirmation validation
-    $('#password_confirmation').on('input', function() {
-        const password = $('#password').val();
-        const confirmation = $(this).val();
-
-        if (password !== confirmation) {
-            $(this).addClass('is-invalid')
-                .removeClass('is-valid');
-            if (!$(this).siblings('.invalid-feedback').length) {
-                $(this).after('<div class="invalid-feedback">كلمة المرور غير متطابقة</div>');
+    @push('styles')
+        <style>
+            .image-upload-zone {
+                border: 2px dashed #ccc;
+                border-radius: 8px;
+                padding: 20px;
+                text-align: center;
+                transition: all 0.3s ease;
+                background: #f8f9fa;
             }
-        } else {
-            $(this).removeClass('is-invalid')
-                .addClass('is-valid')
-                .siblings('.invalid-feedback')
-                .remove();
-        }
-    });
-});
-</script>
-@endpush
+
+            .image-upload-zone.dragover {
+                border-color: #0d6efd;
+                background: #e9ecef;
+            }
+
+            .image-preview {
+                max-width: 200px;
+                margin: 10px auto;
+                position: relative;
+            }
+
+            .image-preview img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .upload-icon {
+                font-size: 2rem;
+                color: #6c757d;
+                margin-bottom: 10px;
+            }
+
+            .remove-image {
+                position: absolute;
+                top: -10px;
+                right: -10px;
+                background: #dc3545;
+                color: white;
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                text-align: center;
+                line-height: 25px;
+                cursor: pointer;
+            }
+        </style>
+    @endpush
+
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                const dropZone = $('#dropZone');
+                const imageInput = $('#image');
+                const imagePreview = $('#imagePreview');
+                const previewImg = imagePreview.find('img');
+                const uploadPlaceholder = $('.upload-placeholder');
+
+                // Handle drag and drop
+                dropZone.on('dragover', function(e) {
+                    e.preventDefault();
+                    $(this).addClass('dragover');
+                });
+
+                dropZone.on('dragleave', function(e) {
+                    e.preventDefault();
+                    $(this).removeClass('dragover');
+                });
+
+                dropZone.on('drop', function(e) {
+                    e.preventDefault();
+                    $(this).removeClass('dragover');
+                    const file = e.originalEvent.dataTransfer.files[0];
+                    handleImageFile(file);
+                });
+
+                // Handle click on upload placeholder
+                uploadPlaceholder.on('click', function(e) {
+                    e.stopPropagation();
+                    imageInput.click();
+                });
+
+                // Handle file input change
+                imageInput.on('change', function() {
+                    const file = this.files[0];
+                    handleImageFile(file);
+                });
+
+                // Handle remove image
+                $('.remove-image').on('click', function(e) {
+                    e.stopPropagation();
+                    resetImageUpload();
+                });
+
+                function handleImageFile(file) {
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImg.attr('src', e.target.result);
+                            imagePreview.removeClass('d-none');
+                            uploadPlaceholder.addClass('d-none');
+                        };
+                        reader.readAsDataURL(file);
+                        imageInput.prop('files', [file]);
+                    }
+                }
+
+                function resetImageUpload() {
+                    imageInput.val('');
+                    imagePreview.addClass('d-none');
+                    uploadPlaceholder.removeClass('d-none');
+                    previewImg.attr('src', '#');
+                }
+
+                // Existing form validation
+                const form = $('form');
+                form.on('submit', function (event) {
+                    if (!this.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    $(this).addClass('was-validated');
+                });
+
+                // إضافة كود التعامل مع المحافظات والمدن
+                $('#governorate_id').on('change', function() {
+                    const governorateId = $(this).val();
+                    const cities = @json($governorates->pluck('cities', 'id'));
+                    const citySelect = $('#city_id');
+
+                    citySelect.empty().append('<option value="">اختر المدينة</option>');
+
+                    if (governorateId && cities[governorateId]) {
+                        cities[governorateId].forEach(function(city) {
+                            citySelect.append(new Option(city.name, city.id));
+                        });
+                    }
+                });
+
+                // إذا كان هناك قيمة محفوظة للمحافظة، قم بتحميل مدنها
+                const oldGovernorate = $('#governorate_id').val();
+                if (oldGovernorate) {
+                    $('#governorate_id').trigger('change');
+
+                    // اختيار المدينة المحفوظة إن وجدت
+                    const oldCity = "{{ old('city_id') }}";
+                    if (oldCity) {
+                        $('#city_id').val(oldCity);
+                    }
+                }
+            });
+        </script>
+    @endpush
 @endsection

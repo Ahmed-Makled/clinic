@@ -52,10 +52,11 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     @if($doctor->image)
-                                        <img src="{{ asset($doctor->image) }}"
+                                        <img src="{{ Storage::url($doctor->image) ?? asset('images/default-doctor.png') }}"
                                              class="rounded-circle me-2"
                                              width="32"
                                              height="32"
+                                             onerror="this.onerror=null; this.src='{{ asset('images/default-doctor.png') }}';"
                                              alt="{{ $doctor->name }}">
                                     @else
                                         <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
@@ -77,28 +78,20 @@
                             <td>{{ $doctor->email }}</td>
                             <td>{{ $doctor->phone }}</td>
                             <td>
-                                <div class="btn-group">
-                                    <a href="{{ route('doctors.show', $doctor) }}"
-                                       class="btn btn-sm btn-outline-primary"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-title="عرض التفاصيل">
+                                <div class="action-buttons">
+                                    <a href="{{ route('doctors.show', $doctor) }}" class="btn-action btn-view"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="عرض">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a href="{{ route('doctors.edit', $doctor) }}"
-                                       class="btn btn-sm btn-outline-secondary"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-title="تعديل">
+                                    <a href="{{ route('doctors.edit', $doctor) }}" class="btn-action btn-edit"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('doctors.destroy', $doctor) }}"
-                                          method="POST"
-                                          class="d-inline">
+                                    <form action="{{ route('doctors.destroy', $doctor) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-danger delete-confirmation"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-title="حذف">
+                                        <button type="submit" class="btn-action btn-delete delete-confirmation"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="حذف">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

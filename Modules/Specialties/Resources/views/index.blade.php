@@ -56,22 +56,16 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="btn-group">
-                                    <a href="{{ route('specialties.edit', $specialty) }}"
-                                       class="btn btn-sm btn-outline-secondary"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-title="تعديل">
+                                <div class="action-buttons">
+                                    <a href="{{ route('specialties.edit', $specialty) }}" class="btn-action btn-edit"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('specialties.destroy', $specialty) }}"
-                                          method="POST"
-                                          class="d-inline">
+                                    <form action="{{ route('specialties.destroy', $specialty) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-danger delete-confirmation"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-title="حذف">
+                                        <button type="submit" class="btn-action btn-delete delete-confirmation"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="حذف">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

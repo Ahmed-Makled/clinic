@@ -93,35 +93,24 @@
                                 </span>
                             </td>
                             <td>
-
-                            <div class="btn-group">
-                                    <a href="{{ route('patients.show', $patient) }}"
-                                       class="btn btn-sm btn-outline-primary"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-title="عرض التفاصيل">
+                                <div class="action-buttons">
+                                    <a href="{{ route('patients.show', $patient) }}" class="btn-action btn-view"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="عرض">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a href="{{ route('patients.edit', $patient) }}"
-                                       class="btn btn-sm btn-outline-secondary"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-title="تعديل">
+                                    <a href="{{ route('patients.edit', $patient) }}" class="btn-action btn-edit"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('patients.destroy', $patient) }}"
-                                          method="POST"
-                                          class="d-inline">
+                                    <form action="{{ route('patients.destroy', $patient) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-danger delete-confirmation"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-title="حذف">
+                                        <button type="submit" class="btn-action btn-delete delete-confirmation"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="حذف">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
                                 </div>
-
-
                             </td>
                         </tr>
                     @empty

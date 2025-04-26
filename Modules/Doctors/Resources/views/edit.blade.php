@@ -8,37 +8,30 @@
                     <h5 class="mb-0 ms-2">تعديل بيانات الطبيب</h5>
                 </div>
                 <div class="card-body px-4 py-3">
-                    <form method="POST" action="{{ route('doctors.update', $doctor) }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('doctors.update', $doctor) }}" enctype="multipart/form-data"
+                        class="needs-validation" novalidate>
                         @csrf
                         @method('PUT')
 
                         <!-- المعلومات الأساسية -->
                         <div class="section-divider mb-4">
-                            <h6 class="section-title">المعلومات الأساسية</h6>
+                            <h6 class="section-title text-primary bold">المعلومات الأساسية</h6>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
-                                <label class="form-label" for="name">الإسم الأول *</label>
-                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name"
-                                       value="{{ old('name', $doctor->name) }}" required />
+                                <label class="form-label" for="name">الإسم *</label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
+                                    name="name" value="{{ old('name', $doctor->name) }}" placeholder="اسم الطبيب" required />
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="mb-3 col-md-6">
-                                <label class="form-label" for="lastname">الإسم الأخير *</label>
-                                <input type="text" class="form-control @error('lastname') is-invalid @enderror" id="lastname" name="lastname"
-                                       value="{{ old('lastname', $doctor->lastname) }}" required />
-                                @error('lastname')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3 col-md-6">
                                 <label class="form-label" for="email">البريد الإلكتروني *</label>
-                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email"
-                                       value="{{ old('email', $doctor->email) }}" required />
+                                <input type="email" style="direction: rtl;"
+                                    class="form-control @error('email') is-invalid @enderror" id="email" name="email"
+                                    value="{{ old('email', $doctor->email) }}" placeholder="البريد الإلكتروني" required />
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -48,8 +41,8 @@
                                 <label class="form-label" for="phone">رقم الهاتف *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">+20</span>
-                                    <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone"
-                                           value="{{ old('phone', $doctor->phone) }}" required />
+                                    <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone"
+                                        name="phone" value="{{ old('phone', $doctor->phone) }}" placeholder="ادخل رقم الهاتف" required />
                                 </div>
                                 @error('phone')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -60,12 +53,12 @@
                                 <label class="form-label d-block">الجنس *</label>
                                 <div class="form-check form-check-inline mt-2">
                                     <input class="form-check-input" type="radio" name="gender" id="male" value="ذكر"
-                                           {{ $doctor->gender == 'ذكر' ? 'checked' : '' }}>
+                                        {{ old('gender', $doctor->gender) == 'ذكر' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="male">ذكر</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="gender" id="female" value="انثي"
-                                           {{ $doctor->gender == 'انثي' ? 'checked' : '' }}>
+                                        {{ old('gender', $doctor->gender) == 'انثي' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="female">انثى</label>
                                 </div>
                             </div>
@@ -74,7 +67,7 @@
                                 <label class="form-label">الحالة</label>
                                 <div class="form-check form-switch mt-2">
                                     <input class="form-check-input" type="checkbox" name="status" id="status"
-                                           {{ $doctor->status ? 'checked' : '' }}>
+                                        {{ old('status', $doctor->status) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="status">نشط</label>
                                 </div>
                             </div>
@@ -84,29 +77,39 @@
                         <div class="section-divider mb-4 mt-4">
                             <h6 class="section-title">المعلومات المهنية</h6>
                         </div>
-                        <div class="row">
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="categories">التخصص *</label>
-                                <select class="form-select @error('categories') is-invalid @enderror" name="categories[]" id="categories" required multiple>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="categories" class="form-label">التخصصات</label>
+                                <select name="categories[]" id="categories" class="form-select"
+                                    data-icon="bi-briefcase-medical" data-color="#0d6efd" required>
+                                    <option value="">اختر التخصص</option>
                                     @foreach($categories as $category)
-                                        <option value="{{ $category->id }}"
-                                                {{ in_array($category->id, old('categories', $doctor->categories->pluck('id')->toArray())) ? 'selected' : '' }}>
+                                        <option value="{{ $category->id }}" data-icon="bi-heart-pulse"
+                                            {{ old('categories', $doctor->categories->contains($category->id)) ? 'selected' : '' }}>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('categories')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             <div class="mb-3 col-md-6">
                                 <label class="form-label" for="experience_years">سنوات الخبرة *</label>
-                                <input type="number" class="form-control @error('experience_years') is-invalid @enderror"
-                                       id="experience_years" name="experience_years"
-                                       value="{{ old('experience_years', $doctor->experience_years) }}"
-                                       min="0" required />
+                                <input type="number" style="direction: rtl"
+                                    class="form-control @error('experience_years') is-invalid @enderror"
+                                    id="experience_years" name="experience_years"
+                                    value="{{ old('experience_years', $doctor->experience_years) }}"
+                                    placeholder="عدد سنوات الخبرة" min="0" required />
                                 @error('experience_years')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3 col-md-12">
+                                <label class="form-label" for="description">وصف الطبيب</label>
+                                <textarea class="form-control @error('description') is-invalid @enderror"
+                                    id="description" name="description" rows="4"
+                                    placeholder="اكتب وصفاً مختصراً عن الطبيب وخبراته">{{ old('description', $doctor->description) }}</textarea>
+                                @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -114,13 +117,28 @@
                             <div class="mb-3 col-md-6">
                                 <label class="form-label" for="consultation_fee">سعر الكشف (جنيه) *</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control @error('consultation_fee') is-invalid @enderror"
-                                           id="consultation_fee" name="consultation_fee"
-                                           value="{{ old('consultation_fee', $doctor->consultation_fee) }}"
-                                           min="0" required />
+                                    <input type="number" style="direction: rtl"
+                                        class="form-control @error('consultation_fee') is-invalid @enderror"
+                                        id="consultation_fee" name="consultation_fee"
+                                        value="{{ old('consultation_fee', $doctor->consultation_fee) }}"
+                                        placeholder="سعر الكشف" min="0" required />
                                     <span class="input-group-text">جنيه</span>
                                 </div>
                                 @error('consultation_fee')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label" for="waiting_time">مدة الإنتظار (بالدقائق)</label>
+                                <div class="input-group">
+                                    <input type="number" style="direction: rtl"
+                                        class="form-control @error('waiting_time') is-invalid @enderror" id="waiting_time"
+                                        name="waiting_time" value="{{ old('waiting_time', $doctor->waiting_time) }}"
+                                        placeholder="مدة الإنتظار" min="0" />
+                                    <span class="input-group-text">دقيقة</span>
+                                </div>
+                                @error('waiting_time')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -128,110 +146,87 @@
 
                         <!-- الصورة الشخصية -->
                         <div class="section-divider mb-4 mt-4">
-                            <h6 class="section-title">الصورة الشخصية</h6>
+                            <h6 class="section-title text-primary fw-bold">الصورة الشخصية</h6>
                         </div>
                         <div class="row">
-                            <div class="mb-3">
-                                <label class="form-label" for="image">صورة شخصية</label>
-                                @if($doctor->image)
-                                    <div class="mb-3">
-                                        <img src="{{ asset('storage/' . $doctor->image) }}" alt="صورة الطبيب" class="rounded" style="max-width: 200px;">
+                            <div class="col-12">
+                                @if($doctor->image && Storage::exists($doctor->image))
+                                    <div class="current-image">
+                                        <img src="{{ Storage::url($doctor->image) }}"
+                                        onerror="this.onerror=null; this.src='{{ asset('images/default-doctor.png') }}';"
+                                            alt="الصورة الحالية" class="mb-2">
+                                        <div class="text-muted">الصورة الحالية</div>
                                     </div>
                                 @endif
-                                <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image" accept="image/*" />
-                                <small class="text-muted">يفضل رفع صورة بأبعاد 400×400 بيكسل</small>
-                                @error('image')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+
+                                <div class="image-upload-zone" id="dropZone">
+                                    <input type="file" class="d-none @error('image') is-invalid @enderror"
+                                        id="image" name="image" accept="image/jpeg,image/png,image/jpg,image/webp" />
+
+                                    <div class="upload-placeholder" style="cursor: pointer;">
+                                        <i class="bi bi-cloud-upload upload-icon"></i>
+                                        <h6 class="mb-2">اسحب الصورة الجديدة هنا أو انقر للاختيار</h6>
+                                        <small class="text-muted d-block">يفضل رفع صورة بأبعاد 400×400 بيكسل</small>
+                                        <small class="text-muted d-block">الصيغ المدعومة: JPG, JPEG, PNG, WEBP</small>
+                                    </div>
+
+                                    <div class="image-preview d-none" id="imagePreview">
+                                        <img src="#" alt="معاينة الصورة">
+                                        <span class="remove-image" title="حذف الصورة">&times;</span>
+                                    </div>
+
+                                    @error('image')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
 
                         <!-- معلومات العنوان -->
                         <div class="section-divider mb-4 mt-4">
-                            <h6 class="section-title">معلومات العنوان</h6>
+                            <h6 class="section-title text-primary fw-bold">معلومات العنوان</h6>
                         </div>
                         <div class="row">
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="address1">العنوان 1</label>
-                                <input type="text" class="form-control" id="address1" name="address1"
-                                       value="{{ old('address1', $doctor->address1) }}" />
-                            </div>
-
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="address2">العنوان 2</label>
-                                <input type="text" class="form-control" id="address2" name="address2"
-                                       value="{{ old('address2', $doctor->address2) }}" />
-                            </div>
-
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="city">المدينة</label>
-                                <select class="form-select" name="city" id="city">
-                                    <option value="">اختر المدينة</option>
-                                    <option value="القاهرة" {{ $doctor->city == 'القاهرة' ? 'selected' : '' }}>القاهرة</option>
-                                    <option value="الإسكندرية" {{ $doctor->city == 'الإسكندرية' ? 'selected' : '' }}>الإسكندرية</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="district">المنطقة</label>
-                                <select class="form-select" name="district" id="district">
-                                    <option value="">اختر المنطقة</option>
-                                    <!-- سيتم تحميل المناطق بناءً على المدينة المختارة -->
-                                </select>
-                            </div>
-
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="postal_code">الرمز البريدي</label>
-                                <input type="text" class="form-control" id="postal_code" name="postal_code"
-                                       value="{{ old('postal_code', $doctor->postal_code) }}" />
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="categories" class="form-label">التخصصات</label>
-                                <select name="categories[]" id="categories" class="form-select" data-icon="bi-briefcase-medical" data-color="#0d6efd" multiple required>
-                                    @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" data-icon="bi-heart-pulse" {{ in_array($category->id, $doctor->categories->pluck('id')->toArray()) ? 'selected' : '' }}>
-                                        {{ $category->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="governorate" class="form-label">المحافظة</label>
-                                <select name="governorate" id="governorate" class="form-select" data-icon="bi-geo-alt" data-color="#198754" required>
+                                <label for="governorate_id" class="form-label">المحافظة *</label>
+                                <select name="governorate_id" id="governorate_id" class="form-select" data-icon="bi-geo-alt"
+                                    data-color="#198754" required>
                                     <option value="">اختر المحافظة</option>
-                                    @foreach(config('governorates') as $key => $value)
-                                    <option value="{{ $key }}" data-icon="bi-pin-map" {{ $doctor->governorate == $key ? 'selected' : '' }}>
-                                        {{ $value }}
-                                    </option>
+                                    @foreach($governorates as $governorate)
+                                        <option value="{{ $governorate->id }}" data-icon="bi-pin-map"
+                                            {{ old('governorate_id', $doctor->governorate_id) == $governorate->id ? 'selected' : '' }}>
+                                            {{ $governorate->name }}
+                                        </option>
                                     @endforeach
                                 </select>
+                                @error('governorate_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                        </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="area" class="form-label">المنطقة</label>
-                                <select name="area" id="area" class="form-select" data-icon="bi-geo" data-color="#6c757d" required>
-                                    <option value="">اختر المنطقة</option>
-                                    <option value="{{ $doctor->area }}" selected>{{ $doctor->area }}</option>
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label" for="city_id">المدينة *</label>
+                                <select class="form-select @error('city_id') is-invalid @enderror" name="city_id" id="city_id" required>
+                                    <option value="">اختر المدينة</option>
                                 </select>
+                                @error('city_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                            <div class="col-md-6">
-                                <label for="status" class="form-label">الحالة</label>
-                                <select name="status" id="status" class="form-select" data-icon="bi-toggle2-on" data-color="#0dcaf0" required>
-                                    <option value="active" data-icon="bi-check-circle" {{ $doctor->status == 'active' ? 'selected' : '' }}>نشط</option>
-                                    <option value="inactive" data-icon="bi-x-circle" {{ $doctor->status == 'inactive' ? 'selected' : '' }}>غير نشط</option>
-                                </select>
+
+                            <div class="mb-3 col-12">
+                                <label class="form-label" for="address">العنوان</label>
+                                <input type="text" class="form-control @error('address') is-invalid @enderror"
+                                    id="address" name="address" value="{{ old('address', $doctor->address) }}" placeholder="العنوان" />
+                                @error('address')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary ms-1">حفظ التغييرات</button>
-                            <a href="{{ route('doctors.show', $doctor) }}" class="btn btn-label-secondary">إلغاء</a>
+                            <a href="{{ route('doctors.index') }}" class="btn btn-label-secondary">إلغاء</a>
                         </div>
                     </form>
                 </div>
@@ -239,4 +234,171 @@
         </div>
     </div>
 
+    @push('styles')
+        <style>
+            .image-upload-zone {
+                border: 2px dashed #ccc;
+                border-radius: 8px;
+                padding: 20px;
+                text-align: center;
+                transition: all 0.3s ease;
+                background: #f8f9fa;
+            }
+
+            .image-upload-zone.dragover {
+                border-color: #0d6efd;
+                background: #e9ecef;
+            }
+
+            .image-preview {
+                max-width: 200px;
+                margin: 10px auto;
+                position: relative;
+            }
+
+            .image-preview img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .upload-icon {
+                font-size: 2rem;
+                color: #6c757d;
+                margin-bottom: 10px;
+            }
+
+            .remove-image {
+                position: absolute;
+                top: -10px;
+                right: -10px;
+                background: #dc3545;
+                color: white;
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                text-align: center;
+                line-height: 25px;
+                cursor: pointer;
+            }
+
+            .current-image {
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            .current-image img {
+                max-width: 200px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        </style>
+    @endpush
+
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                const dropZone = $('#dropZone');
+                const imageInput = $('#image');
+                const imagePreview = $('#imagePreview');
+                const previewImg = imagePreview.find('img');
+                const uploadPlaceholder = $('.upload-placeholder');
+
+                // Handle drag and drop
+                dropZone.on('dragover', function(e) {
+                    e.preventDefault();
+                    $(this).addClass('dragover');
+                });
+
+                dropZone.on('dragleave', function(e) {
+                    e.preventDefault();
+                    $(this).removeClass('dragover');
+                });
+
+                dropZone.on('drop', function(e) {
+                    e.preventDefault();
+                    $(this).removeClass('dragover');
+                    const file = e.originalEvent.dataTransfer.files[0];
+                    handleImageFile(file);
+                });
+
+                // Handle click on upload placeholder
+                uploadPlaceholder.on('click', function(e) {
+                    e.stopPropagation();
+                    imageInput.click();
+                });
+
+                // Handle file input change
+                imageInput.on('change', function() {
+                    const file = this.files[0];
+                    handleImageFile(file);
+                });
+
+                // Handle remove image
+                $('.remove-image').on('click', function(e) {
+                    e.stopPropagation();
+                    resetImageUpload();
+                });
+
+                function handleImageFile(file) {
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImg.attr('src', e.target.result);
+                            imagePreview.removeClass('d-none');
+                            uploadPlaceholder.addClass('d-none');
+                        };
+                        reader.readAsDataURL(file);
+                        imageInput.prop('files', [file]);
+                    }
+                }
+
+                function resetImageUpload() {
+                    imageInput.val('');
+                    imagePreview.addClass('d-none');
+                    uploadPlaceholder.removeClass('d-none');
+                    previewImg.attr('src', '#');
+                }
+
+                // Existing form validation
+                const form = $('form');
+                form.on('submit', function (event) {
+                    if (!this.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    $(this).addClass('was-validated');
+                });
+
+                // إضافة كود التعامل مع المحافظات والمدن
+                $('#governorate_id').on('change', function() {
+                    const governorateId = $(this).val();
+                    const cities = @json($governorates->pluck('cities', 'id'));
+                    const citySelect = $('#city_id');
+
+                    citySelect.empty().append('<option value="">اختر المدينة</option>');
+
+                    if (governorateId && cities[governorateId]) {
+                        cities[governorateId].forEach(function(city) {
+                            citySelect.append(new Option(city.name, city.id));
+                        });
+                    }
+                });
+
+                // تحميل المدن عند تحميل الصفحة إذا كانت هناك محافظة محددة
+                const oldGovernorate = $('#governorate_id').val();
+                if (oldGovernorate) {
+                    $('#governorate_id').trigger('change');
+
+                    // اختيار المدينة المحفوظة إن وجدت
+                    const oldCity = "{{ old('city_id', $doctor->city_id) }}";
+                    if (oldCity) {
+                        $('#city_id').val(oldCity);
+                    }
+                }
+            });
+        </script>
+    @endpush
 @endsection

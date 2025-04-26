@@ -106,22 +106,20 @@
                                 @endif
                             </td>
                             <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('appointments.show', $appointment) }}"
-                                       class="btn btn-sm btn-outline-primary">
+                                <div class="action-buttons">
+                                    <a href="{{ route('appointments.show', $appointment) }}" class="btn-action btn-view"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="عرض">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a href="{{ route('appointments.edit', $appointment) }}"
-                                       class="btn btn-sm btn-outline-secondary">
+                                    <a href="{{ route('appointments.edit', $appointment) }}" class="btn-action btn-edit"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="{{ route('appointments.destroy', $appointment) }}"
-                                          method="POST"
-                                          class="d-inline">
+                                    <form action="{{ route('appointments.destroy', $appointment) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-danger delete-confirmation">
+                                        <button type="submit" class="btn-action btn-delete delete-confirmation"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="حذف">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

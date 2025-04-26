@@ -4,8 +4,8 @@ namespace Modules\Doctors\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
-use Modules\Users\Entities\Users;
 use App\Models\Category;
+use App\Models\Governorate;
 use App\Models\User;
 use App\Repositories\AppointmentRepository;
 use Illuminate\Http\Request;
@@ -37,13 +37,13 @@ class DoctorsController extends Controller
 
         // البحث حسب سعر الكشف
         if ($request->filled('fee_min')) {
-            $query->where('price', '>=', $request->fee_min);
+            $query->where('consultation_fee', '>=', $request->fee_min);
         }
         if ($request->filled('fee_max')) {
-            $query->where('price', '<=', $request->fee_max);
+            $query->where('consultation_fee', '<=', $request->fee_max);
         }
 
-        $doctors = $query->with(['categories', 'user'])
+        $doctors = $query->with(['categories', 'user', 'governorate', 'city'])
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -56,7 +56,8 @@ class DoctorsController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('doctors::create', compact('doctor', 'categories'));
+        $governorates = Governorate::with('cities')->get();
+        return view('doctors::create', compact('categories', 'governorates'));
     }
 
     public function store(Request $request)
@@ -65,25 +66,18 @@ class DoctorsController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'phone' => 'required|string|max:20',
-            'password' => 'required|string|min:6|confirmed',
-            'price' => 'required|numeric|min:0',
-            'categories' => 'required|array|min:1',
-            'categories.*' => 'exists:categories,id',
+            'password' => 'required|string|min:6',
+            'consultation_fee' => 'required|numeric|min:0',
+            'waiting_time' => 'nullable|integer|min:0',
+            'categories' => 'required|exists:categories,id',
             'gender' => 'required|in:ذكر,انثي',
             'experience_years' => 'nullable|integer|min:0',
             'bio' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'address1' => 'nullable|string',
-            'city' => 'nullable|string'
-        ], [
-            'categories.required' => 'يجب اختيار تخصص واحد على الأقل',
-            'categories.min' => 'يجب اختيار تخصص واحد على الأقل',
-            'password.required' => 'كلمة المرور مطلوبة',
-            'password.min' => 'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
-            'password.confirmed' => 'كلمة المرور غير متطابقة',
-            'price.required' => 'سعر الكشف مطلوب',
-            'price.numeric' => 'سعر الكشف يجب أن يكون رقماً',
-            'price.min' => 'سعر الكشف يجب أن يكون أكبر من صفر'
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'address' => 'nullable|string',
+            'governorate_id' => 'required|exists:governorates,id',
+            'city_id' => 'required|exists:cities,id',
         ]);
 
         // Create user record first
@@ -102,21 +96,23 @@ class DoctorsController extends Controller
         // Create doctor record with user_id and name
         $doctor = Doctor::create([
             'user_id' => $user->id,
-            'name' => $validated['name'],  // Adding name field
-            'email' => $validated['email'], // Adding email field
-            'phone' => $validated['phone'], // Adding phone field
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
             'bio' => $validated['bio'] ?? null,
-            'price' => $validated['price'],
+            'description' => $validated['description'] ?? null,
+            'consultation_fee' => $validated['consultation_fee'],
+            'waiting_time' => $validated['waiting_time'],
             'experience_years' => $validated['experience_years'] ?? null,
             'gender' => $validated['gender'],
-            'address' => $validated['address1'] ?? null,
-            'city' => $validated['city'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'governorate_id' => $validated['governorate_id'],
+            'city_id' => $validated['city_id'],
         ]);
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('doctors', 'public');
-            $doctor->image = $imagePath;
+            $doctor->image = Doctor::uploadImage($request->file('image'));
             $doctor->save();
         }
 
@@ -130,7 +126,8 @@ class DoctorsController extends Controller
     public function edit(Doctor $doctor)
     {
         $categories = Category::all();
-        return view('doctors::edit', compact('doctor', 'categories'));
+        $governorates = Governorate::with('cities')->get();
+        return view('doctors::edit', compact('doctor', 'categories', 'governorates'));
     }
 
     public function update(Request $request, Doctor $doctor)
@@ -139,22 +136,23 @@ class DoctorsController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . ($doctor->user_id ?? 0),
             'phone' => 'required|string|max:20',
-            'categories' => 'required|array|min:1',
-            'categories.*' => 'required|exists:categories,id',
+            'categories' => 'required|exists:categories,id',
             'bio' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'description' => 'nullable|string',
+            'consultation_fee' => 'required|numeric|min:0',
+            'waiting_time' => 'nullable|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'gender' => 'required|in:ذكر,انثي',
             'status' => 'nullable|boolean',
-            'address1' => 'nullable|string',
-            'address2' => 'nullable|string',
-            'city' => 'nullable|string',
-            'district' => 'nullable|string',
-            'postal_code' => 'nullable|string'
+            'address' => 'nullable|string',
+            'governorate_id' => 'required|exists:governorates,id',
+            'city_id' => 'required|exists:cities,id',
         ]);
 
         if (!isset($validated['status'])) {
             $validated['status'] = false;
         }
+
         // Update user record if it exists
         if ($doctor->user_id) {
             $user = User::find($doctor->user_id);
@@ -165,43 +163,34 @@ class DoctorsController extends Controller
                     'phone_number' => $validated['phone']
                 ]);
             }
-        } else {
-            // If no user exists, create one
-            $user = User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => Hash::make('password'), // Default password
-                'phone_number' => $validated['phone'],
-                'type' => 'doctor'
-            ]);
-
-            // Assign doctor role with web guard
-            $doctorRole = Role::findByName('Doctor', 'web');
-            $user->assignRole($doctorRole);
-
-            // Associate user with doctor
-            $doctor->user_id = $user->id;
-            $doctor->save();
         }
 
-        // Update doctor record including duplicated fields
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image
+            $doctor->deleteImage();
+
+            // Upload and save new image
+            $doctor->image = Doctor::uploadImage($request->file('image'));
+        }
+
+        // Update doctor record
         $doctor->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'bio' => $validated['bio'] ?? null,
+            'description' => $validated['description'] ?? null,
             'gender' => $validated['gender'],
             'status' => $validated['status'] ?? false,
-            'address' => $validated['address1'] ?? null,
-            'city' => $validated['city'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'governorate_id' => $validated['governorate_id'],
+            'city_id' => $validated['city_id'],
+            'waiting_time' => $validated['waiting_time'],
+            'consultation_fee' => $validated['consultation_fee']
         ]);
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('doctors', 'public');
-            $doctor->image = $imagePath;
-            $doctor->save();
-        }
-
+        // Sync categories
         $doctor->categories()->sync($request->categories);
 
         return redirect()->route('doctors.index')
@@ -229,23 +218,31 @@ class DoctorsController extends Controller
             }
         }
 
-        // Filter by consultation fee
-        if ($request->filled('fee_min')) {
-            $query->where('price', '>=', $request->fee_min);
-        }
-        if ($request->filled('fee_max')) {
-            $query->where('price', '<=', $request->fee_max);
+        // Filter by governorate
+        if ($request->filled('governorate')) {
+            $query->where('governorate_id', $request->governorate);
         }
 
-        $doctors = $query->with(['categories', 'user'])
+        // Filter by consultation fee range
+        if ($request->filled('fee_range')) {
+            [$min, $max] = explode('-', $request->fee_range);
+            if ($max === '+') {
+                $query->where('consultation_fee', '>=', $min);
+            } else {
+                $query->whereBetween('consultation_fee', [$min, $max]);
+            }
+        }
+
+        $doctors = $query->with(['categories', 'user', 'governorate', 'city'])
             ->where('status', true)
             ->latest()
             ->paginate(12)
             ->withQueryString();
 
         $categories = Category::all();
+        $governorates = Governorate::all();
 
-        return view('doctors::profiles', compact('doctors', 'categories'));
+        return view('doctors::profiles', compact('doctors', 'categories', 'governorates'));
     }
 
     public function destroy(Doctor $doctor)
@@ -271,7 +268,7 @@ class DoctorsController extends Controller
      */
     public function show(Doctor $doctor)
     {
-        $doctor->load(['categories', 'user']);
+        $doctor->load(['categories', 'user', 'governorate', 'city']);
         $appointments = app(AppointmentRepository::class)->findByDoctorAndDate($doctor->id, now());
         return view('doctors::show', compact('doctor', 'appointments'));
     }

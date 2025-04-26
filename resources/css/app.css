@@ -12,20 +12,36 @@ body {
     text-align: right;
 }
 
-.border {
-    border: 1px solid #EEE !important;
-}
-
-/* Optimized navbar styles */
-.navbar {
-    position: fixed;
-    width: 100%;
-    z-index: 99;
-}
-
 .navbar .navbar-nav .nav-link {
     color: rgba(255, 255, 255, 0.92);
     transition: color 0.3s ease;
+}
+
+/* Input fields direction handling */
+input,
+select,
+textarea {
+    direction: rtl;
+}
+
+input::-webkit-input-placeholder {
+    text-align: right;
+}
+
+input:-moz-placeholder {
+    text-align: right;
+}
+
+input[type="email"]:is(:placeholder-shown) {
+    direction: rtl;
+}
+
+input[type="email"]:not(:placeholder-shown) {
+    direction: rtl;
+}
+
+input[type=email], input[type=number], input[type=tel], input[type=url]{
+    direction: rtl !important;
 }
 
 .navbar .navbar-nav .nav-link.active,

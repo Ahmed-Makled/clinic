@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         // Other seeders
         $this->call([
             CategorySeeder::class,
+            GovernorateAndCitySeeder::class,
         ]);
     }
 }
