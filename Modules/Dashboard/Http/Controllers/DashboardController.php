@@ -68,6 +68,11 @@ class DashboardController extends Controller
                     ->where('status', 'completed')
                     ->count();
                 return round(($completed / $total) * 100);
+            }),
+            'pending_appointments' => Cache::remember('pending_appointments', 300, function () {
+                return Appointment::where('status', 'pending')
+                    ->where('scheduled_at', '>=', Carbon::now())
+                    ->count();
             })
         ];
 
