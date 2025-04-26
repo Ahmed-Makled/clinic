@@ -52,15 +52,15 @@
                                     @enderror
                                 </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="status" class="form-label">الحالة *</label>
-                                    <select name="status"
-                                            id="status"
-                                            class="form-select @error('status') is-invalid @enderror"
-                                            required>
-                                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>نشط</option>
-                                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>غير نشط</option>
-                                    </select>
+                                <div class="form-check mb-3">
+                                    <input type="hidden" name="status" value="0">
+                                    <input type="checkbox"
+                                           class="form-check-input @error('status') is-invalid @enderror"
+                                           id="status"
+                                           name="status"
+                                           value="1"
+                                           {{ old('status', true) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="status">نشط</label>
                                     @error('status')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

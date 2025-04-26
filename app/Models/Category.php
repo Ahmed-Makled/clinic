@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\HasStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
 class Category extends Model
 {
-    use HasFactory, HasStatus;
+    use HasFactory;
 
     protected $table = 'categories';
 
@@ -20,11 +19,8 @@ class Category extends Model
         'slug'
     ];
 
-    const STATUS_COLUMN = 'status';
-    const STATUSES = ['active', 'inactive'];
-    const STATUS_LABELS = [
-        'active' => 'نشط',
-        'inactive' => 'غير نشط'
+    protected $casts = [
+        'status' => 'boolean'
     ];
 
     protected static function boot()

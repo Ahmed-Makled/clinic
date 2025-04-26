@@ -29,7 +29,7 @@ class SpecialtyController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories',
             'description' => 'nullable|string',
-            'status' => 'required|in:active,inactive'
+            'status' => 'boolean'
         ]);
 
         Category::create($validated);
@@ -51,7 +51,7 @@ class SpecialtyController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $specialty->id,
             'description' => 'nullable|string',
-            'status' => 'required|in:active,inactive'
+            'status' => 'boolean'
         ]);
 
         $specialty->update($validated);

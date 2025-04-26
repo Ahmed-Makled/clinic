@@ -68,18 +68,17 @@
                                 </span>
                             </td>
                             <td>
-
                                 @if($specialty->status)
-                                <span class="status-badge active">
-                                    <i class="bi bi-check-circle-fill"></i>
-                                    نشط
-                                </span>
-                            @else
-                                <span class="status-badge inactive">
-                                    <i class="bi bi-x-circle-fill"></i>
-                                    غير نشط
-                                </span>
-                            @endif
+                                    <span class="status-badge active">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        نشط
+                                    </span>
+                                @else
+                                    <span class="status-badge inactive">
+                                        <i class="bi bi-x-circle-fill"></i>
+                                        غير نشط
+                                    </span>
+                                @endif
                             </td>
                             <td>
                                 <div class="action-buttons">
