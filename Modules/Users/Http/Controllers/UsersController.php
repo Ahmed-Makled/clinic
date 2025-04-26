@@ -18,13 +18,14 @@ class UsersController extends Controller
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+                  ->orWhere('email', 'like', '%' . $request->search . '%')
+                  ->orWhere('phone_number', 'like', '%' . $request->search . '%');
             });
         }
 
         // Filter by role
-        if ($request->filled('role')) {
-            $query->role($request->role);
+        if ($request->filled('role_filter')) {
+            $query->role($request->role_filter);
         }
 
         $users = $query->latest()->paginate(10);

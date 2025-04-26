@@ -77,7 +77,7 @@
 
                     <div class="col-md-1">
                         <label class="form-label">&nbsp;</label>
-                        <button type="button" class="btn btn-primary w-100 d-flex align-items-center" id="applyFilters">
+                        <button type="button" class="btn btn-primary d-flex align-items-center" id="applyFilters">
                             <i class="bi bi-funnel-fill me-1"></i>
                             تطبيق
                         </button>
@@ -102,7 +102,7 @@
                     <tbody>
                         @forelse($appointments as $appointment)
                             <tr>
-                                <td>{{ $appointment->id }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
@@ -254,18 +254,32 @@
                 function updateFilters() {
                     const params = new URLSearchParams(window.location.search);
 
-                    // تحديث قيم الفلاتر
-                    if (dateFilter?.value) params.set('date_filter', dateFilter.value);
-                    if (statusFilter?.value) params.set('status_filter', statusFilter.value);
-                    if (doctorFilter?.value) params.set('doctor_filter', doctorFilter.value);
-                    if (searchInput?.value) params.set('search', searchInput.value);
-
-                    // إزالة القيم الفارغة
-                    for (const [key, value] of params.entries()) {
-                        if (!value) params.delete(key);
+                    // فحص وإضافة الفلاتر فقط إذا كانت لها قيمة
+                    if (dateFilter?.value?.trim()) {
+                        params.set('date_filter', dateFilter.value.trim());
+                    } else {
+                        params.delete('date_filter');
                     }
 
-                    // تحديث الرابط مع الفلاتر الجديدة
+                    if (statusFilter?.value?.trim()) {
+                        params.set('status_filter', statusFilter.value.trim());
+                    } else {
+                        params.delete('status_filter');
+                    }
+
+                    if (doctorFilter?.value?.trim()) {
+                        params.set('doctor_filter', doctorFilter.value.trim());
+                    } else {
+                        params.delete('doctor_filter');
+                    }
+
+                    if (searchInput?.value?.trim()) {
+                        params.set('search', searchInput.value.trim());
+                    } else {
+                        params.delete('search');
+                    }
+
+                    // تحديث الرابط مع الفلاتر
                     window.location.href = `${window.location.pathname}?${params.toString()}`;
                 }
 

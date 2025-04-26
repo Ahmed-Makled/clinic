@@ -41,7 +41,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label">&nbsp;</label>
-                    <button type="button" class="btn btn-primary w-100" id="applyFilters">
+                    <button type="button" class="btn btn-primary d-flex align-items-center" id="applyFilters">
                         <i class="bi bi-funnel-fill me-1"></i>
                         تطبيق
                     </button>
@@ -64,7 +64,7 @@
                 <tbody>
                     @forelse($specialties as $specialty)
                         <tr>
-                            <td>{{ $specialty->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"

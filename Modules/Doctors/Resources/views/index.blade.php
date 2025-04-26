@@ -61,7 +61,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label">&nbsp;</label>
-                    <button type="button" class="btn btn-primary w-100" id="applyFilters">
+                    <button type="button" class="btn btn-primary d-flex align-items-center" id="applyFilters">
                         <i class="bi bi-funnel-fill me-1"></i>
                         تطبيق
                     </button>
@@ -85,7 +85,7 @@
                 <tbody class="border-top-0">
                     @forelse($doctors as $doctor)
                         <tr>
-                            <td class="ps-3">{{ $doctor->id }}</td>
+                            <td class="ps-3">{{ $loop->iteration }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     @if($doctor->image)

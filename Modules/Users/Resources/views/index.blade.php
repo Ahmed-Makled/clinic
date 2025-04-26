@@ -25,7 +25,7 @@
             <div class="filters mb-4">
                 <div class="row g-3">
                     <div class="col-md-5">
-                        <label for="searchInput" class="form-label">اسم المستخدم</label>
+                        <label for="searchInput" class="form-label">بحث بالاسم/البريد/الهاتف</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="bi bi-search"></i>
@@ -34,7 +34,7 @@
                                    class="form-control"
                                    id="searchInput"
                                    name="search"
-                                   placeholder="ادخل اسم المستخدم..."
+                                   placeholder="البحث بالاسم، البريد الإلكتروني، أو رقم الهاتف..."
                                    value="{{ request('search') }}">
                         </div>
                     </div>
@@ -53,7 +53,7 @@
 
                     <div class="col-md-2">
                         <label class="form-label">&nbsp;</label>
-                        <button type="button" class="btn btn-primary w-100" id="applyFilters">
+                        <button type="button" class="btn btn-primary d-flex align-items-center" id="applyFilters">
                             <i class="bi bi-funnel-fill me-1"></i>
                             تطبيق
                         </button>
@@ -77,7 +77,7 @@
                     <tbody>
                         @forelse($users as $user)
                             <tr>
-                                <td>{{ $user->id }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="avatar-circle">
@@ -199,18 +199,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateFilters() {
         const params = new URLSearchParams(window.location.search);
 
-        if (searchInput?.value.trim()) {
+        if (searchInput?.value?.trim()) {
             params.set('search', searchInput.value.trim());
         } else {
             params.delete('search');
         }
 
-        if (roleFilter?.value) {
-            params.set('role', roleFilter.value);
+        if (roleFilter?.value?.trim()) {
+            params.set('role_filter', roleFilter.value.trim());
         } else {
-            params.delete('role');
+            params.delete('role_filter');
         }
 
+        // تحديث الرابط مع الفلاتر
         window.location.href = `${window.location.pathname}?${params.toString()}`;
     }
 

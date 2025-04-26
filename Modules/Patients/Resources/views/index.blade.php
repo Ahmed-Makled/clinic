@@ -60,7 +60,7 @@
 
                 <div class="col-md-1">
                     <label class="form-label">&nbsp;</label>
-                    <button type="button" class="btn btn-primary w-100" id="applyFilters">
+                    <button type="button" class="btn btn-primary d-flex align-items-center" id="applyFilters">
                         <i class="bi bi-funnel-fill me-1"></i>
                         تطبيق
                     </button>
@@ -85,7 +85,7 @@
                 <tbody>
                     @forelse($patients as $patient)
                         <tr>
-                            <td>{{ $patient->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
@@ -253,16 +253,25 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateFilters() {
         const params = new URLSearchParams(window.location.search);
 
-        if (searchInput?.value) params.set('search', searchInput.value);
-        if (genderFilter?.value) params.set('gender_filter', genderFilter.value);
-        if (sortFilter?.value) params.set('sort', sortFilter.value);
-
-        // Remove empty values
-        for (const [key, value] of params.entries()) {
-            if (!value) params.delete(key);
+        if (searchInput?.value?.trim()) {
+            params.set('search', searchInput.value.trim());
+        } else {
+            params.delete('search');
         }
 
-        // Update URL with new filters
+        if (genderFilter?.value?.trim()) {
+            params.set('gender_filter', genderFilter.value.trim());
+        } else {
+            params.delete('gender_filter');
+        }
+
+        if (sortFilter?.value?.trim()) {
+            params.set('sort', sortFilter.value.trim());
+        } else {
+            params.delete('sort');
+        }
+
+        // تحديث الرابط مع الفلاتر
         window.location.href = `${window.location.pathname}?${params.toString()}`;
     }
 
