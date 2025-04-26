@@ -18,36 +18,84 @@
             <div class="card overview-card">
                 <div class="card-body">
                     <div class="row align-items-center">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <h4 class="overview-title mb-3">نظرة عامة اليوم</h4>
-                            <div class="today-stats">
-                                <div class="stat-item">
-                                    <i class="bi bi-calendar-check-fill text-primary"></i>
-                                    <span class="stat-value">{{ $stats['today_appointments'] }}</span>
-                                    <span class="stat-label">مواعيد اليوم</span>
+                            <div class="stats-container">
+                                <!-- إحصائيات المواعيد -->
+                                <div class="stat-group">
+                                    <h6 class="stat-group-title">المواعيد</h6>
+                                    <div class="stat-item">
+                                        <i class="bi bi-calendar-check-fill text-primary"></i>
+                                        <span class="stat-value">{{ $stats['today_appointments'] }}</span>
+                                        <span class="stat-label">مواعيد اليوم</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="bi bi-check2-circle text-success"></i>
+                                        <span class="stat-value">{{ $stats['today_completed'] ?? 0 }}</span>
+                                        <span class="stat-label">مكتملة</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="bi bi-x-circle text-danger"></i>
+                                        <span class="stat-value">{{ $stats['today_cancelled'] ?? 0 }}</span>
+                                        <span class="stat-label">ملغاة</span>
+                                    </div>
                                 </div>
-                                <div class="stat-item">
-                                    <i class="bi bi-clock-fill text-warning"></i>
-                                    <span class="stat-value">{{ $stats['upcoming_appointments'] }}</span>
-                                    <span class="stat-label">المواعيد القادمة</span>
+
+                                <!-- إحصائيات مالية -->
+                                <div class="stat-group">
+                                    <h6 class="stat-group-title">المالية</h6>
+                                    <div class="stat-item">
+                                        <i class="bi bi-cash text-success"></i>
+                                        <span class="stat-value">{{ number_format($stats['today_income'] ?? 0) }}</span>
+                                        <span class="stat-label">دخل اليوم</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="bi bi-wallet2 text-warning"></i>
+                                        <span class="stat-value">{{ number_format($stats['pending_payments'] ?? 0) }}</span>
+                                        <span class="stat-label">معلق</span>
+                                    </div>
                                 </div>
-                                <div class="stat-item">
-                                    <i class="bi bi-check-circle-fill text-success"></i>
-                                    <span class="stat-value">{{ $stats['completed_rate'] }}%</span>
-                                    <span class="stat-label">نسبة الإنجاز</span>
+
+                                <!-- إحصائيات المرضى -->
+                                <div class="stat-group">
+                                    <h6 class="stat-group-title">المرضى</h6>
+                                    <div class="stat-item">
+                                        <i class="bi bi-person-plus-fill text-info"></i>
+                                        <span class="stat-value">{{ $stats['new_patients_today'] ?? 0 }}</span>
+                                        <span class="stat-label">جديد</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="bi bi-people-fill text-primary"></i>
+                                        <span class="stat-value">{{ $stats['total_patients'] ?? 0 }}</span>
+                                        <span class="stat-label">إجمالي</span>
+                                    </div>
+                                </div>
+
+                                <!-- مؤشرات الأداء -->
+                                <div class="stat-group">
+                                    <h6 class="stat-group-title">الأداء</h6>
+                                    <div class="stat-item">
+                                        <i class="bi bi-graph-up text-success"></i>
+                                        <span class="stat-value">{{ $stats['completion_rate'] ?? 0 }}%</span>
+                                        <span class="stat-label">نسبة الإنجاز</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="bi bi-clock-history text-warning"></i>
+                                        <span class="stat-value">{{ $stats['avg_wait_time'] ?? 0 }}د</span>
+                                        <span class="stat-label">وقت الانتظار</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Detailed Statistics Grid -->
+    <!-- Detailed Statistics Cards -->
     <div class="row g-4 mb-4">
-        <!-- Users Statistics -->
+        <!-- Users Card -->
         <div class="col-md-6 col-lg-3">
             <div class="stat-card users">
                 <div class="stat-header">
@@ -55,71 +103,26 @@
                         <i class="bi bi-people-fill"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 class="stat-title">الأطباء والمرضى</h3>
-                        <div class="stat-total">
-                            <span class="total-number">{{ $stats['doctors'] + $stats['patients'] }}</span>
-                            <span class="total-label">إجمالي المستخدمين</span>
-                        </div>
+                        <h3 class="stat-title">المستخدمين</h3>
+                        <div class="stat-total">{{ $stats['total_users'] }}</div>
                     </div>
                 </div>
                 <div class="stat-details">
-                    <div class="detail-item">
-                        <i class="bi bi-heart-pulse"></i>
-                        <span class="detail-value">{{ $stats['doctors'] }}</span>
-                        <span class="detail-label">طبيب</span>
-                        <small class="detail-sub">({{ $stats['active_doctors'] }} نشط)</small>
-                    </div>
-                    <div class="detail-item">
-                        <i class="bi bi-people"></i>
-                        <span class="detail-value">{{ $stats['patients'] }}</span>
-                        <span class="detail-label">مريض</span>
-                        <div class="gender-stats">
-                            <small class="male"><i class="bi bi-gender-male"></i> {{ $stats['male_patients'] }}</small>
-                            <small class="female"><i class="bi bi-gender-female"></i> {{ $stats['female_patients'] }}</small>
+                    <div class="detail-row">
+                        <div class="detail-item">
+                            <i class="bi bi-person-badge text-primary"></i>
+                            <span>{{ $stats['doctors'] }} طبيب</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="bi bi-person text-info"></i>
+                            <span>{{ $stats['patients'] }} مريض</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Financial Statistics -->
-        <div class="col-md-6 col-lg-3">
-            <div class="stat-card finance">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <i class="bi bi-cash-stack"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3 class="stat-title">الإحصائيات المالية</h3>
-                        <div class="stat-total">
-                            <span class="total-number">{{ number_format($stats['total_fees']) }}</span>
-                            <span class="total-label">ج.م إجمالي</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="stat-details">
-                    <div class="progress-container">
-                        <div class="progress finance-progress">
-                            <div class="progress-bar bg-success" style="width: {{ ($stats['paid_fees'] / $stats['total_fees']) * 100 }}%"></div>
-                        </div>
-                        <div class="progress-stats">
-                            <div class="collected">
-                                <i class="bi bi-check-circle text-success"></i>
-                                <span>{{ number_format($stats['paid_fees']) }} ج.م</span>
-                                <small>محصل</small>
-                            </div>
-                            <div class="pending">
-                                <i class="bi bi-clock text-warning"></i>
-                                <span>{{ number_format($stats['unpaid_fees']) }} ج.م</span>
-                                <small>معلق</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Appointments Statistics -->
+        <!-- Appointments Card -->
         <div class="col-md-6 col-lg-3">
             <div class="stat-card appointments">
                 <div class="stat-header">
@@ -127,37 +130,51 @@
                         <i class="bi bi-calendar-week"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 class="stat-title">إحصائيات المواعيد</h3>
-                        <div class="stat-total">
-                            <span class="total-number">{{ $stats['today_appointments'] }}</span>
-                            <span class="total-label">موعد اليوم</span>
-                        </div>
+                        <h3 class="stat-title">المواعيد</h3>
+                        <div class="stat-total">{{ $stats['total_appointments'] }}</div>
                     </div>
                 </div>
-                <div class="stat-details appointments-progress">
-                    <div class="status-item">
-                        <div class="status-info">
-                            <span class="status-label">مكتمل</span>
-                            <span class="status-value">{{ $stats['completed_rate'] }}%</span>
+                <div class="stat-details">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>معدل الإكمال</span>
+                            <span>{{ $stats['completion_rate'] }}%</span>
                         </div>
                         <div class="progress">
-                            <div class="progress-bar bg-success" style="width: {{ $stats['completed_rate'] }}%"></div>
-                        </div>
-                    </div>
-                    <div class="status-item">
-                        <div class="status-info">
-                            <span class="status-label">قيد الانتظار</span>
-                            <span class="status-value">{{ 100 - $stats['completed_rate'] }}%</span>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-warning" style="width: {{ 100 - $stats['completed_rate'] }}%"></div>
+                            <div class="progress-bar bg-success" style="width: {{ $stats['completion_rate'] }}%"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Performance Metrics -->
+        <!-- Financial Card -->
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card finance">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-title">المالية</h3>
+                        <div class="stat-total">{{ number_format($stats['total_income']) }} ج.م</div>
+                    </div>
+                </div>
+                <div class="stat-details">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>نسبة التحصيل</span>
+                            <span>{{ $stats['collection_rate'] }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: {{ $stats['collection_rate'] }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Card -->
         <div class="col-md-6 col-lg-3">
             <div class="stat-card performance">
                 <div class="stat-header">
@@ -165,26 +182,18 @@
                         <i class="bi bi-graph-up"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 class="stat-title">مؤشرات الأداء</h3>
+                        <h3 class="stat-title">الأداء</h3>
+                        <div class="stat-total">{{ $stats['satisfaction_rate'] }}%</div>
                     </div>
                 </div>
                 <div class="stat-details">
-                    <div class="performance-metric">
-                        <div class="metric-info">
-                            <span class="metric-label">رضا المرضى</span>
-                            <span class="metric-value">{{ $stats['satisfaction_rate'] ?? '95' }}%</span>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>معدل الحضور</span>
+                            <span>{{ $stats['attendance_rate'] }}%</span>
                         </div>
                         <div class="progress">
-                            <div class="progress-bar bg-info" style="width: {{ $stats['satisfaction_rate'] ?? '95' }}%"></div>
-                        </div>
-                    </div>
-                    <div class="performance-metric">
-                        <div class="metric-info">
-                            <span class="metric-label">معدل الحضور</span>
-                            <span class="metric-value">{{ $stats['attendance_rate'] ?? '88' }}%</span>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-primary" style="width: {{ $stats['attendance_rate'] ?? '88' }}%"></div>
+                            <div class="progress-bar bg-info" style="width: {{ $stats['attendance_rate'] }}%"></div>
                         </div>
                     </div>
                 </div>
@@ -304,7 +313,7 @@
             /* Main Layout Styles */
             .card {
                 border: none;
-                box-shadow: 0 0 20px rgba(0,0,0,0.05);
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
                 border-radius: 15px;
                 overflow: hidden;
             }
@@ -387,10 +396,25 @@
                 margin-left: 1rem;
             }
 
-            .users .stat-icon { background: #e8f5e9; color: #2e7d32; }
-            .finance .stat-icon { background: #fff8e1; color: #f57c00; }
-            .appointments .stat-icon { background: #e3f2fd; color: #1976d2; }
-            .performance .stat-icon { background: #f3e5f5; color: #7b1fa2; }
+            .users .stat-icon {
+                background: #e8f5e9;
+                color: #2e7d32;
+            }
+
+            .finance .stat-icon {
+                background: #fff8e1;
+                color: #f57c00;
+            }
+
+            .appointments .stat-icon {
+                background: #e3f2fd;
+                color: #1976d2;
+            }
+
+            .performance .stat-icon {
+                background: #f3e5f5;
+                color: #7b1fa2;
+            }
 
             .stat-info {
                 flex: 1;
@@ -474,8 +498,15 @@
                 background: #f8f9fa;
             }
 
-            .reminder-item.warning { background: #fff8e1; color: #f57c00; }
-            .reminder-item.danger { background: #ffebee; color: #d32f2f; }
+            .reminder-item.warning {
+                background: #fff8e1;
+                color: #f57c00;
+            }
+
+            .reminder-item.danger {
+                background: #ffebee;
+                color: #d32f2f;
+            }
 
             /* Responsive Adjustments */
             @media (max-width: 768px) {
@@ -497,7 +528,151 @@
                 }
             }
 
+            /* Stats Container */
+            .stats-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 2rem;
+                justify-content: space-between;
+            }
 
+            .stat-group {
+                min-width: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .stat-group-title {
+                color: #64748b;
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+                font-weight: 600;
+                display: none;
+            }
+
+            /* Stat Cards */
+            .stat-card {
+                background: white;
+                padding: 1.5rem;
+                border-radius: 15px;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+                height: 100%;
+            }
+
+            .stat-header {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 1.5rem;
+            }
+
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                margin-left: 1rem;
+            }
+
+            .stat-info {
+                flex: 1;
+            }
+
+            .stat-title {
+                font-size: 1rem;
+                color: #64748b;
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-total {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1e293b;
+            }
+
+            .stat-details {
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid #e2e8f0;
+            }
+
+            .detail-row {
+                display: flex;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+
+            .detail-item {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+                color: #64748b;
+            }
+
+            /* Progress Items */
+            .progress-item {
+                margin-bottom: 1rem;
+            }
+
+            .progress-label {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.5rem;
+                font-size: 0.9rem;
+                color: #64748b;
+            }
+
+            .progress {
+                height: 6px;
+                background-color: #f1f5f9;
+                border-radius: 3px;
+                overflow: hidden;
+            }
+
+            .progress-bar {
+                transition: width 0.3s ease;
+            }
+
+            /* Card Colors */
+            .users .stat-icon {
+                background: #e8f5e9;
+                color: #2e7d32;
+            }
+
+            .appointments .stat-icon {
+                background: #e3f2fd;
+                color: #1976d2;
+            }
+
+            .finance .stat-icon {
+                background: #fff8e1;
+                color: #f57c00;
+            }
+
+            .performance .stat-icon {
+                background: #f3e5f5;
+                color: #7b1fa2;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .stats-container {
+                    gap: 1rem;
+                }
+
+                .stat-group {
+                    min-width: 100%;
+                }
+
+                .detail-row {
+                    flex-direction: column;
+                }
+            }
         </style>
     @endpush
 

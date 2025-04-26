@@ -7,6 +7,7 @@ use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\Appointment;
 use App\Models\Category;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -16,6 +17,9 @@ class DashboardController extends Controller
     {
         // General Statistics with caching
         $stats = [
+            'total_users' => Cache::remember('total_users_count', 3600, function () {
+                return User::count();
+            }),
             'doctors' => Cache::remember('doctors_count', 3600, function () {
                 return Doctor::count();
             }),
@@ -31,7 +35,7 @@ class DashboardController extends Controller
             'female_patients' => Cache::remember('female_patients_count', 3600, function () {
                 return Patient::where('gender', 'female')->count();
             }),
-            'appointments' => Cache::remember('appointments_count', 3600, function () {
+            'total_appointments' => Cache::remember('appointments_count', 3600, function () {
                 return Appointment::count();
             }),
             'today_appointments' => Cache::remember('today_appointments', 300, function () {
@@ -49,30 +53,54 @@ class DashboardController extends Controller
             'unpaid_fees' => Cache::remember('unpaid_fees', 3600, function () {
                 return Appointment::where('is_paid', false)->sum('fees');
             }),
-            'completed_rate' => Cache::remember('completed_rate', 3600, function () {
+            'completion_rate' => Cache::remember('completion_rate', 3600, function () {
                 $total = Appointment::count();
                 if ($total === 0) return 0;
                 $completed = Appointment::where('status', 'completed')->count();
                 return round(($completed / $total) * 100);
             }),
-            'payment_rate' => Cache::remember('payment_rate', 3600, function () {
+            'collection_rate' => Cache::remember('collection_rate', 3600, function () {
                 $total = Appointment::sum('fees');
                 if ($total === 0) return 0;
                 $paid = Appointment::where('is_paid', true)->sum('fees');
                 return round(($paid / $total) * 100);
             }),
-            'today_completion_rate' => Cache::remember('today_completion_rate', 300, function () {
-                $total = Appointment::whereDate('scheduled_at', Carbon::today())->count();
+            'satisfaction_rate' => Cache::remember('satisfaction_rate', 3600, function () {
+                return 95; // Placeholder value, implement actual calculation when feedback system is ready
+            }),
+            'attendance_rate' => Cache::remember('attendance_rate', 3600, function () {
+                $total = Appointment::whereDate('scheduled_at', '<=', Carbon::now())->count();
                 if ($total === 0) return 0;
-                $completed = Appointment::whereDate('scheduled_at', Carbon::today())
+                $attended = Appointment::whereDate('scheduled_at', '<=', Carbon::now())
                     ->where('status', 'completed')
                     ->count();
-                return round(($completed / $total) * 100);
+                return round(($attended / $total) * 100);
+            }),
+            'today_completed' => Cache::remember('today_completed', 300, function () {
+                return Appointment::whereDate('scheduled_at', Carbon::today())
+                    ->where('status', 'completed')
+                    ->count();
+            }),
+            'today_cancelled' => Cache::remember('today_cancelled', 300, function () {
+                return Appointment::whereDate('scheduled_at', Carbon::today())
+                    ->where('status', 'cancelled')
+                    ->count();
             }),
             'pending_appointments' => Cache::remember('pending_appointments', 300, function () {
                 return Appointment::where('status', 'pending')
                     ->where('scheduled_at', '>=', Carbon::now())
                     ->count();
+            }),
+            'total_income' => Cache::remember('total_income', 3600, function () {
+                return Appointment::where('status', 'completed')
+                    ->where('is_paid', true)
+                    ->sum('fees');
+            }),
+            'today_income' => Cache::remember('today_income', 300, function () {
+                return Appointment::whereDate('scheduled_at', Carbon::today())
+                    ->where('status', 'completed')
+                    ->where('is_paid', true)
+                    ->sum('fees');
             })
         ];
 
