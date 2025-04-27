@@ -692,49 +692,183 @@
         }
 
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            display: flex;
             gap: 1.5rem;
-            margin-top: 2rem;
+            padding: 1rem;
         }
 
         .stat-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            box-shadow:
+                0 4px 6px -1px rgba(0, 0, 0, 0.05),
+                0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            width: 250px;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.5) 0%,
+                rgba(255, 255, 255, 0.1) 100%
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: rgba(226, 232, 240, 0.9);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
         }
 
         .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-icon::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 20px;
+            background: inherit;
+            filter: blur(8px);
+            opacity: 0.4;
+            z-index: -1;
+            transition: all 0.3s ease;
         }
 
         .stat-icon.consultation {
-            background: #e3f2fd;
-            color: #0066cc;
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            color: white;
         }
 
         .stat-icon.appointments {
-            background: #e8f5e9;
-            color: #28a745;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
         }
 
         .stat-icon.cancelled {
-            background: #ffebee;
-            color: #dc3545;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: white;
         }
 
         .stat-icon.earnings {
-            background: #fff3e0;
-            color: #f57c00;
+            background: linear-gradient(135deg, #eab308 0%, #facc15 100%);
+            color: white;
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .stat-card:hover .stat-icon::after {
+            opacity: 0.6;
+            filter: blur(12px);
+        }
+
+        .stat-icon i {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-details {
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.025em;
+        }
+
+        .stat-value {
+            color: #1e293b;
+            font-size: 1.875rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .stat-trend.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .stat-trend.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .stat-trend.neutral {
+            background: rgba(100, 116, 139, 0.1);
+            color: #475569;
+        }
+
+        .stat-trend i {
+            font-size: 1.125rem;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover .stat-trend {
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 768px) {
+
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 1.25rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
         }
 
         .info-section {
@@ -1091,13 +1225,6 @@
         font-size: 1rem;
     }
 
-    /* Stats Grid Styles */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 1.5rem;
-        margin-top: 2rem;
-    }
 
     .stat-card {
         background: white;
@@ -1111,6 +1238,7 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        width: max-content;
     }
 
     .stat-card::before {
@@ -1138,19 +1266,29 @@
     }
 
     .stat-icon {
-        width: 48px;
-        height: 48px;
+        width: 46px;
+        height: 46px;
         border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         transition: all 0.3s ease;
     }
 
     .stat-icon.consultation {
         background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
         color: var(--bs-primary);
+    }
+
+    .stat-icon.consultation i {
+        font-size: 1.25rem;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover .stat-icon.consultation i {
+        transform: scale(1);
     }
 
     .stat-icon.appointments {
