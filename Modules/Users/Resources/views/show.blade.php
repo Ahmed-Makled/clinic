@@ -1,54 +1,28 @@
 @extends('layouts.admin')
-
+@section('breadcrumbs')
+    <li class="breadcrumb-item">
+        <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{{ route('users.index') }}" class="text-decoration-none">المستخدمين</a>
+    </li>
+    <li class="breadcrumb-item active">تفاصيل المستخدم</li>
+@endsection
 @section('content')
     <div class="content-wrapper">
-        <div class="container-fluid p-4">
-            <!-- Profile Header -->
-            <div class="profile-header mb-4">
-                <div class="profile-title">
-                    <ul class="breadcrumb">
-                        <li>المستخدمين</li>
-                        <li>تفاصيل المستخدم</li>
-                    </ul>
-                </div>
-                <div class="profile-actions">
-                    <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline-block">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-soft-danger rounded-pill"
-                            onclick="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="حذف المستخدم">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                viewBox="0 0 16 16">
-                                <path
-                                    d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z" />
-                                <path fill-rule="evenodd"
-                                    d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 01-1-1V2a1 1 0 011-1H6a1 1 0 011-1h2a1 1 0 011 1h3.5a1 1 0 011 1v1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
-                            </svg>
-                            <span>حذف</span>
-                        </button>
-                    </form>
-                    <a href="{{ route('users.edit', $user) }}" class="btn btn-soft-primary rounded-pill">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            viewBox="0 0 16 16">
-                            <path
-                                d="M15.502 1.94a.5.5 0 010 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 01.707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 00-.121.196l-.805 2.414a.25.25 0 00.316.316l2.414-.805a.5.5 0 00.196-.12l6.813-6.814z" />
-                            <path fill-rule="evenodd"
-                                d="M1 13.5A1.5 1.5 0 002.5 15h11a1.5 1.5 0 001.5-1.5v-6a.5.5 0 00-1 0v6a.5.5 0 01-.5.5h-11a.5.5 0 01-.5-.5v-11a.5.5 0 01.5-.5H9a.5.5 0 000-1H2.5A1.5 1.5 0 001 2.5v11z" />
-                        </svg>
-                        تعديل البيانات
-                    </a>
-                </div>
-            </div>
 
-            <!-- Profile Card -->
-            <div class="profile-card">
-                <div class="profile-info">
-                    <div class="profile-avatar animate-pop-in">
-                        {{ substr($user->name, 0, 2) }}
-                        <div class="status-indicator {{ $user->status ? 'active pulse' : 'inactive' }}"></div>
-                    </div>
-                    <div class="profile-details">
+
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-info">
+                <div class="profile-avatar animate-pop-in">
+                    {{ substr($user->name, 0, 2) }}
+                    <div class="status-indicator {{ $user->status ? 'active pulse' : 'inactive' }}"></div>
+                </div>
+                <div class="profile-details">
+
+                    <div class="d-flex">
+
                         <h1 class="name animate-fade-in delay-1">{{ $user->name }}</h1>
                         <div class="badges animate-fade-in delay-2">
                             <span class="role">{{ $user->roles->first()->name ?? 'لا يوجد دور' }}</span>
@@ -64,39 +38,71 @@
                             @endif
                         </div>
 
-                        <div class="profile-contact animate-fade-in delay-3">
-                            <div class="contact-item hover-effect" data-bs-toggle="tooltip" title="رقم الهاتف">
-                                <i>
+                        <div class="profile-actions ms-auto">
+                            <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-soft-danger rounded-pill"
+                                    onclick="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="حذف المستخدم">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         viewBox="0 0 16 16">
                                         <path
-                                            d="M11 1a1 1 0 011 1v12a1 1 0 01-1 1H5a1 1 0 01-1-1V2a1 1 0 011-1h6zM5 0a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V2a2 2 0 00-2-2H5z" />
-                                        <path d="M8 14a1 1 0 100-2 1 1 0 000 2z" />
+                                            d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z" />
+                                        <path fill-rule="evenodd"
+                                            d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 01-1-1V2a1 1 0 011-1H6a1 1 0 011-1h2a1 1 0 011 1h3.5a1 1 0 011 1v1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
                                     </svg>
-                                </i>
-                                <div>
-                                    <div class="contact-label">رقم الهاتف</div>
-                                    <div class="contact-value">{{ $user->phone_number }}</div>
-                                </div>
+                                    <span>حذف</span>
+                                </button>
+                            </form>
+                            <a href="{{ route('users.edit', $user) }}" class="btn btn-soft-primary rounded-pill">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    viewBox="0 0 16 16">
+                                    <path
+                                        d="M15.502 1.94a.5.5 0 010 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 01.707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 00-.121.196l-.805 2.414a.25.25 0 00.316.316l2.414-.805a.5.5 0 00.196-.12l6.813-6.814z" />
+                                    <path fill-rule="evenodd"
+                                        d="M1 13.5A1.5 1.5 0 002.5 15h11a1.5 1.5 0 001.5-1.5v-6a.5.5 0 00-1 0v6a.5.5 0 01-.5.5h-11a.5.5 0 01-.5-.5v-11a.5.5 0 01.5-.5H9a.5.5 0 000-1H2.5A1.5 1.5 0 001 2.5v11z" />
+                                </svg>
+                                تعديل البيانات
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="profile-contact animate-fade-in delay-3">
+                        <div class="contact-item hover-effect" data-bs-toggle="tooltip" title="رقم الهاتف">
+                            <i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    viewBox="0 0 16 16">
+                                    <path
+                                        d="M11 1a1 1 0 011 1v12a1 1 0 01-1 1H5a1 1 0 01-1-1V2a1 1 0 011-1h6zM5 0a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V2a2 2 0 00-2-2H5z" />
+                                    <path d="M8 14a1 1 0 100-2 1 1 0 000 2z" />
+                                </svg>
+                            </i>
+                            <div>
+                                <div class="contact-label">رقم الهاتف</div>
+                                <div class="contact-value">{{ $user->phone_number }}</div>
                             </div>
-                            <div class="contact-item hover-effect" data-bs-toggle="tooltip" title="البريد الإلكتروني">
-                                <i>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        viewBox="0 0 16 16">
-                                        <path
-                                            d="M0 4a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H2a2 2 0 01-2-2V4zm2-1a1 1 0 00-1 1v.217l7 4.2 7-4.2V4a1 1 0 00-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 002 13h12a1 1 0 00.966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z" />
-                                    </svg>
-                                </i>
-                                <div>
-                                    <div class="contact-label">البريد الالكترونى</div>
-                                    <div class="contact-value">{{ $user->email }}</div>
-                                </div>
+                        </div>
+                        <div class="contact-item hover-effect" data-bs-toggle="tooltip" title="البريد الإلكتروني">
+                            <i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    viewBox="0 0 16 16">
+                                    <path
+                                        d="M0 4a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H2a2 2 0 01-2-2V4zm2-1a1 1 0 00-1 1v.217l7 4.2 7-4.2V4a1 1 0 00-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 002 13h12a1 1 0 00.966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z" />
+                                </svg>
+                            </i>
+                            <div>
+                                <div class="contact-label">البريد الالكترونى</div>
+                                <div class="contact-value">{{ $user->email }}</div>
                             </div>
-                            @if($user->address)
+                        </div>
+                        @if($user->address)
                             <div class="contact-item hover-effect" data-bs-toggle="tooltip" title="العنوان">
                                 <i>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
                                     </svg>
                                 </i>
                                 <div>
@@ -104,12 +110,14 @@
                                     <div class="contact-value">{{ $user->address }}</div>
                                 </div>
                             </div>
-                            @endif
-                            @if($user->city)
+                        @endif
+                        @if($user->city)
                             <div class="contact-item hover-effect" data-bs-toggle="tooltip" title="المدينة">
                                 <i>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
                                     </svg>
                                 </i>
                                 <div>
@@ -117,20 +125,20 @@
                                     <div class="contact-value">{{ $user->city->name }}</div>
                                 </div>
                             </div>
-                            @endif
-                        </div>
+                        @endif
                     </div>
                 </div>
-                <div class="profile-stats animate-slide-up delay-4">
-                    <div class="stat-item hover-effect">
-                        <div class="stat-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <div class="stat-value">{{ $user->created_at->format('Y-m-d') }}</div>
-                        <div class="stat-label">تاريخ التسجيل</div>
+            </div>
+            <div class="profile-stats animate-slide-up delay-4">
+                <div class="stat-item hover-effect">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
                     </div>
+                    <div class="stat-value">{{ $user->created_at->format('Y-m-d') }}</div>
+                    <div class="stat-label">تاريخ التسجيل</div>
+                </div>
 
-                    @if($user->roles->first()->name === 'patient')
+                @if($user->roles->first()->name === 'patient')
                     <div class="stat-item hover-effect">
                         <div class="stat-icon">
                             <i class="fas fa-stethoscope"></i>
@@ -145,9 +153,9 @@
                         <div class="stat-value">{{ $user->patient->appointments->where('status', 'pending')->count() }}</div>
                         <div class="stat-label">مواعيد قيد الانتظار</div>
                     </div>
-                    @endif
+                @endif
 
-                    @if($user->roles->first()->name === 'doctor')
+                @if($user->roles->first()->name === 'doctor')
                     <div class="stat-item hover-effect">
                         <div class="stat-icon">
                             <i class="fas fa-user-md"></i>
@@ -162,37 +170,37 @@
                         <div class="stat-value">{{ number_format($user->doctor->rating_avg, 1) }}</div>
                         <div class="stat-label">متوسط التقييم</div>
                     </div>
-                    @endif
+                @endif
 
-                    <div class="stat-item hover-effect">
-                        <div class="stat-icon">
-                            <i class="fas fa-sign-in-alt"></i>
-                        </div>
-                        <div class="stat-value">{{ $user->login_count ?? 0 }}</div>
-                        <div class="stat-label">عدد مرات الدخول</div>
+                <div class="stat-item hover-effect">
+                    <div class="stat-icon">
+                        <i class="fas fa-sign-in-alt"></i>
                     </div>
+                    <div class="stat-value">{{ $user->login_count ?? 0 }}</div>
+                    <div class="stat-label">عدد مرات الدخول</div>
                 </div>
+            </div>
 
-                @if($user->roles->first()->name === 'patient' && $user->patient->appointments->isNotEmpty())
+            @if($user->roles->first()->name === 'patient' && $user->patient->appointments->isNotEmpty())
                 <div class="recent-appointments">
                     <h3>آخر المواعيد</h3>
                     <div class="appointments-list">
                         @foreach($user->patient->appointments->take(3) as $appointment)
-                        <div class="appointment-item">
-                            <div class="appointment-info">
-                                <div class="doctor-name">د. {{ $appointment->doctor->user->name }}</div>
-                                <div class="appointment-date">{{ $appointment->appointment_date->format('Y-m-d H:i') }}</div>
+                            <div class="appointment-item">
+                                <div class="appointment-info">
+                                    <div class="doctor-name">د. {{ $appointment->doctor->user->name }}</div>
+                                    <div class="appointment-date">{{ $appointment->appointment_date->format('Y-m-d H:i') }}</div>
+                                </div>
+                                <div class="appointment-status {{ $appointment->status }}">
+                                    {{ __('appointments.status.' . $appointment->status) }}
+                                </div>
                             </div>
-                            <div class="appointment-status {{ $appointment->status }}">
-                                {{ __('appointments.status.' . $appointment->status) }}
-                            </div>
-                        </div>
                         @endforeach
                     </div>
                 </div>
-                @endif
-            </div>
+            @endif
         </div>
+    </div>
     </div>
 
     <style>
@@ -239,41 +247,9 @@
             transform: translateY(-2px);
         }
 
-        /* Profile Header Styles */
-        .profile-header {
+        .profile-actions  {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .profile-title h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #444;
-            margin-bottom: 5px;
-        }
-
-        .profile-title .breadcrumb {
-            display: flex;
-            list-style: none;
-            font-size: 14px;
-            color: #777;
-            padding: 0;
-            margin: 0;
-        }
-
-        .profile-title .breadcrumb li:after {
-            content: "/";
-            margin: 0 8px;
-        }
-
-        .profile-title .breadcrumb li:last-child:after {
-            content: "";
-        }
-
-        .profile-actions {
-            display: flex;
             gap: 10px;
         }
 
