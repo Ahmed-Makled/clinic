@@ -65,6 +65,11 @@ class UsersController extends Controller
             ->with('success', 'تم إضافة المستخدم بنجاح');
     }
 
+    public function show(User $user)
+    {
+        return view('users::show', compact('user'));
+    }
+
     public function edit(User $user)
     {
         $roles = Role::all();
