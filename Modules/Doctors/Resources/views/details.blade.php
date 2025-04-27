@@ -9,6 +9,22 @@
     </li>
     <li class="breadcrumb-item active">تفاصيل الطبيب</li>
 @endsection
+@section('actions')
+    <div class="d-flex gap-2">
+
+            <form action="{{ route('doctors.destroy', $doctor) }}" method="POST" class="d-inline">
+                @csrf
+                @method('POST')
+                <button type="submit" class="btn btn-soft-danger">
+                    <i class="bi bi-x-circle me-2"></i> حذف
+                </button>
+            </form>
+
+        <a href="{{ route('doctors.edit', $doctor) }}" class="btn btn-soft-primary">
+            <i class="bi bi-pencil me-2"></i>  تعديل البيانات
+        </a>
+    </div>
+@endsection
 
 @section('content')
     <div class="content-wrapper">
@@ -43,20 +59,6 @@
                             </div>
                         </div>
 
-                        <div class="profile-actions">
-                            <a href="{{ route('doctors.edit', $doctor) }}" class="btn btn-soft-primary">
-                                <i class="bi bi-pencil"></i>
-                                تعديل البيانات
-                            </a>
-                            <form action="{{ route('doctors.destroy', $doctor) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-soft-danger" onclick="return confirm('هل أنت متأكد من حذف هذا الطبيب؟')">
-                                    <i class="bi bi-trash"></i>
-                                    حذف
-                                </button>
-                            </form>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -367,6 +367,58 @@ class AppointmentsController extends Controller
     }
 
     /**
+     * Mark an appointment as completed.
+     */
+    public function complete(Appointment $appointment)
+    {
+        try {
+            $oldStatus = $appointment->status;
+            $appointment->update([
+                'status' => 'completed'
+            ]);
+
+            if ($oldStatus !== 'completed') {
+                $appointment->patient->user->notify(new AppointmentCompletedNotification($appointment));
+            }
+
+            return redirect()->back()->with('success', 'تم إتمام الموعد بنجاح');
+        } catch (\Exception $e) {
+            Log::error('Error completing appointment:', [
+                'error' => $e->getMessage(),
+                'appointment_id' => $appointment->id
+            ]);
+
+            return back()->withErrors(['error' => 'حدث خطأ أثناء إتمام الموعد']);
+        }
+    }
+
+    /**
+     * Cancel an appointment.
+     */
+    public function cancel(Appointment $appointment)
+    {
+        try {
+            $oldStatus = $appointment->status;
+            $appointment->update([
+                'status' => 'cancelled'
+            ]);
+
+            if ($oldStatus !== 'cancelled') {
+                $appointment->patient->user->notify(new AppointmentCancelledNotification($appointment));
+            }
+
+            return redirect()->back()->with('success', 'تم إلغاء الموعد بنجاح');
+        } catch (\Exception $e) {
+            Log::error('Error cancelling appointment:', [
+                'error' => $e->getMessage(),
+                'appointment_id' => $appointment->id
+            ]);
+
+            return back()->withErrors(['error' => 'حدث خطأ أثناء إلغاء الموعد']);
+        }
+    }
+
+    /**
      * Show the appointment booking form.
      */
     public function book(Doctor $doctor)

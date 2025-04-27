@@ -90,6 +90,7 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
+                            <th scope="col">رقم الموعد</th>
                             <th scope="col">المريض</th>
                             <th scope="col">الطبيب</th>
                             <th scope="col">التاريخ والوقت</th>
@@ -103,6 +104,9 @@
                         @forelse($appointments as $appointment)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    <span class="appointment-number">#{{ $appointment->id }}</span>
+                                </td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
@@ -406,6 +410,17 @@
                 .action-buttons {
                     flex-wrap: nowrap;
                 }
+            }
+
+            .appointment-number {
+                font-family: monospace;
+                font-weight: 600;
+                color: var(--bs-primary);
+                background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+                padding: 0.25rem 0.75rem;
+                border-radius: 50px;
+                font-size: 0.875rem;
+                border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
             }
         </style>
     @endpush

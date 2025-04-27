@@ -41,7 +41,7 @@ class Appointment extends Model
     const STATUS_COLORS = [
         'scheduled' => 'warning bg-subtle text-warning-emphasis',   // لون برتقالي فاتح للانتظار مع نص داكن
         'completed' => 'success bg-subtle text-success-emphasis',   // لون أخضر فاتح للمكتمل مع نص داكن
-        'cancelled' => 'danger bg-subtle text-danger-emphasis'      // لون أحمر فاتح للملغي مع نص داكن
+        'cancelled' => 'danger bg-subtle text-white'      // لون أحمر فاتح للملغي مع نص داكن
     ];
 
     /**
