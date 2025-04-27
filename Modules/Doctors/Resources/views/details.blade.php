@@ -29,7 +29,7 @@
                     <div class="status-indicator {{ $doctor->status ? 'active' : 'inactive' }}"></div>
                 </div>
 
-                <div class="profile-details">
+                <div class="profile-details w-100">
                     <div class="d-flex justify-content-between align-items-start w-100">
                         <div>
                             <h1 class="doctor-name">د. {{ $doctor->name }}</h1>
