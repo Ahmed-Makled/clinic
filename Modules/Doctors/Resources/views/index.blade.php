@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('title', 'إدارة الأطباء')
 
 @section('header_icon')
 <i class="bi bi-person-badge text-primary me-2 fs-5"></i>
@@ -147,7 +148,7 @@
                             </td>
                             <td class="pe-3">
                                 <div class="action-buttons d-flex gap-1">
-                                    <a href="{{ route('doctors.show', $doctor) }}"
+                                    <a href="{{ route('doctors.details', $doctor) }}"
                                        class="btn btn-light btn-sm px-2 py-1"
                                        data-bs-toggle="tooltip"
                                        data-bs-placement="top"

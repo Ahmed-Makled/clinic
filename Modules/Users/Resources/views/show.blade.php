@@ -23,22 +23,35 @@
 
                     <div class="d-flex">
 
-                        <h1 class="name animate-fade-in delay-1">{{ $user->name }}</h1>
-                        <div class="badges animate-fade-in delay-2">
-                            <span class="role">{{ $user->roles->first()->name ?? 'لا يوجد دور' }}</span>
-                            <span class="status {{ $user->status ? 'active' : 'inactive' }}">
-                                <i class="fas {{ $user->status ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
-                                {{ $user->status ? 'نشط' : 'غير نشط' }}
-                            </span>
-                            @if($user->last_login_at)
-                                <span class="last-login">
-                                    <i class="fas fa-clock me-1"></i>
-                                    آخر دخول: {{ $user->last_login_at->diffForHumans() }}
+                        <div >
+                            <h1 class="name animate-fade-in delay-1">{{ $user->name }}</h1>
+                            <div class="badges animate-fade-in delay-2">
+                                <span class="role">{{ $user->roles->first()->name ?? 'لا يوجد دور' }}</span>
+                                <span class="status {{ $user->status ? 'active' : 'inactive' }}">
+                                    <i class="fas {{ $user->status ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
+                                    {{ $user->status ? 'نشط' : 'غير نشط' }}
                                 </span>
-                            @endif
+                                @if($user->last_login_at)
+                                    <span class="last-login">
+                                        <i class="fas fa-clock me-1"></i>
+                                        آخر دخول: {{ $user->last_login_at->diffForHumans() }}
+                                    </span>
+                                @endif
+                            </div>
                         </div>
 
                         <div class="profile-actions ms-auto">
+
+                            <a href="{{ route('users.edit', $user) }}" class="btn btn-soft-primary rounded-pill">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    viewBox="0 0 16 16">
+                                    <path
+                                        d="M15.502 1.94a.5.5 0 010 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 01.707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 00-.121.196l-.805 2.414a.25.25 0 00.316.316l2.414-.805a.5.5 0 00.196-.12l6.813-6.814z" />
+                                    <path fill-rule="evenodd"
+                                        d="M1 13.5A1.5 1.5 0 002.5 15h11a1.5 1.5 0 001.5-1.5v-6a.5.5 0 00-1 0v6a.5.5 0 01-.5.5h-11a.5.5 0 01-.5-.5v-11a.5.5 0 01.5-.5H9a.5.5 0 000-1H2.5A1.5 1.5 0 001 2.5v11z" />
+                                </svg>
+                                تعديل البيانات
+                            </a>
                             <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline-block">
                                 @csrf
                                 @method('DELETE')
@@ -55,16 +68,6 @@
                                     <span>حذف</span>
                                 </button>
                             </form>
-                            <a href="{{ route('users.edit', $user) }}" class="btn btn-soft-primary rounded-pill">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="M15.502 1.94a.5.5 0 010 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 01.707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 00-.121.196l-.805 2.414a.25.25 0 00.316.316l2.414-.805a.5.5 0 00.196-.12l6.813-6.814z" />
-                                    <path fill-rule="evenodd"
-                                        d="M1 13.5A1.5 1.5 0 002.5 15h11a1.5 1.5 0 001.5-1.5v-6a.5.5 0 00-1 0v6a.5.5 0 01-.5.5h-11a.5.5 0 01-.5-.5v-11a.5.5 0 01.5-.5H9a.5.5 0 000-1H2.5A1.5 1.5 0 001 2.5v11z" />
-                                </svg>
-                                تعديل البيانات
-                            </a>
                         </div>
                     </div>
 

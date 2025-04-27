@@ -284,4 +284,75 @@ class DoctorsController extends Controller
         $appointments = app(AppointmentRepository::class)->findByDoctorAndDate($doctor->id, now());
         return view('doctors::show', compact('doctor', 'appointments'));
     }
+
+    /**
+     * Display the doctor's detailed information for admin.
+     */
+    public function details(Doctor $doctor)
+    {
+        $doctor->load(['categories', 'user', 'governorate', 'city']);
+        $appointments = app(AppointmentRepository::class)->findByDoctorAndDate($doctor->id, now());
+
+        // إحصائيات المواعيد
+        $currentMonth = now()->month;
+        $lastMonth = now()->subMonth()->month;
+
+        $completedAppointments = $doctor->appointments()
+            ->whereMonth('scheduled_at', $currentMonth)
+            ->where('status', 'completed')
+            ->count();
+
+        $cancelledAppointments = $doctor->appointments()
+            ->whereMonth('scheduled_at', $currentMonth)
+            ->where('status', 'cancelled')
+            ->count();
+
+        // مقارنة المواعيد مع الشهر السابق
+        $lastMonthCompleted = $doctor->appointments()
+            ->whereMonth('scheduled_at', $lastMonth)
+            ->where('status', 'completed')
+            ->count();
+
+        $completedGrowthRate = $lastMonthCompleted > 0
+            ? (($completedAppointments - $lastMonthCompleted) / $lastMonthCompleted) * 100
+            : 0;
+
+        // حساب متوسط أسعار الكشف في نفس التخصص
+        $averageConsultationFee = Doctor::whereHas('categories', function($query) use ($doctor) {
+            $query->whereIn('categories.id', $doctor->categories->pluck('id'));
+        })
+        ->where('id', '!=', $doctor->id)
+        ->avg('consultation_fee') ?? 0;
+
+        $feeComparisonRate = $averageConsultationFee > 0
+            ? (($doctor->consultation_fee - $averageConsultationFee) / $averageConsultationFee) * 100
+            : 0;
+
+        // حساب إجمالي الإيرادات وتحليلها
+        $totalEarnings = $doctor->appointments()
+            ->where('status', 'completed')
+            ->where('is_paid', true)
+            ->sum('fees');
+
+        $lastMonthEarnings = $doctor->appointments()
+            ->whereMonth('scheduled_at', $lastMonth)
+            ->where('status', 'completed')
+            ->where('is_paid', true)
+            ->sum('fees');
+
+        $earningsGrowthRate = $lastMonthEarnings > 0
+            ? (($totalEarnings - $lastMonthEarnings) / $lastMonthEarnings) * 100
+            : 0;
+
+        return view('doctors::details', compact(
+            'doctor',
+            'appointments',
+            'completedAppointments',
+            'cancelledAppointments',
+            'completedGrowthRate',
+            'feeComparisonRate',
+            'totalEarnings',
+            'earningsGrowthRate'
+        ));
+    }
 }

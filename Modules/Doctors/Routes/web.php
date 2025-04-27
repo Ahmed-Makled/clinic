@@ -12,6 +12,7 @@ Route::prefix('doctors')->group(function () {
         Route::get('/', [DoctorsController::class, 'index'])->name('doctors.index');
         Route::get('/create', [DoctorsController::class, 'create'])->name('doctors.create');
         Route::post('/', [DoctorsController::class, 'store'])->name('doctors.store');
+        Route::get('/{doctor}/details', [DoctorsController::class, 'details'])->name('doctors.details');
         Route::get('/{doctor}/edit', [DoctorsController::class, 'edit'])->name('doctors.edit');
         Route::put('/{doctor}', [DoctorsController::class, 'update'])->name('doctors.update');
         Route::delete('/{doctor}', [DoctorsController::class, 'destroy'])->name('doctors.destroy');
