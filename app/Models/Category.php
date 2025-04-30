@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Category extends Model
 {
@@ -44,5 +45,18 @@ class Category extends Model
     {
         return $this->belongsToMany(Doctor::class, 'doctor_category')
                     ->withTimestamps();
+    }
+
+    public function appointments()
+    {
+        return $this->hasManyThrough(
+            Appointment::class,
+            Doctor::class,
+            null,
+            'doctor_id'
+        )->join('doctor_category', function($join) {
+            $join->on('doctors.id', '=', 'doctor_category.doctor_id')
+                 ->where('doctor_category.category_id', '=', $this->id);
+        });
     }
 }

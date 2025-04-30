@@ -51,7 +51,7 @@
             --border-color: #e2e8f0;
 
             --font-family: 'Tajawal', sans-serif;
-            --sidebar-width: 280px;
+            --sidebar-width: 240px;
             --header-height: 70px;
             --transition-speed: 0.3s;
 
@@ -76,6 +76,7 @@
         /* Enhanced Sidebar Styles */
         .sidebar {
             width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
             background: #fff;
             box-shadow: var(--shadow);
             display: flex;
@@ -937,9 +938,9 @@
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('appointments.*') ? 'active' : '' }}"
                                     href="{{ route('appointments.index') }}" data-bs-toggle="tooltip"
-                                    data-bs-placement="left" data-bs-title="المواعيد">
+                                    data-bs-placement="left" data-bs-title="الحجوزات">
                                     <i class="bi bi-calendar-check"></i>
-                                    <span>المواعيد</span>
+                                    <span>الحجوزات</span>
 
                                 </a>
                             </li>

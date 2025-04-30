@@ -63,7 +63,7 @@
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ route('appointments.index') }}">
-                                    <i class="bi bi-calendar2-check me-2"></i>مواعيدي
+                                    <i class="bi bi-calendar2-check me-2"></i>حجوزاتي
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>

@@ -37,6 +37,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\TokenAuthMiddleware::class,
             \App\Http\Middleware\CheckUserStatus::class, // Add this line
+            \App\Http\Middleware\TrackLastActiveAt::class, // Add this line
         ],
 
         'api' => [

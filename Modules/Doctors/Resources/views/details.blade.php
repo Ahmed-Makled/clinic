@@ -71,7 +71,7 @@
                     </div>
                     <div class="stat-details">
                         <div class="stat-label">رسوم الكشف</div>
-                        <div class="stat-value">{{ $doctor->consultation_fee }} جنيه</div>
+                        <div class="stat-value">{{ number_format($doctor->consultation_fee) }} جنيه</div>
                         <div class="stat-trend {{ $feeComparisonRate >= 0 ? 'positive' : 'negative' }}">
                             <i class="bi {{ $feeComparisonRate >= 0 ? 'bi-arrow-up-short' : 'bi-arrow-down-short' }}"></i>
                             {{ abs(round($feeComparisonRate)) }}% {{ $feeComparisonRate >= 0 ? 'أعلى من' : 'أقل من' }} متوسط التخصص
@@ -84,7 +84,7 @@
                         <i class="bi bi-calendar2-check"></i>
                     </div>
                     <div class="stat-details">
-                        <div class="stat-label">المواعيد المكتملة</div>
+                        <div class="stat-label">الحجوزات المكتملة</div>
                         <div class="stat-value">{{ $completedAppointments }}</div>
                         <div class="stat-trend {{ $completedGrowthRate >= 0 ? 'positive' : 'negative' }}">
                             <i class="bi {{ $completedGrowthRate >= 0 ? 'bi-arrow-up-short' : 'bi-arrow-down-short' }}"></i>
@@ -98,7 +98,7 @@
                         <i class="bi bi-calendar2-x"></i>
                     </div>
                     <div class="stat-details">
-                        <div class="stat-label">المواعيد الملغاة</div>
+                        <div class="stat-label">الحجوزات الملغاة</div>
                         <div class="stat-value">{{ $cancelledAppointments }}</div>
                         <div class="stat-trend neutral">
                             <i class="bi bi-calendar3"></i>
@@ -221,7 +221,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 class="m-0">
                             <i class="bi bi-calendar2-week me-2"></i>
-                            مواعيد اليوم
+                            الحجوزات
                             <span class="appointments-count">({{ $appointments->count() }})</span>
                         </h2>
                     </div>

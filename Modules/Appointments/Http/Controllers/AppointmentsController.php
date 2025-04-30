@@ -90,7 +90,7 @@ class AppointmentsController extends Controller
             'search' => $request->search,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'title' => 'المواعيد'
+            'title' => 'الحجوزات'
         ]);
     }
 

@@ -5,4 +5,5 @@ use Modules\Users\Http\Controllers\UsersController;
 
 Route::middleware(['web', 'auth:web', 'role:Admin'])->group(function () {
     Route::resource('users', UsersController::class);
+    Route::patch('users/{user}/toggle-status', [UsersController::class, 'toggleStatus'])->name('users.toggle-status');
 });

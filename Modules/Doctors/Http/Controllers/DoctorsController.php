@@ -293,7 +293,7 @@ class DoctorsController extends Controller
         $doctor->load(['categories', 'user', 'governorate', 'city']);
         $appointments = app(AppointmentRepository::class)->findByDoctorAndDate($doctor->id, now());
 
-        // إحصائيات المواعيد
+        // إحصائيات الحجوزات
         $currentMonth = now()->month;
         $lastMonth = now()->subMonth()->month;
 
@@ -307,7 +307,7 @@ class DoctorsController extends Controller
             ->where('status', 'cancelled')
             ->count();
 
-        // مقارنة المواعيد مع الشهر السابق
+        // مقارنة الحجوزات مع الشهر السابق
         $lastMonthCompleted = $doctor->appointments()
             ->whereMonth('scheduled_at', $lastMonth)
             ->where('status', 'completed')
@@ -354,5 +354,96 @@ class DoctorsController extends Controller
             'totalEarnings',
             'earningsGrowthRate'
         ));
+    }
+
+    /**
+     * Show form for creating doctor details from existing user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function createFromUser(Request $request)
+    {
+        // التحقق من وجود المستخدم
+        $user = User::findOrFail($request->user);
+
+        // التحقق من أن المستخدم له دور Doctor
+        if (!$user->hasRole('Doctor')) {
+            return redirect()->route('users.index')
+                ->with('error', 'المستخدم المحدد لا يملك دور طبيب');
+        }
+
+        // التحقق من أن المستخدم ليس لديه سجل طبيب بالفعل
+        $existingDoctor = Doctor::where('user_id', $user->id)->first();
+        if ($existingDoctor) {
+            return redirect()->route('doctors.edit', $existingDoctor->id)
+                ->with('info', 'هذا المستخدم لديه بيانات طبيب بالفعل، يمكنك تعديل البيانات');
+        }
+
+        $categories = Category::all();
+        $governorates = Governorate::with('cities')->get();
+
+        return view('doctors::create_from_user', compact('user', 'categories', 'governorates'));
+    }
+
+    /**
+     * Store doctor details for existing user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeFromUser(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'consultation_fee' => 'required|numeric|min:0',
+            'waiting_time' => 'nullable|integer|min:0',
+            'categories' => 'required|exists:categories,id',
+            'gender' => 'required|in:ذكر,انثي',
+            'experience_years' => 'nullable|integer|min:0',
+            'bio' => 'nullable|string',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'address' => 'nullable|string',
+            'governorate_id' => 'required|exists:governorates,id',
+            'city_id' => 'required|exists:cities,id',
+        ]);
+
+        $user = User::findOrFail($validated['user_id']);
+
+        // Create doctor record with user_id and name
+        $doctor = Doctor::create([
+            'user_id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone_number,
+            'bio' => $validated['bio'] ?? null,
+            'description' => $validated['description'] ?? null,
+            'consultation_fee' => $validated['consultation_fee'],
+            'waiting_time' => $validated['waiting_time'],
+            'experience_years' => $validated['experience_years'] ?? null,
+            'gender' => $validated['gender'],
+            'status' => true,
+            'address' => $validated['address'] ?? null,
+            'governorate_id' => $validated['governorate_id'],
+            'city_id' => $validated['city_id'],
+        ]);
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $doctor->image = Doctor::uploadImage($request->file('image'));
+            $doctor->save();
+        }
+
+        // Sync categories
+        $doctor->categories()->sync($request->categories);
+
+        // Send notification to admins
+        User::role('Admin')->each(function($admin) use ($doctor) {
+            $admin->notify(new NewDoctorNotification($doctor));
+        });
+
+        return redirect()->route('doctors.index')
+            ->with('success', 'تم إضافة بيانات الطبيب بنجاح');
     }
 }

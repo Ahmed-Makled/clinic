@@ -39,9 +39,9 @@ class Appointment extends Model
      * The status colors for UI display.
      */
     const STATUS_COLORS = [
-        'scheduled' => 'warning bg-subtle text-warning-emphasis',   // لون برتقالي فاتح للانتظار مع نص داكن
-        'completed' => 'success bg-subtle text-success-emphasis',   // لون أخضر فاتح للمكتمل مع نص داكن
-        'cancelled' => 'danger bg-subtle text-white'      // لون أحمر فاتح للملغي مع نص داكن
+        'scheduled' => 'warning',
+        'completed' => 'success',
+        'cancelled' => 'danger'
     ];
 
     /**
@@ -55,6 +55,8 @@ class Appointment extends Model
         'scheduled_at',
         'status',
         'notes',
+        'fees',
+        'waiting_time',
         'is_paid',
         'is_important'
     ];
@@ -68,7 +70,8 @@ class Appointment extends Model
         'scheduled_at' => 'datetime',
         'fees' => 'decimal:2',
         'is_paid' => 'boolean',
-        'is_important' => 'boolean'
+        'is_important' => 'boolean',
+        'waiting_time' => 'integer'
     ];
 
     /**
@@ -82,7 +85,8 @@ class Appointment extends Model
         'is_upcoming',
         'is_today',
         'formatted_date',
-        'formatted_time'
+        'formatted_time',
+        'activity_icon_class'
     ];
 
     /**
@@ -147,6 +151,21 @@ class Appointment extends Model
             'completed' => 'مكتمل',
             'cancelled' => 'ملغي',
             default => 'غير معروف'
+        };
+    }
+
+    /**
+     * Get the activity icon class based on status.
+     *
+     * @return string
+     */
+    public function getActivityIconClassAttribute(): string
+    {
+        return match($this->status) {
+            'scheduled' => 'warning',
+            'completed' => 'success',
+            'cancelled' => 'danger',
+            default => 'secondary'
         };
     }
 

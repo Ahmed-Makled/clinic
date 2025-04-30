@@ -9,153 +9,168 @@ use App\Models\Appointment;
 use App\Models\Category;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // General Statistics with caching
+        $appointmentsStats = $this->getAppointmentsStats();
+
         $stats = [
-            'total_users' => Cache::remember('total_users_count', 3600, function () {
-                return User::count();
-            }),
-            'doctors' => Cache::remember('doctors_count', 3600, function () {
-                return Doctor::count();
-            }),
-            'active_doctors' => Cache::remember('active_doctors_count', 3600, function () {
-                return Doctor::where('status', true)->count();
-            }),
-            'patients' => Cache::remember('patients_count', 3600, function () {
-                return Patient::count();
-            }),
-            'male_patients' => Cache::remember('male_patients_count', 3600, function () {
-                return Patient::where('gender', 'male')->count();
-            }),
-            'female_patients' => Cache::remember('female_patients_count', 3600, function () {
-                return Patient::where('gender', 'female')->count();
-            }),
-            'total_appointments' => Cache::remember('appointments_count', 3600, function () {
-                return Appointment::count();
-            }),
-            'today_appointments' => Cache::remember('today_appointments', 300, function () {
-                return Appointment::whereDate('scheduled_at', Carbon::today())->count();
-            }),
-            'upcoming_appointments' => Cache::remember('upcoming_appointments', 300, function () {
-                return Appointment::where('scheduled_at', '>', Carbon::now())->count();
-            }),
-            'total_fees' => Cache::remember('total_fees', 3600, function () {
-                return Appointment::sum('fees');
-            }),
-            'paid_fees' => Cache::remember('paid_fees', 3600, function () {
-                return Appointment::where('is_paid', true)->sum('fees');
-            }),
-            'unpaid_fees' => Cache::remember('unpaid_fees', 3600, function () {
-                return Appointment::where('is_paid', false)->sum('fees');
-            }),
-            'completion_rate' => Cache::remember('completion_rate', 3600, function () {
-                $total = Appointment::count();
-                if ($total === 0) return 0;
-                $completed = Appointment::where('status', 'completed')->count();
-                return round(($completed / $total) * 100);
-            }),
-            'collection_rate' => Cache::remember('collection_rate', 3600, function () {
-                $total = Appointment::sum('fees');
-                if ($total === 0) return 0;
-                $paid = Appointment::where('is_paid', true)->sum('fees');
-                return round(($paid / $total) * 100);
-            }),
-            'satisfaction_rate' => Cache::remember('satisfaction_rate', 3600, function () {
-                return 95; // Placeholder value, implement actual calculation when feedback system is ready
-            }),
-            'attendance_rate' => Cache::remember('attendance_rate', 3600, function () {
-                $total = Appointment::whereDate('scheduled_at', '<=', Carbon::now())->count();
-                if ($total === 0) return 0;
-                $attended = Appointment::whereDate('scheduled_at', '<=', Carbon::now())
-                    ->where('status', 'completed')
-                    ->count();
-                return round(($attended / $total) * 100);
-            }),
-            'today_completed' => Cache::remember('today_completed', 300, function () {
-                return Appointment::whereDate('scheduled_at', Carbon::today())
-                    ->where('status', 'completed')
-                    ->count();
-            }),
-            'today_cancelled' => Cache::remember('today_cancelled', 300, function () {
-                return Appointment::whereDate('scheduled_at', Carbon::today())
-                    ->where('status', 'cancelled')
-                    ->count();
-            }),
-            'pending_appointments' => Cache::remember('pending_appointments', 300, function () {
-                return Appointment::where('status', 'pending')
-                    ->where('scheduled_at', '>=', Carbon::now())
-                    ->count();
-            }),
-            'total_income' => Cache::remember('total_income', 3600, function () {
-                return Appointment::where('status', 'completed')
-                    ->where('is_paid', true)
-                    ->sum('fees');
-            }),
-            'today_income' => Cache::remember('today_income', 300, function () {
-                return Appointment::whereDate('scheduled_at', Carbon::today())
-                    ->where('status', 'completed')
-                    ->where('is_paid', true)
-                    ->sum('fees');
-            })
+            'total_users' => $this->getUsersStats(),
+            'doctors' => $this->getDoctorsStats(),
+            'patients' => $this->getPatientsStats(),
+            'appointments' => $appointmentsStats,
+            'financial' => $this->getFinancialStats(),
+            'pending_appointments' => Appointment::where('status', 'scheduled')->count(),
+            'unpaid_fees' => Appointment::where('is_paid', false)->sum('fees')
         ];
 
-        // Appointment chart data
-        $chartData = $this->getAppointmentsChartData();
+        $stats['completion_rate'] = $appointmentsStats['completion_rate'];
 
-        // Specialties distribution data
+        $chartData = $this->getAppointmentsChartData();
         $specialtyData = $this->getSpecialtiesData();
         $chartData = array_merge($chartData, $specialtyData);
 
-        // Recent activities
-        $activities = Appointment::with(['doctor', 'patient'])
-            ->latest('scheduled_at')
-            ->take(5)
-            ->get();
+        $activities = $this->getRecentActivities();
 
         return view('dashboard::index', compact('stats', 'chartData', 'activities'));
+    }
+
+    private function getUsersStats()
+    {
+        return [
+            'total' => User::count(),
+            'today' => User::whereDate('created_at', Carbon::today())->count(),
+            'active' => User::where(function($query) {
+                $query->where('last_seen', '>=', Carbon::now()->subMinutes(5))
+                      ->orWhere('last_seen', null);
+            })->count()
+        ];
+    }
+
+    private function getDoctorsStats()
+    {
+        return [
+            'total' => Doctor::count(),
+            'active' => Doctor::where('status', true)->count()
+        ];
+    }
+
+    private function getPatientsStats()
+    {
+        return [
+            'total' => Patient::count(),
+            'new_today' => Patient::whereDate('created_at', Carbon::today())->count(),
+            'with_appointments' => Patient::whereHas('appointments')->count()
+        ];
+    }
+
+    private function getAppointmentsStats()
+    {
+        $completed = Appointment::where('status', 'completed')->count();
+        $cancelled = Appointment::where('status', 'cancelled')->count();
+        $scheduled = Appointment::where('status', 'scheduled')->count();
+        $total = $completed + $cancelled + $scheduled;
+        $today = Appointment::whereDate('scheduled_at', Carbon::today())->count();
+
+        return [
+            'completed' => $completed,
+            'cancelled' => $cancelled,
+            'scheduled' => $scheduled,
+            'total' => $total,
+            'today' => $today,
+            'completion_rate' => $total > 0 ? round(($completed / $total) * 100) : 0
+        ];
+    }
+
+    private function getFinancialStats()
+    {
+        $totalIncome = Appointment::where('status', 'completed')
+            ->where('is_paid', true)
+            ->sum('fees');
+
+        $todayIncome = Appointment::whereDate('scheduled_at', Carbon::today())
+            ->where('status', 'completed')
+            ->where('is_paid', true)
+            ->sum('fees');
+
+        $pendingPayments = Appointment::where('is_paid', false)->sum('fees');
+
+        return [
+            'total_income' => $totalIncome,
+            'today_income' => $todayIncome,
+            'pending_payments' => $pendingPayments,
+            'collection_percentage' => $totalIncome + $pendingPayments > 0
+                ? round(($totalIncome / ($totalIncome + $pendingPayments)) * 100)
+                : 100
+        ];
     }
 
     private function getAppointmentsChartData()
     {
         $dates = collect();
-        $appointmentCounts = collect();
+        $appointments = collect();
 
-        // Collect last 7 days data
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i);
             $dates->push($date->format('Y-m-d'));
-
-            $count = Cache::remember('appointments_count_' . $date->format('Y-m-d'), 3600, function () use ($date) {
-                return Appointment::whereDate('scheduled_at', $date)->count();
-            });
-
-            $appointmentCounts->push($count);
+            $dayCount = Appointment::whereDate('scheduled_at', $date)->count();
+            $appointments->push($dayCount);
         }
 
         return [
             'labels' => $dates->toArray(),
-            'appointments' => $appointmentCounts->toArray(),
+            'appointments' => $appointments->toArray()
         ];
     }
 
     private function getSpecialtiesData()
     {
-        $specialties = Cache::remember('specialties_distribution', 3600, function () {
-            return Category::withCount('doctors')
-                ->orderByDesc('doctors_count')
-                ->take(5)
-                ->get();
-        });
+        $specialties = Category::select('categories.*')
+            ->withCount(['doctors'])
+            ->withCount(['doctors as active_doctors_count' => function($query) {
+                $query->where('doctors.status', true);
+            }])
+            ->leftJoin('doctor_category', 'categories.id', '=', 'doctor_category.category_id')
+            ->leftJoin('doctors', 'doctor_category.doctor_id', '=', 'doctors.id')
+            ->leftJoin('appointments', function($join) {
+                $join->on('doctors.id', '=', 'appointments.doctor_id')
+                     ->where('appointments.status', '=', 'completed');
+            })
+            ->groupBy('categories.id')
+            ->selectRaw('COALESCE(SUM(appointments.fees), 0) as appointments_sum_fees')
+            ->orderByDesc('doctors_count')
+            ->take(5)
+            ->get();
 
         return [
             'specialtyLabels' => $specialties->pluck('name')->toArray(),
             'specialtyCounts' => $specialties->pluck('doctors_count')->toArray(),
+            'activeSpecialtyCounts' => $specialties->pluck('active_doctors_count')->toArray(),
+            'specialtyIncome' => $specialties->pluck('appointments_sum_fees')->toArray()
         ];
+    }
+
+    private function getRecentActivities()
+    {
+        return Appointment::with(['doctor', 'patient'])
+            ->latest('scheduled_at')
+            ->take(10)
+            ->get()
+            ->map(function ($appointment) {
+                return [
+                    'id' => $appointment->id,
+                    'doctor_name' => $appointment->doctor->name,
+                    'patient_name' => $appointment->patient->name,
+                    'status' => $appointment->status,
+                    'status_color' => $appointment->status_color,
+                    'scheduled_at' => $appointment->scheduled_at,
+                    'fees' => $appointment->fees,
+                    'is_paid' => $appointment->is_paid
+                ];
+            });
     }
 }
 

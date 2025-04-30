@@ -54,7 +54,7 @@
                         <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>الأحدث</option>
                         <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>الأقدم</option>
                         <option value="name" {{ request('sort') === 'name' ? 'selected' : '' }}>الاسم</option>
-                        <option value="appointments" {{ request('sort') === 'appointments' ? 'selected' : '' }}>عدد المواعيد</option>
+                        <option value="appointments" {{ request('sort') === 'appointments' ? 'selected' : '' }}>عدد الحجوزات</option>
                     </select>
                 </div>
 
@@ -78,7 +78,7 @@
                         <th scope="col">رقم الهاتف</th>
                         <th scope="col">النوع</th>
                         <th scope="col">تاريخ الميلاد</th>
-                        <th scope="col">عدد المواعيد</th>
+                        <th scope="col">عدد الحجوزات</th>
                         <th scope="col">الإجراءات</th>
                     </tr>
                 </thead>

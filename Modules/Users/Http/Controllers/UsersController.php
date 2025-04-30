@@ -4,6 +4,8 @@ namespace Modules\Users\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Doctor;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
@@ -61,6 +63,18 @@ class UsersController extends Controller
 
         $user->assignRole($validated['role']);
 
+        // التوجيه حسب نوع المستخدم
+        if ($validated['role'] === 'Doctor') {
+            // إذا كان الدور هو طبيب، قم بتوجيه المستخدم لإضافة بياناته كطبيب
+            return redirect()->route('doctors.createFromUser', ['user' => $user->id])
+                ->with('info', 'تم إضافة المستخدم بنجاح. الرجاء إضافة المعلومات الإضافية للطبيب');
+        } elseif ($validated['role'] === 'Patient') {
+            // إذا كان الدور هو مريض، قم بتوجيه المستخدم لإضافة بياناته كمريض
+            return redirect()->route('patients.createFromUser', ['user' => $user->id])
+                ->with('info', 'تم إضافة المستخدم بنجاح. الرجاء إضافة المعلومات الإضافية للمريض');
+        }
+
+        // إذا كان دوراً آخر، قم بالتوجيه للصفحة الرئيسية كالمعتاد
         return redirect()->route('users.index')
             ->with('success', 'تم إضافة المستخدم بنجاح');
     }
@@ -99,7 +113,25 @@ class UsersController extends Controller
         }
 
         $user->update($userData);
-        $user->syncRoles([$validated['role']]);
+
+        // إذا كان هناك تغيير في الدور
+        $oldRoles = $user->getRoleNames();
+        $newRole = $validated['role'];
+
+        // تحديث الدور
+        $user->syncRoles([$newRole]);
+
+        // إذا تم تغيير الدور إلى Doctor وليس لديه سجل طبيب
+        if ($newRole === 'Doctor' && !Doctor::where('user_id', $user->id)->exists() && !in_array('Doctor', $oldRoles->toArray())) {
+            return redirect()->route('doctors.createFromUser', ['user' => $user->id])
+                ->with('info', 'تم تحديث بيانات المستخدم بنجاح. الرجاء إضافة المعلومات الإضافية للطبيب');
+        }
+
+        // إذا تم تغيير الدور إلى Patient وليس لديه سجل مريض
+        if ($newRole === 'Patient' && !Patient::where('user_id', $user->id)->exists() && !in_array('Patient', $oldRoles->toArray())) {
+            return redirect()->route('patients.createFromUser', ['user' => $user->id])
+                ->with('info', 'تم تحديث بيانات المستخدم بنجاح. الرجاء إضافة المعلومات الإضافية للمريض');
+        }
 
         return redirect()->route('users.index')
             ->with('success', 'تم تحديث بيانات المستخدم بنجاح');
@@ -110,5 +142,21 @@ class UsersController extends Controller
         $user->delete();
         return redirect()->route('users.index')
             ->with('success', 'تم حذف المستخدم بنجاح');
+    }
+
+    /**
+     * Toggle user status (active/inactive)
+     *
+     * @param User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function toggleStatus(User $user)
+    {
+        $user->status = !$user->status;
+        $user->save();
+
+        $statusMessage = $user->status ? 'تم تفعيل المستخدم بنجاح' : 'تم تعطيل المستخدم بنجاح';
+
+        return redirect()->back()->with('success', $statusMessage);
     }
 }

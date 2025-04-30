@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+
 @section('breadcrumbs')
     <li class="breadcrumb-item">
         <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
@@ -8,579 +9,554 @@
     </li>
     <li class="breadcrumb-item active">تفاصيل المستخدم</li>
 @endsection
+
+@section('actions')
+    <div class="d-flex gap-2">
+        <!-- زر تغيير الحالة -->
+        <form action="{{ route('users.toggle-status', $user) }}" method="POST" class="d-inline">
+            @csrf
+            @method('PATCH')
+            <button type="submit" class="btn {{ $user->status ? 'btn-soft-warning' : 'btn-soft-success' }}">
+                @if($user->status)
+                    <i class="bi bi-pause-circle me-2"></i> تعطيل
+                @else
+                    <i class="bi bi-play-circle me-2"></i> تفعيل
+                @endif
+            </button>
+        </form>
+
+        <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-soft-danger" onclick="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')">
+                <i class="bi bi-x-circle me-2"></i> حذف
+            </button>
+        </form>
+
+        <a href="{{ route('users.edit', $user) }}" class="btn btn-soft-primary">
+            <i class="bi bi-pencil me-2"></i> تعديل البيانات
+        </a>
+    </div>
+@endsection
+
 @section('content')
-    <div class="content-wrapper">
-
-
-        <!-- Profile Card -->
-        <div class="profile-card">
-            <div class="profile-info">
-                <div class="profile-avatar animate-pop-in">
-                    {{ substr($user->name, 0, 2) }}
-                    <div class="status-indicator {{ $user->status ? 'active pulse' : 'inactive' }}"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-8">
+            <!-- معلومات المستخدم -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header border-0 py-3 d-flex align-items-center">
+                    <i class="bi bi-person-vcard me-2 text-primary"></i>
+                    <h5 class="card-title mb-0 fw-bold">معلومات المستخدم</h5>
                 </div>
-                <div class="profile-details">
-
-                    <div class="d-flex">
-
-                        <div >
-                            <h1 class="name animate-fade-in delay-1">{{ $user->name }}</h1>
-                            <div class="badges animate-fade-in delay-2">
-                                <span class="role">{{ $user->roles->first()->name ?? 'لا يوجد دور' }}</span>
+                <div class="card-body">
+                    <div class="d-flex flex-column flex-md-row mb-4 align-items-center">
+                        <div class="user-avatar mb-3 mb-md-0 me-md-4">
+                            @if($user->avatar)
+                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="avatar-img">
+                            @else
+                                <div class="avatar-placeholder">
+                                    {{ strtoupper(substr($user->name, 0, 2)) }}
+                                </div>
+                            @endif
+                        </div>
+                        <div>
+                            <h4 class="mb-1">{{ $user->name }}</h4>
+                            <p class="mb-2 text-muted">{{ $user->email }}</p>
+                            <div class="d-flex align-items-center">
                                 <span class="status {{ $user->status ? 'active' : 'inactive' }}">
-                                    <i class="fas {{ $user->status ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
                                     {{ $user->status ? 'نشط' : 'غير نشط' }}
                                 </span>
-                                @if($user->last_login_at)
-                                    <span class="last-login">
-                                        <i class="fas fa-clock me-1"></i>
-                                        آخر دخول: {{ $user->last_login_at->diffForHumans() }}
-                                    </span>
-                                @endif
+                                <span class="mx-2">•</span>
+                                <span class="role-badge">
+                                    {{ $user->roles->first()->name ?? 'لا يوجد دور' }}
+                                </span>
                             </div>
-                        </div>
-
-                        <div class="profile-actions ms-auto">
-
-                            <a href="{{ route('users.edit', $user) }}" class="btn btn-soft-primary rounded-pill">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="M15.502 1.94a.5.5 0 010 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 01.707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 00-.121.196l-.805 2.414a.25.25 0 00.316.316l2.414-.805a.5.5 0 00.196-.12l6.813-6.814z" />
-                                    <path fill-rule="evenodd"
-                                        d="M1 13.5A1.5 1.5 0 002.5 15h11a1.5 1.5 0 001.5-1.5v-6a.5.5 0 00-1 0v6a.5.5 0 01-.5.5h-11a.5.5 0 01-.5-.5v-11a.5.5 0 01.5-.5H9a.5.5 0 000-1H2.5A1.5 1.5 0 001 2.5v11z" />
-                                </svg>
-                                تعديل البيانات
-                            </a>
-                            <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline-block">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-soft-danger rounded-pill"
-                                    onclick="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')" data-bs-toggle="tooltip"
-                                    data-bs-placement="top" title="حذف المستخدم">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        viewBox="0 0 16 16">
-                                        <path
-                                            d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z" />
-                                        <path fill-rule="evenodd"
-                                            d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 01-1-1V2a1 1 0 011-1H6a1 1 0 011-1h2a1 1 0 011 1h3.5a1 1 0 011 1v1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
-                                    </svg>
-                                    <span>حذف</span>
-                                </button>
-                            </form>
                         </div>
                     </div>
 
-                    <div class="profile-contact animate-fade-in delay-3">
-                        <div class="contact-item hover-effect" data-bs-toggle="tooltip" title="رقم الهاتف">
-                            <i>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="M11 1a1 1 0 011 1v12a1 1 0 01-1 1H5a1 1 0 01-1-1V2a1 1 0 011-1h6zM5 0a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V2a2 2 0 00-2-2H5z" />
-                                    <path d="M8 14a1 1 0 100-2 1 1 0 000 2z" />
-                                </svg>
-                            </i>
-                            <div>
-                                <div class="contact-label">رقم الهاتف</div>
-                                <div class="contact-value">{{ $user->phone_number }}</div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="bi bi-hash"></i>
+                            </div>
+                            <div class="info-content">
+                                <label>كود المستخدم</label>
+                                <div class="info-value">#{{ $user->id }}</div>
                             </div>
                         </div>
-                        <div class="contact-item hover-effect" data-bs-toggle="tooltip" title="البريد الإلكتروني">
-                            <i>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="M0 4a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H2a2 2 0 01-2-2V4zm2-1a1 1 0 00-1 1v.217l7 4.2 7-4.2V4a1 1 0 00-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 002 13h12a1 1 0 00.966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z" />
-                                </svg>
-                            </i>
-                            <div>
-                                <div class="contact-label">البريد الالكترونى</div>
-                                <div class="contact-value">{{ $user->email }}</div>
+
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="bi bi-telephone"></i>
+                            </div>
+                            <div class="info-content">
+                                <label>رقم الهاتف</label>
+                                <div class="info-value">{{ $user->phone_number }}</div>
                             </div>
                         </div>
+
+                        @if($user->last_login_at)
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div class="info-content">
+                                <label>آخر تسجيل دخول</label>
+                                <div class="info-value">{{ $user->last_login_at->diffForHumans() }}</div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            @if($user->address || $user->city)
+            <!-- معلومات العنوان -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header border-0 py-3 d-flex align-items-center">
+                    <i class="bi bi-geo-alt me-2 text-primary"></i>
+                    <h5 class="card-title mb-0 fw-bold">معلومات العنوان</h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
                         @if($user->address)
-                            <div class="contact-item hover-effect" data-bs-toggle="tooltip" title="العنوان">
-                                <i>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        viewBox="0 0 16 16">
-                                        <path
-                                            d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
-                                    </svg>
-                                </i>
-                                <div>
-                                    <div class="contact-label">العنوان</div>
-                                    <div class="contact-value">{{ $user->address }}</div>
-                                </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="bi bi-house"></i>
                             </div>
+                            <div class="info-content">
+                                <label>العنوان</label>
+                                <div class="info-value">{{ $user->address }}</div>
+                            </div>
+                        </div>
                         @endif
+
                         @if($user->city)
-                            <div class="contact-item hover-effect" data-bs-toggle="tooltip" title="المدينة">
-                                <i>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        viewBox="0 0 16 16">
-                                        <path
-                                            d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
-                                    </svg>
-                                </i>
-                                <div>
-                                    <div class="contact-label">المدينة</div>
-                                    <div class="contact-value">{{ $user->city->name }}</div>
-                                </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="bi bi-building"></i>
                             </div>
+                            <div class="info-content">
+                                <label>المدينة</label>
+                                <div class="info-value">{{ $user->city->name }}</div>
+                            </div>
+                        </div>
                         @endif
                     </div>
                 </div>
             </div>
-            <div class="profile-stats animate-slide-up delay-4">
-                <div class="stat-item hover-effect">
-                    <div class="stat-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div class="stat-value">{{ $user->created_at->format('Y-m-d') }}</div>
-                    <div class="stat-label">تاريخ التسجيل</div>
-                </div>
-
-                @if($user->roles->first()->name === 'patient')
-                    <div class="stat-item hover-effect">
-                        <div class="stat-icon">
-                            <i class="fas fa-stethoscope"></i>
-                        </div>
-                        <div class="stat-value">{{ $user->patient->appointments->count() }}</div>
-                        <div class="stat-label">عدد المواعيد</div>
-                    </div>
-                    <div class="stat-item hover-effect">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-value">{{ $user->patient->appointments->where('status', 'pending')->count() }}</div>
-                        <div class="stat-label">مواعيد قيد الانتظار</div>
-                    </div>
-                @endif
-
-                @if($user->roles->first()->name === 'doctor')
-                    <div class="stat-item hover-effect">
-                        <div class="stat-icon">
-                            <i class="fas fa-user-md"></i>
-                        </div>
-                        <div class="stat-value">{{ $user->doctor->appointments->count() }}</div>
-                        <div class="stat-label">عدد المرضى</div>
-                    </div>
-                    <div class="stat-item hover-effect">
-                        <div class="stat-icon">
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="stat-value">{{ number_format($user->doctor->rating_avg, 1) }}</div>
-                        <div class="stat-label">متوسط التقييم</div>
-                    </div>
-                @endif
-
-                <div class="stat-item hover-effect">
-                    <div class="stat-icon">
-                        <i class="fas fa-sign-in-alt"></i>
-                    </div>
-                    <div class="stat-value">{{ $user->login_count ?? 0 }}</div>
-                    <div class="stat-label">عدد مرات الدخول</div>
-                </div>
-            </div>
-
-            @if($user->roles->first()->name === 'patient' && $user->patient->appointments->isNotEmpty())
-                <div class="recent-appointments">
-                    <h3>آخر المواعيد</h3>
-                    <div class="appointments-list">
-                        @foreach($user->patient->appointments->take(3) as $appointment)
-                            <div class="appointment-item">
-                                <div class="appointment-info">
-                                    <div class="doctor-name">د. {{ $appointment->doctor->user->name }}</div>
-                                    <div class="appointment-date">{{ $appointment->appointment_date->format('Y-m-d H:i') }}</div>
-                                </div>
-                                <div class="appointment-status {{ $appointment->status }}">
-                                    {{ __('appointments.status.' . $appointment->status) }}
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
             @endif
         </div>
+
+        <div class="col-xl-4">
+            <!-- الإحصائيات -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header border-0 py-3 d-flex align-items-center">
+                    <i class="bi bi-graph-up me-2 text-primary"></i>
+                    <h5 class="card-title mb-0 fw-bold">الإحصائيات</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-column gap-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-calendar2-check"></i>
+                            </div>
+                            <div class="stat-details">
+                                <div class="stat-label">تاريخ التسجيل</div>
+                                <div class="stat-value">{{ $user->created_at->format('Y-m-d') }}</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-door-open"></i>
+                            </div>
+                            <div class="stat-details">
+                                <div class="stat-label">عدد مرات الدخول</div>
+                                <div class="stat-value">{{ $user->login_count ?? 0 }}</div>
+                            </div>
+                        </div>
+
+                        @if($user->roles->first()->name === 'patient')
+                        <div class="stat-card">
+                            <div class="stat-icon appointments">
+                                <i class="bi bi-calendar2-week"></i>
+                            </div>
+                            <div class="stat-details">
+                                <div class="stat-label">عدد المواعيد</div>
+                                <div class="stat-value">{{ $user->patient->appointments->count() }}</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon pending">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                            <div class="stat-details">
+                                <div class="stat-label">المواعيد المعلقة</div>
+                                <div class="stat-value">{{ $user->patient->appointments->where('status', 'pending')->count() }}</div>
+                            </div>
+                        </div>
+                        @endif
+
+                        @if($user->roles->first()->name === 'doctor')
+                        <div class="stat-card">
+                            <div class="stat-icon patients">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div class="stat-details">
+                                <div class="stat-label">عدد المرضى</div>
+                                <div class="stat-value">{{ $user->doctor->appointments->count() }}</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon rating">
+                                <i class="bi bi-star"></i>
+                            </div>
+                            <div class="stat-details">
+                                <div class="stat-label">متوسط التقييم</div>
+                                <div class="stat-value">{{ number_format($user->doctor->rating_avg, 1) }}</div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
-    </div>
+</div>
 
-    <style>
-        :root {
-            --primary: #0066cc;
-            --primary-rgb: 0, 102, 204;
-            --success: #28a745;
-            --success-rgb: 40, 167, 69;
-            --danger: #dc3545;
-            --danger-rgb: 220, 53, 69;
-            --card-border-radius: 16px;
-            --button-border-radius: 50px;
-        }
+<style>
+.card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+    margin-bottom: 1.5rem;
+}
 
-        .btn {
-            padding: 0.625rem 1.25rem;
-            border-radius: var(--button-border-radius);
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: var(--transition-base);
-        }
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
 
-        .btn-soft-primary {
-            background: rgba(var(--primary-rgb), 0.1);
-            color: var(--primary);
-        }
+.card-header i {
+    font-size: 1.25rem;
+}
 
-        .btn-soft-primary:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-        }
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
 
-        .btn-soft-danger {
-            background: rgba(var(--danger-rgb), 0.1);
-            color: var(--danger);
-        }
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
 
-        .btn-soft-danger:hover {
-            background: var(--danger);
-            color: white;
-            transform: translateY(-2px);
-        }
 
-        .profile-actions  {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.info-icon {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: var(--bs-primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+    transition: all 0.3s ease;
+}
 
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-        }
 
-        .btn svg {
-            margin-left: 8px;
-        }
+.info-content {
+    flex: 1;
+}
 
-        .btn-primary {
-            background-color: #0066cc;
-            color: #fff;
-        }
+.info-content label {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+    display: block;
+}
 
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
+.info-value {
+    color: #1e293b;
+    font-weight: 500;
+    font-size: 1rem;
+}
 
-        .btn-danger {
-            background-color: #f8f9fa;
-            color: #ff3c5f;
-        }
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
 
-        .btn-danger:hover {
-            background-color: #ffe5e9;
-        }
+.status.active {
+    background: linear-gradient(135deg, rgba(56, 193, 114, 0.1) 0%, rgba(47, 182, 100, 0.1) 100%);
+    color: #38c172;
+}
 
-        /* Profile Card Styles */
-        .profile-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            margin-bottom: 30px;
-        }
+.status.inactive {
+    background: linear-gradient(135deg, rgba(227, 52, 47, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    color: #e3342f;
+}
 
-        .profile-info {
-            display: flex;
-            padding: 30px;
-        }
+.role-badge {
+    display: inline-flex;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: var(--bs-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+}
 
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background-color: #0066cc;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            margin-left: 30px;
-            position: relative;
-        }
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
 
-        .status-indicator {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 3px solid white;
-        }
 
-        .status-indicator.active {
-            background-color: #28a745;
-        }
+.stat-icon {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: var(--bs-primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+    transition: all 0.3s ease;
+}
 
-        .status-indicator.inactive {
-            background-color: #ff3c5f;
-        }
+.stat-icon.appointments {
+    background: linear-gradient(135deg, rgba(56, 193, 114, 0.1) 0%, rgba(47, 182, 100, 0.1) 100%);
+    color: #38c172;
+}
 
-        .profile-details {
-            flex: 1;
-        }
+.stat-icon.pending {
+    background: linear-gradient(135deg, rgba(246, 153, 63, 0.1) 0%, rgba(255, 139, 20, 0.1) 100%);
+    color: #f59e0b;
+}
 
-        .profile-details .name {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
+.stat-icon.patients {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
+    color: #6366f1;
+}
 
-        .profile-details .role {
-            display: inline-block;
-            padding: 5px 12px;
-            background-color: #e8f4ff;
-            color: #0066cc;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
+.stat-icon.rating {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+    color: #f59e0b;
+}
 
-        .profile-details .status {
-            display: inline-block;
-            margin-right: 10px;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
+.stat-details {
+    flex: 1;
+}
 
-        .status.active {
-            background-color: #e8f8f0;
-            color: #28a745;
-        }
+.stat-label {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
 
-        .status.inactive {
-            background-color: #ffeeee;
-            color: #ff3c5f;
-        }
+.stat-value {
+    color: #1e293b;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
 
-        .profile-contact {
-            margin-top: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
+.appointments-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    padding-right: 1.5rem;
+}
 
-        .contact-item {
-            display: flex;
-            align-items: center;
-        }
+.appointments-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 7px;
+    height: 100%;
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(var(--bs-primary-rgb), 0.2), rgba(var(--bs-primary-rgb), 0.1));
+}
 
-        .contact-item i {
-            width: 35px;
-            height: 35px;
-            background-color: #e9f0ff;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0066cc;
-            margin-left: 10px;
-        }
+.timeline-item {
+    position: relative;
+    padding-right: 2rem;
+}
 
-        .contact-label {
-            font-size: 12px;
-            color: #777;
-        }
+.timeline-marker {
+    position: absolute;
+    right: -2rem;
+    top: 1.5rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--bs-primary);
+    border: 2px solid white;
+    transform: translateY(-50%);
+}
 
-        .contact-value {
-            font-weight: 500;
-        }
+.timeline-marker.completed {
+    background: #38c172;
+}
 
-        .profile-stats {
-            display: flex;
-            padding: 20px 30px;
-            border-top: 1px solid #e1e5eb;
-            background-color: #f9fafc;
-        }
+.timeline-marker.cancelled {
+    background: #e3342f;
+}
 
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-            padding: 0 15px;
-            border-left: 1px solid #e1e5eb;
-        }
+.timeline-marker.pending {
+    background: #f59e0b;
+}
 
-        .stat-item:last-child {
-            border-left: none;
-        }
+.appointment-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(var(--bs-primary-rgb), 0.06);
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.08);
+}
 
-        .stat-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: #0066cc;
-        }
+.appointment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
 
-        .stat-label {
-            font-size: 13px;
-            color: #777;
-        }
+.time {
+    font-weight: 600;
+    color: var(--bs-primary);
+}
 
-        /* Recent Appointments Styles */
-        .recent-appointments {
-            padding: 1.5rem;
-            border-top: 1px solid #e2e8f0;
-        }
+.doctor-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 
-        .recent-appointments h3 {
-            font-size: 18px;
-            color: #2d3748;
-            margin-bottom: 1rem;
-        }
+.avatar {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: var(--bs-primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
 
-        .appointments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
+.doctor-name {
+    font-weight: 500;
+    color: #1e293b;
+}
 
-        .appointment-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: rgba(var(--primary-rgb), 0.03);
-            border-radius: 12px;
-            transition: var(--transition-base);
-        }
+.appointment-date {
+    font-size: 0.875rem;
+    color: #64748b;
+}
 
-        .appointment-item:hover {
-            transform: translateX(-5px);
-            background: rgba(var(--primary-rgb), 0.05);
-        }
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
 
-        .appointment-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
+    .stat-card {
+        padding: 0.875rem;
+    }
 
-        .doctor-name {
-            font-weight: 500;
-            color: var(--primary);
-        }
+    .timeline-item {
+        padding-right: 1.5rem;
+    }
+}
 
-        .appointment-date {
-            font-size: 14px;
-            color: #718096;
-        }
+.btn-soft-success {
+    background: linear-gradient(135deg, rgba(56, 193, 114, 0.1) 0%, rgba(47, 182, 100, 0.1) 100%);
+    color: #38c172;
+    border: 1px solid rgba(56, 193, 114, 0.1);
+}
 
-        .appointment-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--button-border-radius);
-            font-size: 14px;
-            font-weight: 500;
-        }
+.btn-soft-success:hover {
+    background: #38c172;
+    color: white;
+}
 
-        .appointment-status.pending {
-            background: rgba(var(--primary-rgb), 0.1);
-            color: var(--primary);
-        }
+.btn-soft-danger {
+    background: linear-gradient(135deg, rgba(227, 52, 47, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    color: #e3342f;
+    border: 1px solid rgba(227, 52, 47, 0.1);
+}
 
-        .appointment-status.completed {
-            background: rgba(var(--success-rgb), 0.1);
-            color: var(--success);
-        }
+.btn-soft-danger:hover {
+    background: #e3342f;
+    color: white;
+}
 
-        .appointment-status.cancelled {
-            background: rgba(var(--danger-rgb), 0.1);
-            color: var(--danger);
-        }
+.btn-soft-primary {
+    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: var(--bs-primary);
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+}
 
-        /* Additional Style for Last Login */
-        .last-login {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            background: rgba(var(--primary-rgb), 0.05);
-            border-radius: var(--button-border-radius);
-            font-size: 0.875rem;
-            color: #718096;
-        }
+.btn-soft-primary:hover {
+    background: var(--bs-primary);
+    color: white;
+}
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .profile-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: var(--bs-primary);
+    font-size: 2rem;
+    font-weight: 600;
+}
 
-            .profile-info {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-            .profile-avatar {
-                margin-left: 0;
-                margin-bottom: 20px;
-            }
-
-            .profile-contact {
-                justify-content: center;
-            }
-
-            .profile-stats {
-                flex-wrap: wrap;
-            }
-
-            .stat-item {
-                flex: 0 0 50%;
-                border: none;
-                margin-bottom: 15px;
-            }
-        }
-
-        /* Dark Mode Support for New Elements */
-        @media (prefers-color-scheme: dark) {
-            .recent-appointments h3 {
-                color: #e2e8f0;
-            }
-
-            .appointment-item {
-                background: rgba(255, 255, 255, 0.05);
-            }
-
-            .appointment-item:hover {
-                background: rgba(255, 255, 255, 0.08);
-            }
-
-            .doctor-name {
-                color: #90cdf4;
-            }
-
-            .appointment-date {
-                color: #a0aec0;
-            }
-
-            .last-login {
-                background: rgba(255, 255, 255, 0.05);
-                color: #a0aec0;
-            }
-        }
-    </style>
+.avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+</style>
 @endsection

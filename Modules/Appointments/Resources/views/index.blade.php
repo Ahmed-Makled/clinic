@@ -223,7 +223,7 @@
                                 <td colspan="8" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="bi bi-calendar-x display-6 d-block mb-3 opacity-50"></i>
-                                        <p class="h5 opacity-75">لا توجد مواعيد</p>
+                                        <p class="h5 opacity-75">لا توجد حجوزات</p>
                                     </div>
                                 </td>
                             </tr>

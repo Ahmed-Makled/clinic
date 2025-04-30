@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     dateInput.addEventListener('change', function() {
         // Add loading state to time select
         timeSelect.disabled = true;
-        timeSelect.innerHTML = '<option value="">جاري تحميل المواعيد المتاحة...</option>';
+        timeSelect.innerHTML = '<option value="">جاري تحميل الحجوزات المتاحة...</option>';
 
         // Fetch available time slots
         fetch(`/appointments/available-slots/${document.querySelector('[name="doctor_id"]').value}/${this.value}`)
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Error:', error);
-                timeSelect.innerHTML = '<option value="">حدث خطأ في تحميل المواعيد</option>';
+                timeSelect.innerHTML = '<option value="">حدث خطأ في تحميل الحجوزات</option>';
             })
             .finally(() => {
                 timeSelect.disabled = false;

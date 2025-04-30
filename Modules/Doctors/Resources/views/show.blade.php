@@ -67,7 +67,7 @@
                             @if($appointments->isEmpty())
                                 <div class="text-center">
                                     <i class="uil-calendar-alt" style="font-size: 3rem; color: #dc3545;"></i>
-                                    <h5 class="mt-3">عذراً، لا توجد مواعيد متاحة حالياً</h5>
+                                    <h5 class="mt-3">عذراً، لا توجد حجوزات متاحة حالياً</h5>
                                     <p>يرجى المحاولة في وقت لاحق</p>
                                 </div>
                             @else
@@ -91,7 +91,7 @@
                                                     <li class="my-3 font-weight-bold px-1 small py-2 text-primary">{{ $time }}</li>
                                                 @endforeach
                                                 @if($appointment->is_unavailable)
-                                                    <li class="mt-5 font-weight-bold">لا يوجد مواعيد متاحة</li>
+                                                    <li class="mt-5 font-weight-bold">لا يوجد حجوزات متاحة</li>
                                                 @endif
                                             </ul>
                                             <a href="{{ route('appointments.reserve', ['doctor' => $doctor->id]) }}" class="btn btn-success text-white btn-sm mt-0 btn-block">إحجز</a>

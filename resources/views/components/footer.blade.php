@@ -20,7 +20,7 @@
                 <ul class="footer-links">
                     <li><a href="">انضم كطبيب</a></li>
                     <li><a href="">لوحة تحكم الطبيب</a></li>
-                    <li><a href="">إدارة المواعيد</a></li>
+                    <li><a href="">إدارة الحجوزات</a></li>
                     <li><a href="">قائمة المرضى</a></li>
                     <li><a href="">الملف الشخصي</a></li>
                 </ul>

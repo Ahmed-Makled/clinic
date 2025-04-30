@@ -11,7 +11,7 @@
     <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
 </li>
 <li class="breadcrumb-item">
-    <a href="{{ route('appointments.index') }}" class="text-decoration-none">المواعيد</a>
+    <a href="{{ route('appointments.index') }}" class="text-decoration-none">الحجوزات</a>
 </li>
 <li class="breadcrumb-item active">موعد جديد</li>
 @endsection
