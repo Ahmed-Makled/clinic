@@ -17,11 +17,13 @@ class Patient extends Model
         'medical_history',
         'emergency_contact',
         'blood_type',
-        'allergies'
+        'allergies',
+        'status'
     ];
 
     protected $casts = [
-        'date_of_birth' => 'date'
+        'date_of_birth' => 'date',
+        'status' => 'boolean'
     ];
 
     public function user()
@@ -31,7 +33,7 @@ class Patient extends Model
 
     public function appointments()
     {
-        return $this->hasMany(Appointment::class);
+        return $this->hasMany(Appointment::class)->select('appointments.*'); // This ensures we select from appointments table explicitly
     }
 
     // This accessor will help display the patient's name in views

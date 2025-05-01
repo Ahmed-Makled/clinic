@@ -30,7 +30,13 @@ class UsersController extends Controller
             $query->role($request->role_filter);
         }
 
-        $users = $query->latest()->paginate(10);
+        // Filter by status
+        if ($request->filled('status_filter')) {
+            $status = $request->status_filter === '1';
+            $query->where('status', $status);
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
         $roles = Role::all();
 
         return view('users::index', compact('users', 'roles'));

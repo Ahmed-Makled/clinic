@@ -24,7 +24,7 @@
         <div class="card-body">
             <div class="filters mb-4">
                 <div class="row g-3">
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <label for="searchInput" class="form-label">بحث بالاسم/البريد/الهاتف</label>
                         <div class="input-group">
                             <span class="input-group-text">
@@ -39,7 +39,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-5">
+                    <div class="col-md-3">
                         <label for="roleFilter" class="form-label">الدور</label>
                         <select class="form-select select2" id="roleFilter" name="role_filter">
                             <option value="">الكل</option>
@@ -48,6 +48,15 @@
                                     {{ $role->name }}
                                 </option>
                             @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="statusFilter" class="form-label">الحالة</label>
+                        <select class="form-select select2" id="statusFilter" name="status_filter">
+                            <option value="">الكل</option>
+                            <option value="1" {{ request('status_filter') === '1' ? 'selected' : '' }}>نشط</option>
+                            <option value="0" {{ request('status_filter') === '0' ? 'selected' : '' }}>غير نشط</option>
                         </select>
                     </div>
 
@@ -144,8 +153,58 @@
                 </table>
             </div>
 
-            <div class="d-flex justify-content-center mt-4">
-                {{ $users->links() }}
+            <div class="d-flex justify-content-between align-items-center mt-4 pagination-wrapper">
+                <div class="text-muted small">
+                    إجمالي النتائج: {{ $users->total() }}
+                </div>
+                @if($users->hasPages())
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm mb-0">
+                            {{-- Previous Page Link --}}
+                            @if ($users->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $users->previousPageUrl() }}" rel="prev">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Pagination Elements --}}
+                            @foreach ($users->getUrlRange(max($users->currentPage() - 2, 1), min($users->currentPage() + 2, $users->lastPage())) as $page => $url)
+                                @if ($page == $users->currentPage())
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ $page }}</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                    </li>
+                                @endif
+                            @endforeach
+
+                            {{-- Next Page Link --}}
+                            @if ($users->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $users->nextPageUrl() }}" rel="next">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
+                @endif
             </div>
         </div>
     </div>
@@ -193,6 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get filter elements
     const searchInput = document.getElementById('searchInput');
     const roleFilter = document.getElementById('roleFilter');
+    const statusFilter = document.getElementById('statusFilter');
     const applyFiltersBtn = document.getElementById('applyFilters');
 
     // Update filters function
@@ -209,6 +269,12 @@ document.addEventListener('DOMContentLoaded', function() {
             params.set('role_filter', roleFilter.value.trim());
         } else {
             params.delete('role_filter');
+        }
+
+        if (statusFilter?.value?.trim()) {
+            params.set('status_filter', statusFilter.value.trim());
+        } else {
+            params.delete('status_filter');
         }
 
         // تحديث الرابط مع الفلاتر
@@ -258,7 +324,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 border-radius: 0.5rem;
                 padding: 1.25rem;
             }
-        </style>
+
+        .pagination-wrapper {
+            padding-top: 1rem;
+            border-top: 1px solid var(--bs-gray-200);
+        }
+
+        .pagination {
+            margin: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 2px;
+        }
+
+        .pagination .page-link {
+            border-radius: 4px;
+            border: 1px solid var(--bs-gray-300);
+            color: var(--bs-gray-700);
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+            color: white;
+            box-shadow: 0 2px 4px rgba(var(--bs-primary-rgb), 0.2);
+        }
+
+        .pagination .page-link:hover:not(.disabled) {
+            background-color: var(--bs-gray-100);
+            border-color: var(--bs-gray-400);
+            color: var(--bs-primary);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background-color: var(--bs-gray-100);
+            border-color: var(--bs-gray-200);
+            color: var(--bs-gray-400);
+        }
+    </style>
 @endpush
 
 @endsection

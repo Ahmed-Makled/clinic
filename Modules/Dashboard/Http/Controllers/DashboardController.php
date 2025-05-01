@@ -60,10 +60,11 @@ class DashboardController extends Controller
 
     private function getPatientsStats()
     {
+        $patientRole = 'Patient';
         return [
             'total' => Patient::count(),
             'new_today' => Patient::whereDate('created_at', Carbon::today())->count(),
-            'with_appointments' => Patient::whereHas('appointments')->count()
+            'active' => User::role($patientRole)->where('status', true)->count()
         ];
     }
 
@@ -87,23 +88,20 @@ class DashboardController extends Controller
 
     private function getFinancialStats()
     {
-        $totalIncome = Appointment::where('status', 'completed')
+        $collectedAmount = Appointment::where('status', 'completed')
             ->where('is_paid', true)
             ->sum('fees');
 
-        $todayIncome = Appointment::whereDate('scheduled_at', Carbon::today())
-            ->where('status', 'completed')
-            ->where('is_paid', true)
-            ->sum('fees');
+        $pendingAmount = Appointment::where('is_paid', false)->sum('fees');
 
-        $pendingPayments = Appointment::where('is_paid', false)->sum('fees');
+        $totalAmount = $collectedAmount + $pendingAmount;
 
         return [
-            'total_income' => $totalIncome,
-            'today_income' => $todayIncome,
-            'pending_payments' => $pendingPayments,
-            'collection_percentage' => $totalIncome + $pendingPayments > 0
-                ? round(($totalIncome / ($totalIncome + $pendingPayments)) * 100)
+            'total_income' => $totalAmount,
+            'collected_amount' => $collectedAmount,
+            'pending_amount' => $pendingAmount,
+            'collection_percentage' => $totalAmount > 0
+                ? round(($collectedAmount / $totalAmount) * 100)
                 : 100
         ];
     }
@@ -112,12 +110,37 @@ class DashboardController extends Controller
     {
         $dates = collect();
         $appointments = collect();
+        $period = request('period', 'week');
 
-        for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i);
-            $dates->push($date->format('Y-m-d'));
-            $dayCount = Appointment::whereDate('scheduled_at', $date)->count();
-            $appointments->push($dayCount);
+        switch ($period) {
+            case 'year':
+                for ($i = 11; $i >= 0; $i--) {
+                    $date = Carbon::now()->startOfMonth()->subMonths($i);
+                    $dates->push($date->format('Y-m'));
+                    $monthCount = Appointment::whereYear('scheduled_at', $date->year)
+                        ->whereMonth('scheduled_at', $date->month)
+                        ->count();
+                    $appointments->push($monthCount);
+                }
+                break;
+
+            case 'month':
+                for ($i = 29; $i >= 0; $i--) {
+                    $date = Carbon::now()->subDays($i);
+                    $dates->push($date->format('Y-m-d'));
+                    $dayCount = Appointment::whereDate('scheduled_at', $date)->count();
+                    $appointments->push($dayCount);
+                }
+                break;
+
+            default: // week
+                for ($i = 6; $i >= 0; $i--) {
+                    $date = Carbon::now()->subDays($i);
+                    $dates->push($date->format('Y-m-d'));
+                    $dayCount = Appointment::whereDate('scheduled_at', $date)->count();
+                    $appointments->push($dayCount);
+                }
+                break;
         }
 
         return [
@@ -162,6 +185,8 @@ class DashboardController extends Controller
             ->map(function ($appointment) {
                 return [
                     'id' => $appointment->id,
+                    'title' => sprintf('موعد مع د. %s', $appointment->doctor->name),
+                    'description' => sprintf('موعد للمريض %s', $appointment->patient->name),
                     'doctor_name' => $appointment->doctor->name,
                     'patient_name' => $appointment->patient->name,
                     'status' => $appointment->status,
@@ -171,6 +196,12 @@ class DashboardController extends Controller
                     'is_paid' => $appointment->is_paid
                 ];
             });
+    }
+
+    public function getChartData()
+    {
+        $chartData = $this->getAppointmentsChartData();
+        return response()->json($chartData);
     }
 }
 

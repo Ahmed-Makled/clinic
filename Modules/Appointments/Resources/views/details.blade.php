@@ -45,7 +45,7 @@
             <!-- تفاصيل الموعد -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header border-0 py-3 d-flex align-items-center">
-                    <i class="bi bi-calendar-check me-2 text-primary"></i>
+                    <i class="bi bi-calendar-check me-2 "></i>
                     <h5 class="card-title mb-0 fw-bold">تفاصيل الموعد</h5>
                 </div>
                 <div class="card-body">
@@ -147,7 +147,7 @@
             <!-- معلومات الطبيب -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header border-0 py-3 d-flex align-items-center">
-                    <i class="bi bi-person-badge me-2 text-primary"></i>
+                    <i class="bi bi-person-badge me-2 "></i>
                     <h5 class="card-title mb-0 fw-bold">معلومات الطبيب</h5>
                 </div>
                 <div class="card-body">
@@ -189,7 +189,7 @@
             <!-- معلومات المريض -->
             <div class="card shadow-sm">
                 <div class="card-header border-0 py-3 d-flex align-items-center">
-                    <i class="bi bi-person me-2 text-primary"></i>
+                    <i class="bi bi-person me-2 "></i>
                     <h5 class="card-title mb-0 fw-bold">معلومات المريض</h5>
                 </div>
                 <div class="card-body">
@@ -243,6 +243,12 @@
 
 .card-header i {
     font-size: 1.25rem;
+    color: #1a202c; /* تغيير لون الأيقونة لتكون داكنة */
+}
+
+.card-header h5 {
+    color: #1a202c; /* تغيير لون عنوان البطاقة ليكون داكن */
+    font-weight: 600;
 }
 
 .info-grid {
@@ -261,30 +267,26 @@
     transition: all 0.3s ease;
 }
 
-
 .info-icon {
     width: 42px;
     height: 42px;
-    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-    color: var(--bs-primary);
+    background: #f7fafc; /* تغيير خلفية الأيقونة */
+    color: #1a202c; /* تغيير لون الأيقونة لتكون داكنة */
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
     flex-shrink: 0;
-    border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+    border: 1px solid #edf2f7;
     transition: all 0.3s ease;
 }
-
 
 .info-icon.important {
     background: #dc2626;
     color: white;
     border-color: rgba(220, 38, 38, 0.1);
 }
-
-
 
 .info-content {
     flex: 1;
@@ -372,6 +374,10 @@
     color: var(--bs-primary);
 }
 
+.notes-header i {
+    color: #1a202c; /* تغيير لون أيقونة قسم الملاحظات */
+}
+
 .notes-content {
     color: #64748b;
     line-height: 1.6;
@@ -400,8 +406,8 @@
 .avatar-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-    color: var(--bs-primary);
+    background: #f7fafc;
+    color: #2d3748;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -436,8 +442,8 @@
     display: inline-flex;
     padding: 0.25rem 0.75rem;
     border-radius: 50px;
-    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-    color: var(--bs-primary);
+    background: #f7fafc; /* تغيير الخلفية */
+    color: #2d3748; /* تغيير اللون */
     font-size: 0.875rem;
     font-weight: 500;
 }
@@ -455,6 +461,10 @@
     gap: 0.5rem;
     color: #64748b;
     font-size: 0.875rem;
+}
+
+.contact-item i {
+    color: #1a202c; /* تغيير لون أيقونات معلومات الاتصال */
 }
 
 .btn-soft-success {
@@ -480,13 +490,13 @@
 }
 
 .btn-soft-primary {
-    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-    color: var(--bs-primary);
-    border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+    background: #f7fafc;
+    color: #2d3748;
+    border: 1px solid #edf2f7;
 }
 
 .btn-soft-primary:hover {
-    background: var(--bs-primary);
+    background: #2d3748;
     color: white;
 }
 

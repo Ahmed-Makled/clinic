@@ -77,8 +77,8 @@
                                             name="gender"
                                             required>
                                         <option value="">اختر الجنس</option>
-                                        <option value="male" {{ old('gender', $patient->gender) == 'male' ? 'selected' : '' }}>ذكر</option>
-                                        <option value="female" {{ old('gender', $patient->gender) == 'female' ? 'selected' : '' }}>أنثى</option>
+                                        <option value="male" {{ old('gender', optional($patient->patient)->gender) == 'male' ? 'selected' : '' }}>ذكر</option>
+                                        <option value="female" {{ old('gender', optional($patient->patient)->gender) == 'female' ? 'selected' : '' }}>أنثى</option>
                                     </select>
                                     @error('gender')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -107,6 +107,15 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">الحالة</label>
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" name="status" id="status"
+                                            {{ old('status', $patient->status) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="status">نشط</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -123,23 +132,12 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Form validation
     const form = $('form');
 
     form.on('submit', function(event) {
         if (!this.checkValidity()) {
             event.preventDefault();
             event.stopPropagation();
-        }
-
-        // Phone number format validation
-        const phone = $('#phone_number').val();
-        const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-        if (!phoneRegex.test(phone)) {
-            event.preventDefault();
-            $('#phone_number').addClass('is-invalid')
-                .siblings('.invalid-feedback')
-                .text('رقم الهاتف غير صالح');
         }
 
         // Email format validation
@@ -153,22 +151,6 @@ $(document).ready(function() {
         }
 
         $(this).addClass('was-validated');
-    });
-
-    // Real-time validation
-    $('#phone_number').on('input', function() {
-        const phone = $(this).val();
-        const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-
-        if (!phoneRegex.test(phone)) {
-            $(this).addClass('is-invalid')
-                .removeClass('is-valid')
-                .siblings('.invalid-feedback')
-                .text('رقم الهاتف غير صالح');
-        } else {
-            $(this).removeClass('is-invalid')
-                .addClass('is-valid');
-        }
     });
 
     $('#email').on('input', function() {

@@ -78,7 +78,8 @@
                         <th scope="col" class="fw-medium ps-3">#</th>
                         <th scope="col" class="fw-medium">الطبيب</th>
                         <th scope="col" class="fw-medium">التخصصات</th>
-                        <th scope="col" class="fw-medium">معلومات التواصل</th>
+                        <th scope="col" class="fw-medium">البريد الإلكتروني</th>
+                        <th scope="col" class="fw-medium">رقم الهاتف</th>
                         <th scope="col" class="fw-medium">الحالة</th>
                         <th scope="col" class="fw-medium pe-3">الإجراءات</th>
                     </tr>
@@ -89,20 +90,18 @@
                             <td class="ps-3">{{ $loop->iteration }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    @if($doctor->image)
-                                        <img src="{{ Storage::url($doctor->image) }}"
-                                             class="rounded-circle"
-                                             width="32"
-                                             height="32"
-                                             style="object-fit: cover;"
-                                             onerror="this.src='{{ asset('images/default-doctor.png') }}'"
-                                             alt="{{ $doctor->name }}">
-                                    @else
-                                        <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center"
-                                             style="width: 32px; height: 32px">
-                                            <i class="bi bi-person-badge fs-6"></i>
-                                        </div>
-                                    @endif
+                                    <div class="avatar-wrapper {{ $doctor->image ? '' : ($loop->iteration % 2 ? 'avatar-dark' : 'avatar-light') }}">
+                                        @if($doctor->image)
+                                            <img src="{{ Storage::url($doctor->image) }}"
+                                                class="rounded-circle"
+                                                width="32"
+                                                height="32"
+                                                alt="{{ $doctor->name }}"
+                                                onerror="this.src='{{ asset('images/default-doctor.png') }}'">
+                                        @else
+                                            <i class="bi bi-person-badge"></i>
+                                        @endif
+                                    </div>
                                     <div>
                                         <div class="fw-medium mb-0 fs-7">{{ $doctor->name }}</div>
                                         @if($doctor->degree)
@@ -122,15 +121,15 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="contact-info fs-7">
-                                    <div class="d-flex align-items-center mb-1">
-                                        <i class="bi bi-envelope text-muted me-2 fs-8"></i>
-                                        {{ $doctor->email }}
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-phone text-muted me-2 fs-8"></i>
-                                        {{ $doctor->phone }}
-                                    </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-envelope text-muted me-2 fs-8"></i>
+                                    <span class="fs-7">{{ $doctor->email }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-phone text-muted me-2 fs-8"></i>
+                                    <span class="fs-7">{{ $doctor->phone }}</span>
                                 </div>
                             </td>
                             <td>
@@ -178,7 +177,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center py-4">
+                            <td colspan="7" class="text-center py-4">
                                 <div class="empty-state">
                                     <i class="bi bi-people empty-state-icon opacity-50"></i>
                                     <p class="empty-state-text fs-7 mb-1">لا يوجد أطباء</p>
@@ -334,6 +333,25 @@
     background: var(--bs-gray-100);
     border-radius: 0.5rem;
     padding: 1.25rem;
+}
+
+.avatar-wrapper {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.avatar-dark {
+    background-color: #343a40;
+    color: #fff;
+}
+
+.avatar-light {
+    background-color: #f8f9fa;
+    color: #343a40;
 }
 
 </style>

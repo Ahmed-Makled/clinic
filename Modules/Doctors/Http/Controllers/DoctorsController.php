@@ -61,7 +61,7 @@ class DoctorsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required', // Removed string|max:20
             'password' => 'required|string|min:6',
             'consultation_fee' => 'required|numeric|min:0',
             'waiting_time' => 'nullable|integer|min:0',
@@ -137,12 +137,13 @@ class DoctorsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . ($doctor->user_id ?? 0),
-            'phone' => 'required|string|max:20',
+            'phone' => 'required', // Removed string|max:20
             'categories' => 'required|exists:categories,id',
             'bio' => 'nullable|string',
             'description' => 'nullable|string',
             'consultation_fee' => 'required|numeric|min:0',
             'waiting_time' => 'nullable|integer|min:0',
+            'experience_years' => 'nullable|integer|min:0',  // تأكد من وجود التحقق
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'gender' => 'required|in:ذكر,انثي',
             'address' => 'nullable|string',
@@ -186,7 +187,7 @@ class DoctorsController extends Controller
             'address' => $validated['address'] ?? null,
             'consultation_fee' => $validated['consultation_fee'],
             'waiting_time' => $validated['waiting_time'],
-            'experience_years' => $validated['experience_years'] ?? null,
+            'experience_years' => $validated['experience_years'],  // إضافة حقل سنوات الخبرة
             'governorate_id' => $validated['governorate_id'],
             'city_id' => $validated['city_id']
         ]);

@@ -279,8 +279,8 @@ h6, .h6 { font-size: 0.875rem; }
 .avatar-circle {
     width: 35px;
     height: 35px;
-    background-color: var(--bs-primary-bg-subtle);
-    color: var(--bs-primary);
+    background-color: var(--bs-dark-bg-subtle);
+    color: var(--bs-dark);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -742,4 +742,8 @@ h6, .h6 { font-size: 0.875rem; }
     .status-badge {
         font-size: var(--fs-xs);
     }
+}
+
+i::before{
+    line-height: 2 !important;
 }

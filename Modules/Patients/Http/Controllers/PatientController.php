@@ -17,45 +17,35 @@ class PatientController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::role('Patient')->with('patient')->withCount('appointments');
+        $query = User::role('Patient')
+            ->with('patient')
+            ->select('users.*')
+            ->withCount('appointments');  // Changed this line to just count appointments
 
         // Search filter
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%')
-                  ->orWhere('phone_number', 'like', '%' . $request->search . '%');
+                $q->where('users.name', 'like', '%' . $request->search . '%')
+                  ->orWhere('users.email', 'like', '%' . $request->search . '%')
+                  ->orWhere('users.phone_number', 'like', '%' . $request->search . '%');
             });
         }
 
         // Gender filter
         if ($request->filled('gender_filter')) {
             $query->whereHas('patient', function($q) use ($request) {
-                $q->where('gender', $request->gender_filter);
+                $q->where('patients.gender', $request->gender_filter);
             });
         }
 
-        // Sort filter
-        if ($request->filled('sort')) {
-            switch ($request->sort) {
-                case 'latest':
-                    $query->latest();
-                    break;
-                case 'oldest':
-                    $query->oldest();
-                    break;
-                case 'name':
-                    $query->orderBy('name');
-                    break;
-                case 'appointments':
-                    $query->orderByDesc('appointments_count');
-                    break;
-                default:
-                    $query->latest();
-            }
-        } else {
-            $query->latest();
+        // Status filter
+        if ($request->filled('status_filter')) {
+            $status = $request->status_filter === '1';
+            $query->where('users.status', $status);
         }
+
+        // Default ordering
+        $query->latest();
 
         $patients = $query->paginate(10)->withQueryString();
         return view('patients::index', compact('patients'));
@@ -71,7 +61,7 @@ class PatientController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'phone_number' => 'required|string|max:20',
+            'phone_number' => 'required',  // Removed string|max:20 validation
             'password' => 'required|min:6|confirmed',
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
@@ -87,7 +77,8 @@ class PatientController extends Controller
             'email' => $validated['email'],
             'phone_number' => $validated['phone_number'],
             'password' => $validated['password'],
-            'type' => $validated['type']
+            'type' => $validated['type'],
+            'status' => true // Set default status to active
         ]);
 
         // Create the patient record
@@ -113,25 +104,31 @@ class PatientController extends Controller
 
     public function edit(User $patient)
     {
+        $patient->load('patient');
         return view('patients::edit', compact('patient'));
     }
 
     public function update(Request $request, User $patient)
     {
+        $patient->load('patient');
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $patient->id,
-            'phone_number' => 'required|string|max:20',
+            'phone_number' => 'required', // Removed string|max:20 validation
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
             'gender' => 'required|in:male,female'
         ]);
 
+        // Handle status toggle - convert checkbox value to boolean
+        $status = $request->has('status');
+
         // Update user record
         $patient->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'phone_number' => $validated['phone_number']
+            'phone_number' => $validated['phone_number'],
+            'status' => $status
         ]);
 
         // Update patient record
@@ -168,7 +165,7 @@ class PatientController extends Controller
      * Show form for creating patient details from existing user.
      *
      * @param Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function createFromUser(Request $request)
     {
@@ -223,5 +220,11 @@ class PatientController extends Controller
 
         return redirect()->route('patients.index')
             ->with('success', 'تم إضافة بيانات المريض بنجاح');
+    }
+
+    public function details(User $patient)
+    {
+        $patient->load('patient');
+        return view('patients::details', compact('patient'));
     }
 }

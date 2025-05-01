@@ -49,12 +49,11 @@
                 </div>
 
                 <div class="col-md-3">
-                    <label for="sortFilter" class="form-label">ترتيب حسب</label>
-                    <select class="form-select select2" id="sortFilter" name="sort">
-                        <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>الأحدث</option>
-                        <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>الأقدم</option>
-                        <option value="name" {{ request('sort') === 'name' ? 'selected' : '' }}>الاسم</option>
-                        <option value="appointments" {{ request('sort') === 'appointments' ? 'selected' : '' }}>عدد الحجوزات</option>
+                    <label for="statusFilter" class="form-label">الحالة</label>
+                    <select class="form-select select2" id="statusFilter" name="status_filter">
+                        <option value="">الكل</option>
+                        <option value="1" {{ request('status_filter') === '1' ? 'selected' : '' }}>نشط</option>
+                        <option value="0" {{ request('status_filter') === '0' ? 'selected' : '' }}>غير نشط</option>
                     </select>
                 </div>
 
@@ -79,6 +78,7 @@
                         <th scope="col">النوع</th>
                         <th scope="col">تاريخ الميلاد</th>
                         <th scope="col">عدد الحجوزات</th>
+                        <th scope="col">الحالة</th>
                         <th scope="col">الإجراءات</th>
                     </tr>
                 </thead>
@@ -88,9 +88,9 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
+                                    <div class="bg-dark-subtle text-dark rounded-circle me-2 d-flex align-items-center justify-content-center"
                                          style="width: 40px; height: 40px">
-                                        <i class="bi bi-person text-secondary"></i>
+                                        <i class="bi bi-person "></i>
                                     </div>
                                     <div>
                                         <div class="fw-medium">{{ $patient->name }}</div>
@@ -142,8 +142,21 @@
                                 </span>
                             </td>
                             <td>
+                                @if($patient->status)
+                                    <span class="status-badge active fs-8">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        نشط
+                                    </span>
+                                @else
+                                    <span class="status-badge inactive fs-8">
+                                        <i class="bi bi-x-circle-fill"></i>
+                                        غير نشط
+                                    </span>
+                                @endif
+                            </td>
+                            <td>
                                 <div class="action-buttons">
-                                    <a href="{{ route('patients.show', $patient) }}" class="btn-action btn-view"
+                                    <a href="{{ route('patients.details', $patient) }}" class="btn-action btn-view"
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="عرض">
                                         <i class="bi bi-eye"></i>
                                     </a>
@@ -164,7 +177,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4">
+                            <td colspan="9" class="text-center py-4">
                                 <div class="empty-state">
                                     <i class="bi bi-people empty-state-icon"></i>
                                     <p class="empty-state-text">لا يوجد مرضى</p>
@@ -175,6 +188,60 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-4 pagination-wrapper">
+            <div class="text-muted small">
+                إجمالي النتائج: {{ $patients->total() }}
+            </div>
+            @if($patients->hasPages())
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm mb-0">
+                        {{-- Previous Page Link --}}
+                        @if ($patients->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link" aria-hidden="true">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $patients->previousPageUrl() }}" rel="prev">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($patients->getUrlRange(max($patients->currentPage() - 2, 1), min($patients->currentPage() + 2, $patients->lastPage())) as $page => $url)
+                            @if ($page == $patients->currentPage())
+                                <li class="page-item active">
+                                    <span class="page-link">{{ $page }}</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                </li>
+                            @endif
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($patients->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $patients->nextPageUrl() }}" rel="next">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link" aria-hidden="true">
+                                    <i class="bi bi-chevron-left"></i>
+                                </span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+            @endif
         </div>
 
         <div class="d-flex justify-content-center mt-4">
@@ -231,6 +298,70 @@
         border-radius: 0.5rem;
         padding: 1.25rem;
     }
+
+    .pagination-wrapper {
+        padding-top: 1rem;
+        border-top: 1px solid var(--bs-gray-200);
+    }
+
+    .pagination {
+        margin: 0;
+    }
+
+    .pagination .page-item {
+        margin: 0 2px;
+    }
+
+    .pagination .page-link {
+        border-radius: 4px;
+        border: 1px solid var(--bs-gray-300);
+        color: var(--bs-gray-700);
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: white;
+        box-shadow: 0 2px 4px rgba(var(--bs-primary-rgb), 0.2);
+    }
+
+    .pagination .page-link:hover:not(.disabled) {
+        background-color: var(--bs-gray-100);
+        border-color: var(--bs-gray-400);
+        color: var(--bs-primary);
+    }
+
+    .pagination .page-item.disabled .page-link {
+        background-color: var(--bs-gray-100);
+        border-color: var(--bs-gray-200);
+        color: var(--bs-gray-400);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 1rem;
+        font-weight: 500;
+    }
+
+    .status-badge.active {
+        background-color: #ECFDF5;
+        color: #047857;
+    }
+
+    .status-badge.inactive {
+        background-color: #FEF2F2;
+        color: #B91C1C;
+    }
+
+    .status-badge i {
+        font-size: 0.75rem;
+    }
 </style>
 @endpush
 
@@ -246,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get filter elements
     const searchInput = document.getElementById('searchInput');
     const genderFilter = document.getElementById('genderFilter');
-    const sortFilter = document.getElementById('sortFilter');
+    const statusFilter = document.getElementById('statusFilter');
     const applyFiltersBtn = document.getElementById('applyFilters');
 
     // Update filters function
@@ -265,10 +396,10 @@ document.addEventListener('DOMContentLoaded', function() {
             params.delete('gender_filter');
         }
 
-        if (sortFilter?.value?.trim()) {
-            params.set('sort', sortFilter.value.trim());
+        if (statusFilter?.value?.trim()) {
+            params.set('status_filter', statusFilter.value.trim());
         } else {
-            params.delete('sort');
+            params.delete('status_filter');
         }
 
         // Update URL with new filters

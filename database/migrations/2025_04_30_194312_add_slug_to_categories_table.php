@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->foreignId('parent_id')->nullable()->after('id')->constrained('categories')->nullOnDelete();
-            $table->enum('type', ['general', 'specialized', 'subspecialty'])->default('general')->after('description');
-            $table->enum('status', ['active', 'inactive'])->default('active')->after('type');
+            $table->string('slug')->unique()->after('name');
         });
     }
 
@@ -24,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->dropForeign(['parent_id']);
-            $table->dropColumn(['parent_id', 'type', 'status']);
+            $table->dropColumn('slug');
         });
     }
 };

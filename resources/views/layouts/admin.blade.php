@@ -357,7 +357,7 @@
 
         .main-header .notifications-dropdown .dropdown-header {
             background: var(--primary-bg-subtle);
-            color: var (--primary-color);
+            color: var(--primary-color);
             font-weight: 600;
             padding: 1rem;
             border-bottom: 1px solid var(--border-color);
@@ -419,7 +419,7 @@
         }
 
         .notification-item.unread {
-            background: var (--primary-bg-subtle);
+            background: var(--primary-bg-subtle);
         }
 
         .notification-item.unread:hover {
@@ -473,7 +473,7 @@
 
         .card-header {
             background: transparent;
-            border-bottom: 1px solid var (--border-color);
+            border-bottom: 1px solid var(--border-color);
             padding: 1.25rem 1.5rem;
         }
 
@@ -506,7 +506,7 @@
 
         .badge.bg-success {
             background-color: var(--success-bg-subtle) !important;
-            color: var (--success-color);
+            color: var(--success-color);
         }
 
         .badge.bg-danger.notifications-count {
@@ -858,7 +858,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.25rem;
-            background: var (--primary-bg-subtle);
+            background: var(--primary-bg-subtle);
             color: var(--primary-color);
         }
     </style>

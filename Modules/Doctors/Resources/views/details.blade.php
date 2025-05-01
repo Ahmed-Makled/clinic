@@ -12,16 +12,16 @@
 @section('actions')
     <div class="d-flex gap-2">
 
-            <form action="{{ route('doctors.destroy', $doctor) }}" method="POST" class="d-inline">
-                @csrf
-                @method('POST')
-                <button type="submit" class="btn btn-soft-danger">
-                    <i class="bi bi-x-circle me-2"></i> حذف
-                </button>
-            </form>
+        <form action="{{ route('doctors.destroy', $doctor) }}" method="POST" class="d-inline">
+            @csrf
+            @method('POST')
+            <button type="submit" class="btn btn-soft-danger">
+                <i class="bi bi-x-circle me-2"></i> حذف
+            </button>
+        </form>
 
         <a href="{{ route('doctors.edit', $doctor) }}" class="btn btn-soft-primary">
-            <i class="bi bi-pencil me-2"></i>  تعديل البيانات
+            <i class="bi bi-pencil me-2"></i> تعديل البيانات
         </a>
     </div>
 @endsection
@@ -33,16 +33,20 @@
             <div class="profile-info">
                 <div class="profile-avatar">
                     @if($doctor->image)
-                        <img src="{{ $doctor->image_url }}"
-                             alt="{{ $doctor->name }}"
-                             class="doctor-image"
-                             onerror="this.src='{{ asset('images/default-doctor.png') }}'; this.onerror=null;">
+                        <div class="avatar-wrapper">
+                            <img src="{{ $doctor->image_url }}" alt="{{ $doctor->name }}" class="doctor-image"
+                                onerror="this.src='{{ asset('images/default-doctor.png') }}'; this.onerror=null;">
+                        </div>
                     @else
-                        <div class="avatar-placeholder">
-                            {{ substr($doctor->name, 0, 2) }}
+                        <div class="avatar-wrapper">
+                            <div class="avatar-placeholder ">
+                                <i class="bi bi-person-badge fs-2"></i>
+                            </div>
                         </div>
                     @endif
-                    <div class="status-indicator {{ $doctor->status ? 'active' : 'inactive' }}"></div>
+                    <div class="status-indicator {{ $doctor->status ? 'active' : 'inactive' }}">
+                        <i class="bi {{ $doctor->status ? 'bi-check-circle-fill' : 'bi-x-circle-fill' }}"></i>
+                    </div>
                 </div>
 
                 <div class="profile-details w-100">
@@ -74,7 +78,8 @@
                         <div class="stat-value">{{ number_format($doctor->consultation_fee) }} جنيه</div>
                         <div class="stat-trend {{ $feeComparisonRate >= 0 ? 'positive' : 'negative' }}">
                             <i class="bi {{ $feeComparisonRate >= 0 ? 'bi-arrow-up-short' : 'bi-arrow-down-short' }}"></i>
-                            {{ abs(round($feeComparisonRate)) }}% {{ $feeComparisonRate >= 0 ? 'أعلى من' : 'أقل من' }} متوسط التخصص
+                            {{ abs(round($feeComparisonRate)) }}% {{ $feeComparisonRate >= 0 ? 'أعلى من' : 'أقل من' }} متوسط
+                            التخصص
                         </div>
                     </div>
                 </div>
@@ -88,7 +93,8 @@
                         <div class="stat-value">{{ $completedAppointments }}</div>
                         <div class="stat-trend {{ $completedGrowthRate >= 0 ? 'positive' : 'negative' }}">
                             <i class="bi {{ $completedGrowthRate >= 0 ? 'bi-arrow-up-short' : 'bi-arrow-down-short' }}"></i>
-                            {{ abs(round($completedGrowthRate)) }}% {{ $completedGrowthRate >= 0 ? 'زيادة' : 'انخفاض' }} عن الشهر السابق
+                            {{ abs(round($completedGrowthRate)) }}% {{ $completedGrowthRate >= 0 ? 'زيادة' : 'انخفاض' }} عن
+                            الشهر السابق
                         </div>
                     </div>
                 </div>
@@ -116,7 +122,8 @@
                         <div class="stat-value">{{ $totalEarnings }} جنيه</div>
                         <div class="stat-trend {{ $earningsGrowthRate >= 0 ? 'positive' : 'negative' }}">
                             <i class="bi {{ $earningsGrowthRate >= 0 ? 'bi-graph-up' : 'bi-graph-down' }}"></i>
-                            {{ abs(round($earningsGrowthRate)) }}% {{ $earningsGrowthRate >= 0 ? 'نمو' : 'انخفاض' }} عن الشهر السابق
+                            {{ abs(round($earningsGrowthRate)) }}% {{ $earningsGrowthRate >= 0 ? 'نمو' : 'انخفاض' }} عن
+                            الشهر السابق
                         </div>
                     </div>
                 </div>
@@ -232,7 +239,8 @@
                                 <div class="appointment-card">
                                     <div class="appointment-header">
                                         <div class="time-slot">
-                                            <div class="time">{{ \Carbon\Carbon::parse($appointment->scheduled_at)->format('h:i A') }}</div>
+                                            <div class="time">
+                                                {{ \Carbon\Carbon::parse($appointment->scheduled_at)->format('h:i A') }}</div>
                                             <div class="duration">{{ $doctor->waiting_time ?? 30 }} دقيقة</div>
                                         </div>
                                         <div class="status {{ $appointment->status }}">
@@ -249,7 +257,7 @@
                                                 <div class="patient-details">
                                                     <span class="detail-item">
                                                         <i class="bi bi-telephone"></i>
-                                                            {{ $appointment->patient->user->phone_number }}
+                                                        {{ $appointment->patient->user->phone_number }}
                                                     </span>
                                                 </div>
                                             </div>
@@ -257,7 +265,8 @@
                                         <div class="patient-meta">
                                             @if($appointment->fees)
                                                 <div class="fees {{ $appointment->is_paid ? 'paid' : 'unpaid' }}">
-                                                    <i class="bi {{ $appointment->is_paid ? 'bi-check-circle' : 'bi-exclamation-circle' }}"></i>
+                                                    <i
+                                                        class="bi {{ $appointment->is_paid ? 'bi-check-circle' : 'bi-exclamation-circle' }}"></i>
                                                     <span>{{ $appointment->fees }} جنيه</span>
                                                     <small>({{ $appointment->is_paid ? 'مدفوع' : 'غير مدفوع' }})</small>
                                                 </div>
@@ -316,9 +325,8 @@
                         height: 100%;
                         width: 3px;
                         background: linear-gradient(180deg,
-                            rgba(var(--bs-primary-rgb), 0.2) 0%,
-                            rgba(var(--bs-primary-rgb), 0.1) 100%
-                        );
+                                rgba(var(--bs-primary-rgb), 0.2) 0%,
+                                rgba(var(--bs-primary-rgb), 0.1) 100%);
                         border-radius: 3px;
                     }
 
@@ -363,10 +371,6 @@
                         transition: all 0.3s ease;
                     }
 
-                    .appointment-card:hover {
-                        transform: translateY(-2px) translateX(-2px);
-                        box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.12);
-                    }
 
                     .appointment-header {
                         display: flex;
@@ -451,10 +455,6 @@
                         font-weight: 600;
                         transition: all 0.3s ease;
                         border: 2px solid rgba(var(--bs-primary-rgb), 0.1);
-                    }
-
-                    .patient-info:hover .avatar {
-                        transform: scale(1.1) rotate(8deg);
                     }
 
                     .patient-name {
@@ -599,53 +599,75 @@
             display: flex;
             gap: 2rem;
             margin-bottom: 2rem;
+            align-items: flex-start;
         }
 
         .profile-avatar {
             position: relative;
+            flex-shrink: 0;
+        }
+
+
+        .avatar-wrapper {
             width: 120px;
             height: 120px;
-            border-radius: 50%;
+            border-radius: 15px;
             overflow: hidden;
+        }
+
+        .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.05) 0%, rgba(55, 65, 81, 0.1) 100%);
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-placeholder:hover {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.08) 0%, rgba(55, 65, 81, 0.15) 100%);
         }
 
         .doctor-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        .avatar-placeholder {
-            width: 100%;
-            height: 100%;
-            background: #0066cc;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
+            transition: all 0.3s ease;
         }
 
         .status-indicator {
             position: absolute;
-            bottom: 5px;
-            right: 5px;
-            width: 20px;
-            height: 20px;
+            bottom: -5px;
+            right: -5px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
             border: 3px solid white;
+            transition: all 0.3s ease;
         }
 
         .status-indicator.active {
-            background-color: #28a745;
+            background: linear-gradient(135deg, #38c172 0%, #2fb344 100%);
+            color: white;
+            box-shadow: 0 4px 8px rgba(56, 193, 114, 0.3);
         }
 
         .status-indicator.inactive {
-            background-color: #dc3545;
+            background: linear-gradient(135deg, #e3342f 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 8px rgba(227, 52, 47, 0.3);
         }
 
-        .doctor-name {
+            .doctor-name {
             font-size: 1.8rem;
             margin-bottom: 0.5rem;
         }
@@ -717,26 +739,15 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.5) 0%,
-                rgba(255, 255, 255, 0.1) 100%
-            );
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.5) 0%,
+                    rgba(255, 255, 255, 0.1) 100%);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow:
-                0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border-color: rgba(226, 232, 240, 0.9);
-        }
 
-        .stat-card:hover::before {
-            opacity: 1;
-        }
+
 
         .stat-icon {
             width: 52px;
@@ -782,14 +793,7 @@
             color: white;
         }
 
-        .stat-card:hover .stat-icon {
-            transform: scale(1.1) rotate(10deg);
-        }
 
-        .stat-card:hover .stat-icon::after {
-            opacity: 0.6;
-            filter: blur(12px);
-        }
 
         .stat-icon i {
             font-size: 1.5rem;
@@ -851,9 +855,6 @@
             transition: transform 0.3s ease;
         }
 
-        .stat-card:hover .stat-trend {
-            transform: translateX(5px);
-        }
 
         @media (max-width: 768px) {
 
@@ -902,11 +903,13 @@
             margin-bottom: 0.5rem;
         }
 
-        .bio-section, .description-section {
+        .bio-section,
+        .description-section {
             margin-top: 2rem;
         }
 
-        .bio-section h3, .description-section h3 {
+        .bio-section h3,
+        .description-section h3 {
             color: #333;
             margin-bottom: 1rem;
         }
@@ -1042,345 +1045,322 @@
             }
         }
 
-    .section-title {
-        color: #1e293b;
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
+        .section-title {
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    .section-title i {
-        color: var(--bs-primary);
-        font-size: 1.25rem;
-    }
+        .section-title i {
+            color: var(--bs-primary);
+            font-size: 1.25rem;
+        }
 
-    .info-section {
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid rgba(var(--bs-primary-rgb), 0.08);
-    }
+        .info-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(var(--bs-primary-rgb), 0.08);
+        }
 
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.25rem;
-        margin-bottom: 2rem;
-    }
-
-    .info-item {
-        padding: 1.25rem;
-        border-radius: 15px;
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        transition: all 0.3s ease;
-    }
-
-
-    .info-icon {
-        width: 42px;
-        height: 42px;
-        background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-        color: var(--bs-primary);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        flex-shrink: 0;
-        border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
-        transition: all 0.3s ease;
-    }
-
-
-
-    .info-content {
-        flex: 1;
-    }
-
-    .info-content label {
-        display: block;
-        color: #64748b;
-        font-size: 0.875rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .info-value {
-        color: #1e293b;
-        font-weight: 500;
-        font-size: 1rem;
-    }
-
-
-
-
-
-    .card-header {
-        padding: 1.25rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .card-header i {
-        color: var(--bs-primary);
-        font-size: 1.25rem;
-    }
-
-    .card-header h3 {
-        color: #1e293b;
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin: 0;
-    }
-
-    .card-body {
-        padding: 1.25rem;
-    }
-
-    .card-body p {
-        color: #64748b;
-        line-height: 1.6;
-        margin: 0;
-    }
-
-    @media (max-width: 768px) {
         .info-grid {
-            grid-template-columns: 1fr;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(250px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
         }
 
         .info-item {
-            padding: 1rem;
+            padding: 1.25rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.3s ease;
         }
+
 
         .info-icon {
-            width: 36px;
-            height: 36px;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, rgba(var(--bs-dark-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: var(--bs-dark);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            border: 1px solid rgba(var(--bs-dark-rgb), 0.1);
+            transition: all 0.3s ease;
+        }
+
+
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-content label {
+            display: block;
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            color: #1e293b;
+            font-weight: 500;
             font-size: 1rem;
         }
-    }
-
-    /* Contact Info Styles */
-    .contact-info {
-        display: flex;
-        gap: 2rem;
-        margin-top: 1.5rem;
-        flex-wrap: wrap;
-    }
-
-    .contact-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        padding: 1rem;
-        background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.03) 0%, rgba(37, 99, 235, 0.03) 100%);
-        border-radius: 12px;
-        border: 1px solid rgba(var(--bs-primary-rgb), 0.08);
-        transition: all 0.3s ease;
-        flex: 1;
-        min-width: max-content;
-    }
-
-    .contact-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.08);
-    }
-
-    .contact-icon {
-        width: 42px;
-        height: 42px;
-        background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-        color: var(--bs-primary);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        flex-shrink: 0;
-        border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
-        transition: all 0.3s ease;
-    }
-
-    .contact-item:hover .contact-icon {
-        transform: scale(1.1) rotate(8deg);
-        background: var(--bs-primary);
-        color: white;
-    }
-
-    .contact-details {
-        flex: 1;
-    }
-
-    .contact-label {
-        color: #64748b;
-        font-size: 0.875rem;
-        margin-bottom: 0.25rem;
-        display: block;
-    }
-
-    .contact-value {
-        color: #1e293b;
-        font-weight: 500;
-        font-size: 1rem;
-    }
 
 
-    .stat-card {
-        background: white;
-        border-radius: 15px;
-        padding: 1.5rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        box-shadow: 0 2px 8px rgba(var(--bs-primary-rgb), 0.06);
-        border: 1px solid rgba(var(--bs-primary-rgb), 0.08);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        width: max-content;
-    }
 
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(to right,
-            rgba(var(--bs-primary-rgb), 0.5),
-            rgba(var(--bs-primary-rgb), 0.2)
-        );
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
 
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 16px rgba(var(--bs-primary-rgb), 0.12);
-    }
 
-    .stat-card:hover::before {
-        opacity: 1;
-    }
-
-    .stat-icon {
-        width: 46px;
-        height: 46px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        transition: all 0.3s ease;
-    }
-
-    .stat-icon.consultation {
-        background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-        color: var(--bs-primary);
-    }
-
-    .stat-icon.consultation i {
-        font-size: 1.25rem;
-        transform: scale(0.9);
-        transition: transform 0.3s ease;
-    }
-
-    .stat-card:hover .stat-icon.consultation i {
-        transform: scale(1);
-    }
-
-    .stat-icon.appointments {
-        background: linear-gradient(135deg, rgba(56, 193, 114, 0.1) 0%, rgba(47, 182, 100, 0.1) 100%);
-        color: #38c172;
-    }
-
-    .stat-icon.cancelled {
-        background: linear-gradient(135deg, rgba(227, 52, 47, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
-        color: #e3342f;
-    }
-
-    .stat-icon.earnings {
-        background: linear-gradient(135deg, rgba(246, 153, 63, 0.1) 0%, rgba(255, 139, 20, 0.1) 100%);
-        color: #f59e0b;
-    }
-
-    .stat-card:hover .stat-icon {
-        transform: scale(1.1) rotate(10deg);
-    }
-
-    .stat-details {
-        flex: 1;
-    }
-
-    .stat-label {
-        color: #64748b;
-        font-size: 0.875rem;
-        margin-bottom: 0.375rem;
-    }
-
-    .stat-value {
-        color: #1e293b;
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .stat-trend {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        font-size: 0.875rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 50px;
-        width: fit-content;
-        text-wrap: nowrap;
-    }
-
-    .stat-trend.positive {
-        background: linear-gradient(135deg, rgba(56, 193, 114, 0.1) 0%, rgba(47, 182, 100, 0.1) 100%);
-        color: #38c172;
-    }
-
-    .stat-trend.negative {
-        background: linear-gradient(135deg, rgba(227, 52, 47, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
-        color: #e3342f;
-    }
-
-    .stat-trend.neutral {
-        background: linear-gradient(135deg, rgba(var(--bs-secondary-rgb), 0.1) 0%, rgba(108, 117, 125, 0.1) 100%);
-        color: #6c757d;
-        border: 1px solid rgba(108, 117, 125, 0.1);
-    }
-
-    @media (max-width: 768px) {
-        .contact-info {
-            flex-direction: column;
+        .card-header {
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        .contact-item {
-            width: 100%;
+        .card-header i {
+            color: var(--bs-primary);
+            font-size: 1.25rem;
         }
 
-        .stats-grid {
-            grid-template-columns: 1fr;
+        .card-header h3 {
+            color: #1e293b;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
         }
 
-        .stat-card {
+        .card-body {
             padding: 1.25rem;
         }
 
-        .stat-icon {
+        .card-body p {
+            color: #64748b;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-item {
+                padding: 1rem;
+            }
+
+            .info-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Contact Info Styles */
+        .contact-info {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.03) 0%, rgba(37, 99, 235, 0.03) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(var(--bs-primary-rgb), 0.08);
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: max-content;
+        }
+
+
+
+        .contact-icon {
             width: 42px;
             height: 42px;
+            background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: var(--bs-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.25rem;
+            flex-shrink: 0;
+            border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+            transition: all 0.3s ease;
         }
-    }
-</style>
+
+        .contact-details {
+            flex: 1;
+        }
+
+        .contact-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .contact-value {
+            color: #1e293b;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(var(--bs-primary-rgb), 0.06);
+            border: 1px solid rgba(var(--bs-primary-rgb), 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            width: max-content;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right,
+                    rgba(var(--bs-primary-rgb), 0.5),
+                    rgba(var(--bs-primary-rgb), 0.2));
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-icon.consultation {
+            background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: var(--bs-primary);
+        }
+
+        .stat-icon.consultation i {
+            font-size: 1.25rem;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+
+        .stat-icon.appointments {
+            background: linear-gradient(135deg, rgba(56, 193, 114, 0.1) 0%, rgba(47, 182, 100, 0.1) 100%);
+            color: #38c172;
+        }
+
+        .stat-icon.cancelled {
+            background: linear-gradient(135deg, rgba(227, 52, 47, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            color: #e3342f;
+        }
+
+        .stat-icon.earnings {
+            background: linear-gradient(135deg, rgba(246, 153, 63, 0.1) 0%, rgba(255, 139, 20, 0.1) 100%);
+            color: #f59e0b;
+        }
+
+
+
+        .stat-details {
+            flex: 1;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 0.375rem;
+        }
+
+        .stat-value {
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            width: fit-content;
+            text-wrap: nowrap;
+        }
+
+        .stat-trend.positive {
+            background: linear-gradient(135deg, rgba(56, 193, 114, 0.1) 0%, rgba(47, 182, 100, 0.1) 100%);
+            color: #38c172;
+        }
+
+        .stat-trend.negative {
+            background: linear-gradient(135deg, rgba(227, 52, 47, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            color: #e3342f;
+        }
+
+        .stat-trend.neutral {
+            background: linear-gradient(135deg, rgba(var(--bs-secondary-rgb), 0.1) 0%, rgba(108, 117, 125, 0.1) 100%);
+            color: #6c757d;
+            border: 1px solid rgba(108, 117, 125, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .contact-info {
+                flex-direction: column;
+            }
+
+            .contact-item {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 1.25rem;
+            }
+
+            .stat-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
 @endsection

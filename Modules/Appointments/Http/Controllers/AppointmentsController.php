@@ -230,7 +230,7 @@ class AppointmentsController extends Controller
     {
         $appointment->load(['doctor', 'patient']);
 
-        return view('appointments::show', [
+        return view('appointments::details', [
             'appointment' => $appointment,
             'title' => 'تفاصيل الموعد'
         ]);

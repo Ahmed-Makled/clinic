@@ -144,7 +144,6 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Form validation
     const form = $('form');
 
     form.on('submit', function(event) {
@@ -162,17 +161,6 @@ $(document).ready(function() {
             $('#password_confirmation').addClass('is-invalid')
                 .siblings('.invalid-feedback')
                 .text('كلمة المرور غير متطابقة');
-        }
-
-        // Phone number format validation
-        const phone = $('#phone_number').val();
-        const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-
-        if (!phoneRegex.test(phone)) {
-            event.preventDefault();
-            $('#phone_number').addClass('is-invalid')
-                .siblings('.invalid-feedback')
-                .text('رقم الهاتف غير صالح');
         }
 
         // Email format validation
@@ -198,21 +186,6 @@ $(document).ready(function() {
                 .removeClass('is-valid')
                 .siblings('.invalid-feedback')
                 .text('كلمة المرور غير متطابقة');
-        } else {
-            $(this).removeClass('is-invalid')
-                .addClass('is-valid');
-        }
-    });
-
-    $('#phone_number').on('input', function() {
-        const phone = $(this).val();
-        const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
-
-        if (!phoneRegex.test(phone)) {
-            $(this).addClass('is-invalid')
-                .removeClass('is-valid')
-                .siblings('.invalid-feedback')
-                .text('رقم الهاتف غير صالح');
         } else {
             $(this).removeClass('is-invalid')
                 .addClass('is-valid');

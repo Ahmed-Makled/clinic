@@ -136,8 +136,8 @@ if (!function_exists('is_valid_phone')) {
      */
     function is_valid_phone(string $phone): bool
     {
-        // Simple regex for phone validation - customize as needed
-        return preg_match('/^[+]?[\d\s()-]{8,20}$/', $phone) === 1;
+        // No validation - accept any phone number
+        return true;
     }
 }
 
@@ -150,8 +150,8 @@ if (!function_exists('sanitize_phone')) {
      */
     function sanitize_phone(string $phone): string
     {
-        // Remove everything except digits and plus sign
-        return preg_replace('/[^\d+]/', '', $phone);
+        // No sanitization - return phone as is
+        return $phone;
     }
 }
 
@@ -171,7 +171,7 @@ if (!function_exists('mask_sensitive_data')) {
 
         $maskedLength = strlen($data) - $visibleChars;
         $masked = str_repeat('*', $maskedLength);
-        
+
         return $masked . substr($data, -$visibleChars);
     }
 }
@@ -229,7 +229,7 @@ if (!function_exists('format_money')) {
     {
         $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::CURRENCY);
         $formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, $decimals);
-        
+
         return $formatter->formatCurrency($amount, $currency);
     }
 }

@@ -109,25 +109,15 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
-                                            style="width: 32px; height: 32px">
-                                            <i class="bi bi-person text-secondary"></i>
-                                        </div>
+
                                         <div>{{ $appointment->patient->name }}</div>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         @if($appointment->doctor->image)
-                                            <img src="{{ Storage::url($appointment->doctor->image) }}" class="rounded-circle me-2"
-                                                width="32" height="32"
-                                                onerror="this.onerror=null;this.src='{{ asset('images/default-doctor.png') }}';"
-                                                alt="{{ $appointment->doctor->name }}">
-                                        @else
-                                            <div class="bg-primary bg-opacity-10 rounded-circle me-2 d-flex align-items-center justify-content-center"
-                                                style="width: 32px; height: 32px">
-                                                <i class="bi bi-person-badge text-primary"></i>
-                                            </div>
+                                            <img src="{{ $appointment->doctor->image_url }}" alt="{{ $appointment->doctor->name }}" class="doctor-avatar">
+
                                         @endif
                                         <div>{{ $appointment->doctor->name }}</div>
                                     </div>
@@ -230,6 +220,60 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4 pagination-wrapper">
+                <div class="text-muted small">
+                    إجمالي النتائج: {{ $appointments->total() }}
+                </div>
+                @if($appointments->hasPages())
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm mb-0">
+                            {{-- Previous Page Link --}}
+                            @if ($appointments->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $appointments->previousPageUrl() }}" rel="prev">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Pagination Elements --}}
+                            @foreach ($appointments->getUrlRange(max($appointments->currentPage() - 2, 1), min($appointments->currentPage() + 2, $appointments->lastPage())) as $page => $url)
+                                @if ($page == $appointments->currentPage())
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ $page }}</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                    </li>
+                                @endif
+                            @endforeach
+
+                            {{-- Next Page Link --}}
+                            @if ($appointments->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $appointments->nextPageUrl() }}" rel="next">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
+                @endif
             </div>
 
             <div class="d-flex justify-content-center mt-4">
@@ -422,7 +466,83 @@
                 font-size: 0.875rem;
                 border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
             }
+
+            .doctor-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 12px;
+                object-fit: cover;
+                margin-right: 0.75rem;
+            }
         </style>
     @endpush
+
+    @push('styles')
+    <style>
+        .pagination-wrapper {
+            padding-top: 1rem;
+            border-top: 1px solid var(--bs-gray-200);
+        }
+
+        .pagination {
+            margin: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 2px;
+        }
+
+        .pagination .page-link {
+            border-radius: 4px;
+            border: 1px solid var(--bs-gray-300);
+            color: var(--bs-gray-700);
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+            color: white;
+            box-shadow: 0 2px 4px rgba(var(--bs-primary-rgb), 0.2);
+        }
+
+        .pagination .page-link:hover:not(.disabled) {
+            background-color: var(--bs-gray-100);
+            border-color: var(--bs-gray-400);
+            color: var(--bs-primary);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background-color: var(--bs-gray-100);
+            border-color: var(--bs-gray-200);
+            color: var(--bs-gray-400);
+        }
+
+        .badge.bg-primary {
+            background-color: var(--primary-bg-subtle) !important;
+            color: var(--primary-color);
+        }
+        .badge.bg-danger {
+            background-color: var(--danger-bg-subtle) !important;
+            color: var(--danger-color);
+        }
+        .badge.bg-success {
+            background-color: var(--success-bg-subtle) !important;
+            color: var(--success-color);
+        }
+
+        .badge.bg-warning {
+            background-color: var(--warning-bg-subtle) !important;
+            color: var(--warning-color);
+        }
+
+        .badge.bg-danger.notifications-count {
+            background-color: var(--danger-bg-subtle) !important;
+            color: var(--danger-color);
+        }
+    </style>
+@endpush
 
 @endsection

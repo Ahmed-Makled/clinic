@@ -44,7 +44,7 @@
     <div class="row">
         <div class="col-xl-8">
             <!-- معلومات المستخدم -->
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm h-100  mb-4">
                 <div class="card-header border-0 py-3 d-flex align-items-center">
                     <i class="bi bi-person-vcard me-2 text-primary"></i>
                     <h5 class="card-title mb-0 fw-bold">معلومات المستخدم</h5>
@@ -113,7 +113,7 @@
 
             @if($user->address || $user->city)
             <!-- معلومات العنوان -->
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm h-100  mb-4">
                 <div class="card-header border-0 py-3 d-flex align-items-center">
                     <i class="bi bi-geo-alt me-2 text-primary"></i>
                     <h5 class="card-title mb-0 fw-bold">معلومات العنوان</h5>
@@ -151,7 +151,7 @@
 
         <div class="col-xl-4">
             <!-- الإحصائيات -->
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm h-100  mb-4">
                 <div class="card-header border-0 py-3 d-flex align-items-center">
                     <i class="bi bi-graph-up me-2 text-primary"></i>
                     <h5 class="card-title mb-0 fw-bold">الإحصائيات</h5>
@@ -267,15 +267,15 @@
 .info-icon {
     width: 42px;
     height: 42px;
-    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-    color: var(--bs-primary);
+    background: linear-gradient(135deg, rgba(var(--bs-dark-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: var(--bs-dark);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
     flex-shrink: 0;
-    border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+    border: 1px solid rgba(var(--bs-dark-rgb), 0.1);
     transition: all 0.3s ease;
 }
 
@@ -341,15 +341,15 @@
 .stat-icon {
     width: 42px;
     height: 42px;
-    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-    color: var(--bs-primary);
+    background: linear-gradient(135deg, rgba(var(--bs-dark-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: var(--bs-dark);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
     flex-shrink: 0;
-    border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+    border: 1px solid rgba(var(--bs-dark-rgb), 0.1);
     transition: all 0.3s ease;
 }
 
@@ -531,6 +531,17 @@
     color: white;
 }
 
+.btn-soft-warning {
+    background: linear-gradient(135deg, rgba(246, 153, 63, 0.1) 0%, rgba(255, 139, 20, 0.1) 100%);
+    color: #f59e0b;
+    border: 1px solid rgba(246, 153, 63, 0.1);
+}
+
+.btn-soft-warning:hover {
+    background: #f59e0b;
+    color: white;
+}
+
 .user-avatar {
     width: 100px;
     height: 100px;
@@ -539,8 +550,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-    color: var(--bs-primary);
+    background: linear-gradient(135deg, rgba(var(--bs-dark-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: var(--bs-dark);
     font-size: 2rem;
     font-weight: 600;
 }

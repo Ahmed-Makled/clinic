@@ -29,7 +29,7 @@ class NewPatientNotification extends Notification
             ->subject('مريض جديد')
             ->line('تم إضافة مريض جديد:')
             ->line("الاسم: {$this->patient->user->name}")
-            ->action('عرض المريض', route('patients.show', $this->patient->user));
+            ->action('عرض المريض', route('patients.details', $this->patient->user));
     }
 
     public function toArray($notifiable): array

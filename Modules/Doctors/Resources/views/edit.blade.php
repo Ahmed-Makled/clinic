@@ -55,12 +55,9 @@
                                 <label class="form-label" for="phone">رقم الهاتف *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">+20</span>
-                                    <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone"
+                                    <input type="text" class="form-control" id="phone"
                                         name="phone" value="{{ old('phone', $doctor->phone) }}" placeholder="ادخل رقم الهاتف" required />
                                 </div>
-                                @error('phone')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             <div class="mb-3 col-md-6">
@@ -311,108 +308,226 @@
         </style>
     @endpush
 
+    @push('styles')
+<style>
+.image-upload-zone {
+    border: 2px dashed rgba(var(--bs-primary-rgb), 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.02) 0%, rgba(37, 99, 235, 0.02) 100%);
+    position: relative;
+    cursor: pointer;
+}
+
+.image-upload-zone.dragover {
+    border-color: var(--bs-primary);
+    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.05) 0%, rgba(37, 99, 235, 0.05) 100%);
+    transform: scale(1.02);
+}
+
+.current-image {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.current-image img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 20px;
+    border: 3px solid rgba(var(--bs-primary-rgb), 0.1);
+    box-shadow:
+        0 8px 16px rgba(var(--bs-primary-rgb), 0.1),
+        0 2px 4px rgba(var(--bs-primary-rgb), 0.05);
+    transition: all 0.3s ease;
+}
+
+.current-image:hover img {
+    transform: translateY(-5px) rotate(2deg);
+    box-shadow:
+        0 12px 20px rgba(var(--bs-primary-rgb), 0.15),
+        0 4px 8px rgba(var(--bs-primary-rgb), 0.1);
+    border-color: rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.current-image .text-muted {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: #64748b !important;
+}
+
+.upload-placeholder {
+    padding: 2rem;
+}
+
+.upload-icon {
+    font-size: 2.5rem;
+    color: var(--bs-primary);
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.image-upload-zone:hover .upload-icon {
+    transform: translateY(-5px);
+}
+
+.upload-placeholder h6 {
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+}
+
+.upload-placeholder small {
+    color: #64748b;
+}
+
+.image-preview {
+    position: relative;
+    display: inline-block;
+}
+
+.image-preview img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 20px;
+    border: 3px solid rgba(var(--bs-primary-rgb), 0.1);
+    box-shadow:
+        0 8px 16px rgba(var(--bs-primary-rgb), 0.1),
+        0 2px 4px rgba(var(--bs-primary-rgb), 0.05);
+}
+
+.remove-image {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+    border: 2px solid white;
+    transition: all 0.2s ease;
+}
+
+.remove-image:hover {
+    transform: scale(1.1);
+    background: #c82333;
+}
+
+</style>
+@endpush
+
     @push('scripts')
-        <script>
-            $(document).ready(function () {
-                const dropZone = $('#dropZone');
-                const imageInput = $('#image');
-                const imagePreview = $('#imagePreview');
-                const previewImg = imagePreview.find('img');
-                const uploadPlaceholder = $('.upload-placeholder');
+<script>
+$(document).ready(function () {
+    const dropZone = $('#dropZone');
+    const imageInput = $('#image');
+    const imagePreview = $('#imagePreview');
+    const previewImg = imagePreview.find('img');
+    const uploadPlaceholder = $('.upload-placeholder');
 
-                // Handle drag and drop
-                dropZone.on('dragover', function(e) {
-                    e.preventDefault();
-                    $(this).addClass('dragover');
-                });
+    // Handle drag and drop
+    dropZone.on('dragover', function(e) {
+        e.preventDefault();
+        $(this).addClass('dragover');
+    });
 
-                dropZone.on('dragleave', function(e) {
-                    e.preventDefault();
-                    $(this).removeClass('dragover');
-                });
+    dropZone.on('dragleave', function(e) {
+        e.preventDefault();
+        $(this).removeClass('dragover');
+    });
 
-                dropZone.on('drop', function(e) {
-                    e.preventDefault();
-                    $(this).removeClass('dragover');
-                    const file = e.originalEvent.dataTransfer.files[0];
-                    handleImageFile(file);
-                });
+    dropZone.on('drop', function(e) {
+        e.preventDefault();
+        $(this).removeClass('dragover');
+        const dt = e.originalEvent.dataTransfer;
+        const files = dt.files;
 
-                // Handle click on upload placeholder
-                uploadPlaceholder.on('click', function(e) {
-                    e.stopPropagation();
-                    imageInput.click();
-                });
+        if (files.length) {
+            imageInput[0].files = files;
+            handleImagePreview(files[0]);
+        }
+    });
 
-                // Handle file input change
-                imageInput.on('change', function() {
-                    const file = this.files[0];
-                    handleImageFile(file);
-                });
+    // Handle click to upload
+    dropZone.on('click', function() {
+        imageInput.click();
+    });
 
-                // Handle remove image
-                $('.remove-image').on('click', function(e) {
-                    e.stopPropagation();
-                    resetImageUpload();
-                });
+    // Handle file input change
+    imageInput.on('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            handleImagePreview(file);
+        }
+    });
 
-                function handleImageFile(file) {
-                    if (file && file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            previewImg.attr('src', e.target.result);
-                            imagePreview.removeClass('d-none');
-                            uploadPlaceholder.addClass('d-none');
-                        };
-                        reader.readAsDataURL(file);
-                        imageInput.prop('files', [file]);
-                    }
-                }
+    // Handle image preview
+    function handleImagePreview(file) {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.attr('src', e.target.result);
+                imagePreview.removeClass('d-none');
+                uploadPlaceholder.addClass('d-none');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
 
-                function resetImageUpload() {
-                    imageInput.val('');
-                    imagePreview.addClass('d-none');
-                    uploadPlaceholder.removeClass('d-none');
-                    previewImg.attr('src', '#');
-                }
+    // Handle remove image
+    $('.remove-image').on('click', function() {
+        imageInput.val('');
+        imagePreview.addClass('d-none');
+        uploadPlaceholder.removeClass('d-none');
+        previewImg.attr('src', '#');
+    });
 
-                // Existing form validation
-                const form = $('form');
-                form.on('submit', function (event) {
-                    if (!this.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    $(this).addClass('was-validated');
-                });
+    // Form validation
+    const form = $('form');
+    form.on('submit', function (event) {
+        if (!this.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        $(this).addClass('was-validated');
+    });
 
-                // إضافة كود التعامل مع المحافظات والمدن
-                $('#governorate_id').on('change', function() {
-                    const governorateId = $(this).val();
-                    const cities = @json($governorates->pluck('cities', 'id'));
-                    const citySelect = $('#city_id');
+    // إضافة كود التعامل مع المحافظات والمدن
+    $('#governorate_id').on('change', function() {
+        const governorateId = $(this).val();
+        const cities = @json($governorates->pluck('cities', 'id'));
+        const citySelect = $('#city_id');
 
-                    citySelect.empty().append('<option value="">اختر المدينة</option>');
+        citySelect.empty().append('<option value="">اختر المدينة</option>');
 
-                    if (governorateId && cities[governorateId]) {
-                        cities[governorateId].forEach(function(city) {
-                            citySelect.append(new Option(city.name, city.id));
-                        });
-                    }
-                });
-
-                // تحميل المدن عند تحميل الصفحة إذا كانت هناك محافظة محددة
-                const oldGovernorate = $('#governorate_id').val();
-                if (oldGovernorate) {
-                    $('#governorate_id').trigger('change');
-
-                    // اختيار المدينة المحفوظة إن وجدت
-                    const oldCity = "{{ old('city_id', $doctor->city_id) }}";
-                    if (oldCity) {
-                        $('#city_id').val(oldCity);
-                    }
-                }
+        if (governorateId && cities[governorateId]) {
+            cities[governorateId].forEach(function(city) {
+                citySelect.append(new Option(city.name, city.id));
             });
-        </script>
-    @endpush
+        }
+    });
+
+    // تحميل المدن عند تحميل الصفحة إذا كانت هناك محافظة محددة
+    const oldGovernorate = $('#governorate_id').val();
+    if (oldGovernorate) {
+        $('#governorate_id').trigger('change');
+
+        // اختيار المدينة المحفوظة إن وجدت
+        const oldCity = "{{ old('city_id', $doctor->city_id) }}";
+        if (oldCity) {
+            $('#city_id').val(oldCity);
+        }
+    }
+});
+</script>
+@endpush
 @endsection
