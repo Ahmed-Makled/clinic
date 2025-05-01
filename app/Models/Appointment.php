@@ -272,4 +272,36 @@ class Appointment extends Model
                     ->whereDate('scheduled_at', '<=', $endDate)
                     ->orderBy('scheduled_at');
     }
+
+    /**
+     * Scope a query to check for appointment conflicts.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $doctorId
+     * @param \Carbon\Carbon|string $scheduledAt
+     * @param int $durationMinutes
+     * @param int|null $excludeAppointmentId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeHasConflict($query, $doctorId, $scheduledAt, $durationMinutes = 30, $excludeAppointmentId = null)
+    {
+        $startTime = $scheduledAt instanceof Carbon ? $scheduledAt : Carbon::parse($scheduledAt);
+        $endTime = (clone $startTime)->addMinutes($durationMinutes);
+
+        $query->where('doctor_id', $doctorId)
+            ->where('status', 'scheduled')
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->whereBetween('scheduled_at', [$startTime, $endTime])
+                    ->orWhere(function ($q) use ($startTime) {
+                        $q->where('scheduled_at', '<=', $startTime)
+                            ->whereRaw("DATE_ADD(scheduled_at, INTERVAL 30 MINUTE) >= ?", [$startTime]);
+                    });
+            });
+
+        if ($excludeAppointmentId) {
+            $query->where('id', '!=', $excludeAppointmentId);
+        }
+
+        return $query;
+    }
 }

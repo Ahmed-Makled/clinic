@@ -14,7 +14,7 @@
 
     <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     @vite(['resources/css/global.css'])
 
@@ -443,7 +443,7 @@
 
         .notification-content p {
             margin-bottom: 0.25rem;
-            color: var(--secondary-color);
+            color: var (--secondary-color);
             font-size: 0.925rem;
         }
 
@@ -751,7 +751,7 @@
         }
 
         .form-control.is-valid {
-            border-color: var(--success-color);
+            border-color: var (--success-color);
             padding-right: calc(1.5em + 0.75rem);
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
@@ -1135,7 +1135,7 @@
                     class: 'primary'
                 },
                 'App\\Notifications\\DoctorUpdatedNotification': {
-                    icon: 'bi-person-gear',
+                    icon: 'bi-person-gear   ',
                     class: 'info'
                 },
                 'App\\Notifications\\DoctorDeletedNotification': {
@@ -1147,7 +1147,7 @@
                     class: 'primary'
                 },
                 'App\\Notifications\\PatientUpdatedNotification': {
-                    icon: 'bi-person-gear',
+                    icon: 'bi-person-gear   ',
                     class: 'info'
                 },
                 'App\\Notifications\\PatientDeletedNotification': {
@@ -1189,22 +1189,19 @@
             // Notifications functionality
             const notificationsButton = document.querySelector('.notification-btn');
             const notificationsCount = document.querySelector('.notification-badge');
-            const notificationsDropdown = document.querySelector('.notifications-dropdown');
-            const markAllReadButton = document.querySelector('.mark-all-read');
             const notificationsList = document.querySelector('.notifications-list');
-
-            // Initialize dropdown with Bootstrap
-            if (notificationsButton) {
-                new bootstrap.Dropdown(notificationsButton, {
-                    autoClose: 'outside'
-                });
-            }
+            const markAllReadButton = document.querySelector('.mark-all-read');
 
             function updateNotificationsCount() {
                 if (!notificationsCount) return;
 
                 fetch('/admin/notifications/count')
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (notificationsCount) {
                             notificationsCount.textContent = data.count;
@@ -1214,10 +1211,18 @@
                     .catch(error => console.error('Error updating notifications:', error));
             }
 
-            if (notificationsDropdown) {
+            // Initialize dropdown if notification button exists
+            if (notificationsButton) {
+                const dropdown = new bootstrap.Dropdown(notificationsButton);
+
                 notificationsButton.addEventListener('click', function () {
                     fetch('/admin/notifications')
-                        .then(response => response.json())
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
                         .then(data => {
                             if (!notificationsList) return;
 
@@ -1234,9 +1239,9 @@
                             notificationsList.innerHTML = data.notifications.map(notification => {
                                 const iconData = getNotificationIcon(notification.type);
                                 return `
-                                    <div class="notification-item ${notification.read_at ? '' : 'unread'}">
+                                    <div class="notification-item ${notification.read_at ? '' : 'unread'}" data-id="${notification.id}">
                                         <div class="d-flex align-items-center">
-                                            <div class="notification-icon ${iconData.class}">
+                                            <div class="notification-icon bg-${iconData.class}-subtle text-${iconData.class}">
                                                 <i class="bi ${iconData.icon}"></i>
                                             </div>
                                             <div class="flex-grow-1 ms-3">
@@ -1247,6 +1252,24 @@
                                     </div>
                                 `;
                             }).join('');
+
+                            // Add click handlers for individual notifications
+                            notificationsList.querySelectorAll('.notification-item').forEach(item => {
+                                item.addEventListener('click', () => {
+                                    const id = item.dataset.id;
+                                    fetch(`/admin/notifications/${id}/mark-as-read`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                        }
+                                    })
+                                    .then(() => {
+                                        item.classList.remove('unread');
+                                        updateNotificationsCount();
+                                    })
+                                    .catch(error => console.error('Error marking notification as read:', error));
+                                });
+                            });
                         })
                         .catch(error => {
                             console.error('Error fetching notifications:', error);
@@ -1266,23 +1289,33 @@
             if (markAllReadButton) {
                 markAllReadButton.addEventListener('click', function (e) {
                     e.preventDefault();
+                    e.stopPropagation(); // Prevent dropdown from closing
+
                     fetch('/admin/notifications/mark-all-read', {
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         }
                     })
-                        .then(() => {
-                            updateNotificationsCount();
-                            document.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
-                        })
-                        .catch(error => console.error('Error marking notifications as read:', error));
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(() => {
+                        updateNotificationsCount();
+                        document.querySelectorAll('.notification-item').forEach(item => {
+                            item.classList.remove('unread');
+                        });
+                    })
+                    .catch(error => console.error('Error marking notifications as read:', error));
                 });
             }
 
             // Initial count update and periodic refresh
             updateNotificationsCount();
-            setInterval(updateNotificationsCount, 60000);
+            setInterval(updateNotificationsCount, 60000); // Update every minute
 
             // Mobile navigation
             const navbarToggler = document.querySelector('.navbar-toggler');

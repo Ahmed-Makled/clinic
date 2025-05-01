@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\GovernorateController;
 use Modules\Doctors\Http\Controllers\DoctorsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotificationsController;
 
 // Main routes
 Route::get('/', [PageController::class, 'home'])->name('home');
@@ -27,4 +28,10 @@ Route::get('/doctors/filter', [DoctorsController::class, 'filter'])->name('docto
 // Profile routes
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/profile', [PageController::class, 'profile'])->name('profile');
+
+    // Notification routes
+    Route::get('/admin/notifications', [NotificationsController::class, 'index']);
+    Route::get('/admin/notifications/count', [NotificationsController::class, 'count']);
+    Route::post('/admin/notifications/{id}/mark-as-read', [NotificationsController::class, 'markAsRead']);
+    Route::post('/admin/notifications/mark-all-read', [NotificationsController::class, 'markAllAsRead']);
 });

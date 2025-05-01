@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Notifications\NewAppointmentNotification;
 use App\Notifications\AppointmentCancelledNotification;
 use App\Notifications\AppointmentCompletedNotification;
-use App\Repositories\AppointmentRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -26,26 +25,23 @@ class AppointmentsController extends Controller
         if ($request->filled('date_filter')) {
             switch ($request->date_filter) {
                 case 'today':
-                    $query->whereDate('scheduled_at', Carbon::today());
+                    $query->today();
                     break;
                 case 'upcoming':
-                    $query->where('scheduled_at', '>=', Carbon::now());
+                    $query->upcoming();
                     break;
                 case 'past':
                     $query->where('scheduled_at', '<', Carbon::now());
                     break;
                 case 'week':
-                    $query->whereBetween('scheduled_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    $query->betweenDates(Carbon::now()->startOfWeek()->toDateString(), Carbon::now()->endOfWeek()->toDateString());
                     break;
                 case 'month':
-                    $query->whereBetween('scheduled_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()]);
+                    $query->betweenDates(Carbon::now()->startOfMonth()->toDateString(), Carbon::now()->endOfMonth()->toDateString());
                     break;
                 case 'custom':
-                    if ($request->filled('start_date')) {
-                        $query->whereDate('scheduled_at', '>=', $request->start_date);
-                    }
-                    if ($request->filled('end_date')) {
-                        $query->whereDate('scheduled_at', '<=', $request->end_date);
+                    if ($request->filled(['start_date', 'end_date'])) {
+                        $query->betweenDates($request->start_date, $request->end_date);
                     }
                     break;
             }
@@ -58,7 +54,7 @@ class AppointmentsController extends Controller
 
         // تصفية حسب الطبيب
         if ($request->filled('doctor_filter')) {
-            $query->where('doctor_id', $request->doctor_filter);
+            $query->forDoctor($request->doctor_filter);
         }
 
         // البحث حسب اسم المريض
@@ -74,24 +70,13 @@ class AppointmentsController extends Controller
             'paid_fees' => Appointment::where('is_paid', true)->sum('fees'),
             'unpaid_fees' => Appointment::where('is_paid', false)->sum('fees'),
             'total_appointments' => Appointment::count(),
-            'today_appointments' => Appointment::whereDate('scheduled_at', Carbon::today())->count()
+            'today_appointments' => Appointment::today()->count()
         ];
 
         $appointments = $query->orderBy('scheduled_at', 'desc')->paginate(15);
         $doctors = Doctor::all();
 
-        return view('appointments::index', [
-            'appointments' => $appointments,
-            'doctors' => $doctors,
-            'stats' => $stats,
-            'date_filter' => $request->date_filter,
-            'status_filter' => $request->status_filter,
-            'doctor_filter' => $request->doctor_filter,
-            'search' => $request->search,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'title' => 'الحجوزات'
-        ]);
+        return view('appointments::index', compact('appointments', 'doctors', 'stats', 'request'));
     }
 
     public function create()
@@ -165,10 +150,7 @@ class AppointmentsController extends Controller
 
             // Check if the time slot is available
             $doctor = Doctor::findOrFail($validated['doctor_id']);
-            $conflictingAppointments = app(AppointmentRepository::class)->findConflictingAppointments(
-                $doctor->id,
-                $scheduledAt
-            );
+            $conflictingAppointments = Appointment::hasConflict($doctor->id, $scheduledAt)->get();
 
             if ($conflictingAppointments->isNotEmpty()) {
                 return back()->withErrors(['appointment_time' => 'هذا الموعد محجوز بالفعل، يرجى اختيار وقت آخر'])->withInput();
@@ -307,12 +289,12 @@ class AppointmentsController extends Controller
 
             // Check for conflicting appointments if date/time changed
             if ($scheduledAt->format('Y-m-d H:i') !== $appointment->scheduled_at->format('Y-m-d H:i')) {
-                $conflictingAppointments = app(AppointmentRepository::class)->findConflictingAppointments(
+                $conflictingAppointments = Appointment::hasConflict(
                     $validated['doctor_id'],
                     $scheduledAt,
                     30,
                     $appointment->id
-                );
+                )->get();
 
                 if ($conflictingAppointments->isNotEmpty()) {
                     return back()->withErrors(['appointment_time' => 'هذا الموعد محجوز بالفعل، يرجى اختيار وقت آخر'])->withInput();
