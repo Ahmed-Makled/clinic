@@ -120,7 +120,7 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a href="{{ route('users.show', $user) }}" class="btn-action btn-view"
+                                        <a href="{{ route('users.details', $user) }}" class="btn-action btn-view"
                                             data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="عرض">
                                             <i class="bi bi-eye"></i>
                                         </a>
