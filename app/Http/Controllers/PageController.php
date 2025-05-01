@@ -16,7 +16,7 @@ class PageController extends Controller
         return view('home', [
             'title' => 'Clinic Master',
             'classes' => 'bg-white',
-            'categories' => Category::where('status', 'active')->get(),
+            'categories' => Category::where('status', 1 )->get(),
             'governorates' => Governorate::with('cities')->get(),
             'cities' => City::all(),
             'doctors' => Doctor::where('status', true)->get(),
@@ -52,4 +52,38 @@ class PageController extends Controller
         return response()->json($cities);
     }
 
+    public function search(Request $request)
+    {
+        $query = Doctor::query()
+            ->where('status', true)
+            ->with(['categories', 'governorate', 'city']);
+
+        if ($request->filled('category')) {
+            $query->whereHas('categories', function($q) use ($request) {
+                $q->where('categories.id', $request->category);
+            });
+        }
+
+        if ($request->filled('governorate_id')) {
+            $query->where('governorate_id', $request->governorate_id);
+        }
+
+        if ($request->filled('city_id')) {
+            $query->where('city_id', $request->city_id);
+        }
+
+        if ($request->filled('doctors')) {
+            $query->where('id', $request->doctors);
+        }
+
+        $doctors = $query->latest()->paginate(12);
+
+        return view('doctors::search', [
+            'title' => 'نتائج البحث',
+            'classes' => 'bg-white',
+            'doctors' => $doctors,
+            'categories' => Category::where('status', 1)->get(),
+            'governorates' => Governorate::with('cities')->get()
+        ]);
+    }
 }

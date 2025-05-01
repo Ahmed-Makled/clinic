@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use App\Traits\HasStatus;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, HasStatus;
 
     protected $table = 'categories';
 
@@ -23,6 +24,14 @@ class Category extends Model
     protected $casts = [
         'status' => 'boolean'
     ];
+
+    /**
+     * Scope a query to only include active categories.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
 
     protected static function boot()
     {

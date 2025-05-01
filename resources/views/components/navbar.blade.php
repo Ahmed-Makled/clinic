@@ -61,11 +61,13 @@
                                     <i class="bi bi-person me-2"></i>حسابي
                                 </a>
                             </li>
+                            @if(!(auth()->user()->hasRole('Admin')))
                             <li>
                                 <a class="dropdown-item" href="{{ route('appointments.index') }}">
                                     <i class="bi bi-calendar2-check me-2"></i>حجوزاتي
                                 </a>
                             </li>
+                            @endif
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">

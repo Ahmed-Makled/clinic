@@ -1,0 +1,6 @@
+{
+    "context": {
+        "architecture": "Laravel MVC",
+        "notes": "Avoid using internal API requests. Use controllers and models instead. Follow Laravel's MVC conventions. and not use repositroes and services , Do not change the functionality other features.Avoid modifying other pages, components, or project files Proceed cautiously to ensure no regression in permissions behavior."
+    }
+}

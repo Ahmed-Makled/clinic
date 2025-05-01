@@ -34,7 +34,7 @@
     @stack('styles')
 </head>
 
-<body class="{{ $classes ?? '' }}">
+<body >
     @include('components.navbar')
 
     <main>

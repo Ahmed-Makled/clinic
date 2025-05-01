@@ -10,6 +10,7 @@ body {
     font-size: .92rem;
     direction: rtl;
     text-align: right;
+    background-color: #efeff4;
 }
 
 .navbar .navbar-nav .nav-link {
