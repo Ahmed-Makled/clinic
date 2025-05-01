@@ -12,118 +12,98 @@
             </div>
         </div>
 
-        <div class="doctors-container grid-view">
+        <div class="doctors-grid">
             @forelse($doctors as $doctor)
-            <div class="doctor-item">
-                <div class="card h-100 border-0 shadow-hover rounded-3 doctor-card">
-                    <!-- Doctor Header Section -->
-                    <div class="doctor-header position-relative overflow-hidden">
-                        <div class="header-bg rounded-top-3"></div>
-                        <div class="doctor-header-content text-center position-relative">
-                            <div class="doctor-image-container">
-                                <div class="doctor-image-wrapper mx-auto">
-                                    <img src="{{ $doctor->image_url }}"
-                                        class="rounded-circle doctor-image"
-                                        alt="{{ $doctor->name }}"
-                                    >
-                                    <div class="online-indicator pulse"></div>
+                <div class="doctor-card-container">
+                    <article class="doctor-card">
+                        <!-- رأس البطاقة: صورة الدكتور والمعلومات الأساسية -->
+                        <header class="card-header">
+                            <div class="doctor-identity">
+                                <div class="avatar-container">
+                                    <img src="{{ $doctor->image_url }}" alt="{{ $doctor->name }}" class="doctor-avatar">
+                                    <span class="status-badge"></span>
+                                </div>
+                                <div class="identity-info">
+                                    <h3 class="doctor-name">{{ $doctor->title }} {{ $doctor->name }}</h3>
+                                    <div class="specialty-badge">
+                                        <i class="bi bi-award-fill"></i>
+                                        {{ $doctor->categories->pluck('name')->implode(', ') }}
+                                    </div>
                                 </div>
                             </div>
-                            <h4 class="doctor-name">{{ $doctor->title }} {{ $doctor->name }}</h4>
-                            <div class="specialty-badge">
-                                <i class="bi bi-award-fill"></i>
-                                {{ $doctor->specialty ? $doctor->specialty->name : 'غير محدد' }}
-                            </div>
-                        </div>
-                    </div>
+                        </header>
 
-                    <div class="card-body p-3">
-                        <!-- Rating Section -->
-                        <div class="rating-section text-center mb-4">
-                            <div class="stars-container">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    @if ($i <= floor($doctor->rating_average))
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                    @elseif ($i - 0.5 <= $doctor->rating_average)
-                                        <i class="bi bi-star-half text-warning"></i>
-                                    @else
-                                        <i class="bi bi-star text-warning"></i>
-                                    @endif
-                                @endfor
+                        <!-- معلومات الزيارة -->
+                        <div class="visit-info">
+                            <div class="visit-item fee">
+                                <i class="bi bi-cash-coin"></i>
+                                <div class="info-content">
+                                    <span class="value">{{ $doctor->consultation_fee }} جنيه</span>
+                                    <label>سعر الكشف</label>
+                                </div>
                             </div>
-                            <div class="rating-info">
-                                <span class="rating-score">{{ number_format($doctor->rating_average, 1) }}</span>
-                                <span class="rating-count">({{ $doctor->ratings_count }} تقييم)</span>
+                            <div class="visit-item duration">
+                                <i class="bi bi-clock-fill"></i>
+                                <div class="info-content">
+                                    <span class="value">10 دقيقة</span>
+                                    <label>مدة الكشف</label>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Doctor Info Cards -->
-                        <div class="info-cards-grid mb-4">
-                            <div class="info-card">
-                                <div class="info-icon">
+                        <!-- معلومات التقييم والموقع -->
+                        <div class="details-section">
+                            <div class="rating-location">
+                                <div class="rating-info">
+                                    <div class="stars">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= floor($doctor->rating_average))
+                                                <i class="bi bi-star-fill"></i>
+                                            @elseif ($i - 0.5 <= $doctor->rating_average)
+                                                <i class="bi bi-star-half"></i>
+                                            @else
+                                                <i class="bi bi-star"></i>
+                                            @endif
+                                        @endfor
+                                    </div>
+                                    <div class="rating-stats">
+                                        <strong>{{ number_format($doctor->rating_average, 1) }}</strong>
+                                        <span class="count">({{ $doctor->ratings_count }} تقييم)</span>
+                                    </div>
+                                </div>
+                                <div class="location-info">
                                     <i class="bi bi-geo-alt-fill"></i>
-                                </div>
-                                <div class="info-content">
-                                    <span class="info-label">العنوان</span>
-                                    <span class="info-value">{{ $doctor->governorate->name }} - {{ $doctor->city->name }}</span>
+                                    <span>{{ $doctor->governorate->name }} - {{ $doctor->city->name }}</span>
                                 </div>
                             </div>
 
-                            <div class="info-card">
-                                <div class="info-icon">
-                                    <i class="bi bi-cash-coin"></i>
+                            @if($doctor->description)
+                                <div class="doctor-bio">
+                                    <p>{{ Str::limit($doctor->description, 100) }}</p>
                                 </div>
-                                <div class="info-content">
-                                    <span class="info-label">سعر الكشف</span>
-                                    <span class="info-value price">{{ $doctor->consultation_fee }} جنيه</span>
-                                </div>
-                            </div>
-
-                            <div class="info-card">
-                                <div class="info-icon">
-                                    <i class="bi bi-clock-fill"></i>
-                                </div>
-                                <div class="info-content">
-                                    <span class="info-label">مدة الكشف</span>
-                                    <span class="info-value">10 دقيقة</span>
-                                </div>
-                            </div>
+                            @endif
                         </div>
 
-                        @if($doctor->description)
-                        <div class="description-section mb-4">
-                            <h6 class="section-title">
-                                <i class="bi bi-info-circle-fill me-2"></i>
-                                نبذة عن الطبيب
-                            </h6>
-                            <p class="description-text">
-                                {{ $doctor->description }}
-                            </p>
-                        </div>
-                        @endif
-
-                        <!-- Action Buttons -->
-                        <div class="action-buttons">
-                            <a href="{{ route('doctors.show', $doctor->id) }}"
-                               class="btn btn-primary btn-book w-100 mb-2">
-                                <i class="bi bi-calendar-check me-2"></i>
-                                احجز موعد
+                        <!-- أزرار الإجراءات -->
+                        <footer class="card-actions">
+                            <a href="{{ route('doctors.show', $doctor->id) }}" class="btn-book">
+                                <i class="bi bi-calendar-check"></i>
+                                <span>احجز موعد</span>
                             </a>
-                            <button class="btn btn-outline-primary btn-call w-100">
-                                <i class="bi bi-telephone-fill me-2"></i>
-                                اتصل للحجز
+                            <button type="button" class="btn-call">
+                                <i class="bi bi-telephone-fill"></i>
+                                <span>اتصل للحجز</span>
                             </button>
-                        </div>
-                    </div>
+                        </footer>
+                    </article>
                 </div>
-            </div>
             @empty
-                <div class="empty-state text-center py-5">
-                    <div class="empty-state-icon mb-4">
+                <div class="empty-view">
+                    <div class="empty-content">
                         <i class="bi bi-search"></i>
+                        <h4>لم يتم العثور على أطباء</h4>
+                        <p>لا يوجد أطباء متاحين حالياً</p>
                     </div>
-                    <h4 class="empty-state-title">لم يتم العثور على أطباء</h4>
-                    <p class="empty-state-description">لا يوجد أطباء متاحين حالياً</p>
                 </div>
             @endforelse
         </div>
@@ -135,309 +115,308 @@
         @endif
     </div>
 
-@push('styles')
-<style>
-/* Grid Layout */
-.doctors-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    padding: 0.75rem;
-}
+    @push('styles')
+        <style>
+            /* التخطيط الرئيسي */
+            .doctors-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 1.25rem;
+                padding: 1rem;
+            }
 
-/* Card Styling */
-.doctor-card {
-    background: white;
-    transition: all 0.3s ease;
-    position: relative;
-}
+            /* تصميم البطاقة */
+            .doctor-card {
+                background: #fff;
+                border-radius: 16px;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                transition: all 0.3s ease;
+                border: 1px solid rgba(0, 0, 0, 0.08);
+            }
 
-.shadow-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1)!important;
-}
+            .doctor-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
+                border-color: rgba(var(--bs-primary-rgb), 0.2);
+            }
 
-/* Header Styling */
-.doctor-header {
-    padding-top: 1.5rem;
-    margin-bottom: 0.75rem;
-}
+            /* رأس البطاقة */
+            .card-header {
+                padding: 1.25rem;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
 
-.header-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100px;
-    background: linear-gradient(135deg, var(--bs-primary) 0%, #4a90e2 100%);
-    opacity: 0.1;
-}
+            .doctor-identity {
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+            }
 
-.doctor-header-content {
-    position: relative;
-    z-index: 1;
-}
+            .avatar-container {
+                position: relative;
+                flex-shrink: 0;
+            }
 
-/* Doctor Image */
-.doctor-image-container {
-    margin-bottom: 0.75rem;
-}
+            .doctor-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid #fff;
+                box-shadow: 0 0 0 2px rgba(var(--bs-primary-rgb), 0.1);
+            }
 
-.doctor-image-wrapper {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    padding: 3px;
-    background: white;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    position: relative;
-    border: 2px solid var(--bs-primary);
-}
+            .status-badge {
+                position: absolute;
+                bottom: 2px;
+                right: 2px;
+                width: 16px;
+                height: 16px;
+                background: #22c55e;
+                border-radius: 50%;
+                border: 2px solid #fff;
+                box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
 
-.doctor-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
+                display: unset;
+                gap: 0.375rem;
+                padding: unset;
+                font-size: unset;
+                font-weight: unset;
+            }
 
-/* Online Indicator */
-.online-indicator {
-    position: absolute;
-    bottom: 6px;
-    right: 6px;
-    width: 10px;
-    height: 10px;
-    background-color: #22c55e;
-    border-radius: 50%;
-    border: 2px solid white;
-}
+            .identity-info {
+                flex-grow: 1;
+                min-width: 0;
+            }
 
-.pulse {
-    animation: pulse 2s infinite;
-}
+            .doctor-name {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--bs-gray-900);
+                margin: 0 0 0.5rem;
+            }
 
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-    }
-}
+            .specialty-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3rem;
+                padding: 0.35rem 0.75rem;
+                background: rgba(var(--bs-primary-rgb), 0.08);
+                color: var(--bs-primary);
+                border-radius: 20px;
+                font-size: 0.8rem;
+            }
 
-/* Doctor Name */
-.doctor-name {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--bs-primary);
-    margin: 0.4rem 0;
-}
+            /* معلومات الزيارة */
+            .visit-info {
+                display: flex;
+                gap: 1rem;
+                padding: 1rem;
+                background: rgba(var(--bs-primary-rgb), 0.03);
+            }
 
-/* Specialty Badge */
-.specialty-badge {
-    display: inline-block;
-    padding: 0.4rem 0.8rem;
-    background-color: rgba(var(--bs-primary-rgb), 0.1);
-    border-radius: 20px;
-    color: var(--bs-primary);
-    font-size: 0.8rem;
-    margin-bottom: 0.75rem;
-}
+            .visit-item {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.75rem;
+                border-radius: 12px;
+                background: white;
+            }
 
-.specialty-badge i {
-    margin-left: 0.5rem;
-}
+            .visit-item i {
+                font-size: 1.2rem;
+                color: var(--bs-primary);
+            }
 
-/* Rating Section */
-.rating-section {
-    padding: 0.75rem;
-    background-color: rgba(var(--bs-warning-rgb), 0.1);
-    border-radius: 12px;
-    margin: 0.75rem 0;
-}
+            .info-content {
+                display: flex;
+                flex-direction: column;
+            }
 
-.stars-container {
-    margin-bottom: 0.4rem;
-}
+            .info-content .value {
+                font-weight: 600;
+                color: var(--bs-gray-900);
+                font-size: 0.9rem;
+            }
 
-.stars-container i {
-    font-size: 1rem;
-    margin: 0 0.1rem;
-}
+            .info-content label {
+                font-size: 0.75rem;
+                color: var(--bs-gray-600);
+                margin: 0;
+            }
 
-.rating-info {
-    font-size: 0.8rem;
-}
+            /* التقييم والموقع */
+            .details-section {
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
 
-.rating-score {
-    font-weight: 700;
-    color: var(--bs-primary);
-    margin-right: 0.3rem;
-}
+            .rating-location {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
 
-.rating-count {
-    color: var(--bs-gray-600);
-}
+            .rating-info {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
 
-/* Info Cards Grid */
-.info-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-}
+            .stars {
+                display: flex;
+                gap: 0.2rem;
+                color: #fbbf24;
+            }
 
-.info-card {
-    padding: 0.75rem;
-    background-color: var(--bs-light);
-    border-radius: 12px;
-    text-align: center;
-    transition: all 0.3s ease;
-}
+            .stars i {
+                font-size: 0.9rem;
+            }
 
-.info-card:hover {
-    background-color: rgba(var(--bs-primary-rgb), 0.1);
-    transform: translateY(-2px);
-}
+            .rating-stats {
+                font-size: 0.85rem;
+                color: var(--bs-gray-600);
+            }
 
-.info-icon {
-    font-size: 1.2rem;
-    margin-bottom: 0.4rem;
-}
+            .rating-stats strong {
+                color: var(--bs-gray-900);
+                margin-right: 0.2rem;
+            }
 
-.info-icon i {
-    color: var(--bs-primary);
-}
+            .location-info {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.85rem;
+                color: var(--bs-gray-700);
+            }
 
-.info-content {
-    display: flex;
-    flex-direction: column;
-}
+            .location-info i {
+                color: #ef4444;
+            }
 
-.info-label {
-    font-size: 0.75rem;
-    color: var(--bs-gray-600);
-    margin-bottom: 0.2rem;
-}
+            /* النبذة */
+            .doctor-bio {
+                padding-top: 0.5rem;
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+            }
 
-.info-value {
-    font-weight: 600;
-    color: var(--bs-gray-800);
-    font-size: 0.85rem;
-}
+            .doctor-bio p {
+                font-size: 0.85rem;
+                color: var(--bs-gray-600);
+                line-height: 1.5;
+                margin: 0;
+            }
 
-.info-value.price {
-    color: var(--bs-success);
-}
+            /* الأزرار */
+            .card-actions {
+                margin-top: auto;
+                padding: 1rem;
+                display: grid;
+                gap: 0.75rem;
+            }
 
-/* Description Section */
-.description-section {
-    background-color: var(--bs-light);
-    padding: 0.75rem;
-    border-radius: 12px;
-}
+            .btn-book,
+            .btn-call {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                padding: 0.75rem;
+                border-radius: 12px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                transition: all 0.2s ease;
+                text-decoration: none;
+                border: none;
+                width: 100%;
+            }
 
-.section-title {
-    color: var(--bs-primary);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
+            .btn-book {
+                background: var(--bs-primary);
+                color: white;
+            }
 
-.description-text {
-    color: var(--bs-gray-700);
-    font-size: 0.85rem;
-    line-height: 1.5;
-    margin: 0;
-}
+            .btn-book:hover {
+                background: var(--bs-primary-dark, #0056b3);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.2);
+            }
 
-/* Action Buttons */
-.action-buttons {
-    margin-top: 1rem;
-}
+            .btn-call {
+                background: transparent;
+                color: var(--bs-primary);
+                border: 1.5px solid var(--bs-primary);
+            }
 
-.btn-book {
-    padding: 0.6rem 1.2rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
+            .btn-call:hover {
+                background: rgba(var(--bs-primary-rgb), 0.08);
+                transform: translateY(-1px);
+            }
 
-.btn-book:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.3);
-}
+            /* حالة عدم وجود أطباء */
+            .empty-view {
+                grid-column: 1 / -1;
+                text-align: center;
+                padding: 3rem 1rem;
+            }
 
-.btn-call {
-    padding: 0.6rem 1.2rem;
-    font-weight: 600;
-}
+            .empty-content i {
+                font-size: 2.5rem;
+                color: var(--bs-gray-400);
+                margin-bottom: 1rem;
+            }
 
-.btn-call:hover {
-    background-color: rgba(var(--bs-primary-rgb), 0.1);
-}
+            .empty-content h4 {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--bs-gray-700);
+                margin-bottom: 0.5rem;
+            }
 
-/* Empty State */
-.empty-state {
-    width: 100%;
-    padding: 2rem;
-}
+            .empty-content p {
+                font-size: 0.9rem;
+                color: var(--bs-gray-600);
+                margin: 0;
+            }
 
-.empty-state-icon {
-    font-size: 3rem;
-    color: var(--bs-primary);
-    opacity: 0.5;
-}
+            /* التجاوب */
+            @media (max-width: 768px) {
+                .doctors-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                }
 
-.empty-state-title {
-    color: var(--bs-gray-800);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
+                .doctor-avatar {
+                    width: 70px;
+                    height: 70px;
+                }
 
-.empty-state-description {
-    color: var(--bs-gray-600);
-    max-width: 300px;
-    margin: 0 auto;
-}
+                .visit-info {
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+            }
 
-/* Responsive Design */
-@media (max-width: 992px) {
-    .doctors-container {
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    }
-}
+            @media (max-width: 576px) {
+                .doctors-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    @endpush
 
-@media (max-width: 768px) {
-    .info-cards-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .doctor-image-wrapper {
-        width: 100px;
-        height: 100px;
-    }
-
-    .doctor-name {
-        font-size: 1.1rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .doctors-container {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
-@endpush
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // No view switching functionality needed anymore
-});
-</script>
-@endpush
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // No view switching functionality needed anymore
+            });
+        </script>
+    @endpush
 @endsection
