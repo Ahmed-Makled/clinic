@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Governorate;
+use App\Models\City;
+use App\Models\Doctor;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
 class PageController extends Controller
@@ -11,8 +16,10 @@ class PageController extends Controller
         return view('home', [
             'title' => 'Clinic Master',
             'classes' => 'bg-white',
-            'categories' => [],
-            'governorates' => Config::get('governorates', []),
+            'categories' => Category::where('status', 'active')->get(),
+            'governorates' => Governorate::with('cities')->get(),
+            'cities' => City::all(),
+            'doctors' => Doctor::where('status', true)->get(),
         ]);
     }
 
@@ -32,4 +39,17 @@ class PageController extends Controller
             'user' => auth()->user()
         ]);
     }
+
+    public function getCities(Governorate $governorate)
+    {
+        $cities = $governorate->cities->map(function($city) {
+            return [
+                'id' => $city->id,
+                'name' => $city->name
+            ];
+        });
+
+        return response()->json($cities);
+    }
+
 }

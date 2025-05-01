@@ -447,4 +447,6 @@ class DoctorsController extends Controller
         return redirect()->route('doctors.index')
             ->with('success', 'تم إضافة بيانات الطبيب بنجاح');
     }
+
+
 }

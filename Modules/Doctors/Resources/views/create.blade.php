@@ -220,15 +220,6 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            <div class="mb-3 col-12">
-                                <label class="form-label" for="address">العنوان</label>
-                                <input type="text" class="form-control @error('address') is-invalid @enderror"
-                                    id="address" name="address" value="{{ old('address') }}" placeholder="العنوان" />
-                                @error('address')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
                         </div>
 
                         <div class="mt-4">
@@ -396,5 +387,7 @@
                 }
             });
         </script>
+
+
     @endpush
 @endsection
