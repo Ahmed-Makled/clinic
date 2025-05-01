@@ -568,9 +568,9 @@
         }
 
         .status.scheduled {
-            background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-            color: var(--bs-primary);
-            border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%);
+            color: #9333ea;
+            border: 1px solid rgba(147, 51, 234, 0.1);
         }
 
         .status.completed {

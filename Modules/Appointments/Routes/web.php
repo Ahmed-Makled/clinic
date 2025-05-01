@@ -14,4 +14,6 @@ Route::middleware(['web', 'auth:web', 'role:Admin'])->group(function () {
     Route::resource('appointments', AppointmentsController::class)->except(['store']);
     Route::put('/appointments/{appointment}/complete', [AppointmentsController::class, 'complete'])->name('appointments.complete');
     Route::put('/appointments/{appointment}/cancel', [AppointmentsController::class, 'cancel'])->name('appointments.cancel');
+    Route::put('/appointments/{appointment}/mark-as-paid', [AppointmentsController::class, 'markAsPaid'])->name('appointments.mark-as-paid');
+    Route::put('/appointments/{appointment}/mark-as-unpaid', [AppointmentsController::class, 'markAsUnpaid'])->name('appointments.mark-as-unpaid');
 });

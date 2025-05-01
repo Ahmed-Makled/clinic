@@ -39,7 +39,7 @@ class Appointment extends Model
      * The status colors for UI display.
      */
     const STATUS_COLORS = [
-        'scheduled' => 'warning',
+        'scheduled' => 'primary',  // سيستخدم اللون البنفسجي الذي قمنا بتعريفه في CSS
         'completed' => 'success',
         'cancelled' => 'danger'
     ];

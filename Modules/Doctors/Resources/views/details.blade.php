@@ -408,9 +408,9 @@
                     }
 
                     .status.scheduled {
-                        background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-                        color: var(--bs-primary);
-                        border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+                        background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%);
+                        color: #9333ea;
+                        border: 1px solid rgba(147, 51, 234, 0.1);
                     }
 
                     .status.completed {
@@ -1007,25 +1007,6 @@
             transition: all 0.3s ease;
         }
 
-        .btn-soft-primary {
-            background: #e3f2fd;
-            color: #0066cc;
-        }
-
-        .btn-soft-primary:hover {
-            background: #0066cc;
-            color: white;
-        }
-
-        .btn-soft-danger {
-            background: #ffebee;
-            color: #dc3545;
-        }
-
-        .btn-soft-danger:hover {
-            background: #dc3545;
-            color: white;
-        }
 
         @media (max-width: 768px) {
             .profile-info {

@@ -521,8 +521,8 @@
         }
 
         .badge.bg-primary {
-            background-color: var(--primary-bg-subtle) !important;
-            color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%) !important;
+            color: #9333ea;
         }
         .badge.bg-danger {
             background-color: var(--danger-bg-subtle) !important;
@@ -541,6 +541,12 @@
         .badge.bg-danger.notifications-count {
             background-color: var(--danger-bg-subtle) !important;
             color: var(--danger-color);
+        }
+
+        .appointment-number {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%);
+            color: #9333ea;
+            border: 1px solid rgba(147, 51, 234, 0.1);
         }
     </style>
 @endpush

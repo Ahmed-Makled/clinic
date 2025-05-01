@@ -419,6 +419,30 @@ class AppointmentsController extends Controller
     }
 
     /**
+     * Mark an appointment as paid.
+     */
+    public function markAsPaid(Appointment $appointment)
+    {
+        $appointment->update(['is_paid' => true]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'تم تأكيد الدفع بنجاح');
+    }
+
+    /**
+     * Mark an appointment as unpaid.
+     */
+    public function markAsUnpaid(Appointment $appointment)
+    {
+        $appointment->update(['is_paid' => false]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'تم إلغاء حالة الدفع بنجاح');
+    }
+
+    /**
      * Show the appointment booking form.
      */
     public function book(Doctor $doctor)

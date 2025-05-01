@@ -747,3 +747,35 @@ h6, .h6 { font-size: 0.875rem; }
 i::before{
     line-height: 2 !important;
 }
+
+
+
+.btn-soft-primary {
+    background: #e3f2fd;
+    color: #0066cc;
+}
+
+.btn-soft-primary:hover {
+    background: #0066cc;
+    color: white;
+}
+
+.btn-soft-danger {
+    background: #ffebee;
+    color: #dc3545;
+}
+
+.btn-soft-danger:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-soft-success {
+    background: #ebf9f1;
+    color: #38c172;
+}
+
+.btn-soft-success:hover {
+    background: #38c172;
+    color: white;
+}

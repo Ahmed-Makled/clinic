@@ -15,8 +15,8 @@
 @endsection
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-lg-8">
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
         <div class="card shadow-sm rounded-4">
             <div class="card-header border-bottom py-3 mb-4">
                 <h5 class="mb-0 ms-2">إضافة مستخدم جديد</h5>

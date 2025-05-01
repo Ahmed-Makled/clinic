@@ -317,6 +317,17 @@
     color: #e3342f;
 }
 
+.status.scheduled {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%);
+    color: #9333ea;
+    border: 1px solid rgba(147, 51, 234, 0.1);
+}
+
+.status .badge {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%) !important;
+    color: #9333ea;
+}
+
 .role-badge {
     display: inline-flex;
     padding: 0.5rem 1rem;

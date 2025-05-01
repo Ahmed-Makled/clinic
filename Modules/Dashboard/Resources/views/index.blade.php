@@ -31,7 +31,7 @@
                                     <i class="bi bi-check-circle-fill"></i>
                                     {{ $stats['appointments']['completed'] }} مكتمل
                                 </span>
-                                <span class="text-warning">
+                                <span style="color: #9333ea">
                                     <i class="bi bi-clock-fill"></i>
                                     {{ $stats['appointments']['scheduled'] }} منتظر
                                 </span>
@@ -236,8 +236,8 @@
                     align-items: center;
                     justify-content: center;
                     font-size: 1.25rem;
-                    background: var(--primary-bg-subtle);
-                    color: var(--primary-color);
+                    background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%);
+                    color: #9333ea;
                 }
 
                 .activity-content {
@@ -411,6 +411,8 @@
             align-items: center;
             justify-content: center;
             font-size: 1.25rem;
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%);
+            color: #9333ea;
         }
 
         .notification-item {
@@ -465,11 +467,11 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             let appointmentsChart = null;
-            
+
             document.addEventListener('DOMContentLoaded', function() {
                 // Initialize charts
                 initCharts(@json($chartData));
-                
+
                 // Handle period change
                 document.getElementById('chartPeriod').addEventListener('change', function() {
                     updateChart(this.value);

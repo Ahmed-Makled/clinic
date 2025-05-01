@@ -24,7 +24,7 @@
     <div class="card-body">
         <div class="filters mb-4">
             <div class="row g-3">
-                <div class="col-md-10">
+                <div class="col-md-6">
                     <label for="searchInput" class="form-label">اسم التخصص</label>
                     <div class="input-group">
                         <span class="input-group-text">
@@ -39,9 +39,18 @@
                     </div>
                 </div>
 
+                <div class="col-md-4">
+                    <label for="statusFilter" class="form-label">الحالة</label>
+                    <select class="form-select" id="statusFilter" name="status">
+                        <option value="">الكل</option>
+                        <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>نشط</option>
+                        <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>غير نشط</option>
+                    </select>
+                </div>
+
                 <div class="col-md-2">
                     <label class="form-label">&nbsp;</label>
-                    <button type="button" class="btn btn-primary d-flex align-items-center" id="applyFilters">
+                    <button type="button" class="btn btn-primary d-flex align-items-center w-100" id="applyFilters">
                         <i class="bi bi-funnel-fill me-1"></i>
                         تطبيق
                     </button>
@@ -67,9 +76,9 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <div class="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
+                                    <div class="bg-dark-subtle rounded-circle me-2 d-flex align-items-center justify-content-center"
                                          style="width: 32px; height: 32px">
-                                        <i class="bi bi-heart-pulse text-info"></i>
+                                        <i class="bi bi-heart-pulse text-dark"></i>
                                     </div>
                                     <div>{{ $specialty->name }}</div>
                                 </div>
@@ -191,6 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Get filter elements
     const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
     const applyFiltersBtn = document.getElementById('applyFilters');
 
     // Update filters function
@@ -198,6 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const params = new URLSearchParams(window.location.search);
 
         if (searchInput?.value) params.set('search', searchInput.value);
+        if (statusFilter?.value) params.set('status', statusFilter.value);
 
         // Remove empty values
         for (const [key, value] of params.entries()) {
