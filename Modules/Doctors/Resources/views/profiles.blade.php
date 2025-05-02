@@ -29,10 +29,28 @@
                                         <i class="bi bi-award-fill"></i>
                                         {{ $doctor->categories->pluck('name')->implode(', ') }}
                                     </div>
+                                    <div class="rating-info">
+                                        <div class="stars">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= floor($doctor->rating_average))
+                                                    <i class="bi bi-star-fill"></i>
+                                                @elseif ($i - 0.5 <= $doctor->rating_average)
+                                                    <i class="bi bi-star-half"></i>
+                                                @else
+                                                    <i class="bi bi-star"></i>
+                                                @endif
+                                            @endfor
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
                         </header>
-
+                        @if($doctor->description)
+                            <div class="doctor-bio p-3">
+                                <p>{{ Str::limit($doctor->description, 100) }}</p>
+                            </div>
+                        @endif
                         <!-- معلومات الزيارة -->
                         <div class="visit-info">
                             <div class="visit-item fee">
@@ -54,46 +72,27 @@
                         <!-- معلومات التقييم والموقع -->
                         <div class="details-section">
                             <div class="rating-location">
-                                <div class="rating-info">
-                                    <div class="stars">
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            @if ($i <= floor($doctor->rating_average))
-                                                <i class="bi bi-star-fill"></i>
-                                            @elseif ($i - 0.5 <= $doctor->rating_average)
-                                                <i class="bi bi-star-half"></i>
-                                            @else
-                                                <i class="bi bi-star"></i>
-                                            @endif
-                                        @endfor
-                                    </div>
-                                    <div class="rating-stats">
-                                        <strong>{{ number_format($doctor->rating_average, 1) }}</strong>
-                                        <span class="count">({{ $doctor->ratings_count }} تقييم)</span>
-                                    </div>
-                                </div>
+
                                 <div class="location-info">
                                     <i class="bi bi-geo-alt-fill"></i>
                                     <span>{{ $doctor->governorate->name }} - {{ $doctor->city->name }}</span>
                                 </div>
                             </div>
 
-                            @if($doctor->description)
-                                <div class="doctor-bio">
-                                    <p>{{ Str::limit($doctor->description, 100) }}</p>
-                                </div>
-                            @endif
+
                         </div>
+                        <hr class="my-2 border-primary-subtle">
 
                         <!-- أزرار الإجراءات -->
-                        <footer class="card-actions">
-                            <a href="{{ route('doctors.show', $doctor->id) }}" class="btn-book">
+                        <footer class="d-flex justify-content-between align-items-center card-actions">
+                            <a href="{{ route('doctors.show', $doctor->id) }}" class="btn btn-primary btn-lg rounded-3 btn-sm m-auto w-100 ">
                                 <i class="bi bi-calendar-check"></i>
                                 <span>احجز موعد</span>
                             </a>
-                            <button type="button" class="btn-call">
+                            {{-- <button type="button" class="btn btn-outline-primary btn-lg rounded-3 btn-sm">
                                 <i class="bi bi-telephone-fill"></i>
                                 <span>اتصل للحجز</span>
-                            </button>
+                            </button> --}}
                         </footer>
                     </article>
                 </div>
@@ -135,6 +134,7 @@
                 height: 100%;
                 transition: all 0.3s ease;
                 border: 1px solid rgba(0, 0, 0, 0.08);
+                text-align: center;
             }
 
             .doctor-card:hover {
@@ -252,7 +252,8 @@
 
             /* التقييم والموقع */
             .details-section {
-                padding: 1rem;
+                padding-inline: 1rem;
+                padding-top: 0.5rem;
                 display: flex;
                 flex-direction: column;
                 gap: 1rem;
@@ -267,6 +268,7 @@
             .rating-info {
                 display: flex;
                 align-items: center;
+                justify-content: center;
                 gap: 0.75rem;
             }
 
@@ -303,10 +305,6 @@
             }
 
             /* النبذة */
-            .doctor-bio {
-                padding-top: 0.5rem;
-                border-top: 1px solid rgba(0, 0, 0, 0.05);
-            }
 
             .doctor-bio p {
                 font-size: 0.85rem;
