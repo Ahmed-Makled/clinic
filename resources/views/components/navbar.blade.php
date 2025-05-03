@@ -57,9 +57,9 @@
                                     <i class="bi bi-person me-2"></i>حسابي
                                 </a>
                             </li>
-                            @if(!(auth()->user()->hasRole('Admin')))
+                            @if((auth()->user()->hasRole('Patient')))
                             <li>
-                                <a class="dropdown-item" href="{{ route('appointments.index') }}">
+                                <a class="dropdown-item" href="{{ route('profile') }}#appointments" id="navbar-appointments-link">
                                     <i class="bi bi-calendar2-check me-2"></i>حجوزاتي
                                 </a>
                             </li>

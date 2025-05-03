@@ -8,6 +8,8 @@ use App\Models\City;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class PageController extends Controller
 {
@@ -34,7 +36,7 @@ class PageController extends Controller
     public function profile()
     {
         return view('profile', [
-            'title' => 'My Profile',
+            'title' => 'الصفحة الشخصية',
             'classes' => 'bg-white',
             'user' => auth()->user()
         ]);
@@ -99,14 +101,29 @@ class PageController extends Controller
 
         // Validate inputs
         $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone_number' => 'required|string|max:20',
             'date_of_birth' => 'nullable|date',
             'gender' => 'required|in:male,female',
             'address' => 'nullable|string|max:255',
         ], [
+            'name.required' => 'الاسم مطلوب',
+            'email.required' => 'البريد الإلكتروني مطلوب',
+            'email.email' => 'يرجى إدخال بريد إلكتروني صحيح',
+            'email.unique' => 'البريد الإلكتروني مستخدم بالفعل',
+            'phone_number.required' => 'رقم الهاتف مطلوب',
             'gender.required' => 'الجنس مطلوب',
             'gender.in' => 'قيمة الجنس غير صحيحة',
             'date_of_birth.date' => 'صيغة تاريخ الميلاد غير صحيحة',
             'address.max' => 'العنوان لا يمكن أن يتجاوز 255 حرف',
+        ]);
+
+        // Update user basic information
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone_number' => $validated['phone_number']
         ]);
 
         // Update the patient profile
@@ -118,10 +135,43 @@ class PageController extends Controller
 
         // Redirect with success message
         if (request()->has('redirect_to')) {
-            return redirect(request('redirect_to'))->with('success', 'تم تحديث ملفك الطبي بنجاح');
+            return redirect(request('redirect_to'))->with('success', 'تم تحديث الملف الشخصي بنجاح');
         }
 
-        return redirect()->route('profile')->with('success', 'تم تحديث ملفك الطبي بنجاح');
+        return redirect()->route('profile')->with('success', 'تم تحديث الملف الشخصي بنجاح');
+    }
+
+    /**
+     * Update user password
+     */
+    public function updatePassword(Request $request)
+    {
+        $user = auth()->user();
+
+        // Validate inputs
+        $validated = $request->validate([
+            'current_password' => ['required', function ($attribute, $value, $fail) use ($user) {
+                if (!Hash::check($value, $user->password)) {
+                    $fail('كلمة المرور الحالية غير صحيحة');
+                }
+            }],
+            'password' => ['required', 'confirmed', Password::min(8)
+                ->letters()
+                ->mixedCase()
+                ->numbers()
+            ],
+        ], [
+            'current_password.required' => 'كلمة المرور الحالية مطلوبة',
+            'password.required' => 'كلمة المرور الجديدة مطلوبة',
+            'password.confirmed' => 'كلمة المرور الجديدة غير متطابقة مع التأكيد',
+        ]);
+
+        // Update password
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return redirect()->route('profile')->with('success', 'تم تغيير كلمة المرور بنجاح');
     }
 
     public function getCities(Governorate $governorate)
