@@ -858,7 +858,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.25rem;
-            background: var(--primary-bg-subtle);
+            background: var (--primary-bg-subtle);
             color: var(--primary-color);
         }
     </style>
@@ -1150,6 +1150,30 @@
             return icons[type] || { icon: 'bi-bell', class: 'primary' };
         }
 
+        function formatRelativeTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            const diffInMinutes = Math.floor(diffInSeconds / 60);
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            const diffInDays = Math.floor(diffInHours / 24);
+            const diffInMonths = Math.floor(diffInDays / 30);
+            const diffInYears = Math.floor(diffInMonths / 12);
+
+            if (diffInSeconds < 60) {
+                return 'منذ لحظات';
+            } else if (diffInMinutes < 60) {
+                return `منذ ${diffInMinutes} ${diffInMinutes === 1 ? 'دقيقة' : 'دقائق'}`;
+            } else if (diffInHours < 24) {
+                return `منذ ${diffInHours} ${diffInHours === 1 ? 'ساعة' : 'ساعات'}`;
+            } else if (diffInDays < 30) {
+                return `منذ ${diffInDays} ${diffInDays === 1 ? 'يوم' : 'أيام'}`;
+            } else if (diffInMonths < 12) {
+                return `منذ ${diffInMonths} ${diffInMonths === 1 ? 'شهر' : 'أشهر'}`;
+            } else {
+                return `منذ ${diffInYears} ${diffInYears === 1 ? 'سنة' : 'سنوات'}`;
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
             // Initialize Select2
@@ -1238,7 +1262,7 @@
                                             </div>
                                             <div class="flex-grow-1 ms-3">
                                                 <p class="mb-1">${notification.data.message}</p>
-                                                <small class="text-muted">${notification.created_at}</small>
+                                                <small class="text-muted">${formatRelativeTime(notification.created_at)}</small>
                                             </div>
                                         </div>
                                     </div>

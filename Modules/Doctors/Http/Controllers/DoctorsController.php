@@ -243,6 +243,7 @@ class DoctorsController extends Controller
 
     public function edit(Doctor $doctor)
     {
+        $doctor->load(['schedules']); // تحميل جداول المواعيد
         $categories = Category::all();
         $governorates = Governorate::with('cities')->get();
         return view('doctors::edit', compact('doctor', 'categories', 'governorates'));
@@ -264,6 +265,19 @@ class DoctorsController extends Controller
             'address' => 'nullable|string',
             'governorate_id' => 'required|exists:governorates,id',
             'city_id' => 'required|exists:cities,id',
+            'schedules' => ['required', 'array'],
+            'schedules.*.is_available' => ['nullable', 'boolean'],
+            'schedules.*.start_time' => [
+                'required_with:schedules.*.is_available',
+                'nullable',
+                'date_format:H:i',
+            ],
+            'schedules.*.end_time' => [
+                'required_with:schedules.*.is_available',
+                'nullable',
+                'date_format:H:i',
+                'after:schedules.*.start_time'
+            ],
         ], [
             'name.required' => 'حقل الاسم مطلوب',
             'name.string' => 'يجب أن يكون الاسم نصاً',
@@ -289,7 +303,13 @@ class DoctorsController extends Controller
             'governorate_id.required' => 'حقل المحافظة مطلوب',
             'governorate_id.exists' => 'المحافظة المختارة غير موجودة',
             'city_id.required' => 'حقل المدينة مطلوب',
-            'city_id.exists' => 'المدينة المختارة غير موجودة'
+            'city_id.exists' => 'المدينة المختارة غير موجودة',
+            'schedules.required' => 'جدول المواعيد مطلوب',
+            'schedules.*.start_time.required_with' => 'يجب تحديد وقت البداية عند اختيار اليوم',
+            'schedules.*.start_time.date_format' => 'صيغة وقت البداية غير صحيحة',
+            'schedules.*.end_time.required_with' => 'يجب تحديد وقت النهاية عند اختيار اليوم',
+            'schedules.*.end_time.date_format' => 'صيغة وقت النهاية غير صحيحة',
+            'schedules.*.end_time.after' => 'يجب أن يكون وقت النهاية بعد وقت البداية'
         ]);
 
         // Update user record if it exists
@@ -332,6 +352,29 @@ class DoctorsController extends Controller
 
         // Sync categories
         $doctor->categories()->sync($request->categories);
+
+        // Update schedules
+        if ($request->has('schedules') && is_array($request->schedules)) {
+            // Delete existing schedules
+            $doctor->schedules()->delete();
+
+            $days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+            foreach ($request->schedules as $index => $schedule) {
+                if (isset($schedule['is_available']) &&
+                    $schedule['is_available'] &&
+                    isset($schedule['start_time']) &&
+                    isset($schedule['end_time'])) {
+
+                    $doctor->schedules()->create([
+                        'day' => $days[$index],
+                        'start_time' => $schedule['start_time'],
+                        'end_time' => $schedule['end_time'],
+                        'is_active' => true
+                    ]);
+                }
+            }
+        }
 
         // Send notification to admins
         User::role('Admin')->each(function ($admin) use ($doctor) {

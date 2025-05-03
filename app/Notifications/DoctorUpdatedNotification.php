@@ -30,7 +30,7 @@ class DoctorUpdatedNotification extends Notification
             ->line('تم تحديث بيانات الطبيب:')
             ->line("الاسم: {$this->doctor->name}")
             ->line("التخصص: {$this->doctor->categories->pluck('name')->implode(', ')}")
-            ->action('عرض الطبيب', route('doctors.show', $this->doctor));
+            ->action('عرض الطبيب', route('doctors.index', $this->doctor));
     }
 
     public function toArray($notifiable): array

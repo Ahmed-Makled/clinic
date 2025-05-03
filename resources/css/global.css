@@ -779,3 +779,45 @@ i::before{
     background: #38c172;
     color: white;
 }
+
+
+.pagination-wrapper {
+    padding-top: 1rem;
+    border-top: 1px solid var(--bs-gray-200);
+}
+
+.pagination {
+    margin: 0;
+}
+
+.pagination .page-item {
+    margin: 0 2px;
+}
+
+.pagination .page-link {
+    border-radius: 4px;
+    border: 1px solid var(--bs-gray-300);
+    color: var(--bs-gray-700);
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.pagination .page-link:hover:not(.disabled) {
+    background-color: var(--bs-gray-100);
+    border-color: var(--bs-gray-400);
+    color: var(--bs-primary);
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: var(--bs-gray-100);
+    border-color: var(--bs-gray-200);
+    color: var(--bs-gray-400);
+}

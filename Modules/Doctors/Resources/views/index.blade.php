@@ -177,8 +177,59 @@
                 </table>
             </div>
 
-            <div class="d-flex justify-content-center mt-3">
-                {{ $doctors->links() }}
+
+            <div class="d-flex justify-content-between align-items-center mt-4 pagination-wrapper">
+                <div class="text-muted small">
+                    إجمالي النتائج: {{ $doctors->total() }}
+                </div>
+                @if($doctors->hasPages())
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm mb-0">
+                            {{-- Previous Page Link --}}
+                            @if ($doctors->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $doctors->previousPageUrl() }}" rel="prev">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Pagination Elements --}}
+                            @foreach ($doctors->getUrlRange(max($doctors->currentPage() - 2, 1), min($doctors->currentPage() + 2, $doctors->lastPage())) as $page => $url)
+                                @if ($page == $doctors->currentPage())
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ $page }}</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                    </li>
+                                @endif
+                            @endforeach
+
+                            {{-- Next Page Link --}}
+                            @if ($doctors->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $doctors->nextPageUrl() }}" rel="next">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
+                @endif
             </div>
 
             <!-- Loading Overlay -->

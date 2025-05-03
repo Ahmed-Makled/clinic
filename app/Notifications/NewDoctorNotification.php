@@ -30,7 +30,7 @@ class NewDoctorNotification extends Notification
             ->line('تم إضافة طبيب جديد:')
             ->line("الاسم: {$this->doctor->name}")
             ->line("التخصص: {$this->doctor->categories->pluck('name')->implode(', ')}")
-            ->action('عرض الطبيب', route('doctors.show', $this->doctor));
+            ->action('عرض الطبيب', route('doctors.index', ['doctor' => $this->doctor->id]));
     }
 
     public function toArray($notifiable): array

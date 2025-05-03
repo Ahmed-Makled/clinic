@@ -115,10 +115,10 @@
                                                         </p>
 
                                                         @if($doctor->description)
-                                                            <div class="mb-3">
-                                                                <p class="text-muted mb-0 doctor-description">
+                                                            <div class="mb-3" title="{{ $doctor->description }}">
+                                                                <p class="text-muted mb-0 doctor-description" >
                                                                     <i class="bi bi-info-circle text-info me-2"></i>
-                                                                    {{ $doctor->description }}
+                                                                    {{ Str::limit($doctor->description,28) }}
                                                                 </p>
                                                             </div>
                                                         @endif

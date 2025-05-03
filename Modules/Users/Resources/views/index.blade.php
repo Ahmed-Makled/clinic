@@ -3,14 +3,14 @@
 @section('title', 'إدارة المستخدمين')
 
 @section('header_icon')
-<i class="bi bi-people text-primary me-2 fs-5"></i>
+    <i class="bi bi-people text-primary me-2 fs-5"></i>
 @endsection
 
 @section('breadcrumbs')
-<li class="breadcrumb-item">
-    <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
-</li>
-<li class="breadcrumb-item active">المستخدمين</li>
+    <li class="breadcrumb-item">
+        <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
+    </li>
+    <li class="breadcrumb-item active">المستخدمين</li>
 @endsection
 
 @section('actions')
@@ -30,12 +30,9 @@
                             <span class="input-group-text">
                                 <i class="bi bi-search"></i>
                             </span>
-                            <input type="search"
-                                   class="form-control"
-                                   id="searchInput"
-                                   name="search"
-                                   placeholder="البحث بالاسم، البريد الإلكتروني، أو رقم الهاتف..."
-                                   value="{{ request('search') }}">
+                            <input type="search" class="form-control" id="searchInput" name="search"
+                                placeholder="البحث بالاسم، البريد الإلكتروني، أو رقم الهاتف..."
+                                value="{{ request('search') }}">
                         </div>
                     </div>
 
@@ -128,7 +125,8 @@
                                             data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="تعديل">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline delete-form">
+                                        <form action="{{ route('users.destroy', $user) }}" method="POST"
+                                            class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-action btn-delete delete-confirmation"
@@ -208,111 +206,111 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
 
-<!-- Delete Confirmation Modal Template -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">تأكيد الحذف</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>هل أنت متأكد من حذف المستخدم "<span class="user-name fw-bold"></span>"؟</p>
-                <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
-                    لا يمكن التراجع عن هذا الإجراء.
+    <!-- Delete Confirmation Modal Template -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تأكيد الحذف</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
-                <form id="deleteForm" action="" method="POST" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash me-2"></i>
-                        حذف
-                    </button>
-                </form>
+                <div class="modal-body">
+                    <p>هل أنت متأكد من حذف المستخدم "<span class="user-name fw-bold"></span>"؟</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        لا يمكن التراجع عن هذا الإجراء.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                    <form id="deleteForm" action="" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-2"></i>
+                            حذف
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Select2
-    $('.select2').select2({
-        theme: 'bootstrap-5',
-        width: '100%'
-    });
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Initialize Select2
+                $('.select2').select2({
+                    theme: 'bootstrap-5',
+                    width: '100%'
+                });
 
-    // Get filter elements
-    const searchInput = document.getElementById('searchInput');
-    const roleFilter = document.getElementById('roleFilter');
-    const statusFilter = document.getElementById('statusFilter');
-    const applyFiltersBtn = document.getElementById('applyFilters');
+                // Get filter elements
+                const searchInput = document.getElementById('searchInput');
+                const roleFilter = document.getElementById('roleFilter');
+                const statusFilter = document.getElementById('statusFilter');
+                const applyFiltersBtn = document.getElementById('applyFilters');
 
-    // Update filters function
-    function updateFilters() {
-        const params = new URLSearchParams(window.location.search);
+                // Update filters function
+                function updateFilters() {
+                    const params = new URLSearchParams(window.location.search);
 
-        if (searchInput?.value?.trim()) {
-            params.set('search', searchInput.value.trim());
-        } else {
-            params.delete('search');
-        }
+                    if (searchInput?.value?.trim()) {
+                        params.set('search', searchInput.value.trim());
+                    } else {
+                        params.delete('search');
+                    }
 
-        if (roleFilter?.value?.trim()) {
-            params.set('role_filter', roleFilter.value.trim());
-        } else {
-            params.delete('role_filter');
-        }
+                    if (roleFilter?.value?.trim()) {
+                        params.set('role_filter', roleFilter.value.trim());
+                    } else {
+                        params.delete('role_filter');
+                    }
 
-        if (statusFilter?.value?.trim()) {
-            params.set('status_filter', statusFilter.value.trim());
-        } else {
-            params.delete('status_filter');
-        }
+                    if (statusFilter?.value?.trim()) {
+                        params.set('status_filter', statusFilter.value.trim());
+                    } else {
+                        params.delete('status_filter');
+                    }
 
-        // تحديث الرابط مع الفلاتر
-        window.location.href = `${window.location.pathname}?${params.toString()}`;
-    }
+                    // تحديث الرابط مع الفلاتر
+                    window.location.href = `${window.location.pathname}?${params.toString()}`;
+                }
 
-    // Add event listeners
-    applyFiltersBtn?.addEventListener('click', updateFilters);
-    searchInput?.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') updateFilters();
-    });
+                // Add event listeners
+                applyFiltersBtn?.addEventListener('click', updateFilters);
+                searchInput?.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') updateFilters();
+                });
 
-    // Initialize tooltips
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(tooltipTriggerEl => {
-        new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+                // Initialize tooltips
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                tooltipTriggerList.forEach(tooltipTriggerEl => {
+                    new bootstrap.Tooltip(tooltipTriggerEl);
+                });
 
-    // Handle delete confirmation
-    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    const deleteForm = document.getElementById('deleteForm');
-    const deleteForms = document.querySelectorAll('.delete-form');
+                // Handle delete confirmation
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                const deleteForm = document.getElementById('deleteForm');
+                const deleteForms = document.querySelectorAll('.delete-form');
 
-    deleteForms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const userName = this.closest('tr').querySelector('.fw-medium').textContent.trim();
-            deleteForm.action = this.action;
-            document.querySelector('#deleteModal .user-name').textContent = userName;
-            deleteModal.show();
-        });
-    });
-});
-</script>
-@endpush
+                deleteForms.forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        const userName = this.closest('tr').querySelector('.fw-medium').textContent.trim();
+                        deleteForm.action = this.action;
+                        document.querySelector('#deleteModal .user-name').textContent = userName;
+                        deleteModal.show();
+                    });
+                });
+            });
+        </script>
+    @endpush
 
-@push('styles')
-    <style>
+    @push('styles')
+        <style>
             .form-label {
                 font-size: 0.875rem;
                 margin-bottom: 0.5rem;
@@ -325,47 +323,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 padding: 1.25rem;
             }
 
-        .pagination-wrapper {
-            padding-top: 1rem;
-            border-top: 1px solid var(--bs-gray-200);
-        }
 
-        .pagination {
-            margin: 0;
-        }
-
-        .pagination .page-item {
-            margin: 0 2px;
-        }
-
-        .pagination .page-link {
-            border-radius: 4px;
-            border: 1px solid var(--bs-gray-300);
-            color: var(--bs-gray-700);
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: var(--bs-primary);
-            border-color: var(--bs-primary);
-            color: white;
-            box-shadow: 0 2px 4px rgba(var(--bs-primary-rgb), 0.2);
-        }
-
-        .pagination .page-link:hover:not(.disabled) {
-            background-color: var(--bs-gray-100);
-            border-color: var(--bs-gray-400);
-            color: var(--bs-primary);
-        }
-
-        .pagination .page-item.disabled .page-link {
-            background-color: var(--bs-gray-100);
-            border-color: var(--bs-gray-200);
-            color: var(--bs-gray-400);
-        }
-    </style>
-@endpush
+        </style>
+    @endpush
 
 @endsection

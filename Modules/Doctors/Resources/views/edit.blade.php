@@ -170,17 +170,72 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label" for="waiting_time">مدة الانتظار (بالدقائق)</label>
+                            <label class="form-label" for="waiting_time">مدة الانتظار (بالدقائق) *</label>
                             <div class="input-group">
-                                <input type="number" style="direction: rtl"
-                                    class="form-control @error('waiting_time') is-invalid @enderror" id="waiting_time"
-                                    name="waiting_time" value="{{ old('waiting_time', $doctor->waiting_time) }}" placeholder="مدة الانتظار"
+                                <input type="number" class="form-control @error('waiting_time') is-invalid @enderror"
+                                    name="waiting_time" id="waiting_time"
+                                    value="{{ old('waiting_time', $doctor->waiting_time) }}"
                                     min="0" />
                                 <span class="input-group-text">دقيقة</span>
                             </div>
                             @error('waiting_time')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                        </div>
+
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>اليوم</th>
+                                            <th>متاح</th>
+                                            <th>من الساعة</th>
+                                            <th>إلى الساعة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach(['sunday' => 'الأحد', 'monday' => 'الإثنين', 'tuesday' => 'الثلاثاء', 'wednesday' => 'الأربعاء', 'thursday' => 'الخميس', 'friday' => 'الجمعة', 'saturday' => 'السبت'] as $dayKey => $dayName)
+                                            @php
+                                                $schedule = $doctor->schedules->where('day', $dayName)->first();
+                                            @endphp
+                                            <tr>
+                                                <td>{{ $dayName }}</td>
+                                                <td>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input schedule-availability" type="checkbox"
+                                                            name="schedules[{{ $loop->index }}][is_available]"
+                                                            id="day_{{ $loop->index }}_available"
+                                                            value="1"
+                                                            {{ $schedule && $schedule->is_active ? 'checked' : '' }}>
+                                                        <input type="hidden" name="schedules[{{ $loop->index }}][day]" value="{{ $dayName }}">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="time" class="form-control schedule-time @error("schedules.{$loop->index}.start_time") is-invalid @enderror"
+                                                        name="schedules[{{ $loop->index }}][start_time]"
+                                                        id="day_{{ $loop->index }}_start"
+                                                        value="{{ old("schedules.{$loop->index}.start_time", $schedule ? $schedule->start_time->format('H:i') : '') }}"
+                                                        {{ $schedule && $schedule->is_active ? '' : 'disabled' }}>
+                                                    @error("schedules.{$loop->index}.start_time")
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </td>
+                                                <td>
+                                                    <input type="time" class="form-control schedule-time @error("schedules.{$loop->index}.end_time") is-invalid @enderror"
+                                                        name="schedules[{{ $loop->index }}][end_time]"
+                                                        id="day_{{ $loop->index }}_end"
+                                                        value="{{ old("schedules.{$loop->index}.end_time", $schedule ? $schedule->end_time->format('H:i') : '') }}"
+                                                        {{ $schedule && $schedule->is_active ? '' : 'disabled' }}>
+                                                    @error("schedules.{$loop->index}.end_time")
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
@@ -490,6 +545,18 @@ $(document).ready(function () {
             $('#city_id').val(oldCity);
         }
     }
+
+    // التحكم في حقول جداول المواعيد
+    $('.schedule-availability').on('change', function() {
+        const row = $(this).closest('tr');
+        const timeInputs = row.find('.schedule-time');
+
+        if ($(this).is(':checked')) {
+            timeInputs.prop('disabled', false);
+        } else {
+            timeInputs.prop('disabled', true).val('');
+        }
+    });
 });
 </script>
 @endpush
