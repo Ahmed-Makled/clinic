@@ -14,6 +14,9 @@
                     <h6 class="alert-heading">تمت العملية بنجاح!</h6>
                     <p class="mb-0">{!! session('success') !!}</p>
                 </div>
+                <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                    <i class="bi bi-x"></i>
+                </button>
             </div>
         @endif
 
@@ -547,6 +550,20 @@
 
             .alert-card.success .alert-heading {
                 color: var(--success-color);
+            }
+
+            .alert-close {
+                background: none;
+                border: none;
+                color: #6c757d;
+                font-size: 1.25rem;
+                cursor: pointer;
+                margin-left: 1rem;
+                align-self: center;
+            }
+
+            .alert-close:hover {
+                color: #495057;
             }
 
             /* ======= APPOINTMENT CARD STYLES ======= */

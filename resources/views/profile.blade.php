@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="container mt-5 py-5">
+
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <!-- رسائل النجاح والخطأ -->
@@ -73,15 +74,7 @@
                                         </a>
                                     </div>
 
-                                    <!-- أزرار إضافية -->
-                                    @if($user->isPatient())
-                                        <div class="mt-4 pt-3 border-top">
-                                            <a href="{{ route('search') }}"
-                                                class="btn btn-primary btn-create-appointment w-100">
-                                                <i class="bi bi-plus-circle me-2"></i> حجز موعد جديد
-                                            </a>
-                                        </div>
-                                    @endif
+
                                 </div>
                             </div>
 
@@ -100,14 +93,16 @@
                                                     </div>
                                                     <h5 class="mb-0 fw-bold">بياناتي</h5>
                                                 </div>
-
+                                                @if($user->patient)
                                                 <div class="">
                                                     <button type="button" class="btn btn-primary btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#editPatientModal">
                                                         <i class="bi bi-pencil-square me-1"></i> تعديل البيانات
                                                     </button>
                                                 </div>
+                                                @endif
                                             </div>
+
 
                                             <div class="profile-info">
                                                 <div class="info-item">
@@ -139,6 +134,7 @@
                                                         {{ $user->phone_number ?: 'غير محدد' }}
                                                     </div>
                                                 </div>
+                                                @if($user->patient)
                                                 <div class="profile-info">
                                                     <div class="info-item">
                                                         <div class="info-label">
@@ -146,7 +142,7 @@
                                                             <span>تاريخ الميلاد</span>
                                                         </div>
                                                         <div class="info-value">
-                                                            {{ $user->patient->date_of_birth ? $user->patient->date_of_birth->format('Y-m-d') : 'غير محدد' }}
+                                                            {{ $user->patient && $user->patient->date_of_birth ? $user->patient->date_of_birth->format('Y-m-d') : 'غير محدد' }}
                                                         </div>
                                                     </div>
 
@@ -156,9 +152,9 @@
                                                             <span>الجنس</span>
                                                         </div>
                                                         <div class="info-value">
-                                                            @if($user->patient->gender == 'male')
+                                                            @if($user->patient && $user->patient->gender == 'male')
                                                                 <i class="bi bi-gender-male text-primary me-1"></i> ذكر
-                                                            @elseif($user->patient->gender == 'female')
+                                                            @elseif($user->patient && $user->patient->gender == 'female')
                                                                 <i class="bi bi-gender-female text-danger me-1"></i> أنثى
                                                             @else
                                                                 غير محدد
@@ -172,11 +168,11 @@
                                                             <span>العنوان</span>
                                                         </div>
                                                         <div class="info-value">
-                                                            {{ $user->patient->address ?: 'غير محدد' }}
+                                                            {{ $user->patient && $user->patient->address ? $user->patient->address : 'غير محدد' }}
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                                @endif
                                             </div>
                                         </div>
 
@@ -604,7 +600,7 @@
                                                         </div>
                                                         <h5>لا توجد حجوزات حالية</h5>
                                                         <p class="text-muted">يمكنك حجز موعد جديد مع أطبائنا</p>
-                                                        <a href="{{ route('appointments.create') }}" class="btn btn-primary">
+                                                        <a href="{{ route('search') }}" class="btn btn-primary">
                                                             <i class="bi bi-plus-circle me-1"></i> حجز موعد جديد
                                                         </a>
                                                     </div>
@@ -704,6 +700,7 @@
 
     @push('styles')
         <style>
+
             .profile-page {
                 padding: 20px 0;
             }
@@ -784,7 +781,6 @@
             .content-section {
                 background-color: #fff;
                 border-radius: 12px;
-                padding: 20px;
                 margin-bottom: 20px;
             }
 
