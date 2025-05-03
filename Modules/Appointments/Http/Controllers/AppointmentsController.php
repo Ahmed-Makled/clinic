@@ -418,23 +418,57 @@ class AppointmentsController extends Controller
     public function cancel(Appointment $appointment)
     {
         try {
+            // سجل محاولة الإلغاء
+            Log::info('Attempting to cancel appointment:', [
+                'appointment_id' => $appointment->id,
+                'current_status' => $appointment->status,
+                'user_id' => auth()->id(),
+                'user_type' => auth()->user()->roles->pluck('name')
+            ]);
+
             $oldStatus = $appointment->status;
             $appointment->update([
                 'status' => 'cancelled'
             ]);
 
+            // سجل نجاح تحديث الحالة
+            Log::info('Appointment status updated:', [
+                'appointment_id' => $appointment->id,
+                'old_status' => $oldStatus,
+                'new_status' => 'cancelled'
+            ]);
+
             if ($oldStatus !== 'cancelled') {
                 $appointment->patient->user->notify(new AppointmentCancelledNotification($appointment));
+
+                // سجل إرسال الإشعار
+                Log::info('Cancellation notification sent to patient', [
+                    'patient_id' => $appointment->patient->id,
+                    'patient_email' => $appointment->patient->user->email
+                ]);
             }
 
-            return redirect()->back()->with('success', 'تم إلغاء الموعد بنجاح');
+            // تحقق من نوع المستخدم وتوجيهه بشكل مناسب
+            $user = auth()->user();
+            if ($user->hasRole('Admin') || $user->hasRole('Doctor')) {
+                // للمشرفين والأطباء، عودة للصفحة السابقة
+                Log::info('Admin/Doctor redirect: back with success message');
+                return redirect()->back()->with('success', 'تم إلغاء الموعد بنجاح');
+            } else {
+                // للمستخدمين العاديين، توجيه إلى صفحة تفاصيل الموعد الملغي
+                Log::info('Patient redirect: to appointment details with success message');
+                return redirect()->route('appointments.show', $appointment)
+                    ->with('success', 'تم إلغاء الموعد بنجاح. يمكنك حجز موعد آخر في أي وقت.');
+            }
         } catch (\Exception $e) {
+            // سجل الخطأ بتفاصيل أكثر
             Log::error('Error cancelling appointment:', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
                 'appointment_id' => $appointment->id
             ]);
 
-            return back()->withErrors(['error' => 'حدث خطأ أثناء إلغاء الموعد']);
+            return back()->withErrors(['error' => 'حدث خطأ أثناء إلغاء الموعد: ' . $e->getMessage()]);
         }
     }
 

@@ -3,93 +3,221 @@
 @section('title', 'تفاصيل الموعد')
 
 @section('content')
-<div class="container py-5 mt-4">
-    <!-- رسالة التأكيد -->
-    @if (session('success'))
-    <div class="alert alert-success custom-alert mb-4 shadow-sm">
-        <div class="d-flex">
-            <div class="alert-icon">
-                <i class="bi bi-check-circle-fill"></i>
+    <div class="container py-5 mt-5">
+        <!-- رسالة التأكيد -->
+        @if (session('success'))
+            <div class="alert-card success mb-4">
+                <div class="alert-icon">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="alert-content">
+                    <h6 class="alert-heading">تم تأكيد الحجز بنجاح!</h6>
+                    <p class="mb-0">{!! session('success') !!}</p>
+                </div>
             </div>
-            <div class="alert-content">
-                <h6 class="alert-heading mb-1">تم تأكيد الحجز بنجاح!</h6>
-                <p class="mb-0">{!! session('success') !!}</p>
-            </div>
-        </div>
-    </div>
-    @endif
+        @endif
 
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- بطاقة تفاصيل الموعد -->
-            <div class="card appointment-card rounded-4 mb-4 shadow-sm">
-                <div class="card-header border-0 bg-white pt-4 pb-0 px-4">
-                    <div class="d-flex align-items-center gap-3 mb-4">
-                        <div class="header-icon">
-                            <i class="bi bi-calendar-check-fill"></i>
+        <div class="row">
+
+            <div class="col-lg-4">
+                <!-- بطاقة معلومات الطبيب -->
+                <div class="doctor-card mb-4">
+                    <div class="card-header">
+                        <div class="section-title">
+                            <i class="bi bi-person-badge"></i>
+                            معلومات الطبيب
                         </div>
-                        <div>
-                            <h1 class="card-title fs-4 fw-bold mb-0">تفاصيل الحجز</h1>
-                            <span class="text-secondary">رقم الحجز: #{{ $appointment->id }}</span>
+                    </div>
+                    <div class="doctor-profile">
+                        <div class="doctor-avatar">
+                            @if($appointment->doctor->image)
+                                <img src="{{ asset('storage/' . $appointment->doctor->image) }}"
+                                    alt="{{ $appointment->doctor->name }}" class="doctor-image"
+                                    onerror="this.src='{{ asset('images/default-doctor.png') }}'; this.onerror=null;">
+                            @else
+                                <div class="avatar-placeholder">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                            @endif
+                        </div>
+                        <h5 class="doctor-name">{{ $appointment->doctor->gender == 'ذكر' ? 'د.' : 'د.' }}
+                            {{ $appointment->doctor->name }}
+                        </h5>
+                        <p class="doctor-title">{{ $appointment->doctor->title }}</p>
+
+                        <div class="doctor-categories">
+                            @foreach($appointment->doctor->categories as $index => $category)
+                                <span class="category-badge category-badge-{{ $index % 6 }}">{{ $category->name }}</span>
+                            @endforeach
+                        </div>
+
+                        <div class="doctor-rating">
+                            <div class="stars">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    @if ($i <= floor($appointment->doctor->rating))
+                                        <i class="bi bi-star-fill"></i>
+                                    @elseif ($i - 0.5 <= $appointment->doctor->rating)
+                                        <i class="bi bi-star-half"></i>
+                                    @else
+                                        <i class="bi bi-star"></i>
+                                    @endif
+                                @endfor
+                            </div>
+                            <div class="rating-text">{{ number_format($appointment->doctor->rating, 1) }}
+                                ({{ $appointment->doctor->ratings_count ?? 0 }} تقييم)</div>
+                        </div>
+                    </div>
+
+                    <div class="doctor-contact">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="contact-text">
+                                {{ $appointment->doctor->governorate->name }} - {{ $appointment->doctor->city->name }}
+                            </div>
+                        </div>
+
+                        @if($appointment->doctor->address)
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="bi bi-building"></i>
+                                </div>
+                                <div class="contact-text">
+                                    {{ $appointment->doctor->address }}
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($appointment->doctor->phone)
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="bi bi-telephone-fill"></i>
+                                </div>
+                                <div class="contact-text">
+                                    {{ $appointment->doctor->phone }}
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- بطاقة المساعدة والدعم -->
+                <div class="support-card">
+                    <div class="card-header">
+                        <div class="section-title">
+                            <i class="bi bi-headset"></i>
+                            مساعدة ودعم
+                        </div>
+                    </div>
+                    <div class="support-content">
+                        <p>هل تواجه مشكلة أو لديك استفسار بخصوص موعدك؟</p>
+                        <div class="support-options">
+                            <a href="tel:+201066181942" class="support-option">
+                                <i class="bi bi-telephone-fill"></i>
+                                <span>+201066181942</span>
+                            </a>
+                            <a href="mailto:support@clinic.com" class="support-option">
+                                <i class="bi bi-envelope-fill"></i>
+                                <span>support@clinic.com</span>
+                            </a>
+                            <a href="#" class="support-option">
+                                <i class="bi bi-chat-dots-fill"></i>
+                                <span>محادثة مباشرة</span>
+                            </a>
                         </div>
                     </div>
                 </div>
-                <div class="card-body pt-0 px-4">
-                    <!-- معلومات الموعد -->
-                    <div class="appointment-info mt-3">
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <div class="info-icon">
-                                        <i class="bi bi-calendar2-event"></i>
-                                    </div>
-                                    <div class="info-content">
-                                        <span class="info-label">تاريخ الموعد</span>
-                                        <h6 class="info-value mb-0">
-                                            {{ $appointment->scheduled_at->locale('ar')->translatedFormat('l d F Y') }}
-                                        </h6>
+            </div>
+            <div class="col-lg-8">
+                <!-- بطاقة تفاصيل الموعد -->
+                <div class="appointment-card mb-4 h-100">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between w-100">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="header-icon {{ $appointment->status }}">
+                                    <i class="bi bi-calendar-check-fill"></i>
+                                </div>
+                                <div>
+                                    <h1 class="card-title">تفاصيل الحجز</h1>
+                                    <div class="status-badge {{ $appointment->status }}">
+                                        <i class="bi bi-circle-fill me-2"></i>
+                                        {{ $appointment->status_text }}
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <div class="info-icon">
-                                        <i class="bi bi-clock"></i>
+
+                            <!-- أزرار الإجراءات في الهيدر -->
+                            @if($appointment->status === 'scheduled')
+                                <div class="header-actions">
+
+                                    <button type="button" class="btn btn-danger" id="cancelbtn">
+                                        <i class="bi bi-x-circle me-2"></i>
+                                        إلغاء الموعد
+                                    </button>
+
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- معلومات الموعد الرئيسية -->
+                    <div class="appointment-info-section">
+                        <div class="section-title">
+                            <i class="bi bi-info-circle-fill"></i>
+                            معلومات الموعد
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon date">
+                                    <i class="bi bi-calendar2-event"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <div class="stat-label">تاريخ الموعد</div>
+                                    <div class="stat-value">
+                                        {{ $appointment->scheduled_at->locale('ar')->translatedFormat('l') }}
                                     </div>
-                                    <div class="info-content">
-                                        <span class="info-label">وقت الكشف</span>
-                                        <h6 class="info-value mb-0">
-                                            {{ $appointment->scheduled_at->format('h:i A') }}
-                                        </h6>
+                                    <div class="stat-subtext">
+                                        {{ $appointment->scheduled_at->locale('ar')->translatedFormat('d F Y') }}
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <div class="info-icon status-{{ $appointment->status }}">
-                                        <i class="bi bi-circle-fill"></i>
-                                    </div>
-                                    <div class="info-content">
-                                        <span class="info-label">حالة الموعد</span>
-                                        <h6 class="info-value status-text-{{ $appointment->status }} mb-0">
-                                            {{ $appointment->status_text }}
-                                        </h6>
+
+                            <div class="stat-card">
+                                <div class="stat-icon time">
+                                    <i class="bi bi-clock"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <div class="stat-label">وقت الكشف</div>
+                                    <div class="stat-value">{{ $appointment->scheduled_at->format('h:i A') }}</div>
+                                    <div class="stat-subtext">مدة الانتظار {{ $appointment->doctor->waiting_time ?? 30 }}
+                                        دقيقة</div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon price">
+                                    <i class="bi bi-cash-stack"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <div class="stat-label">تكلفة الكشف</div>
+                                    <div class="stat-value">{{ $appointment->fees }} <span class="currency">ج.م</span></div>
+                                    <div class="stat-badge {{ $appointment->is_paid ? 'paid' : 'unpaid' }}">
+                                        <i
+                                            class="bi {{ $appointment->is_paid ? 'bi-check-circle-fill' : 'bi-clock-history' }}"></i>
+                                        {{ $appointment->is_paid ? 'مدفوع' : 'غير مدفوع' }}
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="info-item">
-                                    <div class="info-icon">
-                                        <i class="bi bi-cash-stack"></i>
-                                    </div>
-                                    <div class="info-content">
-                                        <span class="info-label">تكلفة الكشف</span>
-                                        <h6 class="info-value mb-0">
-                                            {{ $appointment->fees }} جنيه
-                                            <span class="payment-badge {{ $appointment->is_paid ? 'paid' : 'unpaid' }}">
-                                                {{ $appointment->is_paid ? 'مدفوع' : 'غير مدفوع' }}
-                                            </span>
-                                        </h6>
+
+                            <div class="stat-card">
+                                <div class="stat-icon id">
+                                    <i class="bi bi-upc-scan"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <div class="stat-label">رقم الحجز</div>
+                                    <div class="stat-value">#{{ str_pad($appointment->id, 4, '0', STR_PAD_LEFT) }}</div>
+                                    <div class="stat-subtext">{{ $appointment->created_at->locale('ar')->diffForHumans() }}
                                     </div>
                                 </div>
                             </div>
@@ -97,353 +225,886 @@
                     </div>
 
                     @if($appointment->notes)
-                    <!-- ملاحظات الموعد -->
-                    <div class="appointment-notes mt-4">
-                        <h6 class="section-title">
-                            <i class="bi bi-journal-text text-primary me-2"></i>
-                            ملاحظات
-                        </h6>
-                        <div class="notes-content p-3 bg-light rounded-3 text-secondary">
-                            {{ $appointment->notes }}
+                        <!-- ملاحظات الموعد -->
+                        <div class="appointment-notes-section">
+                            <div class="section-title">
+                                <i class="bi bi-journal-text"></i>
+                                ملاحظات الموعد
+                            </div>
+                            <div class="notes-content">
+                                {{ $appointment->notes }}
+                            </div>
                         </div>
-                    </div>
                     @endif
 
-                    <!-- تذكيرات وتعليمات -->
-                    <div class="instructions mt-4">
-                        <h6 class="section-title">
-                            <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                    <!-- تعليمات هامة -->
+                    <div class="instructions-section">
+                        <div class="section-title">
+                            <i class="bi bi-exclamation-triangle"></i>
                             تعليمات هامة
-                        </h6>
-                        <div class="instructions-content p-3 bg-light rounded-3">
-                            <ul class="instructions-list mb-0 text-secondary">
-                                <li>يرجى الوصول قبل الموعد المحدد ب 15-20 دقيقة لإتمام إجراءات التسجيل</li>
-                                <li>يجب إحضار البطاقة الشخصية وأي تقارير طبية سابقة إن وجدت</li>
-                                <li>يمكنك إلغاء الحجز قبل 24 ساعة على الأقل من موعد الكشف</li>
-                                <li>في حالة التأخير أكثر من 20 دقيقة، قد يتم تأجيل الموعد</li>
+                        </div>
+                        <div class="instructions-content">
+                            <ul class="instructions-list">
+                                <li>
+                                    <span class="instruction-icon"><i class="bi bi-clock-history"></i></span>
+                                    <span>يرجى الوصول قبل الموعد المحدد بـ 15-20 دقيقة لإتمام إجراءات التسجيل</span>
+                                </li>
+                                <li>
+                                    <span class="instruction-icon"><i class="bi bi-file-earmark-medical"></i></span>
+                                    <span>يجب إحضار البطاقة الشخصية وأي تقارير طبية سابقة إن وجدت</span>
+                                </li>
+                                <li>
+                                    <span class="instruction-icon"><i class="bi bi-x-circle"></i></span>
+                                    <span>في حالة الرغبة في إلغاء الموعد، يرجى الإلغاء قبل 24 ساعة على الأقل</span>
+                                </li>
+                                <li>
+                                    <span class="instruction-icon"><i class="bi bi-telephone"></i></span>
+                                    <span>في حالة وجود استفسارات يمكنكم التواصل عبر رقم الدعم: +201066181942</span>
+                                </li>
                             </ul>
                         </div>
                     </div>
-
-                    <!-- أزرار إجراءات -->
-                    @if($appointment->status === 'scheduled')
-                    <div class="appointment-actions mt-4 text-center">
-                        <form action="{{ route('appointments.cancel', $appointment) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من إلغاء هذا الموعد؟')">
-                            @csrf
-                            @method('PUT')
-                            <button type="submit" class="btn btn-outline-danger">
-                                <i class="bi bi-x-circle me-2"></i>
-                                إلغاء الموعد
-                            </button>
-                        </form>
-                    </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <!-- بطاقة معلومات الطبيب -->
-            <div class="card rounded-4 mb-4 shadow-sm">
-                <div class="card-header border-0 bg-white pt-4 pb-0 px-4">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <i class="bi bi-person-badge text-primary me-1"></i>
-                        <h6 class="card-title mb-0 fw-bold">معلومات الطبيب</h6>
-                    </div>
-                </div>
-                <div class="card-body pt-0 px-4">
-                    <div class="doctor-profile text-center">
-                        <div class="doctor-avatar-wrapper mx-auto mb-3">
-                            @if($appointment->doctor->image)
-                            <img src="{{ asset('storage/' . $appointment->doctor->image) }}" alt="{{ $appointment->doctor->name }}" class="doctor-avatar"
-                                 onerror="this.src='{{ asset('images/default-doctor.png') }}'; this.onerror=null;">
-                            @else
-                            <div class="doctor-avatar-placeholder">
-                                <i class="bi bi-person-fill"></i>
-                            </div>
-                            @endif
-                        </div>
-                        <h5 class="doctor-name mb-1">{{ $appointment->doctor->gender == 'ذكر' ? 'د.' : 'د.' }} {{ $appointment->doctor->name }}</h5>
-                        <p class="doctor-title text-primary mb-2">{{ $appointment->doctor->title }}</p>
-
-                        <div class="categories mb-3">
-                            @foreach($appointment->doctor->categories as $category)
-                            <span class="category-badge">{{ $category->name }}</span>
-                            @endforeach
-                        </div>
-
-                        <div class="contact-info">
-                            <div class="contact-item">
-                                <i class="bi bi-geo-alt-fill"></i>
-                                <span>
-                                    {{ $appointment->doctor->governorate->name }} - {{ $appointment->doctor->city->name }}
-                                </span>
-                            </div>
-                            <div class="contact-item">
-                                <i class="bi bi-building"></i>
-                                <span>{{ $appointment->doctor->address ?: 'عنوان العيادة غير متوفر' }}</span>
-                            </div>
-                            @if($appointment->doctor->phone)
-                            <div class="contact-item">
-                                <i class="bi bi-telephone-fill"></i>
-                                <span>{{ $appointment->doctor->phone }}</span>
-                            </div>
-                            @endif
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            <!-- بطاقة المساعدة والدعم -->
-            <div class="card support-card rounded-4 shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title mb-3">
-                        <i class="bi bi-headset text-primary me-2"></i>
-                        مساعدة ودعم
-                    </h6>
-                    <p class="text-muted">هل تواجه مشكلة أو لديك استفسار بخصوص موعدك؟</p>
-                    <div class="support-contact">
-                        <div class="support-item mb-2">
-                            <i class="bi bi-telephone"></i>
-                            <span>02-123456789</span>
-                        </div>
-                        <div class="support-item">
-                            <i class="bi bi-envelope"></i>
-                            <span>support@clinic.com</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-</div>
 
-<style>
-/* رسالة التأكيد */
-.custom-alert {
-    border-radius: 12px;
-    border-left: 5px solid #28a745;
-    padding: 1.25rem;
-    background: linear-gradient(to right, rgba(40, 167, 69, 0.05), transparent);
-}
+    @push('scripts')
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // إضافة معالج الحدث لزر الإلغاء
+                const cancelbtn = document.getElementById('cancelbtn');
 
-.alert-icon {
-    font-size: 2rem;
-    color: #28a745;
-    margin-right: 1.25rem;
-}
+                if (cancelbtn) {
+                    cancelbtn.addEventListener('click', function (e) {
 
-.alert-content h6 {
-    font-weight: 600;
-    color: #28a745;
-}
+                        // إظهار النافذة المنبثقة لتأكيد الإلغاء
+                        showCancellationPopup();
+                    });
+                }
 
-/* بطاقات المعلومات */
-.appointment-card {
-    border: none;
-    overflow: hidden;
-}
+                // إغلاق النافذة المنبثقة عند النقر خارجها
+                document.addEventListener('click', function (e) {
+                    const popup = document.getElementById('cancellationPopup');
+                    const popupContent = document.querySelector('.popup-content');
 
-.header-icon {
-    font-size: 2rem;
-    color: var(--bs-primary);
-    background-color: rgba(var(--bs-primary-rgb), 0.1);
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
+                    if (popup && e.target === popup && !popupContent.contains(e.target)) {
+                        popup.classList.remove('show');
+                    }
+                });
+            });
 
-/* عناصر المعلومات */
-.info-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-}
+            // دالة لإظهار النافذة المنبثقة
+            function showCancellationPopup() {
+                // إنشاء النافذة المنبثقة إذا لم تكن موجودة بالفعل
+                let popup = document.getElementById('cancellationPopup');
 
-.info-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
-    background-color: #f8f9fa;
-    color: #6c757d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    flex-shrink: 0;
-    transition: all 0.3s ease;
-}
+                if (!popup) {
+                    popup = document.createElement('div');
+                    popup.id = 'cancellationPopup';
+                    popup.className = 'popup-overlay';
 
-.info-content {
-    flex: 1;
-}
+                    const popupHTML = `
+                            <div class="popup-content">
+                                <div class="popup-header">
+                                    <div class="popup-icon warning">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                    </div>
+                                    <h3 class="popup-title">تأكيد إلغاء الموعد</h3>
+                                </div>
+                                <div class="popup-body">
+                                    <p>هل أنت متأكد من إلغاء هذا الموعد؟</p>
+                                    <p class="text-danger small">لا يمكن التراجع عن هذه العملية بعد تأكيدها.</p>
+                                </div>
+                                <div class="popup-actions">
+                                    <button type="button" class="btn btn-outline-secondary" id="cancelButton">
+                                        تراجع
+                                    </button>
 
-.info-label {
-    display: block;
-    color: #6c757d;
-    font-size: 0.875rem;
-    margin-bottom: 0.25rem;
-}
+                                     <form action="{{ route('appointments.cancel', $appointment) }}" method="POST"  >
+                                                @csrf
+                                                @method('PUT')
+                                                  <button type="submit" class="btn btn-danger" id="confirmButton">
+                                                    <i class="bi bi-x-circle me-2"></i>
+                                                    تأكيد الإلغاء
+                                                </button>
+                                            </form>
 
-.info-value {
-    color: #212529;
-    font-weight: 600;
-}
 
-/* أيقونات الحالة */
-.info-icon.status-scheduled {
-    background-color: rgba(var(--bs-primary-rgb), 0.1);
-    color: var(--bs-primary);
-}
+                                </div>
+                            </div>
+                        `;
 
-.info-icon.status-completed {
-    background-color: rgba(40, 167, 69, 0.1);
-    color: #28a745;
-}
+                    popup.innerHTML = popupHTML;
+                    document.body.appendChild(popup);
 
-.info-icon.status-cancelled {
-    background-color: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
-}
+                    // إضافة أحداث للأزرار
+                    const cancelButton = document.getElementById('cancelButton');
+                    const confirmButton = document.getElementById('confirmButton');
 
-.status-text-scheduled {
-    color: var(--bs-primary);
-}
+                    cancelButton.addEventListener('click', function () {
+                        popup.classList.remove('show');
+                    });
 
-.status-text-completed {
-    color: #28a745;
-}
+                    // confirmButton.addEventListener('click', function() {
+                    //     document.getElementById('cancelForm').submit();
+                    // });
+                }
 
-.status-text-cancelled {
-    color: #dc3545;
-}
+                // إظهار النافذة المنبثقة
+                popup.classList.add('show');
+            }
+        </script>
+    @endpush
 
-/* شارات الدفع */
-.payment-badge {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 50px;
-    font-size: 0.75rem;
-    margin-right: 0.5rem;
-}
+    @push('styles')
+        <style>
+            /* ======= POPUP STYLES ======= */
+            .popup-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(4px);
+            }
 
-.payment-badge.paid {
-    background-color: rgba(40, 167, 69, 0.1);
-    color: #28a745;
-}
+            .popup-overlay.show {
+                opacity: 1;
+                visibility: visible;
+            }
 
-.payment-badge.unpaid {
-    background-color: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
-}
+            .popup-content {
+                background-color: white;
+                border-radius: 15px;
+                width: 100%;
+                max-width: 450px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                transform: translateY(20px);
+                transition: transform 0.3s ease;
+                overflow: hidden;
+            }
 
-/* عناوين الأقسام */
-.section-title {
-    font-weight: 600;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-}
+            .popup-overlay.show .popup-content {
+                transform: translateY(0);
+            }
 
-/* قائمة التعليمات */
-.instructions-list {
-    padding-right: 1rem;
-}
+            .popup-header {
+                padding: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
 
-.instructions-list li {
-    margin-bottom: 0.75rem;
-    position: relative;
-}
+            .popup-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
 
-.instructions-list li:last-child {
-    margin-bottom: 0;
-}
+            .popup-icon.warning {
+                background: linear-gradient(135deg, rgba(227, 52, 47, 0.1) 0%, rgba(220, 38, 38, 0.15) 100%);
+                color: var(--danger-color);
+                font-size: 1.5rem;
+            }
 
-/* معلومات الطبيب */
-.doctor-avatar-wrapper {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+            .popup-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin: 0;
+                color: #2d3748;
+            }
 
-.doctor-avatar, .doctor-avatar-placeholder {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+            .popup-body {
+                padding: 1.5rem;
+                color: #4a5568;
+            }
 
-.doctor-avatar-placeholder {
-    background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.2), rgba(var(--bs-primary-rgb), 0.1));
-    color: var(--bs-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-}
+            .popup-body p {
+                margin-bottom: 0.75rem;
+            }
 
-.doctor-name {
-    font-weight: 600;
-}
+            .popup-body p:last-child {
+                margin-bottom: 0;
+            }
 
-.doctor-title {
-    font-size: 0.9rem;
-}
+            .popup-actions {
+                padding: 1rem 1.5rem;
+                display: flex;
+                justify-content: flex-end;
+                gap: 0.75rem;
+                background-color: #f8fafc;
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+            }
 
-.categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    justify-content: center;
-}
+            @media (max-width: 576px) {
+                .popup-content {
+                    max-width: calc(100% - 2rem);
+                    margin: 0 1rem;
+                }
 
-.category-badge {
-    background-color: rgba(var(--bs-primary-rgb), 0.1);
-    color: var(--bs-primary);
-    padding: 0.25rem 0.75rem;
-    border-radius: 50px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
+                .popup-actions {
+                    flex-direction: column-reverse;
+                }
 
-.contact-info {
-    margin-top: 1rem;
-}
+                .popup-actions button {
+                    width: 100%;
+                }
+            }
 
-.contact-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: #6c757d;
-}
+            /* ======= VARIABLES ======= */
+            :root {
+                --primary-color: #4361ee;
+                --primary-light: rgba(67, 97, 238, 0.1);
+                --success-color: #38c172;
+                --success-light: rgba(56, 193, 114, 0.1);
+                --danger-color: #e3342f;
+                --danger-light: rgba(227, 52, 47, 0.1);
+                --warning-color: #f6993f;
+                --warning-light: rgba(246, 153, 63, 0.1);
+                --info-color: #3490dc;
+                --info-light: rgba(52, 144, 220, 0.1);
+                --scheduled-color: #9333ea;
+                /* لون أرجواني لحالة في الانتظار */
+                --scheduled-light: rgba(147, 51, 234, 0.1);
+                /* خلفية شفافة للون الأرجواني */
+                --border-radius: 15px;
+            }
 
-.contact-item i {
-    color: var(--bs-primary);
-}
+            /* ======= GENERAL STYLES ======= */
+            body {
+                background-color: #f8fafc;
+            }
 
-/* بطاقة الدعم */
-.support-card {
-    border: none;
-    background: linear-gradient(135deg, #f8f9fa, #fff);
-}
+            /* ======= ALERT CARD ======= */
+            .alert-card {
+                display: flex;
+                padding: 1.5rem;
+                border-radius: var(--border-radius);
+                background: #ffffff;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                border-right: 5px solid var(--success-color);
+                animation: fadeIn 0.5s ease;
+            }
 
-.support-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.95rem;
-}
+            .alert-card.success {
+                border-right-color: var(--success-color);
+            }
 
-.support-item i {
-    color: var(--bs-primary);
-}
-</style>
+            .alert-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                background-color: var(--success-light);
+                margin-left: 1.5rem;
+                flex-shrink: 0;
+            }
+
+            .alert-card.success .alert-icon {
+                background-color: var(--success-light);
+                color: var(--success-color);
+            }
+
+            .alert-icon i {
+                font-size: 1.5rem;
+            }
+
+            .alert-content {
+                flex: 1;
+            }
+
+            .alert-heading {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                font-size: 1.1rem;
+                color: var(--success-color);
+            }
+
+            .alert-card.success .alert-heading {
+                color: var(--success-color);
+            }
+
+            /* ======= APPOINTMENT CARD STYLES ======= */
+            .appointment-card,
+            .doctor-card,
+            .support-card {
+                background: #ffffff;
+                border-radius: var(--border-radius);
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            }
+
+            .card-header {
+                padding: 1rem;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+                position: relative;
+            }
+
+            .header-icon {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.75rem;
+                flex-shrink: 0;
+            }
+
+            .header-icon.scheduled {
+                background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%);
+                color: #9333ea;
+            }
+
+            .header-icon.completed {
+                background-color: var(--success-light);
+                color: var(--success-color);
+            }
+
+            .header-icon.cancelled {
+                background-color: var(--danger-light);
+                color: var(--danger-color);
+            }
+
+            .card-title {
+                margin: 0;
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #2d3748;
+            }
+
+            .status-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.25rem 0.75rem;
+                border-radius: 50px;
+                font-size: 0.875rem;
+                margin-top: 0.5rem;
+            }
+
+            .status-badge.scheduled {
+                background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%);
+                color: #9333ea;
+            }
+
+            .status-badge.completed {
+                background-color: var(--success-light);
+                color: var(--success-color);
+            }
+
+            .status-badge.cancelled {
+                background-color: var(--danger-light);
+                color: var(--danger-color);
+            }
+
+            .status-badge i {
+                font-size: 0.75rem;
+            }
+
+            /* ======= HEADER ACTIONS ======= */
+            .header-actions {
+                display: flex;
+                align-items: center;
+            }
+
+            .header-actions .btn-danger {
+                background-color: var(--danger-color);
+                border-color: var(--danger-color);
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+                transition: all 0.3s ease;
+                white-space: nowrap;
+            }
+
+            .header-actions .btn-danger:hover {
+                background-color: #d32f2f;
+                box-shadow: 0 4px 8px rgba(227, 52, 47, 0.25);
+                transform: translateY(-2px);
+            }
+
+            /* ======= SECTIONS STYLES ======= */
+            .appointment-info-section,
+            .appointment-notes-section,
+            .instructions-section,
+            .actions-section {
+                padding: 1.5rem;
+            }
+
+            .actions-section {
+                padding: 1.5rem;
+                border-bottom: none;
+                text-align: center;
+            }
+
+            .section-title {
+                display: flex;
+                align-items: center;
+                font-weight: 600;
+                color: #2d3748;
+            }
+
+            .section-title i {
+                margin-left: 0.75rem;
+                font-size: 1.25rem;
+                color: var(--primary-color);
+            }
+
+            /* ======= STATS GRID STYLES ======= */
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .stat-card {
+                display: flex;
+                align-items: flex-start;
+                border-radius: 12px;
+                padding: 1rem;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+
+
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.25rem;
+                margin-left: 1rem;
+                flex-shrink: 0;
+            }
+
+            .stat-icon.date {
+                background-color: var(--primary-light);
+                color: var(--primary-color);
+            }
+
+            .stat-icon.time {
+                background-color: var(--info-light);
+                color: var(--info-color);
+            }
+
+            .stat-icon.price {
+                background-color: var(--success-light);
+                color: var(--success-color);
+            }
+
+            .stat-icon.id {
+                background-color: var(--warning-light);
+                color: var(--warning-color);
+            }
+
+            .stat-details {
+                flex: 1;
+            }
+
+            .stat-label {
+                font-size: 0.875rem;
+                color: #64748b;
+                margin-bottom: 0.25rem;
+            }
+
+            .stat-value {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #2d3748;
+                margin-bottom: 0.25rem;
+                line-height: 1.2;
+            }
+
+            .stat-value .currency {
+                font-size: 0.875rem;
+                font-weight: normal;
+                margin-right: 0.25rem;
+            }
+
+            .stat-subtext {
+                font-size: 0.875rem;
+                color: #64748b;
+            }
+
+            .stat-badge {
+                display: inline-flex;
+                align-items: center;
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+                border-radius: 50px;
+            }
+
+            .stat-badge.paid {
+                background-color: var(--success-light);
+                color: var(--success-color);
+            }
+
+            .stat-badge.unpaid {
+                background-color: var(--warning-light);
+                color: var(--warning-color);
+            }
+
+            .stat-badge i {
+                margin-left: 0.25rem;
+            }
+
+            /* ======= NOTES SECTION STYLES ======= */
+            .notes-content {
+                background-color: #f8fafc;
+                border-radius: 12px;
+                padding: 1rem;
+                color: #4a5568;
+                line-height: 1.6;
+            }
+
+            /* ======= INSTRUCTIONS SECTION STYLES ======= */
+            .instructions-content {
+                border-radius: 12px;
+                padding: 1rem;
+            }
+
+            .instructions-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .instructions-list li {
+                display: flex;
+                margin-bottom: 0.875rem;
+                color: #4a5568;
+            }
+
+            .instructions-list li:last-child {
+                margin-bottom: 0;
+            }
+
+            .instruction-icon {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background-color: var(--primary-light);
+                color: var(--primary-color);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.75rem;
+                margin-left: 0.75rem;
+                flex-shrink: 0;
+            }
+
+            /* ======= DOCTOR CARD STYLES ======= */
+            .doctor-profile {
+                padding: 1.5rem;
+                text-align: center;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .doctor-avatar {
+                width: 120px;
+                height: 120px;
+                margin: 0 auto 1rem;
+                position: relative;
+                border-radius: 50%;
+                overflow: hidden;
+                border: 4px solid #fff;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            }
+
+            .doctor-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .avatar-placeholder {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(45deg, #e9ecef 0%, #f8f9fa 100%);
+                color: #6c757d;
+                font-size: 3rem;
+            }
+
+            .doctor-name {
+                margin-bottom: 0.25rem;
+                font-weight: 600;
+                color: #2d3748;
+                font-size: 1.25rem;
+            }
+
+            .doctor-title {
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+                font-size: 0.95rem;
+            }
+
+            .doctor-categories {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                justify-content: center;
+                margin-bottom: 1rem;
+            }
+
+            .category-badge {
+                padding: 0.25rem 0.75rem;
+                border-radius: 50px;
+                font-size: 0.75rem;
+                background-color: #e9ecef;
+                color: #495057;
+            }
+
+            .category-badge-0 {
+                background-color: #e3f2fd;
+                color: #0d6efd;
+            }
+
+            .category-badge-1 {
+                background-color: #e8f5e9;
+                color: #28a745;
+            }
+
+            .category-badge-2 {
+                background-color: #fff3cd;
+                color: #ffc107;
+            }
+
+            .category-badge-3 {
+                background-color: #f8d7da;
+                color: #dc3545;
+            }
+
+            .category-badge-4 {
+                background-color: #d1ecf1;
+                color: #17a2b8;
+            }
+
+            .category-badge-5 {
+                background-color: #f5e6ff;
+                color: #6610f2;
+            }
+
+            .doctor-rating {
+                margin-bottom: 0.5rem;
+            }
+
+            .stars {
+                color: #ffc107;
+                font-size: 1.1rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .rating-text {
+                color: #6c757d;
+                font-size: 0.875rem;
+            }
+
+            .doctor-contact {
+                padding: 1.5rem;
+            }
+
+            .contact-item {
+                display: flex;
+                margin-bottom: 0.75rem;
+            }
+
+            .contact-item:last-child {
+                margin-bottom: 0;
+            }
+
+            .contact-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 8px;
+                background-color: var(--primary-light);
+                color: var(--primary-color);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+                margin-left: 1rem;
+                flex-shrink: 0;
+            }
+
+            .contact-text {
+                flex: 1;
+                font-size: 0.95rem;
+                color: #4a5568;
+                display: flex;
+                align-items: center;
+            }
+
+            /* ======= SUPPORT CARD STYLES ======= */
+            .support-content {
+                padding: 1.5rem;
+            }
+
+            .support-content p {
+                margin-bottom: 1rem;
+                color: #4a5568;
+            }
+
+            .support-options {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .support-option {
+                display: flex;
+                align-items: center;
+                padding: 8px;
+                border-radius: 8px;
+                color: #4a5568;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+
+            .support-option:hover {
+                background-color: var(--primary-light);
+                color: var(--primary-color);
+                transform: translateY(-2px);
+            }
+
+            .support-option i {
+                margin-left: 0.75rem;
+                font-size: 1.1rem;
+                color: var(--primary-color);
+            }
+
+            /* ======= BUTTONS STYLES ======= */
+            .btn {
+                font-weight: 500;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .btn-danger {
+                background-color: var(--danger-color);
+                border-color: var(--danger-color);
+            }
+
+            /* ======= ANIMATIONS ======= */
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* ======= RESPONSIVE STYLES ======= */
+            @media (max-width: 991.98px) {
+                .stats-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .header-icon {
+                    width: 56px;
+                    height: 56px;
+                    font-size: 1.5rem;
+                }
+
+                .card-title {
+                    font-size: 1.35rem;
+                }
+
+                .doctor-avatar {
+                    width: 100px;
+                    height: 100px;
+                }
+
+                .card-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+
+                .header-actions {
+                    align-self: flex-end;
+                    margin-top: -2rem;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+                .alert-card {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    border-right: none;
+                    border-top: 5px solid var(--success-color);
+                }
+
+                .alert-icon {
+                    margin: 0 0 1rem 0;
+                }
+
+                .appointment-info-section,
+                .appointment-notes-section,
+                .instructions-section,
+                .actions-section {
+                    padding: 1.25rem;
+                }
+
+                .doctor-contact {
+                    padding: 1.25rem;
+                }
+
+                .support-content {
+                    padding: 1.25rem;
+                }
+
+                .card-header .d-flex {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    width: 100%;
+                }
+
+                .header-actions {
+                    margin-top: 1rem;
+                    width: 100%;
+                }
+
+                .header-actions form {
+                    width: 100%;
+                }
+
+                .header-actions .btn-danger {
+                    width: 100%;
+                }
+            }
+        </style>
+    @endpush
 @endsection
