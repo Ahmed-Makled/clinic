@@ -450,15 +450,28 @@ class AppointmentsController extends Controller
 
             // تحقق من نوع المستخدم وتوجيهه بشكل مناسب
             $user = auth()->user();
+
+            // إعداد الرسائل المناسبة حسب نوع المستخدم
             if ($user->hasRole('Admin') || $user->hasRole('Doctor')) {
-                // للمشرفين والأطباء، عودة للصفحة السابقة
+                // للمشرفين والأطباء
+                $doctor = $appointment->doctor;
+                $patient = $appointment->patient;
+                $successMessage = "تم إلغاء موعد المريض {$patient->name} مع الدكتور {$doctor->name} بنجاح";
+
                 Log::info('Admin/Doctor redirect: back with success message');
-                return redirect()->back()->with('success', 'تم إلغاء الموعد بنجاح');
+                return redirect()->back()->with('success', $successMessage);
             } else {
-                // للمستخدمين العاديين، توجيه إلى صفحة تفاصيل الموعد الملغي
+                // للمرضى
+                $doctor = $appointment->doctor;
+                $appointmentDate = $appointment->scheduled_at->locale('ar')->translatedFormat('l d F Y');
+                $appointmentTime = $appointment->scheduled_at->format('h:i A');
+
+                $successMessage = "تم إلغاء موعدك مع د. {$doctor->name} بتاريخ {$appointmentDate} الساعة {$appointmentTime} بنجاح";
+                $successMessage .= ".<br/>يمكنك حجز موعد جديد في أي وقت من صفحة الأطباء.";
+
                 Log::info('Patient redirect: to appointment details with success message');
                 return redirect()->route('appointments.show', $appointment)
-                    ->with('success', 'تم إلغاء الموعد بنجاح. يمكنك حجز موعد آخر في أي وقت.');
+                    ->with('success', $successMessage);
             }
         } catch (\Exception $e) {
             // سجل الخطأ بتفاصيل أكثر

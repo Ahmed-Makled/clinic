@@ -11,7 +11,7 @@
                     <i class="bi bi-check-circle-fill"></i>
                 </div>
                 <div class="alert-content">
-                    <h6 class="alert-heading">تم تأكيد الحجز بنجاح!</h6>
+                    <h6 class="alert-heading">تمت العملية بنجاح!</h6>
                     <p class="mb-0">{!! session('success') !!}</p>
                 </div>
             </div>
@@ -278,7 +278,6 @@
 
                 if (cancelbtn) {
                     cancelbtn.addEventListener('click', function (e) {
-
                         // إظهار النافذة المنبثقة لتأكيد الإلغاء
                         showCancellationPopup();
                     });
@@ -322,35 +321,44 @@
                                         تراجع
                                     </button>
 
-                                     <form action="{{ route('appointments.cancel', $appointment) }}" method="POST"  >
-                                                @csrf
-                                                @method('PUT')
-                                                  <button type="submit" class="btn btn-danger" id="confirmButton">
-                                                    <i class="bi bi-x-circle me-2"></i>
-                                                    تأكيد الإلغاء
-                                                </button>
-                                            </form>
-
-
+                                    <form action="{{ route('appointments.cancel', $appointment) }}" method="POST" id="cancelForm">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="btn btn-danger" id="confirmButton">
+                                            <i class="bi bi-x-circle me-2"></i>
+                                            تأكيد الإلغاء
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         `;
 
                     popup.innerHTML = popupHTML;
                     document.body.appendChild(popup);
-
-                    // إضافة أحداث للأزرار
-                    const cancelButton = document.getElementById('cancelButton');
-                    const confirmButton = document.getElementById('confirmButton');
-
-                    cancelButton.addEventListener('click', function () {
-                        popup.classList.remove('show');
-                    });
-
-                    // confirmButton.addEventListener('click', function() {
-                    //     document.getElementById('cancelForm').submit();
-                    // });
                 }
+
+                // إضافة أحداث للأزرار - نضيفها في كل مرة لضمان عملها
+                const cancelButton = document.getElementById('cancelButton');
+                const confirmButton = document.getElementById('confirmButton');
+                const cancelForm = document.getElementById('cancelForm');
+
+                // إزالة المستمعين القديمة لمنع التكرار
+                cancelButton.replaceWith(cancelButton.cloneNode(true));
+                confirmButton.replaceWith(confirmButton.cloneNode(true));
+
+                // إعادة تعريف المتغيرات بعد الإعادة
+                const newCancelButton = document.getElementById('cancelButton');
+                const newConfirmButton = document.getElementById('confirmButton');
+
+                // إضافة المستمعين الجدد
+                newCancelButton.addEventListener('click', function () {
+                    popup.classList.remove('show');
+                });
+
+                // ضمان عدم منع السلوك الافتراضي للنموذج
+                cancelForm.addEventListener('submit', function(e) {
+                    // السماح بتقديم النموذج بشكل طبيعي
+                });
 
                 // إظهار النافذة المنبثقة
                 popup.classList.add('show');
