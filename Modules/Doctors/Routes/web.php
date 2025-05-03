@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Modules\Doctors\Http\Controllers\DoctorsController;
 
 Route::prefix('doctors')->group(function () {
-    // Public routes
-    Route::get('profiles', [DoctorsController::class, 'profiles'])->name('doctors.profiles');
 
     // Admin routes
     Route::middleware(['auth:web', 'role:Admin'])->group(function () {

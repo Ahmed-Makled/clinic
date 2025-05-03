@@ -7,7 +7,7 @@
                 <h5 class="footer-heading mb-4">روابط المرضى</h5>
                 <ul class="footer-links">
                     <li><a href="{{ route('appointments.index') }}">مواعيدي</a></li>
-                    <li><a href="{{ route('doctors.profiles') }}">البحث عن طبيب</a></li>
+                    <li><a href="{{ route('search') }}">البحث عن طبيب</a></li>
                     <li><a href="{{ route('specialties.index') }}">التخصصات الطبية</a></li>
                     <li><a href="">السجل الطبي</a></li>
                     <li><a href="">التأمين الطبي</a></li>

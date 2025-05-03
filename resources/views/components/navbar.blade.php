@@ -16,11 +16,6 @@
                         <i class="bi bi-house me-1"></i>الرئيسية
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->is('doctors*') ? 'active' : '' }}" href="{{ route('doctors.profiles') }}">
-                        <i class="bi bi-person-vcard me-1"></i>الأطباء
-                    </a>
-                </li>
 
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('contact*') ? 'active' : '' }}" href="{{ route('contact') }}">

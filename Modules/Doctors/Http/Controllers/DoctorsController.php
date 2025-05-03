@@ -333,26 +333,6 @@ class DoctorsController extends Controller
         }
     }
 
-    public function profiles(Request $request)
-    {
-        $query = Doctor::with(['categories', 'user', 'governorate', 'city'])
-            ->where('status', true)
-            ->whereHas('user', function ($q) {
-                $q->where('status', true);
-            });
-
-        $query = $this->applyFilters($query, $request);
-
-        $doctors = $query->latest()
-            ->paginate(12)
-            ->withQueryString();
-
-        $categories = Category::active()->get();
-        $governorates = Governorate::all();
-
-        return view('doctors::profiles', compact('doctors', 'categories', 'governorates'));
-    }
-
     public function destroy(Doctor $doctor)
     {
         $doctorName = $doctor->name;
