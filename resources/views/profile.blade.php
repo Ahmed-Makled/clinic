@@ -794,24 +794,6 @@
             }
 
 
-            .section-icon.blue {
-                background-color: #f2f2f2;
-                color: #444444;
-            }
-
-            .section-icon.green {
-                background-color: #f2f2f2;
-                color: #444444;
-            }
-
-            .section-icon.yellow {
-                background-color: #f2f2f2;
-                color: #666666;
-            }
-
-            .section-icon i {
-                font-size: 20px;
-            }
 
             /* معلومات الملف الشخصي */
             .profile-info {
