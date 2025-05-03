@@ -25,13 +25,8 @@ Route::get('/governorates/{governorate}/cities', [GovernorateController::class, 
 Route::get('/governorates/{governorate}/cities', [PageController::class, 'getCities'])->name('governorates.cities');
 Route::get('/doctors/filter', [DoctorsController::class, 'filter'])->name('doctors.filter');
 
-// Profile routes
+// Notification routes - تم نقل مسارات الملف الشخصي إلى Modules/Patients/Routes/web.php
 Route::middleware(['auth:web'])->group(function () {
-    Route::get('/profile', [PageController::class, 'profile'])->name('profile');
-    Route::post('/profile/store', [PageController::class, 'storeProfile'])->name('profile.store');
-    Route::put('/profile/update', [PageController::class, 'updateProfile'])->name('profile.update');
-    Route::post('/profile/password/update', [PageController::class, 'updatePassword'])->name('profile.password.update');
-
     // Notification routes
     Route::get('/admin/notifications', [NotificationsController::class, 'index']);
     Route::get('/admin/notifications/count', [NotificationsController::class, 'count']);
