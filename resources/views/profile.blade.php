@@ -201,7 +201,7 @@
                                                                             </label>
                                                                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $user->name) }}">
                                                                             @error('name')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                                                <div class="invalid-feedback">{{ $message ?? 'الاسم مطلوب' }}</div>
                                                                             @enderror
                                                                         </div>
 
@@ -211,7 +211,7 @@
                                                                             </label>
                                                                             <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $user->email) }}">
                                                                             @error('email')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                                                <div class="invalid-feedback">{{ $message ?? 'يرجى إدخال بريد إلكتروني صحيح' }}</div>
                                                                             @enderror
                                                                         </div>
 
@@ -221,7 +221,7 @@
                                                                             </label>
                                                                             <input type="tel" class="form-control @error('phone_number') is-invalid @enderror" id="phone_number" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}">
                                                                             @error('phone_number')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                                                <div class="invalid-feedback">{{ $message ?? 'رقم الهاتف مطلوب' }}</div>
                                                                             @enderror
                                                                         </div>
 
@@ -231,7 +231,7 @@
                                                                             </label>
                                                                             <input type="date" class="form-control @error('date_of_birth') is-invalid @enderror" id="date_of_birth" name="date_of_birth" value="{{ old('date_of_birth', $user->patient->date_of_birth ? $user->patient->date_of_birth->format('Y-m-d') : '') }}">
                                                                             @error('date_of_birth')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                                                <div class="invalid-feedback">{{ $message ?? 'صيغة تاريخ الميلاد غير صحيحة' }}</div>
                                                                             @enderror
                                                                         </div>
 
@@ -249,7 +249,7 @@
                                                                                     <label class="form-check-label" for="gender_female">أنثى</label>
                                                                                 </div>
                                                                                 @error('gender')
-                                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                                    <div class="invalid-feedback d-block">{{ $message ?? 'الجنس مطلوب' }}</div>
                                                                                 @enderror
                                                                             </div>
                                                                         </div>
@@ -260,7 +260,7 @@
                                                                             </label>
                                                                             <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="3" placeholder="أدخل عنوانك هنا...">{{ old('address', $user->patient->address) }}</textarea>
                                                                             @error('address')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                                                <div class="invalid-feedback">{{ $message ?? 'العنوان يتجاوز الحد المسموح به' }}</div>
                                                                             @enderror
                                                                         </div>
                                                                     </div>
@@ -298,7 +298,7 @@
                                                             </label>
                                                             <input type="date" class="form-control @error('date_of_birth') is-invalid @enderror" id="date_of_birth" name="date_of_birth" value="{{ old('date_of_birth') }}">
                                                             @error('date_of_birth')
-                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                                <div class="invalid-feedback">{{ $message ?? 'صيغة تاريخ الميلاد غير صحيحة' }}</div>
                                                             @enderror
                                                         </div>
 
@@ -316,7 +316,7 @@
                                                                     <label class="form-check-label" for="gender_female"><i class="bi bi-gender-female me-1 text-danger"></i>أنثى</label>
                                                                 </div>
                                                                 @error('gender')
-                                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                                    <div class="invalid-feedback d-block">{{ $message ?? 'الجنس مطلوب' }}</div>
                                                                 @enderror
                                                             </div>
                                                         </div>
@@ -327,7 +327,7 @@
                                                             </label>
                                                             <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="3" placeholder="أدخل عنوانك هنا...">{{ old('address') }}</textarea>
                                                             @error('address')
-                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                                <div class="invalid-feedback">{{ $message ?? 'العنوان يتجاوز الحد المسموح به' }}</div>
                                                             @enderror
                                                         </div>
 
@@ -532,7 +532,7 @@
                                                         </button>
                                                     </div>
                                                     @error('current_password')
-                                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                        <div class="invalid-feedback d-block">{{ $message ?? 'كلمة المرور الحالية غير صحيحة' }}</div>
                                                     @enderror
                                                 </div>
 
@@ -547,7 +547,7 @@
                                                         </button>
                                                     </div>
                                                     @error('password')
-                                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                        <div class="invalid-feedback d-block">{{ $message ?? 'كلمة المرور الجديدة غير صالحة' }}</div>
                                                     @enderror
                                                 </div>
 
