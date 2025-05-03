@@ -52,8 +52,9 @@
                 <div class="profile-details w-100">
                     <div class="d-flex justify-content-between align-items-start w-100">
                         <div>
-                            <h1 class="doctor-name">د. {{ $doctor->name }}</h1>
+                            <h1 class="doctor-name"> @if($doctor->gender =='ذكر')دكتور @else دكتورة@endif {{ $doctor->name }}</h1>
                             <div class="badges">
+                                <span class="specialty-badge">{{ $doctor->title }}</span>
                                 @foreach($doctor->categories as $category)
                                     <span class="specialty-badge">{{ $category->name }}</span>
                                 @endforeach
@@ -61,8 +62,23 @@
                                     {{ $doctor->status ? 'نشط' : 'غير نشط' }}
                                 </span>
                             </div>
+                            <div class="rating-info mt-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rating">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= floor($doctor->rating))
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            @elseif ($i - 0.5 <= $doctor->rating)
+                                                <i class="bi bi-star-half text-warning"></i>
+                                            @else
+                                                <i class="bi bi-star text-warning"></i>
+                                            @endif
+                                        @endfor
+                                    </div>
+                                    <span class="text-muted">({{ $doctor->ratings_count ?? 0 }} تقييم)</span>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -158,11 +174,41 @@
 
                     <div class="info-item">
                         <div class="info-icon">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                        <div class="info-content">
+                            <label>المسمى الوظيفي</label>
+                            <span class="info-value">{{ $doctor->title ?? 'غير محدد' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-clipboard2-pulse"></i>
+                        </div>
+                        <div class="info-content">
+                            <label>التخصص الدقيق</label>
+                            <span class="info-value">{{ $doctor->specialization ?? 'غير محدد' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
                             <i class="bi bi-geo-alt"></i>
                         </div>
                         <div class="info-content">
-                            <label>العنوان</label>
+                            <label>المحافظة والمدينة</label>
                             <span class="info-value">{{ $doctor->governorate->name }} - {{ $doctor->city->name }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <div class="info-content">
+                            <label>عنوان العيادة</label>
+                            <span class="info-value">{{ $doctor->address ?? 'غير محدد' }}</span>
                         </div>
                     </div>
 
@@ -196,6 +242,148 @@
                         </div>
                     </div>
                 </div>
+
+                @if($doctor->schedule)
+                    <div class="schedule-section content-card mt-4">
+                        <div class="card-header">
+                            <i class="bi bi-calendar-week"></i>
+                            <h3>جدول المواعيد</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="schedule-grid">
+                                @foreach($doctor->schedule as $day => $hours)
+                                    <div class="schedule-item">
+                                        <div class="day">{{ $day }}</div>
+                                        <div class="hours">{{ $hours }}</div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if($doctor->schedules->isNotEmpty())
+                    <div class="schedule-section mt-4">
+                        <h2 class="section-title">
+                            <i class="bi bi-calendar-week"></i>
+                            جدول المواعيد الأسبوعي
+                        </h2>
+                        <div class="schedule-grid">
+                            @foreach($doctor->schedules as $schedule)
+                                <div class="schedule-day {{ $schedule->is_active ? 'available' : 'unavailable' }}">
+                                    <div class="day-header">
+                                        <span class="day-name">{{ $schedule->day_name }}</span>
+                                        <span class="availability-badge">
+                                            @if($schedule->is_active)
+                                                <i class="bi bi-check-circle-fill text-success"></i>
+                                                متاح
+                                            @else
+                                                <i class="bi bi-x-circle-fill text-danger"></i>
+                                                غير متاح
+                                            @endif
+                                        </span>
+                                    </div>
+                                    @if($schedule->is_active)
+                                        <div class="time-slots">
+                                            <div class="time-slot">
+                                                <i class="bi bi-clock"></i>
+                                                <span>{{ date('h:i A', strtotime($schedule->start_time)) }}</span>
+                                                <i class="bi bi-arrow-right"></i>
+                                                <span>{{ date('h:i A', strtotime($schedule->end_time)) }}</span>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <style>
+                        .schedule-section {
+                            background: white;
+                            border-radius: 15px;
+                            padding: 2rem;
+                            box-shadow: 0 2px 8px rgba(var(--bs-primary-rgb), 0.06);
+                            border: 1px solid rgba(var(--bs-primary-rgb), 0.08);
+                        }
+
+                        .schedule-grid {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                            gap: 1rem;
+                            margin-top: 1.5rem;
+                        }
+
+                        .schedule-day {
+                            background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.03) 0%, rgba(37, 99, 235, 0.03) 100%);
+                            border-radius: 12px;
+                            padding: 1.25rem;
+                            border: 1px solid rgba(var(--bs-primary-rgb), 0.08);
+                            transition: all 0.3s ease;
+                        }
+
+                        .schedule-day:hover {
+                            transform: translateY(-2px);
+                            box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.08);
+                        }
+
+                        .schedule-day.unavailable {
+                            background: linear-gradient(135deg, rgba(var(--bs-danger-rgb), 0.03) 0%, rgba(220, 38, 38, 0.03) 100%);
+                            border: 1px solid rgba(var(--bs-danger-rgb), 0.08);
+                        }
+
+                        .day-header {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 1rem;
+                        }
+
+                        .day-name {
+                            font-weight: 600;
+                            color: #1e293b;
+                            font-size: 1.1rem;
+                        }
+
+                        .availability-badge {
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            font-size: 0.875rem;
+                            padding: 0.375rem 0.75rem;
+                            border-radius: 50px;
+                            background: white;
+                            color: #64748b;
+                        }
+
+                        .time-slots {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.75rem;
+                        }
+
+                        .time-slot {
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            padding: 0.75rem 1rem;
+                            background: white;
+                            border-radius: 8px;
+                            color: #1e293b;
+                        }
+
+                        .time-slot i {
+                            color: var(--bs-primary);
+                            font-size: 0.875rem;
+                        }
+
+                        @media (max-width: 768px) {
+                            .schedule-grid {
+                                grid-template-columns: 1fr;
+                            }
+                        }
+                    </style>
+                @endif
 
                 @if($doctor->bio)
                     <div class="bio-section content-card">
@@ -240,7 +428,8 @@
                                     <div class="appointment-header">
                                         <div class="time-slot">
                                             <div class="time">
-                                                {{ \Carbon\Carbon::parse($appointment->scheduled_at)->format('h:i A') }}</div>
+                                                {{ \Carbon\Carbon::parse($appointment->scheduled_at)->format('h:i A') }}
+                                            </div>
                                             <div class="duration">{{ $doctor->waiting_time ?? 30 }} دقيقة</div>
                                         </div>
                                         <div class="status {{ $appointment->status }}">
@@ -667,7 +856,7 @@
             box-shadow: 0 4px 8px rgba(227, 52, 47, 0.3);
         }
 
-            .doctor-name {
+        .doctor-name {
             font-size: 1.8rem;
             margin-bottom: 0.5rem;
         }

@@ -85,14 +85,10 @@
 
                         <!-- أزرار الإجراءات -->
                         <footer class="d-flex justify-content-between align-items-center card-actions">
-                            <a href="{{ route('doctors.show', $doctor->id) }}" class="btn btn-primary btn-lg rounded-3 btn-sm m-auto w-100 ">
+                            <a href="{{ route('appointments.book', $doctor->id) }}" class="btn btn-primary btn-lg rounded-3 btn-sm m-auto w-100 ">
                                 <i class="bi bi-calendar-check"></i>
                                 <span>احجز موعد</span>
                             </a>
-                            {{-- <button type="button" class="btn btn-outline-primary btn-lg rounded-3 btn-sm">
-                                <i class="bi bi-telephone-fill"></i>
-                                <span>اتصل للحجز</span>
-                            </button> --}}
                         </footer>
                     </article>
                 </div>

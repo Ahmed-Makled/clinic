@@ -87,7 +87,7 @@
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
                                         <div
-                                            class="avatar-wrapper {{ $doctor->image ? '' : ($loop->iteration % 2 ? 'avatar-dark' : 'avatar-light') }}">
+                                            class="avatar-wrapper {{ $doctor->image ? '' : 'avatar-light' }}">
                                             @if($doctor->image)
                                                 <img src="{{ Storage::url($doctor->image) }}" class="rounded-circle" width="32"
                                                     height="32" alt="{{ $doctor->name }}"

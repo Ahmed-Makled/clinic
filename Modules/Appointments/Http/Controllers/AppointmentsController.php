@@ -93,30 +93,51 @@ class AppointmentsController extends Controller
 
     public function store(Request $request)
     {
-        // Log incoming request data for debugging
-        Log::info('Appointment booking request:', $request->all());
+        // التحقق من تسجيل دخول المستخدم
+        if (!auth()->check()) {
+            return back()
+                ->with('error', 'يجب تسجيل الدخول أولاً لتتمكن من حجز موعد');
+        }
+
+        $user = auth()->user();
+
+        // إذا كان المستخدم ليس آدمن وليس مريض
+        if (!$user->hasRole('Admin') && !$user->isPatient()) {
+            return back()
+                ->with('error', 'عذراً، فقط المرضى يمكنهم حجز المواعيد');
+        }
+
+        // التحقق من وجود ملف المريض إذا كان المستخدم ليس آدمن
+        if (!$user->hasRole('Admin')) {
+            $patient = $user->patient;
+            if (!$patient) {
+                return back()
+                    ->with('warning', 'يجب إكمال ملفك الشخصي كمريض أولاً لتتمكن من حجز موعد')
+                    ->with('redirect_after', route('appointments.book', $request->input('doctor_id')));
+            }
+        }
 
         // Common validation rules
         $rules = [
             'doctor_id' => 'required|exists:doctors,id',
             'appointment_date' => 'required|date|after_or_equal:today',
             'appointment_time' => ['required', 'regex:/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/'],
-            'notes' => 'nullable|string|max:1000',
+            'notes' => 'nullable|string|max:1000'
         ];
 
         // Add patient_id validation for admin creation
-        if (auth()->user()->hasRole('Admin')) {
+        if ($user->hasRole('Admin')) {
             $rules['patient_id'] = 'required|exists:patients,id';
         }
 
         $messages = [
-            'doctor_id.required' => 'يرجى اختيار الطبيب',
-            'doctor_id.exists' => 'الطبيب المختار غير موجود',
-            'appointment_date.required' => 'يرجى اختيار تاريخ الموعد',
-            'appointment_date.date' => 'تاريخ الموعد غير صالح',
-            'appointment_date.after_or_equal' => 'يجب أن يكون تاريخ الموعد اليوم أو في المستقبل',
-            'appointment_time.required' => 'يرجى اختيار وقت الموعد',
-            'appointment_time.regex' => 'وقت الموعد غير صالح',
+            'doctor_id.required' => 'يجب اختيار الطبيب',
+            'doctor_id.exists' => 'الطبيب المحدد غير متوفر',
+            'appointment_date.required' => 'يجب اختيار تاريخ الموعد',
+            'appointment_date.date' => 'صيغة التاريخ غير صحيحة',
+            'appointment_date.after_or_equal' => 'لا يمكن حجز موعد في تاريخ سابق',
+            'appointment_time.required' => 'يجب اختيار وقت الموعد',
+            'appointment_time.regex' => 'صيغة الوقت غير صحيحة',
             'notes.max' => 'الملاحظات لا يمكن أن تتجاوز 1000 حرف'
         ];
 
@@ -124,11 +145,10 @@ class AppointmentsController extends Controller
             $validator = Validator::make($request->all(), $rules, $messages);
 
             if ($validator->fails()) {
-                Log::error('Validation failed:', [
-                    'errors' => $validator->errors()->toArray(),
-                    'input' => $request->all()
-                ]);
-                return back()->withErrors($validator)->withInput();
+                return back()
+                    ->withErrors($validator)
+                    ->withInput()
+                    ->with('error', 'يرجى تصحيح الأخطاء التالية:');
             }
 
             $validated = $validator->validated();
@@ -145,26 +165,25 @@ class AppointmentsController extends Controller
                     'time' => $validated['appointment_time'],
                     'error' => $e->getMessage()
                 ]);
-                return back()->withErrors(['appointment_date' => 'تاريخ أو وقت غير صالح'])->withInput();
+                return back()->withErrors(['appointment_date' => 'صيغة التاريخ أو الوقت غير صحيحة'])->withInput();
             }
 
             // Check if the time slot is available
             $doctor = Doctor::findOrFail($validated['doctor_id']);
+
+            // التحقق من تداخل المواعيد
             $conflictingAppointments = Appointment::hasConflict($doctor->id, $scheduledAt)->get();
 
             if ($conflictingAppointments->isNotEmpty()) {
-                return back()->withErrors(['appointment_time' => 'هذا الموعد محجوز بالفعل، يرجى اختيار وقت آخر'])->withInput();
+                return back()->withErrors([
+                    'appointment_time' => 'عذراً، هذا الموعد محجوز بالفعل. يرجى اختيار وقت آخر.'
+                ])->withInput();
             }
-
-            // Set patient ID based on context
-            $patientId = auth()->user()->hasRole('Admin')
-                ? $validated['patient_id']
-                : auth()->user()->patient->id;
 
             // Create the appointment
             $appointment = Appointment::create([
                 'doctor_id' => $validated['doctor_id'],
-                'patient_id' => $patientId,
+                'patient_id' => $user->hasRole('Admin') ? $validated['patient_id'] : $user->patient->id,
                 'scheduled_at' => $scheduledAt,
                 'status' => 'scheduled',
                 'notes' => $validated['notes'] ?? null,
@@ -172,6 +191,9 @@ class AppointmentsController extends Controller
                 'is_paid' => false,
                 'is_important' => false
             ]);
+
+            // Notify relevant parties
+            $doctor->user->notify(new NewAppointmentNotification($appointment));
 
             // Notify Admin about the new appointment
             User::role('Admin')->each(function($admin) use ($appointment) {
@@ -182,18 +204,15 @@ class AppointmentsController extends Controller
             Log::info('Appointment booked successfully:', [
                 'appointment_id' => $appointment->id,
                 'doctor_id' => $doctor->id,
-                'patient_id' => $patientId,
+                'patient_id' => $user->hasRole('Admin') ? $validated['patient_id'] : $user->patient->id,
                 'scheduled_at' => $scheduledAt->format('Y-m-d H:i:s')
             ]);
 
-            // Redirect based on context
-            if (auth()->user()->hasRole('Admin')) {
-                return redirect()->route('appointments.index')
-                    ->with('success', 'تم إضافة الموعد بنجاح');
-            }
+            $successMessage = 'تم حجز موعدك بنجاح! سيتم إرسال تفاصيل الموعد إلى بريدك الإلكتروني. ';
+            $successMessage .= 'موعدك مع د. ' . $doctor->name . ' يوم ' . $scheduledAt->format('Y-m-d') . ' الساعة ' . $scheduledAt->format('H:i');
 
             return redirect()->route('appointments.show', $appointment)
-                ->with('success', 'تم حجز الموعد بنجاح، سيتم التواصل معك قريباً للتأكيد');
+                ->with('success', $successMessage);
 
         } catch (\Exception $e) {
             Log::error('Appointment booking error:', [
@@ -203,7 +222,7 @@ class AppointmentsController extends Controller
             ]);
 
             return back()->withErrors([
-                'error' => 'حدث خطأ أثناء حجز الموعد. يرجى المحاولة مرة أخرى.'
+                'error' => 'عذراً، حدث خطأ أثناء حجز الموعد. يرجى المحاولة مرة أخرى أو التواصل مع الدعم الفني.'
             ])->withInput();
         }
     }
@@ -429,9 +448,31 @@ class AppointmentsController extends Controller
      */
     public function book(Doctor $doctor)
     {
-        // Get available time slots
-        $timeSlots = get_appointment_time_slots(30, '09:00', '17:00');
+        // Get selected date or default to today
+        $selectedDate = request('date') ?? now()->format('Y-m-d');
 
-        return view('appointments::book', compact('doctor', 'timeSlots'));
+        // Get available slots for the selected date
+        $availableSlots = $doctor->getAvailableSlots($selectedDate);
+
+        // Check if doctor has any schedules
+        if (empty($availableSlots) && !$doctor->schedules()->exists()) {
+            $availableSlots = [];
+            session()->flash('schedule_error', 'لا توجد مواعيد متاحة حالياً. الرجاء المحاولة في وقت لاحق.');
+            return view('appointments::book', compact('doctor', 'availableSlots', 'selectedDate'));
+        }
+
+        // Filter out slots that have existing appointments
+        $bookedSlots = Appointment::where('doctor_id', $doctor->id)
+            ->whereDate('scheduled_at', $selectedDate)
+            ->where('status', 'scheduled')
+            ->pluck('scheduled_at')
+            ->map(function($datetime) {
+                return Carbon::parse($datetime)->format('H:i');
+            })
+            ->toArray();
+
+        $availableSlots = array_values(array_diff($availableSlots, $bookedSlots));
+
+        return view('appointments::book', compact('doctor', 'availableSlots', 'selectedDate'));
     }
 }

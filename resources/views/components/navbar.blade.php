@@ -21,11 +21,7 @@
                         <i class="bi bi-person-vcard me-1"></i>الأطباء
                     </a>
                 </li>
-                <li class="nav-item"></li></li>
-                    <a class="nav-link {{ request()->is('specialties*') ? 'active' : '' }}" href="{{ route('specialties.index') }}">
-                        <i class="bi bi-clipboard2-pulse me-1"></i>التخصصات
-                    </a>
-                </li>
+
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('contact*') ? 'active' : '' }}" href="{{ route('contact') }}">
                         <i class="bi bi-envelope me-1"></i>اتصل بنا

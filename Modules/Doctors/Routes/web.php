@@ -21,7 +21,4 @@ Route::prefix('doctors')->group(function () {
         Route::get('/create-from-user', [DoctorsController::class, 'createFromUser'])->name('doctors.createFromUser');
         Route::post('/store-from-user', [DoctorsController::class, 'storeFromUser'])->name('doctors.storeFromUser');
     });
-
-    // This should be last to avoid conflicting with other routes
-    Route::get('/{doctor}', [DoctorsController::class, 'show'])->name('doctors.show');
 });

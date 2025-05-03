@@ -2,10 +2,10 @@
 
 namespace Modules\Auth\Http\Controllers;
 
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Modules\User\Entities\User;
 use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
@@ -20,7 +20,7 @@ class RegisterController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'phone_number' => ['required', 'string', 'max:15', 'unique:users'],
+            'phone_number' => ['required', 'string', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 

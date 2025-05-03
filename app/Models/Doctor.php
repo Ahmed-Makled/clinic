@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 use App\Traits\Searchable;
+use DateTime;
 
 class Doctor extends Model
 {
@@ -20,8 +21,8 @@ class Doctor extends Model
         'bio',
         'description',
         'image',
-        'governorate_id', // تحديث من governorate إلى governorate_id
-        'city_id', // تحديث من city إلى city_id
+        'governorate_id',
+        'city_id',
         'address',
         'degree',
         'price',
@@ -30,7 +31,9 @@ class Doctor extends Model
         'consultation_fee',
         'experience_years',
         'gender',
-        'status'
+        'status',
+        'title',
+        'specialization'
     ];
 
     protected $searchable = [
@@ -139,6 +142,39 @@ class Doctor extends Model
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(DoctorSchedule::class);
+    }
+
+    public function getAvailableSlots($date)
+    {
+        $dateTime = new DateTime($date);
+        $dayOfWeek = strtolower($dateTime->format('l'));
+        $schedule = $this->schedules()
+            ->where('day', $dayOfWeek)
+            ->where('is_active', true)
+            ->first();
+
+        // If no schedule exists, return empty array
+        if (!$schedule) {
+            return [];
+        }
+
+        // Get slots from schedule
+        $availableSlots = $schedule->getAvailableSlots(new DateTime($date));
+        $dateStr = $dateTime->format('Y-m-d');
+
+        // Filter out slots that already have appointments
+        return array_filter($availableSlots, function($slot) use ($dateStr) {
+            $slotDateTime = new DateTime($dateStr . ' ' . $slot);
+            return !$this->appointments()
+                ->where('scheduled_at', $slotDateTime->format('Y-m-d H:i:s'))
+                ->where('status', 'scheduled')
+                ->exists();
+        });
     }
 
 }
