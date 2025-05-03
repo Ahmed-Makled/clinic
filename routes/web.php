@@ -28,6 +28,8 @@ Route::get('/doctors/filter', [DoctorsController::class, 'filter'])->name('docto
 // Profile routes
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/profile', [PageController::class, 'profile'])->name('profile');
+    Route::post('/profile/store', [PageController::class, 'storeProfile'])->name('profile.store');
+    Route::put('/profile/update', [PageController::class, 'updateProfile'])->name('profile.update');
 
     // Notification routes
     Route::get('/admin/notifications', [NotificationsController::class, 'index']);

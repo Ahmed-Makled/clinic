@@ -122,45 +122,43 @@ class DoctorsController extends Controller
             'schedules.*.is_available' => ['nullable', 'boolean'],
             'schedules.*.start_time' => [
                 'required_with:schedules.*.is_available',
-                'nullable',
                 'date_format:H:i',
             ],
             'schedules.*.end_time' => [
                 'required_with:schedules.*.is_available',
-                'nullable',
                 'date_format:H:i',
                 'after:schedules.*.start_time'
-            ],
+            ]
         ], [
-            'name.required' => 'حقل الاسم مطلوب',
-            'name.string' => 'يجب أن يكون الاسم نصاً',
-            'name.max' => 'يجب ألا يتجاوز الاسم 255 حرفاً',
-            'email.required' => 'حقل البريد الإلكتروني مطلوب',
-            'email.email' => 'يرجى إدخال بريد إلكتروني صحيح',
-            'email.unique' => 'البريد الإلكتروني مستخدم من قبل',
-            'phone.required' => 'حقل رقم الهاتف مطلوب',
-            'phone.unique' => 'رقم الهاتف مستخدم من قبل',
-            'password.required' => 'حقل كلمة المرور مطلوب',
-            'password.min' => 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل',
-            'consultation_fee.required' => 'حقل سعر الكشف مطلوب',
-            'consultation_fee.numeric' => 'يجب أن يكون سعر الكشف رقماً',
-            'consultation_fee.min' => 'يجب أن يكون سعر الكشف 0 على الأقل',
-            'title.required' => 'حقل المسمى الوظيفي مطلوب',
-            'title.max' => 'يجب ألا يتجاوز المسمى الوظيفي 100 حرف',
-            'specialization.required' => 'حقل التخصص مطلوب',
-            'specialization.max' => 'يجب ألا يتجاوز التخصص 100 حرف',
-            'categories.required' => 'يجب اختيار تخصص واحد على الأقل',
-            'categories.exists' => 'أحد التخصصات المختارة غير موجود',
-            'gender.required' => 'حقل الجنس مطلوب',
-            'gender.in' => 'قيمة الجنس غير صحيحة',
-            'experience_years.required' => 'حقل سنوات الخبرة مطلوب',
-            'experience_years.integer' => 'يجب أن تكون سنوات الخبرة رقماً صحيحاً',
-            'experience_years.min' => 'يجب أن تكون سنوات الخبرة 0 على الأقل',
-            'address.required' => 'حقل العنوان مطلوب',
-            'address.max' => 'يجب ألا يتجاوز العنوان 255 حرف',
-            'governorate_id.required' => 'حقل المحافظة مطلوب',
+            'name.required' => 'اسم الطبيب مطلوب',
+            'email.required' => 'البريد الإلكتروني مطلوب',
+            'email.email' => 'صيغة البريد الإلكتروني غير صحيحة',
+            'email.unique' => 'البريد الإلكتروني مستخدم بالفعل',
+            'phone.required' => 'رقم الهاتف مطلوب',
+            'phone.unique' => 'رقم الهاتف مستخدم بالفعل',
+            'password.required' => 'كلمة المرور مطلوبة',
+            'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
+            'consultation_fee.required' => 'سعر الكشف مطلوب',
+            'consultation_fee.numeric' => 'سعر الكشف يجب أن يكون رقماً',
+            'consultation_fee.min' => 'سعر الكشف يجب أن يكون أكبر من صفر',
+            'waiting_time.integer' => 'مدة الانتظار يجب أن تكون رقماً صحيحاً',
+            'waiting_time.min' => 'مدة الانتظار يجب أن تكون أكبر من صفر',
+            'title.required' => 'المسمى الوظيفي مطلوب',
+            'specialization.required' => 'التخصص مطلوب',
+            'categories.required' => 'التخصصات مطلوبة',
+            'categories.exists' => 'التخصص المختار غير موجود',
+            'gender.required' => 'النوع مطلوب',
+            'experience_years.required' => 'سنوات الخبرة مطلوبة',
+            'experience_years.integer' => 'سنوات الخبرة يجب أن تكون رقماً صحيحاً',
+            'experience_years.min' => 'سنوات الخبرة يجب أن تكون أكبر من صفر',
+            'description.max' => 'الوصف لا يمكن أن يتجاوز 1000 حرف',
+            'image.image' => 'الملف المرفق يجب أن يكون صورة',
+            'image.mimes' => 'صيغة الصورة غير مدعومة',
+            'image.max' => 'حجم الصورة لا يمكن أن يتجاوز 2 ميجابايت',
+            'address.required' => 'العنوان مطلوب',
+            'governorate_id.required' => 'المحافظة مطلوبة',
             'governorate_id.exists' => 'المحافظة المختارة غير موجودة',
-            'city_id.required' => 'حقل المدينة مطلوب',
+            'city_id.required' => 'المدينة مطلوبة',
             'city_id.exists' => 'المدينة المختارة غير موجودة',
             'schedules.required' => 'جدول المواعيد مطلوب',
             'schedules.*.start_time.required_with' => 'يجب تحديد وقت البداية عند اختيار اليوم',
@@ -212,24 +210,23 @@ class DoctorsController extends Controller
             $doctor->categories()->sync($validated['categories']);
 
             // Add schedules
-            if ($request->has('schedules') && is_array($request->schedules)) {
-                $days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            $days = [
+                'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'
+            ];
+            $scheduleData = [];
 
-                foreach ($request->schedules as $index => $schedule) {
-                    if (isset($schedule['is_available']) &&
-                        $schedule['is_available'] &&
-                        isset($schedule['start_time']) &&
-                        isset($schedule['end_time'])) {
-
-                        $doctor->schedules()->create([
-                            'day' => $days[$index],
-                            'start_time' => $schedule['start_time'],
-                            'end_time' => $schedule['end_time'],
-                            'is_active' => true
-                        ]);
-                    }
+            foreach ($request->schedules as $index => $schedule) {
+                if (isset($schedule['is_available']) && $schedule['is_available']) {
+                    $scheduleData[] = [
+                        'day' => $days[$index],
+                        'is_available' => true,
+                        'start_time' => $schedule['start_time'],
+                        'end_time' => $schedule['end_time']
+                    ];
                 }
             }
+
+            $doctor->updateSchedule($scheduleData);
 
             DB::commit();
             return redirect()->route('doctors.index')->with('success', 'تم إضافة الطبيب بنجاح');
@@ -252,137 +249,88 @@ class DoctorsController extends Controller
     public function update(Request $request, Doctor $doctor)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . ($doctor->user_id ?? 0),
-            'phone' => 'required',
-            'categories' => 'required|exists:categories,id',
-            'description' => 'nullable|string',
-            'consultation_fee' => 'required|numeric|min:0',
-            'waiting_time' => 'nullable|integer|min:0',
-            'experience_years' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'gender' => 'required|in:ذكر,انثي',
-            'address' => 'nullable|string',
-            'governorate_id' => 'required|exists:governorates,id',
-            'city_id' => 'required|exists:cities,id',
+            'title' => ['required', 'string', 'max:100'],
+            'specialization' => ['required', 'string', 'max:100'],
+            'categories' => ['required', 'array', 'exists:categories,id'],
+            'gender' => ['required', Rule::in(['ذكر', 'انثي'])],
+            'experience_years' => ['required', 'integer', 'min:0'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'address' => ['required', 'string', 'max:255'],
+            'governorate_id' => ['required', 'exists:governorates,id'],
+            'city_id' => ['required', 'exists:cities,id'],
+            'status' => ['nullable', 'boolean'],
+            'consultation_fee' => ['required', 'numeric', 'min:0'],
+            'waiting_time' => ['nullable', 'integer', 'min:0'],
             'schedules' => ['required', 'array'],
             'schedules.*.is_available' => ['nullable', 'boolean'],
             'schedules.*.start_time' => [
                 'required_with:schedules.*.is_available',
-                'nullable',
                 'date_format:H:i',
             ],
             'schedules.*.end_time' => [
                 'required_with:schedules.*.is_available',
-                'nullable',
                 'date_format:H:i',
                 'after:schedules.*.start_time'
-            ],
-        ], [
-            'name.required' => 'حقل الاسم مطلوب',
-            'name.string' => 'يجب أن يكون الاسم نصاً',
-            'name.max' => 'يجب ألا يتجاوز الاسم 255 حرفاً',
-            'email.required' => 'حقل البريد الإلكتروني مطلوب',
-            'email.email' => 'يرجى إدخال بريد إلكتروني صحيح',
-            'email.unique' => 'البريد الإلكتروني مستخدم من قبل',
-            'phone.required' => 'حقل رقم الهاتف مطلوب',
-            'categories.required' => 'يجب اختيار تخصص واحد على الأقل',
-            'categories.exists' => 'أحد التخصصات المختارة غير موجود',
-            'consultation_fee.required' => 'حقل سعر الكشف مطلوب',
-            'consultation_fee.numeric' => 'يجب أن يكون سعر الكشف رقماً',
-            'consultation_fee.min' => 'يجب أن يكون سعر الكشف 0 على الأقل',
-            'waiting_time.integer' => 'يجب أن تكون مدة الانتظار رقماً صحيحاً',
-            'waiting_time.min' => 'يجب أن تكون مدة الانتظار 0 على الأقل',
-            'experience_years.integer' => 'يجب أن تكون سنوات الخبرة رقماً صحيحاً',
-            'experience_years.min' => 'يجب أن تكون سنوات الخبرة 0 على الأقل',
-            'image.image' => 'يجب أن يكون الملف صورة',
-            'image.mimes' => 'يجب أن تكون الصورة من نوع: jpeg, png, jpg, webp',
-            'image.max' => 'يجب ألا يتجاوز حجم الصورة 2 ميجابايت',
-            'gender.required' => 'حقل الجنس مطلوب',
-            'gender.in' => 'قيمة الجنس غير صحيحة',
-            'governorate_id.required' => 'حقل المحافظة مطلوب',
-            'governorate_id.exists' => 'المحافظة المختارة غير موجودة',
-            'city_id.required' => 'حقل المدينة مطلوب',
-            'city_id.exists' => 'المدينة المختارة غير موجودة',
-            'schedules.required' => 'جدول المواعيد مطلوب',
-            'schedules.*.start_time.required_with' => 'يجب تحديد وقت البداية عند اختيار اليوم',
-            'schedules.*.start_time.date_format' => 'صيغة وقت البداية غير صحيحة',
-            'schedules.*.end_time.required_with' => 'يجب تحديد وقت النهاية عند اختيار اليوم',
-            'schedules.*.end_time.date_format' => 'صيغة وقت النهاية غير صحيحة',
-            'schedules.*.end_time.after' => 'يجب أن يكون وقت النهاية بعد وقت البداية'
+            ]
         ]);
 
-        // Update user record if it exists
-        if ($doctor->user_id) {
-            $user = User::find($doctor->user_id);
-            if ($user) {
-                $user->update([
-                    'name' => $validated['name'],
-                    'email' => $validated['email'],
-                    'phone_number' => $validated['phone']
-                ]);
+        try {
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $doctor->deleteImage();
+                $doctor->image = Doctor::uploadImage($request->file('image'));
             }
-        }
 
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            // Delete old image first
-            $doctor->deleteImage();
-            // Upload and save new image
-            $doctor->image = Doctor::uploadImage($request->file('image'));
-            $doctor->save();
-        }
+            $doctor->update([
+                'title' => $validated['title'],
+                'specialization' => $validated['specialization'],
+                'experience_years' => $validated['experience_years'],
+                'description' => $validated['description'],
+                'consultation_fee' => $validated['consultation_fee'],
+                'waiting_time' => $validated['waiting_time'] ?? 30,
+                'gender' => $validated['gender'],
+                'status' => $request->boolean('status'),
+                'address' => $validated['address'],
+                'governorate_id' => $validated['governorate_id'],
+                'city_id' => $validated['city_id']
+            ]);
 
-        // Handle status field - convert checkbox value to boolean
-        $status = $request->has('status');
+            // Sync categories
+            $doctor->categories()->sync($request->categories);
 
-        // Update doctor record
-        $doctor->update([
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'gender' => $validated['gender'],
-            'status' => $status,
-            'address' => $validated['address'] ?? null,
-            'consultation_fee' => $validated['consultation_fee'],
-            'waiting_time' => $validated['waiting_time'],
-            'experience_years' => $validated['experience_years'],
-            'governorate_id' => $validated['governorate_id'],
-            'city_id' => $validated['city_id']
-        ]);
-
-        // Sync categories
-        $doctor->categories()->sync($request->categories);
-
-        // Update schedules
-        if ($request->has('schedules') && is_array($request->schedules)) {
-            // Delete existing schedules
-            $doctor->schedules()->delete();
-
-            $days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            // Update schedules
+            $days = [
+                'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'
+            ];
+            $scheduleData = [];
 
             foreach ($request->schedules as $index => $schedule) {
-                if (isset($schedule['is_available']) &&
-                    $schedule['is_available'] &&
-                    isset($schedule['start_time']) &&
-                    isset($schedule['end_time'])) {
-
-                    $doctor->schedules()->create([
+                if (isset($schedule['is_available']) && $schedule['is_available']) {
+                    $scheduleData[] = [
                         'day' => $days[$index],
+                        'is_available' => true,
                         'start_time' => $schedule['start_time'],
-                        'end_time' => $schedule['end_time'],
-                        'is_active' => true
-                    ]);
+                        'end_time' => $schedule['end_time']
+                    ];
                 }
             }
+
+            $doctor->updateSchedule($scheduleData);
+
+            // Send notification to admins
+            User::role('Admin')->each(function ($admin) use ($doctor) {
+                $admin->notify(new DoctorUpdatedNotification($doctor));
+            });
+
+            return redirect()->route('doctors.index')
+                ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
+
+        } catch (\Exception $e) {
+            \Log::error('Error updating doctor: ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'حدث خطأ أثناء تحديث بيانات الطبيب');
         }
-
-        // Send notification to admins
-        User::role('Admin')->each(function ($admin) use ($doctor) {
-            $admin->notify(new DoctorUpdatedNotification($doctor));
-        });
-
-        return redirect()->route('doctors.index')
-            ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
     }
 
     public function profiles(Request $request)

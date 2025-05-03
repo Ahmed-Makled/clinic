@@ -93,7 +93,6 @@
                         </div>
 
 
-
                         <!-- Rating Details -->
                         <div class="doctor-section">
                             <h5 class="section-title">
@@ -184,98 +183,136 @@
                     </div>
 
                     <div class="location-info alert alert-light mb-4">
-                        <div class="d-flex align-items-start">
+                        <div class="d-flex align-items-center">
                             <i class="bi bi-geo-alt text-danger me-2" style="font-size: 1.2rem"></i>
                             <div>
-                                <p class="mb-2">{{ $doctor->address }}</p>
                                 <small class="text-muted">سيتم إرسال العنوان التفصيلي ورقم العيادة بعد تأكيد الحجز</small>
                             </div>
                         </div>
                     </div>
 
+                        @if (session('warning'))
+                            <div class="alert alert-warning" role="alert">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+                                    <div>
+                                        <strong>تنبيه:</strong> {{ session('warning') }}
+                                        @if (session('profile_required'))
+                                            <div class="mt-2">
+                                                <a href="{{ route('profile') }}?redirect_to={{ route('appointments.book', session('doctor_id')) }}" class="btn btn-sm btn-outline-warning">
+                                                    <i class="bi bi-person-plus me-1"></i>
+                                                    إكمال الملف الشخصي
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
 
-                    @if(session('schedule_error'))
-                    <div class="col-12">
-                        <div class="alert alert-warning border text-center mb-0">
-                            <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 2rem"></i>
-                            <p class="mt-2 mb-0">{{ session('schedule_error') }}</p>
-                        </div>
-                    </div>
-                    @else
                     <div class="booking-section">
-
                         <div class="section-header text-center mb-4">
                             <h5 class="fw-bold mb-2">اختر موعد الحجز</h5>
                             <p class="text-muted small">اختر التاريخ والوقت المناسب لموعدك</p>
                         </div>
 
-                        <!-- Date Selection -->
-                        <div class="date-selection mb-4">
+                        <form id='bookingForm'  action="{{ route('appointments.store') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="doctor_id" value="{{ $doctor->id }}">
+                            <input type="hidden" name="appointment_date" value="{{ $selectedDate }}">
 
-                            <label class="form-label fw-medium d-flex align-items-center gap-2 mb-3">
-                                <i class="bi bi-calendar3 text-primary"></i>
-                                اختر التاريخ المناسب
-                            </label>
-                            <div class="date-carousel">
-                                @for($i = 0; $i < 7; $i++)
-                                    @php
-                                        $date = now()->addDays($i);
-                                        $isToday = $date->isToday();
-                                        $isTomorrow = $date->isTomorrow();
-                                    @endphp
-                                    <div class="date-item" data-date="{{ $date->format('Y-m-d') }}">
-                                        <input type="radio"
-                                               name="appointment_date"
-                                               id="date_{{ $date->format('Y-m-d') }}"
-                                               value="{{ $date->format('Y-m-d') }}"
-                                               class="btn-check"
-                                               {{ $selectedDate == $date->format('Y-m-d') ? 'checked' : '' }}
-                                               required>
-                                        <label class="date-card"
-                                               for="date_{{ $date->format('Y-m-d') }}">
-                                            <div class="date-weekday">
-                                                @if($isToday)
-                                                    اليوم
-                                                @elseif($isTomorrow)
-                                                    غداً
-                                                @else
-                                                    {{ $date->locale('ar')->dayName }}
-                                                @endif
-                                            </div>
-                                            <div class="date-number">{{ $date->format('d') }}</div>
-                                            <div class="date-month">{{ $date->locale('ar')->monthName }}</div>
-                                        </label>
+                            @if ($errors->any())
+                                <div class="alert alert-danger mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+                                        <strong>يرجى تصحيح الأخطاء التالية:</strong>
                                     </div>
-                                @endfor
+                                    <ul class="list-unstyled m-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li class="d-flex align-items-center text-danger">
+                                                <i class="bi bi-dot me-2"></i>
+                                                {{ $error }}
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <!-- Date Selection -->
+                            <div class="date-selection mb-4">
+                                <label class="form-label fw-medium d-flex align-items-center gap-2 mb-3">
+                                    <i class="bi bi-calendar3 text-primary"></i>
+                                    اختر التاريخ المناسب
+                                </label>
+                                <div class="date-carousel">
+                                    @php
+                                        $availableDays = $doctor->schedules->pluck('day')->map(function($day) {
+                                            return strtolower($day);
+                                        })->toArray();
+
+                                        $days = [
+                                            'sunday' => 'الأحد',
+                                            'monday' => 'الإثنين',
+                                            'tuesday' => 'الثلاثاء',
+                                            'wednesday' => 'الأربعاء',
+                                            'thursday' => 'الخميس',
+                                            'friday' => 'الجمعة',
+                                            'saturday' => 'السبت'
+                                        ];
+                                    @endphp
+                                    @for($i = 0; $i < 14; $i++)
+                                        @php
+                                            $date = now()->addDays($i);
+                                            $isToday = $date->isToday();
+                                            $isTomorrow = $date->isTomorrow();
+                                            $englishDay = strtolower($date->format('l'));
+                                            $arabicDay = $days[$englishDay];
+                                            $isAvailable = in_array($englishDay, $availableDays);
+                                        @endphp
+                                        <div class="date-item" data-date="{{ $date->format('Y-m-d') }}">
+                                            <input type="radio"
+                                                   name="appointment_date"
+                                                   id="date_{{ $date->format('Y-m-d') }}"
+                                                   value="{{ $date->format('Y-m-d') }}"
+                                                   class="btn-check"
+                                                   {{ $selectedDate == $date->format('Y-m-d') ? 'checked' : '' }}
+                                                   {{ !$isAvailable ? 'disabled' : '' }}
+                                                   required>
+                                            <label class="date-card {{ !$isAvailable ? 'unavailable' : '' }}"
+                                                   for="date_{{ $date->format('Y-m-d') }}">
+                                                <div class="date-weekday">
+                                                    @if($isToday)
+                                                        اليوم
+                                                    @elseif($isTomorrow)
+                                                        غداً
+                                                    @else
+                                                        {{ $arabicDay }}
+                                                    @endif
+                                                </div>
+                                                <div class="date-number">{{ $date->format('d') }}</div>
+                                                <div class="date-month">{{ $date->locale('ar')->monthName }}</div>
+                                                @if(!$isAvailable)
+                                                    <div class="unavailable-badge">
+                                                        <i class="bi bi-x-circle-fill"></i>
+                                                        غير متاح
+                                                    </div>
+                                                @else
+                                                    <div class="available-badge">
+                                                        <i class="bi bi-check-circle-fill"></i>
+                                                        متاح
+                                                    </div>
+                                                @endif
+                                            </label>
+                                        </div>
+                                    @endfor
+                                </div>
+                                @error('appointment_date')
+                                    <div class="invalid-feedback d-block mt-2">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
-                        </div>
-
-                        <form action="{{ route('appointments.store') }}" method="POST" id="bookingForm" class="needs-validation" novalidate>
-                            @csrf
-                            <input type="hidden" name="doctor_id" value="{{ $doctor->id }}">
-                            <input type="hidden" name="appointment_date" value="{{ $selectedDate }}">
-
-                        @if ($errors->any())
-                        <div class="alert alert-danger mb-4">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
-                                <strong>يرجى تصحيح الأخطاء التالية:</strong>
-                            </div>
-                            <ul class="list-unstyled m-0">
-                                @foreach ($errors->all() as $error)
-                                    <li class="d-flex align-items-center text-danger">
-                                        <i class="bi bi-dot me-2"></i>
-                                        {{ $error }}
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        @endif
-
-                        <form action="{{ route('appointments.store') }}" method="POST" id="bookingForm" class="needs-validation" novalidate>
-                            @csrf
-                            <input type="hidden" name="doctor_id" value="{{ $doctor->id }}">
-                            <input type="hidden" name="appointment_date" value="{{ $selectedDate }}">
 
                             <!-- Time Slots -->
                             <div class="time-slots mb-4">
@@ -285,31 +322,29 @@
                                     <span class="text-danger">*</span>
                                 </label>
                                 <div class="row g-2" id="timeSlots">
-
-                                        @forelse($availableSlots as $slot)
-                                            <div class="col-lg-3 col-md-4 col-6">
-                                                <input type="radio"
-                                                       class="btn-check"
-                                                       name="appointment_time"
-                                                       id="slot_{{ $slot }}"
-                                                       value="{{ $slot }}"
-                                                       {{ old('appointment_time') == $slot ? 'checked' : '' }}
-                                                       required>
-                                                <label class="time-slot-card w-100" for="slot_{{ $slot }}">
-                                                    <i class="bi bi-clock-fill"></i>
-                                                    {{ $slot }}
-                                                </label>
+                                    @forelse($availableSlots as $slot)
+                                        <div class="col-lg-3 col-md-4 col-6">
+                                            <input type="radio"
+                                                   class="btn-check"
+                                                   name="appointment_time"
+                                                   id="slot_{{ $slot }}"
+                                                   value="{{ $slot }}"
+                                                   {{ old('appointment_time') == $slot ? 'checked' : '' }}
+                                                   required>
+                                            <label class="time-slot-card w-100" for="slot_{{ $slot }}">
+                                                <i class="bi bi-clock-fill"></i>
+                                                {{ $slot }}
+                                            </label>
+                                        </div>
+                                    @empty
+                                        <div class="col-12">
+                                            <div class="alert alert-light border text-center mb-0">
+                                                <i class="bi bi-calendar-x text-warning" style="font-size: 2rem"></i>
+                                                <p class="mt-2 mb-0">لا توجد مواعيد متاحة في هذا اليوم</p>
+                                                <small class="text-muted">يرجى اختيار يوم آخر</small>
                                             </div>
-                                        @empty
-                                            <div class="col-12">
-                                                <div class="alert alert-light border text-center mb-0">
-                                                    <i class="bi bi-calendar-x text-warning" style="font-size: 2rem"></i>
-                                                    <p class="mt-2 mb-0">لا توجد مواعيد متاحة في هذا اليوم</p>
-                                                    <small class="text-muted">يرجى اختيار يوم آخر</small>
-                                                </div>
-                                            </div>
-                                        @endforelse
-
+                                        </div>
+                                    @endforelse
                                 </div>
                                 @error('appointment_time')
                                     <div class="invalid-feedback d-block mt-2">
@@ -348,7 +383,6 @@
                             </button>
                         </form>
                     </div>
-                    @endif
 
 
 
@@ -372,6 +406,7 @@
 
 @push('styles')
 <style>
+
     .category-badge-0 { background-color: #e8f3ff !important; color: #0d6efd !important; }
     .category-badge-1 { background-color: #e8fff3 !important; color: #198754 !important; }
     .category-badge-2 { background-color: #ffe8e8 !important; color: #dc3545 !important; }
@@ -416,8 +451,8 @@
     }
 
     .date-card {
-        background: #fff;
-        border: 1px solid #dee2e6;
+        background: #FFFFFF;
+        border: 1px solid #E8EAED;
         border-radius: 12px;
         padding: 12px 8px;
         text-align: center;
@@ -426,20 +461,13 @@
         display: flex;
         flex-direction: column;
         gap: 4px;
-    }
-
-    .btn-check:checked + .date-card {
-        background: var(--bs-primary);
-        border-color: var(--bs-primary);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
+        color: #202124;
     }
 
     .date-weekday {
         font-size: 0.85rem;
-        color: inherit;
-        opacity: 0.8;
+        color: #5F6368;
+        opacity: 1;
     }
 
     .date-number {
@@ -450,14 +478,36 @@
 
     .date-month {
         font-size: 0.8rem;
-        color: inherit;
-        opacity: 0.8;
+        color: #5F6368;
+        opacity: 1;
+    }
+
+    .btn-check:checked + .date-card {
+        background: #4285F4;
+        border-color: #4285F4;
+        color: #FFFFFF;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+    }
+
+    .btn-check:checked + .date-card .date-weekday,
+    .btn-check:checked + .date-card .date-month {
+        opacity: 0.9;
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    .btn-check:checked + .date-card .available-badge {
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    .btn-check:checked + .date-card .available-badge i {
+        color: #98ff98;
     }
 
     .date-card:hover:not(.btn-check:checked + .date-card) {
-        border-color: var(--bs-primary);
+        border-color: #0d6efd;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.1);
     }
 
     .time-slot-card {
@@ -521,9 +571,97 @@
             min-width: calc(100% / 2.5 - 8px);
         }
     }
-</style>
 
-<style>
+    .date-card.unavailable {
+        background: #F8F9FA;
+        border-color: #E8EAED;
+        opacity: 1;
+        cursor: not-allowed;
+    }
+
+    .date-card.unavailable:hover {
+        transform: none;
+        box-shadow: none;
+        border-color: #E8EAED;
+    }
+
+    .unavailable-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        color: #D93025;
+        margin-top: 0.25rem;
+    }
+
+    .unavailable-badge i {
+        font-size: 0.875rem;
+        color: #EA4335;
+    }
+
+    .available-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        color: #34A853;
+        margin-top: 0.25rem;
+    }
+
+    .available-badge i {
+        font-size: 0.875rem;
+        color: #2E9247;
+    }
+
+    .schedule-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .schedule-day {
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        padding: 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .schedule-day.available {
+        background-color: #e8fff3;
+        border-color: rgba(25, 135, 84, 0.1);
+    }
+
+    .schedule-day.unavailable {
+        background-color: #fff5f5;
+        border-color: rgba(220, 53, 69, 0.1);
+    }
+
+    .day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .day-name {
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .time-slots {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .time-slot {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #475569;
+        font-size: 0.875rem;
+    }
+
 /* Doctor Profile Styles */
 .doctor-cover {
     background-color: #f8fafc;
@@ -838,9 +976,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const appointmentDateInput = bookingForm.querySelector('input[name="appointment_date"]');
     const timeSlotsContainer = document.getElementById('timeSlots');
 
-    // Add smooth scroll animation
+    // تحويل الوقت إلى معرف صالح
+    const sanitizeId = (id) => {
+        return id ? id.replace(/[:\s]/g, '_') : '';
+    };
+
+    // Add smooth scroll animation with sanitized selector
     const smoothScroll = (target) => {
-        const element = document.querySelector(target);
+        if (!target) return;
+
+        if (target.startsWith('#')) {
+            target = target.substring(1);
+        }
+        const element = document.getElementById(sanitizeId(target));
         if (element) {
             element.scrollIntoView({
                 behavior: 'smooth',
@@ -849,10 +997,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+
     // Handle date selection
     dateInputs.forEach(input => {
         input.addEventListener('change', function() {
             const selectedDate = this.value;
+            if (!selectedDate) return;
+
             appointmentDateInput.value = selectedDate;
 
             // Show loading state
@@ -876,7 +1027,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     const newTimeSlots = doc.getElementById('timeSlots');
                     if (newTimeSlots) {
                         timeSlotsContainer.innerHTML = newTimeSlots.innerHTML;
-                        smoothScroll('#timeSlots');
+
+                        // تحديث معرفات عناصر الوقت
+                        const timeSlots = timeSlotsContainer.querySelectorAll('input[type="radio"]');
+                        timeSlots.forEach(slot => {
+                            if (!slot.id) return;
+
+                            const originalId = slot.id;
+                            const newId = sanitizeId(originalId);
+                            if (originalId !== newId) {
+                                slot.id = newId;
+                                const label = timeSlotsContainer.querySelector(`label[for="${originalId}"]`);
+                                if (label) {
+                                    label.setAttribute('for', newId);
+                                }
+                            }
+                        });
+
+                        smoothScroll('timeSlots');
                     }
                 })
                 .catch(error => {
@@ -891,21 +1059,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                 });
         });
-    });
-
-    // Form validation with better UX
-    bookingForm.addEventListener('submit', function(event) {
-        if (!this.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Scroll to first invalid element
-            const firstInvalid = this.querySelector(':invalid');
-            if (firstInvalid) {
-                smoothScroll('#' + firstInvalid.id);
-            }
-        }
-        this.classList.add('was-validated');
     });
 });
 </script>

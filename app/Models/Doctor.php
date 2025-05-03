@@ -167,14 +167,59 @@ class Doctor extends Model
         $availableSlots = $schedule->getAvailableSlots(new DateTime($date));
         $dateStr = $dateTime->format('Y-m-d');
 
-        // Filter out slots that already have appointments
-        return array_filter($availableSlots, function($slot) use ($dateStr) {
-            $slotDateTime = new DateTime($dateStr . ' ' . $slot);
-            return !$this->appointments()
-                ->where('scheduled_at', $slotDateTime->format('Y-m-d H:i:s'))
-                ->where('status', 'scheduled')
-                ->exists();
-        });
+        // تحميل جميع المواعيد المحجوزة لهذا اليوم مسبقًا
+        $bookedAppointments = $this->appointments()
+            ->whereDate('scheduled_at', $dateStr)
+            ->where('status', 'scheduled')
+            ->get()
+            ->map(function($appointment) {
+                return $appointment->scheduled_at->format('H:i');
+            })
+            ->toArray();
+
+        // استبعاد الأوقات التي تم حجزها بالفعل
+        return array_values(array_filter($availableSlots, function($slot) use ($bookedAppointments) {
+            return !in_array($slot, $bookedAppointments);
+        }));
+    }
+
+    protected static function arabicToEnglishDay($arabicDay)
+    {
+        return match($arabicDay) {
+            'الأحد' => 'sunday',
+            'الإثنين' => 'monday',
+            'الثلاثاء' => 'tuesday',
+            'الأربعاء' => 'wednesday',
+            'الخميس' => 'thursday',
+            'الجمعة' => 'friday',
+            'السبت' => 'saturday',
+            default => strtolower($arabicDay)
+        };
+    }
+
+    public function updateSchedule($scheduleData)
+    {
+        // Delete existing schedules
+        $this->schedules()->delete();
+
+        // Add new schedules
+        foreach ($scheduleData as $schedule) {
+            if (isset($schedule['is_available']) &&
+                $schedule['is_available'] &&
+                isset($schedule['start_time']) &&
+                isset($schedule['end_time'])) {
+
+                // Convert Arabic day name to English
+                $englishDay = self::arabicToEnglishDay($schedule['day']);
+
+                $this->schedules()->create([
+                    'day' => $englishDay,
+                    'start_time' => $schedule['start_time'],
+                    'end_time' => $schedule['end_time'],
+                    'is_active' => true
+                ]);
+            }
+        }
     }
 
 }

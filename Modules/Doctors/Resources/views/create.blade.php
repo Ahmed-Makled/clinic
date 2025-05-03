@@ -200,9 +200,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach(['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'] as $day)
+                                        @foreach(['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'] as $dayName)
                                         <tr>
-                                            <td>{{ $day }}</td>
+                                            <td>{{ $dayName }}</td>
                                             <td>
                                                 <div class="form-check">
                                                     <input class="form-check-input schedule-availability" type="checkbox"
@@ -210,6 +210,7 @@
                                                         id="day_{{ $loop->index }}_available"
                                                         value="1"
                                                         {{ old("schedules.{$loop->index}.is_available") ? 'checked' : '' }}>
+                                                    <input type="hidden" name="schedules[{{ $loop->index }}][day]" value="{{ $dayName }}">
                                                 </div>
                                             </td>
                                             <td>

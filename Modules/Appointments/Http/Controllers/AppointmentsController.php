@@ -95,7 +95,7 @@ class AppointmentsController extends Controller
     {
         // التحقق من تسجيل دخول المستخدم
         if (!auth()->check()) {
-            return back()
+            return redirect()->route('login')
                 ->with('error', 'يجب تسجيل الدخول أولاً لتتمكن من حجز موعد');
         }
 
@@ -111,9 +111,14 @@ class AppointmentsController extends Controller
         if (!$user->hasRole('Admin')) {
             $patient = $user->patient;
             if (!$patient) {
+                // نحفظ البيانات في الجلسة لاستعادتها لاحقًا
+                $request->flash();
+
+                // نرجع إلى نفس الصفحة مع رسالة التحذير
                 return back()
                     ->with('warning', 'يجب إكمال ملفك الشخصي كمريض أولاً لتتمكن من حجز موعد')
-                    ->with('redirect_after', route('appointments.book', $request->input('doctor_id')));
+                    ->with('profile_required', true)
+                    ->with('doctor_id', $request->input('doctor_id'));
             }
         }
 
@@ -171,12 +176,13 @@ class AppointmentsController extends Controller
             // Check if the time slot is available
             $doctor = Doctor::findOrFail($validated['doctor_id']);
 
-            // التحقق من تداخل المواعيد
-            $conflictingAppointments = Appointment::hasConflict($doctor->id, $scheduledAt)->get();
+            // تحديد المواعيد المتاحة لهذا التاريخ
+            $availableSlots = $doctor->getAvailableSlots($validated['appointment_date']);
 
-            if ($conflictingAppointments->isNotEmpty()) {
+            // التحقق من أن الوقت المطلوب ما زال متاحًا
+            if (!in_array($validated['appointment_time'], $availableSlots)) {
                 return back()->withErrors([
-                    'appointment_time' => 'عذراً، هذا الموعد محجوز بالفعل. يرجى اختيار وقت آخر.'
+                    'appointment_time' => 'عذراً، هذا الموعد غير متاح للحجز. يرجى اختيار وقت آخر من القائمة.'
                 ])->withInput();
             }
 
@@ -208,8 +214,13 @@ class AppointmentsController extends Controller
                 'scheduled_at' => $scheduledAt->format('Y-m-d H:i:s')
             ]);
 
-            $successMessage = 'تم حجز موعدك بنجاح! سيتم إرسال تفاصيل الموعد إلى بريدك الإلكتروني. ';
-            $successMessage .= 'موعدك مع د. ' . $doctor->name . ' يوم ' . $scheduledAt->format('Y-m-d') . ' الساعة ' . $scheduledAt->format('H:i');
+            // تحسين رسالة النجاح بمزيد من التفاصيل
+            $arabicDate = $scheduledAt->locale('ar')->translatedFormat('l d F Y');
+            $arabicTime = $scheduledAt->format('h:i A');
+
+            $successMessage = 'تم تأكيد حجز موعدك بنجاح! ';
+            $successMessage .= 'موعدك مع د. ' . $doctor->name . ' يوم ' . $arabicDate . ' الساعة ' . $arabicTime . '. ';
+            $successMessage .= 'يرجى الوصول قبل الموعد بـ 15 دقيقة. سيتم إرسال تفاصيل إضافية إلى بريدك الإلكتروني.';
 
             return redirect()->route('appointments.show', $appointment)
                 ->with('success', $successMessage);
@@ -231,10 +242,18 @@ class AppointmentsController extends Controller
     {
         $appointment->load(['doctor', 'patient']);
 
-        return view('appointments::details', [
-            'appointment' => $appointment,
-            'title' => 'تفاصيل الموعد'
-        ]);
+        // استخدام قالب مختلف حسب نوع المستخدم
+        if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Doctor')) {
+            return view('appointments::details', [
+                'appointment' => $appointment,
+                'title' => 'تفاصيل الموعد'
+            ]);
+        } else {
+            return view('appointments::show', [
+                'appointment' => $appointment,
+                'title' => 'تفاصيل الموعد'
+            ]);
+        }
     }
 
     public function edit(Appointment $appointment)
@@ -450,29 +469,42 @@ class AppointmentsController extends Controller
     {
         // Get selected date or default to today
         $selectedDate = request('date') ?? now()->format('Y-m-d');
+        $selectedDateObj = Carbon::parse($selectedDate);
 
-        // Get available slots for the selected date
-        $availableSlots = $doctor->getAvailableSlots($selectedDate);
+        // Get the day name in English lowercase
+        $dayName = strtolower($selectedDateObj->format('l'));
 
-        // Check if doctor has any schedules
-        if (empty($availableSlots) && !$doctor->schedules()->exists()) {
+        // Get all schedules for mapping days
+        $schedules = $doctor->schedules;
+
+        // Arabic day names mapping
+        $days = [
+            'sunday' => 'الأحد',
+            'monday' => 'الإثنين',
+            'tuesday' => 'الثلاثاء',
+            'wednesday' => 'الأربعاء',
+            'thursday' => 'الخميس',
+            'friday' => 'الجمعة',
+            'saturday' => 'السبت'
+        ];
+
+        // Find schedule for this day
+        $schedule = $schedules->where('day', $dayName)->where('is_active', true)->first();
+
+        // If no schedule exists for this day
+        if (!$schedule) {
             $availableSlots = [];
-            session()->flash('schedule_error', 'لا توجد مواعيد متاحة حالياً. الرجاء المحاولة في وقت لاحق.');
-            return view('appointments::book', compact('doctor', 'availableSlots', 'selectedDate'));
+            session()->flash('schedule_error', 'لا توجد مواعيد متاحة في هذا اليوم.');
+            return view('appointments::book', compact('doctor', 'availableSlots', 'selectedDate', 'schedules', 'days'));
         }
 
-        // Filter out slots that have existing appointments
-        $bookedSlots = Appointment::where('doctor_id', $doctor->id)
-            ->whereDate('scheduled_at', $selectedDate)
-            ->where('status', 'scheduled')
-            ->pluck('scheduled_at')
-            ->map(function($datetime) {
-                return Carbon::parse($datetime)->format('H:i');
-            })
-            ->toArray();
+        if (!$schedule->slot_duration) {
+            $schedule->slot_duration = 30; // Default to 30 minutes if not set
+        }
 
-        $availableSlots = array_values(array_diff($availableSlots, $bookedSlots));
+        // Get available slots for this schedule
+        $availableSlots = $doctor->getAvailableSlots($selectedDate);
 
-        return view('appointments::book', compact('doctor', 'availableSlots', 'selectedDate'));
+        return view('appointments::book', compact('doctor', 'availableSlots', 'selectedDate', 'schedules', 'days'));
     }
 }

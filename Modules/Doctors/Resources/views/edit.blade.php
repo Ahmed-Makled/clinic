@@ -197,7 +197,7 @@
                                     <tbody>
                                         @foreach(['sunday' => 'الأحد', 'monday' => 'الإثنين', 'tuesday' => 'الثلاثاء', 'wednesday' => 'الأربعاء', 'thursday' => 'الخميس', 'friday' => 'الجمعة', 'saturday' => 'السبت'] as $dayKey => $dayName)
                                             @php
-                                                $schedule = $doctor->schedules->where('day', $dayName)->first();
+                                                $schedule = $doctor->schedules->where('day', $dayKey)->first();
                                             @endphp
                                             <tr>
                                                 <td>{{ $dayName }}</td>
@@ -208,7 +208,7 @@
                                                             id="day_{{ $loop->index }}_available"
                                                             value="1"
                                                             {{ $schedule && $schedule->is_active ? 'checked' : '' }}>
-                                                        <input type="hidden" name="schedules[{{ $loop->index }}][day]" value="{{ $dayName }}">
+                                                        <input type="hidden" name="schedules[{{ $loop->index }}][day]" value="{{ $dayKey }}">
                                                     </div>
                                                 </td>
                                                 <td>
@@ -545,18 +545,6 @@ $(document).ready(function () {
             $('#city_id').val(oldCity);
         }
     }
-
-    // التحكم في حقول جداول المواعيد
-    $('.schedule-availability').on('change', function() {
-        const row = $(this).closest('tr');
-        const timeInputs = row.find('.schedule-time');
-
-        if ($(this).is(':checked')) {
-            timeInputs.prop('disabled', false);
-        } else {
-            timeInputs.prop('disabled', true).val('');
-        }
-    });
 });
 </script>
 @endpush

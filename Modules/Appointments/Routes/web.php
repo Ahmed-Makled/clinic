@@ -7,11 +7,12 @@ use Modules\Appointments\Http\Controllers\AppointmentsController;
 Route::middleware(['web', 'auth:web'])->group(function () {
     Route::get('/appointments/book/{doctor}', [AppointmentsController::class, 'book'])->name('appointments.book');
     Route::post('/appointments', [AppointmentsController::class, 'store'])->name('appointments.store');
+    Route::get('/appointments/{appointment}', [AppointmentsController::class, 'show'])->name('appointments.show');
 });
 
 // Admin routes
 Route::middleware(['web', 'auth:web', 'role:Admin'])->group(function () {
-    Route::resource('appointments', AppointmentsController::class)->except(['store']);
+    Route::resource('appointments', AppointmentsController::class)->except(['store', 'show']);
     Route::put('/appointments/{appointment}/complete', [AppointmentsController::class, 'complete'])->name('appointments.complete');
     Route::put('/appointments/{appointment}/cancel', [AppointmentsController::class, 'cancel'])->name('appointments.cancel');
     Route::put('/appointments/{appointment}/mark-as-paid', [AppointmentsController::class, 'markAsPaid'])->name('appointments.mark-as-paid');

@@ -34,14 +34,17 @@ class DoctorSchedule extends Model
 
     public function getAvailableSlots($date)
     {
-        if (!$this->is_active || strtolower($date->format('l')) !== $this->day) {
+        // Get day name in lowercase English
+        $dayName = strtolower($date->format('l'));
+
+        if (!$this->is_active || $this->day !== $dayName) {
             return [];
         }
 
         $slots = [];
         $startTime = new DateTime($date->format('Y-m-d ') . $this->start_time->format('H:i'));
         $endTime = new DateTime($date->format('Y-m-d ') . $this->end_time->format('H:i'));
-        $interval = new DateInterval('PT' . $this->slot_duration . 'M');
+        $interval = new DateInterval('PT' . ($this->slot_duration ?? 30) . 'M');
 
         while ($startTime < $endTime) {
             $slots[] = $startTime->format('H:i');
