@@ -123,6 +123,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -159,90 +160,561 @@
 
     <section class="about py-5">
         <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">إزاى تحجز معانا</h2>
-                <p class="text-muted w-75 mx-auto">اتبع الخطوات البسيطة دي عشان تحجز مع افضل دكتور</p>
+            <div class="section-header text-center mb-5 position-relative">
+                <h2 class="display-5 fw-bold mb-3 animate__animated animate__fadeInDown position-relative d-inline-block">
+                    إزاى تحجز معانا
+                    <span class="section-underline"></span>
+                </h2>
+                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">اتبع الخطوات البسيطة دي عشان تحجز مع افضل دكتور</p>
             </div>
 
             <div class="row g-4">
                 <div class="col-lg-4">
-                    <div class="card border-0 text-center hover-scale transition p-4">
+                    <div class="booking-step shadow rounded-4 bg-white text-center p-4 h-100 position-relative animate__animated animate__fadeInUp" data-wow-delay="0.1s">
+                        <div class="step-number">1</div>
                         <div class="icon-box mb-4 mx-auto">
-                            <i class="bi bi-search text-primary display-4"></i>
+                            <div class="icon-circle">
+                                <i class="bi bi-search fs-1 text-primary"></i>
+                            </div>
                         </div>
-                        <h4>إبحث على دكتور</h4>
-                        <p class="text-muted">بالتخصص و المنطقة و التامين و سعر الكشف</p>
+                        <h4 class="mb-3">إبحث على دكتور</h4>
+                        <p class="text-muted mb-3">حدد التخصص والمنطقة والتأمين وسعر الكشف المناسب ليك</p>
+                        <div class="step-features">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted small">تخصصات متنوعة</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted small">بحث متقدم</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="col-lg-4">
-                    <div class="card border-0 text-center hover-scale transition p-4">
+                    <div class="booking-step shadow rounded-4 bg-white text-center p-4 h-100 position-relative animate__animated animate__fadeInUp" data-wow-delay="0.3s">
+                        <div class="step-number">2</div>
                         <div class="icon-box mb-4 mx-auto">
-                            <i class="bi bi-star text-primary display-4"></i>
+                            <div class="icon-circle">
+                                <i class="bi bi-star fs-1 text-primary"></i>
+                            </div>
                         </div>
-                        <h4>قارن واختار</h4>
-                        <p class="text-muted">شوف تقييمات المرضى واختار الدكتور المناسب</p>
+                        <h4 class="mb-3">قارن واختار</h4>
+                        <p class="text-muted mb-3">شوف تقييمات المرضى السابقين واختار الدكتور المناسب لحالتك</p>
+                        <div class="step-features">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted small">تقييمات حقيقية</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted small">معلومات مفصلة</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="col-lg-4">
-                    <div class="card border-0 text-center hover-scale transition p-4">
+                    <div class="booking-step shadow rounded-4 bg-white text-center p-4 h-100 position-relative animate__animated animate__fadeInUp" data-wow-delay="0.5s">
+                        <div class="step-number">3</div>
                         <div class="icon-box mb-4 mx-auto">
-                            <i class="bi bi-calendar-check text-primary display-4"></i>
+                            <div class="icon-circle">
+                                <i class="bi bi-calendar-check fs-1 text-primary"></i>
+                            </div>
                         </div>
-                        <h4>احجز موعدك</h4>
-                        <p class="text-muted">احجز ميعادك اونلاين وهنأكدلك الحجز</p>
+                        <h4 class="mb-3">احجز موعدك</h4>
+                        <p class="text-muted mb-3">احجز ميعادك اونلاين وهنأكدلك الحجز فورًا عبر الرسائل النصية</p>
+                        <div class="step-features">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted small">تأكيد فوري</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted small">تذكير قبل الميعاد</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="text-center mt-5 animate__animated animate__fadeInUp">
+                <a href="{{ route('search') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm">
+                    <i class="bi bi-calendar-plus me-2"></i> ابدأ الحجز الآن
+                </a>
             </div>
         </div>
     </section>
 
-    <section class="features bg-light py-5">
+
+
+    <!-- سيكشن "ليه تختار منصتنا؟" محسن ومطور -->
+    <section class="features py-5">
         <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">ليه تختار منصتنا؟</h2>
-                <p class="text-muted w-75 mx-auto">نقدملك خدمة طبية متكاملة وسهلة</p>
+            <div class="section-header text-center mb-5 position-relative">
+                <h2 class="display-5 fw-bold mb-3 animate__animated animate__fadeInDown position-relative d-inline-block">
+                    ليه تختار منصتنا؟
+                    <span class="section-underline"></span>
+                </h2>
+                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">نقدم لك خدمات طبية متكاملة من خلال نخبة من أفضل الأطباء والمستشفيات</p>
             </div>
 
             <div class="row g-4">
                 <div class="col-md-6 col-lg-3">
-                    <div class="feature-card text-center p-4">
-                        <div class="icon-circle mb-4 mx-auto">
-                            <i class="bi bi-shield-check text-primary"></i>
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp" data-delay="0.1s">
+                        <div class="icon-box mb-4 mx-auto">
+                            <div class="icon-circle">
+                                <i class="bi bi-shield-check fs-1 text-primary"></i>
+                            </div>
                         </div>
-                        <h5>دكاترة معتمدين</h5>
-                        <p class="text-muted small">كل دكاترنا معتمدين ومرخصين</p>
+                        <h5 class="mb-3 fw-bold">دكاترة معتمدين</h5>
+                        <p class="text-muted mb-3">نضمن لك التعامل مع أطباء مُرخصين ومعتمدين من وزارة الصحة، بخبرة لا تقل عن 3 سنوات في مجالهم</p>
+                        <div class="feature-details">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">الترخيص الطبي</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">الخبرة الكافية</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="col-md-6 col-lg-3">
-                    <div class="feature-card text-center p-4">
-                        <div class="icon-circle mb-4 mx-auto">
-                            <i class="bi bi-clock-history text-primary"></i>
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp" data-delay="0.3s">
+                        <div class="icon-box mb-4 mx-auto">
+                            <div class="icon-circle">
+                                <i class="bi bi-clock-history fs-1 text-primary"></i>
+                            </div>
                         </div>
-                        <h5>حجز سريع</h5>
-                        <p class="text-muted small">احجز ميعادك في دقايق</p>
+                        <h5 class="mb-3 fw-bold">حجز سريع</h5>
+                        <p class="text-muted mb-3">احجز موعدك في أقل من دقيقة واحدة، وتلقى تأكيداً فورياً عبر الرسائل النصية والبريد الإلكتروني</p>
+                        <div class="feature-details">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">حجز خلال دقيقة</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">تأكيد فوري</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="col-md-6 col-lg-3">
-                    <div class="feature-card text-center p-4">
-                        <div class="icon-circle mb-4 mx-auto">
-                            <i class="bi bi-geo-alt text-primary"></i>
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp" data-delay="0.5s">
+                        <div class="icon-box mb-4 mx-auto">
+                            <div class="icon-circle">
+                                <i class="bi bi-geo-alt fs-1 text-primary"></i>
+                            </div>
                         </div>
-                        <h5>عيادات في كل مكان</h5>
-                        <p class="text-muted small">عيادات في كل محافظات مصر</p>
+                        <h5 class="mb-3 fw-bold">عيادات في كل مكان</h5>
+                        <p class="text-muted mb-3">نمتلك شبكة واسعة من العيادات والمستشفيات في جميع محافظات مصر، اختر الأقرب لك بكل سهولة</p>
+                        <div class="feature-details">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">تغطية كل المحافظات</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">سهولة الوصول</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="col-md-6 col-lg-3">
-                    <div class="feature-card text-center p-4">
-                        <div class="icon-circle mb-4 mx-auto">
-                            <i class="bi bi-headset text-primary"></i>
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp" data-delay="0.7s">
+                        <div class="icon-box mb-4 mx-auto">
+                            <div class="icon-circle">
+                                <i class="bi bi-headset fs-1 text-primary"></i>
+                            </div>
                         </div>
-                        <h5>دعم 24/7</h5>
-                        <p class="text-muted small">فريق دعم متواجد على مدار اليوم</p>
+                        <h5 class="mb-3 fw-bold">دعم على مدار اليوم</h5>
+                        <p class="text-muted mb-3">فريق دعم متخصص متاح 24/7 للإجابة على استفساراتك ومساعدتك في أي وقت تحتاج فيه للمساعدة</p>
+                        <div class="feature-details">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">متاح 24/7</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">فريق متخصص</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- صف إضافي للميزات -->
+            <div class="row g-4 mt-3">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp" data-delay="0.8s">
+                        <div class="icon-box mb-4 mx-auto">
+                            <div class="icon-circle">
+                                <i class="bi bi-star fs-1 text-primary"></i>
+                            </div>
+                        </div>
+                        <h5 class="mb-3 fw-bold">تقييمات حقيقية</h5>
+                        <p class="text-muted mb-3">تقييمات واقعية من مرضى حقيقيين تساعدك على اختيار الطبيب المناسب بثقة وشفافية</p>
+                        <div class="feature-details">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">تقييمات موثقة</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">نظام تقييم دقيق</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm ه-100 animate__animated animate__fadeInUp" data-delay="1s">
+                        <div class="icon-box mb-4 mx-auto">
+                            <div class="icon-circle">
+                                <i class="bi bi-wallet2 fs-1 text-primary"></i>
+                            </div>
+                        </div>
+                        <h5 class="mb-3 fw-bold">أسعار تنافسية</h5>
+                        <p class="text-muted mb-3">أسعار مناسبة وشفافة لجميع الخدمات الطبية، مع إمكانية الدفع بطرق متعددة وخصومات دورية</p>
+                        <div class="feature-details">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">أفضل الأسعار</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">خصومات مستمرة</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm ه-100 animate__animated animate__fadeInUp" data-delay="1.2s">
+                        <div class="icon-box mb-4 mx-auto">
+                            <div class="icon-circle">
+                                <i class="bi bi-journal-medical fs-1 text-primary"></i>
+                            </div>
+                        </div>
+                        <h5 class="mb-3 fw-bold">ملفات طبية آمنة</h5>
+                        <p class="text-muted mb-3">احتفظ بملفك الطبي بشكل آمن ومشفر، وتتبع تاريخ الزيارات والعلاجات بسهولة</p>
+                        <div class="feature-details">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">خصوصية عالية</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">متابعة مستمرة</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- زر الحجز -->
+            <div class="text-center mt-5 animate__animated animate__fadeInUp">
+                <a href="{{ route('search') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm hover-scale-lg">
+                    <i class="bi bi-calendar-check me-2"></i> احجز موعدك الآن
+                </a>
+            </div>
+
         </div>
     </section>
+
+    <!-- شركاؤنا - تصميم محسن -->
+    <section class="partners py-5 bg-white">
+        <div class="container">
+            <div class="section-header text-center mb-5 position-relative">
+                <h2 class="display-5 fw-bold mb-3 animate__animated animate__fadeInDown position-relative d-inline-block">
+                    شركاؤنا
+                    <span class="section-underline"></span>
+                </h2>
+                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">نتعاون مع أفضل المستشفيات والمراكز الطبية في مصر والعالم العربي</p>
+            </div>
+
+            <!-- للشاشات المتوسطة والكبيرة -->
+            <div class="d-none d-md-block">
+                <div class="row justify-content-center align-items-center">
+                    <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
+                        <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                            <img src="https://placehold.co/200x100/4e73df/ffffff?text=Medlife" alt="Medlife Hospital" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
+                        <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                            <img src="https://placehold.co/200x100/20c997/ffffff?text=HealthPlus" alt="HealthPlus" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
+                        <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                            <img src="https://placehold.co/200x100/fd7e14/ffffff?text=MediCare" alt="MediCare" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
+                        <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                            <img src="https://placehold.co/200x100/e83e8c/ffffff?text=AlShifa" alt="AlShifa Hospital" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
+                        <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                            <img src="https://placehold.co/200x100/6f42c1/ffffff?text=MediTech" alt="MediTech" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
+                        <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                            <img src="https://placehold.co/200x100/dc3545/ffffff?text=NileCare" alt="NileCare" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center align-items-center mt-4">
+                    <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
+                        <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                            <img src="https://placehold.co/200x100/6610f2/ffffff?text=AlAmal" alt="AlAmal Center" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
+                        <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                            <img src="https://placehold.co/200x100/198754/ffffff?text=EgyptMed" alt="EgyptMed" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
+                        <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                            <img src="https://placehold.co/200x100/0d6efd/ffffff?text=CairoHealth" alt="CairoHealth" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
+                        <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                            <img src="https://placehold.co/200x100/fd7e14/ffffff?text=SmartCare" alt="SmartCare" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- كاروسيل للشاشات الصغيرة -->
+            <div class="d-md-none">
+                <div id="partnersCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/4e73df/ffffff?text=Medlife" alt="Medlife Hospital" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/20c997/ffffff?text=HealthPlus" alt="HealthPlus" class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/fd7e14/ffffff?text=MediCare" alt="MediCare" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/e83e8c/ffffff?text=AlShifa" alt="AlShifa Hospital" class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/6f42c1/ffffff?text=MediTech" alt="MediTech" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/dc3545/ffffff?text=NileCare" alt="NileCare" class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/6610f2/ffffff?text=AlAmal" alt="AlAmal Center" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/198754/ffffff?text=EgyptMed" alt="EgyptMed" class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/0d6efd/ffffff?text=CairoHealth" alt="CairoHealth" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/fd7e14/ffffff?text=SmartCare" alt="SmartCare" class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-indicators position-relative mt-3">
+                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="0" class="active bg-primary" aria-current="true"></button>
+                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="1" class="bg-primary"></button>
+                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="2" class="bg-primary"></button>
+                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="3" class="bg-primary"></button>
+                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="4" class="bg-primary"></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- قسم آراء المرضى - تصميم محسن بسلايدر أفقي -->
+    <section class="testimonials py-5">
+        <div class="container">
+            <div class="section-header text-center mb-5 position-relative">
+                <h2 class="display-5 fw-bold mb-3 animate__animated animate__fadeInDown position-relative d-inline-block">
+                    آراء المرضى
+                    <span class="section-underline"></span>
+                </h2>
+                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">شاهد تجارب مرضانا مع أطبائنا المميزين</p>
+            </div>
+
+            <!-- تصميم جديد باستخدام سلايدر أفقي -->
+            <div class="testimonials-slider position-relative">
+                <!-- أزرار التنقل -->
+                <div class="slider-nav">
+                    <button class="slider-prev" aria-label="السابق">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                    <button class="slider-next" aria-label="التالي">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                </div>
+
+                <!-- حاوية السلايدر -->
+                <div class="testimonials-track-outer">
+                    <div class="testimonials-track">
+                        <!-- بطاقة تقييم 1 -->
+                        <div class="testimonial-slide">
+                            <div class="testimonial-card h-100">
+                                <div class="testimonial-rating mb-3">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="ms-2 text-muted">(5.0)</span>
+                                </div>
+                                <div class="testimonial-text mb-4">
+                                    <p class="mb-0">
+                                        "تجربتي مع دكتور أحمد كانت ممتازة، كان متعاون جدًا ومتفهم لحالتي. استطاع تشخيص مشكلتي بدقة ووصف العلاج المناسب. موقع شركتكم سهل جدًا في الاستخدام وحجز الميعاد كان سهل وسريع."
+                                    </p>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="testimonial-img me-3">
+                                        <img src="https://randomuser.me/api/portraits/men/45.jpg" class="rounded-circle" width="60" height="60" alt="مريض">
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0 fw-bold">محمد أحمد</h5>
+                                        <p class="text-primary mb-0 small">قسم جراحة العظام</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- بطاقة تقييم 2 -->
+                        <div class="testimonial-slide">
+                            <div class="testimonial-card h-100">
+                                <div class="testimonial-rating mb-3">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star text-warning"></i>
+                                    <span class="ms-2 text-muted">(4.0)</span>
+                                </div>
+                                <div class="testimonial-text mb-4">
+                                    <p class="mb-0">
+                                        "أنا سعيدة جداً بخدمات العيادة، الدكتورة ليلى كانت محترمة جداً والعيادة نظيفة ومجهزة بأحدث الأجهزة. أنصح بشدة بالحجز من خلال موقعكم لسهولة الحجز ودقة المواعيد."
+                                    </p>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="testimonial-img me-3">
+                                        <img src="https://randomuser.me/api/portraits/women/32.jpg" class="rounded-circle" width="60" height="60" alt="مريضة">
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0 fw-bold">سارة محمود</h5>
+                                        <p class="text-primary mb-0 small">قسم الأمراض الجلدية</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- بطاقة تقييم 3 -->
+                        <div class="testimonial-slide">
+                            <div class="testimonial-card h-100">
+                                <div class="testimonial-rating mb-3">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-half text-warning"></i>
+                                    <span class="ms-2 text-muted">(4.5)</span>
+                                </div>
+                                <div class="testimonial-text mb-4">
+                                    <p class="mb-0">
+                                        "تطبيقكم جميل جدًا وسهل الاستعمال، سهلتولي حجز ميعاد مع الدكتور بسهولة. الأطباء محترفين والمواعيد دقيقة وفي الوقت المحدد. شكرًا لكم على المجهود الرائع."
+                                    </p>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="testimonial-img me-3">
+                                        <img src="https://randomuser.me/api/portraits/men/36.jpg" class="rounded-circle" width="60" height="60" alt="مريض">
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0 fw-bold">خالد محمد</h5>
+                                        <p class="text-primary mb-0 small">قسم طب الأطفال</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- مؤشرات السلايدر (النقاط) -->
+                <div class="testimonials-indicators">
+                    <div class="indicator active" data-index="0"></div>
+                    <div class="indicator" data-index="1"></div>
+                    <div class="indicator" data-index="2"></div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="{{ route('search') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm animate__animated animate__fadeInUp">
+                    <i class="bi bi-calendar-check me-2"></i> احجز الآن وكن جزءًا من قصص النجاح
+                </a>
+            </div>
+        </div>
+    </section>
+
     @push('styles')
         <style>
             .header {
@@ -257,6 +729,98 @@
 
             .header .carousel-item.active img {
                 transform: scale(1);
+            }
+
+            /* تحسينات عنوان القسم */
+            .section-header h2 {
+                position: relative;
+                display: inline-block;
+                margin-bottom: 1rem;
+            }
+
+            .section-underline {
+                position: absolute;
+                left: 50%;
+                bottom: -10px;
+                width: 80px;
+                height: 4px;
+                background-color: var(--bs-primary);
+                transform: translateX(-50%);
+                border-radius: 2px;
+                content: "";
+                display: block;
+            }
+
+            .section-header h2:after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: -10px;
+                width: 50px;
+                height: 4px;
+                background-color: rgba(13, 110, 253, 0.5);
+                transform: translateX(-50%) translateX(65px);
+                border-radius: 2px;
+            }
+
+            /* خطوات الحجز المحسنة */
+            .section-header .badge {
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+            }
+
+            .booking-step {
+                border-top: 4px solid var(--bs-primary);
+                transition: all 0.3s ease;
+                overflow: hidden;
+            }
+
+            .booking-step:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+            }
+
+            .booking-step .step-number {
+                position: absolute;
+                top:20px ;
+                right: 20px;
+                background: var(--bs-primary);
+                color: white;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 1.2rem;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .icon-circle {
+                width: 80px;
+                height: 80px;
+                background-color: rgba(13, 110, 253, 0.1);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+                transition: all 0.3s ease;
+            }
+
+            .booking-step:hover .icon-circle {
+                background-color: var(--bs-primary);
+            }
+
+            .booking-step:hover .icon-circle i {
+                color: white !important;
+            }
+
+            .step-features {
+                border-top: 1px dashed #ddd;
+                padding-top: 15px;
+                margin-top: 15px;
             }
 
             /* Utility classes */
@@ -352,6 +916,114 @@
                 transform: translateY(-2px);
             }
 
+            /* تصميمات لقسم الدكاترة المميزين */
+            .doctor-card {
+                transition: all 0.3s ease;
+            }
+
+            .doctor-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+            }
+
+            .doc-image-container {
+                height: 200px;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .doc-img {
+                height: 100%;
+                object-fit: cover;
+                transition: all 0.5s ease;
+            }
+
+            .doctor-card:hover .doc-img {
+                transform: scale(1.05);
+            }
+
+            .featured-badge {
+                font-size: 0.8rem;
+                opacity: 0.9;
+            }
+
+            .doctor-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .doctor-card:hover .doctor-overlay {
+                opacity: 1;
+            }
+
+            .doctor-actions {
+                text-align: center;
+            }
+
+            .doctor-actions a {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            /* تصميمات شعارات الشركاء */
+            .partner-logo {
+                transition: all 0.3s ease;
+            }
+
+            .grayscale-hover img {
+                filter: grayscale(100%);
+                opacity: 0.7;
+                transition: all 0.3s ease;
+            }
+
+            .grayscale-hover:hover img {
+                filter: grayscale(0%);
+                opacity: 1;
+            }
+
+            /* تصميمات آراء المرضى */
+            .testimonial-card {
+                transition: all 0.3s ease;
+                position: relative;
+            }
+
+            .testimonial-card:before {
+                content: '"';
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                font-size: 3rem;
+                font-family: Georgia, serif;
+                color: rgba(13, 110, 253, 0.1);
+            }
+
+            .testimonial-text {
+                line-height: 1.7;
+            }
+
+            .testimonial-img img {
+                border: 3px solid var(--bs-primary);
+            }
+
+            /* شريط الإحصائيات */
+            .stats-bar {
+                position: relative;
+                z-index: 1;
+            }
+
+            .counter {
+                animation: fadeIn 1s ease-in-out;
+            }
+
             /* Animation keyframes */
             @keyframes float {
                 0% {
@@ -374,6 +1046,495 @@
 
             .animate__animated.animate__fadeInUp {
                 animation-duration: 1.2s;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* تحسينات الريسبونسف */
+            @media (max-width: 768px) {
+                .stats-bar {
+                    margin-top: 1rem;
+                }
+
+                .doc-image-container {
+                    height: 160px;
+                }
+
+                .testimonial-card {
+                    margin-bottom: 1rem;
+                }
+
+                .booking-step {
+                    margin-bottom: 2rem;
+                }
+            }
+
+            /* تحسينات جديدة لقسم الشركاء */
+            .shadow-hover {
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            }
+
+            .shadow-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            }
+
+            .partner-logo img {
+                transition: all 0.4s ease;
+                filter: brightness(0.95);
+            }
+
+            .partner-logo:hover img {
+                filter: brightness(1.05);
+                transform: scale(1.08);
+            }
+
+            .hover-scale {
+                transition: transform 0.3s ease;
+            }
+
+            .hover-scale:hover {
+                transform: scale(1.05);
+            }
+
+            #partnersCarousel .carousel-indicators [data-bs-target] {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                margin: 0 5px;
+            }
+
+            .section-header h2.animate__fadeInDown {
+                animation-delay: 0.2s;
+            }
+
+            .section-header p.animate__fadeInUp {
+                animation-delay: 0.4s;
+            }
+
+            /* تصميمات آراء المرضى */
+            .testimonials {
+                /* background-color: #f8f9fa; */
+                position: relative;
+                overflow: hidden;
+            }
+
+            .testimonials::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: url('{{ asset("images/pattern-bg.png") }}') center/cover;
+                opacity: 0.05;
+                z-index: 0;
+            }
+
+            .testimonials .container {
+                position: relative;
+                z-index: 1;
+            }
+
+            .testimonial-card {
+                transition: all 0.3s ease;
+                position: relative;
+                border-radius: 12px;
+                border-top: 3px solid var(--bs-primary);
+                overflow: hidden;
+            }
+
+            .testimonial-card::before {
+                content: '\201C';
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                font-size: 60px;
+                font-family: Georgia, serif;
+                color: rgba(13, 110, 253, 0.1);
+                line-height: 1;
+            }
+
+            .testimonial-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .testimonial-text {
+                line-height: 1.7;
+                font-style: italic;
+            }
+
+            .testimonial-img img {
+                border: 2px solid var(--bs-primary);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .testimonial-card:hover .testimonial-img img {
+                transform: scale(1.1);
+            }
+
+            .carousel-controls button {
+                width: 40px;
+                height: 40px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .section-header h2 {
+                color: #333;
+            }
+
+            #testimonialsCarouselSm .carousel-indicators [data-bs-target] {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                margin: 0 5px;
+                background-color: var(--bs-primary);
+            }
+
+            /* Animation styles for testimonials */
+            .testimonial-card.animate__animated {
+                animation-duration: 0.8s;
+            }
+
+            .testimonial-card .testimonial-img {
+                animation-delay: 0.2s;
+            }
+
+            /* Styles for responsive design */
+            @media (max-width: 768px) {
+                .testimonial-card {
+                    margin-bottom: 1rem;
+                }
+
+                .testimonials::before {
+                    opacity: 0.02;
+                }
+            }
+
+            /* تصميمات آراء المرضى المحسنة مع سلايدر أفقي */
+            .testimonials {
+                background-color: #f8f9fa;
+                position: relative;
+                overflow: hidden;
+                padding: 80px 0;
+            }
+
+            .testimonials::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: url('{{ asset("images/pattern-bg.png") }}') center/cover;
+                opacity: 0.05;
+                z-index: 0;
+            }
+
+            .testimonials .container {
+                position: relative;
+                z-index: 1;
+            }
+
+            /* تنسيق السلايدر */
+            .testimonials-slider {
+                margin: 20px auto;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .testimonials-track-outer {
+                overflow: hidden;
+                padding: 30px 0;
+                margin: 0 -10px;
+            }
+
+            .testimonials-track {
+                display: flex;
+                transition: transform 0.5s ease;
+                gap: 20px;
+                padding: 10px;
+            }
+
+            .testimonial-slide {
+                min-width: calc(33.333% - 20px);
+                padding: 0;
+                transition: all 0.3s ease;
+            }
+
+            /* تصميم البطاقة */
+            .testimonial-card {
+                background: white;
+                border-radius: 15px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+                padding: 25px;
+                transition: all 0.3s ease;
+                position: relative;
+                border-top: 4px solid var(--bs-primary);
+                height: 100%;
+            }
+
+            .testimonial-card::before {
+                content: '\201C';
+                position: absolute;
+                top: 15px;
+                right: 20px;
+                font-size: 60px;
+                font-family: Georgia, serif;
+                color: rgba(13, 110, 253, 0.1);
+                line-height: 1;
+            }
+
+            .testimonial-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+            }
+
+            .testimonial-text {
+                font-style: italic;
+                color: #555;
+                line-height: 1.7;
+                font-size: 15px;
+            }
+
+            /* صورة المريض */
+            .testimonial-img img {
+                width: 60px;
+                height: 60px;
+                border: 3px solid var(--bs-primary);
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .testimonial-card:hover .testimonial-img img {
+                transform: scale(1.1);
+            }
+
+            /* أزرار التنقل */
+            .slider-nav button {
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                background-color: white;
+                color: var(--bs-primary);
+                border: none;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+                font-size: 20px;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .slider-nav button:hover {
+                background-color: var(--bs-primary);
+                color: white;
+            }
+
+            .slider-prev {
+                left: -10px;
+            }
+
+            .slider-next {
+                right: -10px;
+            }
+
+            /* مؤشرات السلايدر (النقاط) */
+            .testimonials-indicators {
+                display: flex;
+                justify-content: center;
+                margin-top: 30px;
+                gap: 10px;
+            }
+
+            .indicator {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background-color: #ccc;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .indicator.active {
+                background-color: var(--bs-primary);
+                width: 25px;
+                border-radius: 10px;
+            }
+
+            /* تصميمات للشاشات المختلفة */
+            @media (max-width: 991px) {
+                .testimonial-slide {
+                    min-width: calc(50% - 20px);
+                }
+
+                .slider-prev {
+                    left: 10px;
+                }
+
+                .slider-next {
+                    right: 10px;
+                }
+            }
+
+            @media (max-width: 767px) {
+                .testimonial-slide {
+                    min-width: calc(100% - 20px);
+                }
+
+                .testimonials-track {
+                    gap: 15px;
+                }
+
+                .slider-prev {
+                    left: 5px;
+                }
+
+                .slider-next {
+                    right: 5px;
+                }
+            }
+
+            // ...existing code...
+
+            /* تصميمات سيكشن "ليه تختار منصتنا؟" */
+            .features {
+                background-color: #f8f9fa;
+                position: relative;
+                overflow: hidden;
+                padding: 80px 0;
+            }
+
+            .features::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: url('{{ asset("images/pattern-bg.png") }}') center/cover;
+                opacity: 0.03;
+                z-index: 0;
+            }
+
+            .features .container {
+                position: relative;
+                z-index: 1;
+            }
+
+            .feature-card {
+                transition: all 0.35s ease;
+                border-top: 4px solid transparent;
+                overflow: hidden;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-10px);
+                border-top: 4px solid var(--bs-primary);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+            }
+
+            .icon-circle {
+                width: 90px;
+                height: 90px;
+                background-color: rgba(13, 110, 253, 0.1);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+                transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            }
+
+            .feature-card:hover .icon-circle {
+                background-color: var(--bs-primary);
+                transform: scale(1.1) rotate(10deg);
+                box-shadow: 0 10px 20px rgba(13, 110, 253, 0.3);
+            }
+
+            .feature-card:hover .icon-circle i {
+                color: white !important;
+                transform: scale(1.2);
+            }
+
+            .icon-circle i {
+                transition: all 0.3s ease;
+            }
+
+            .feature-details {
+                border-top: 1px dashed #ddd;
+                padding-top: 15px;
+                margin-top: auto;
+                text-align: right;
+            }
+
+            .feature-card h5 {
+                position: relative;
+                display: inline-block;
+            }
+
+            .feature-card:hover h5 {
+                color: var(--bs-primary);
+            }
+
+            /* تصميم قسم الإحصائيات */
+            .stats-bar {
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+                margin-top: 50px;
+            }
+
+            .stats-counter {
+                padding: 20px 0;
+            }
+
+            .stats-icon {
+                transition: all 0.3s ease;
+            }
+
+            .stats-data:hover .stats-icon {
+                transform: scale(1.2);
+            }
+
+            .counter {
+                font-size: 2.5rem;
+                background: linear-gradient(45deg, var(--bs-primary), #0c63e4);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                margin-bottom: 0;
+            }
+
+            .animate__animated[data-delay] {
+                animation-delay: var(--delay);
+            }
+
+            @media (max-width: 768px) {
+                .counter {
+                    font-size: 2rem;
+                }
+
+                .feature-card {
+                    margin-bottom: 15px;
+                }
             }
         </style>
     @endpush
@@ -476,6 +1637,211 @@
                     // Show selected tab content
                     $('#' + tabName).show();
                 });
+
+                // تأثير العداد للإحصائيات
+                function animateCounters() {
+                    $('.counter').each(function() {
+                        const $this = $(this);
+                        const countTo = $this.text().replace(/\D/g, '');
+
+                        $({ countNum: 0 }).animate({
+                            countNum: countTo
+                        }, {
+                            duration: 2000,
+                            easing: 'swing',
+                            step: function() {
+                                $this.text(Math.floor(this.countNum).toLocaleString() + '+');
+                            }
+                        });
+                    });
+                }
+
+                // بدء تشغيل التأثير عند رؤية العناصر
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animateCounters();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+
+                $('.stats-bar').each(function() {
+                    observer.observe(this);
+                });
+
+                // فلترة الأطباء بحسب التخصص
+                $('.doctors-filter-buttons button').on('click', function() {
+                    const filter = $(this).data('filter');
+
+                    // تنشيط الزر المختار
+                    $('.doctors-filter-buttons button').removeClass('active');
+                    $(this).addClass('active');
+
+                    if (filter === 'all') {
+                        // عرض جميع الأطباء
+                        $('.doctor-item').fadeIn(300);
+                    } else {
+                        // إخفاء جميع الأطباء
+                        $('.doctor-item').hide();
+                        // عرض الأطباء بحسب التخصص المختار
+                        $('.filter-cat-' + filter).fadeIn(300);
+                    }
+                });
+
+                // تأثير الظهور المتدرج للأطباء عند التمرير
+                const doctorsObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const element = entry.target;
+                            element.classList.add('animate__fadeInUp', 'animate__animated');
+                            doctorsObserver.unobserve(element);
+                        }
+                    });
+                }, {
+                    threshold: 0.1
+                });
+
+                $('.doctor-card').each(function() {
+                    doctorsObserver.observe(this);
+                });
+            });
+
+            // سكريبت السلايدر الأفقي للتقييمات
+            document.addEventListener('DOMContentLoaded', function() {
+                const track = document.querySelector('.testimonials-track');
+                const slides = document.querySelectorAll('.testimonial-slide');
+                const prevButton = document.querySelector('.slider-prev');
+                const nextButton = document.querySelector('.slider-next');
+                const indicators = document.querySelectorAll('.indicator');
+
+                if (!track || slides.length === 0) return;
+
+                let currentSlide = 0;
+                let slideWidth = 0;
+                let slidesToShow = 3; // عدد البطاقات المعروضة في الشاشة الكبيرة
+
+                // تحديث عدد البطاقات المعروضة بناءً على عرض الشاشة
+                function updateSlidesToShow() {
+                    if (window.innerWidth < 768) {
+                        slidesToShow = 1;
+                    } else if (window.innerWidth < 992) {
+                        slidesToShow = 2;
+                    } else {
+                        slidesToShow = 3;
+                    }
+
+                    slideWidth = track.clientWidth / slidesToShow;
+                    slides.forEach(slide => {
+                        slide.style.minWidth = `calc(${100 / slidesToShow}% - 20px)`;
+                    });
+                }
+
+                // حركة السلايدر إلى الشريحة المحددة
+                function moveToSlide(index) {
+                    if (index < 0) {
+                        index = slides.length - slidesToShow;
+                    } else if (index > slides.length - slidesToShow) {
+                        index = 0;
+                    }
+
+                    currentSlide = index;
+                    const offset = -currentSlide * (slideWidth + 20); // إضافة الفجوة (gap)
+                    track.style.transform = `translateX(${offset}px)`;
+
+                    // تحديث مؤشرات السلايدر
+                    indicators.forEach((ind, i) => {
+                        ind.classList.remove('active');
+                    });
+
+                    // تنشيط المؤشر المناسب
+                    const indicatorIndex = Math.floor(currentSlide % indicators.length);
+                    indicators[indicatorIndex].classList.add('active');
+                }
+
+                // تحديث السلايدر عند تغيير حجم النافذة
+                window.addEventListener('resize', function() {
+                    updateSlidesToShow();
+                    moveToSlide(currentSlide);
+                });
+
+                // تهيئة السلايدر
+                updateSlidesToShow();
+
+                // أزرار التنقل
+                if (prevButton) {
+                    prevButton.addEventListener('click', function() {
+                        moveToSlide(currentSlide - 1);
+                    });
+                }
+
+                if (nextButton) {
+                    nextButton.addEventListener('click', function() {
+                        moveToSlide(currentSlide + 1);
+                    });
+                }
+
+                // مؤشرات السلايدر
+                indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', function() {
+                        moveToSlide(index);
+                    });
+                });
+
+                // التنقل باستخدام السحب (للجوال)
+                let isDragging = false;
+                let startPosition = 0;
+                let currentTranslate = 0;
+
+                track.addEventListener('mousedown', dragStart);
+                track.addEventListener('touchstart', dragStart);
+                track.addEventListener('mouseup', dragEnd);
+                track.addEventListener('touchend', dragEnd);
+                track.addEventListener('mouseleave', dragEnd);
+                track.addEventListener('mousemove', drag);
+                track.addEventListener('touchmove', drag);
+
+                function dragStart(e) {
+                    isDragging = true;
+                    startPosition = getPositionX(e);
+                    currentTranslate = -currentSlide * (slideWidth + 20);
+                }
+
+                function drag(e) {
+                    if (isDragging) {
+                        const currentPosition = getPositionX(e);
+                        const diff = currentPosition - startPosition;
+                        const translate = currentTranslate + diff;
+                        track.style.transform = `translateX(${translate}px)`;
+                    }
+                }
+
+                function dragEnd(e) {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    const currentPosition = getPositionX(e);
+                    const diff = currentPosition - startPosition;
+
+                    // تحديد ما إذا كان يجب الانتقال للشريحة التالية أو السابقة
+                    if (diff < -100) {
+                        moveToSlide(currentSlide + 1);
+                    } else if (diff > 100) {
+                        moveToSlide(currentSlide - 1);
+                    } else {
+                        moveToSlide(currentSlide);
+                    }
+                }
+
+                function getPositionX(e) {
+                    return e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                }
+
+                // تلقائي التنقل كل 5 ثوانٍ
+                setInterval(function() {
+                    if (!isDragging) {
+                        moveToSlide(currentSlide + 1);
+                    }
+                }, 5000);
             });
         </script>
     @endpush
