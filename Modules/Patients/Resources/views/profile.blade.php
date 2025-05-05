@@ -4,25 +4,35 @@
     <div class="container mt-5 py-5">
 
         <div class="row justify-content-center">
-            <div class="col-lg-10">
+            <div class="col-lg-12">
                 <!-- رسائل النجاح والخطأ -->
-                @if(session('success'))
-                    <div class="alert alert-success border-0 shadow-sm py-3 mb-4 d-flex align-items-center" role="alert">
-                        <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
-                        <div>
-                            <strong>تم بنجاح!</strong> {{ session('success') }}
+
+                @if (session('success'))
+                    <div class="alert-card success mb-4">
+                        <div class="alert-icon">
+                            <i class="bi bi-check-circle-fill"></i>
                         </div>
-                        <button type="button" class="btn-close me-auto" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+                        <div class="alert-content">
+                            <h6 class="alert-heading">تمت العملية بنجاح!</h6>
+                            <p class="mb-0">{!! session('success') !!}</p>
+                        </div>
+                        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                            <i class="bi bi-x"></i>
+                        </button>
                     </div>
                 @endif
-
-                @if(session('error'))
-                    <div class="alert alert-danger border-0 shadow-sm py-3 mb-4 d-flex align-items-center" role="alert">
-                        <i class="bi bi-exclamation-circle-fill text-danger fs-4 me-3"></i>
-                        <div>
-                            <strong>حدث خطأ!</strong> {{ session('error') }}
+                @if (session('error'))
+                    <div class="alert-card error mb-4">
+                        <div class="alert-icon">
+                            <i class="bi bi-exclamation-triangle"></i>
                         </div>
-                        <button type="button" class="btn-close me-auto" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+                        <div class="alert-content">
+                            <h6 class="alert-heading">حدث خطأ!</h6>
+                            <p class="mb-0">{!! session('error') !!}</p>
+                        </div>
+                        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                            <i class="bi bi-x"></i>
+                        </button>
                     </div>
                 @endif
 
@@ -38,7 +48,7 @@
                     <div class="card-body p-0">
                         <div class="row g-0">
                             <!-- القائمة الجانبية -->
-                            <div class="col-lg-3 profile-sidebar-wrapper">
+                            <div class="col-lg-2 profile-sidebar-wrapper">
                                 <div class="profile-sidebar p-4">
                                     <!-- معلومات المستخدم المختصرة -->
                                     <div class="text-center mb-4 pb-3 border-bottom">
@@ -79,7 +89,7 @@
                             </div>
 
                             <!-- محتوى الصفحة -->
-                            <div class="col-lg-9 profile-content-wrapper">
+                            <div class="col-lg-10 profile-content-wrapper">
                                 <div class="tab-content p-4" id="profile-tabsContent">
                                     <!-- تبويب البيانات الشخصية -->
                                     <div class="tab-pane fade show active" id="personal" role="tabpanel"
@@ -94,12 +104,12 @@
                                                     <h5 class="mb-0 fw-bold">بياناتي</h5>
                                                 </div>
                                                 @if($user->patient)
-                                                <div class="">
-                                                    <button type="button" class="btn btn-primary btn-sm"
-                                                        data-bs-toggle="modal" data-bs-target="#editPatientModal">
-                                                        <i class="bi bi-pencil-square me-1"></i> تعديل البيانات
-                                                    </button>
-                                                </div>
+                                                    <div class="">
+                                                        <button type="button" class="btn btn-primary btn-sm"
+                                                            data-bs-toggle="modal" data-bs-target="#editPatientModal">
+                                                            <i class="bi bi-pencil-square me-1"></i> تعديل البيانات
+                                                        </button>
+                                                    </div>
                                                 @endif
                                             </div>
 
@@ -135,43 +145,43 @@
                                                     </div>
                                                 </div>
                                                 @if($user->patient)
-                                                <div class="profile-info">
-                                                    <div class="info-item">
-                                                        <div class="info-label">
-                                                            <i class="bi bi-calendar-event"></i>
-                                                            <span>تاريخ الميلاد</span>
+                                                    <div class="profile-info">
+                                                        <div class="info-item">
+                                                            <div class="info-label">
+                                                                <i class="bi bi-calendar-event"></i>
+                                                                <span>تاريخ الميلاد</span>
+                                                            </div>
+                                                            <div class="info-value">
+                                                                {{ $user->patient && $user->patient->date_of_birth ? $user->patient->date_of_birth->format('Y-m-d') : 'غير محدد' }}
+                                                            </div>
                                                         </div>
-                                                        <div class="info-value">
-                                                            {{ $user->patient && $user->patient->date_of_birth ? $user->patient->date_of_birth->format('Y-m-d') : 'غير محدد' }}
-                                                        </div>
-                                                    </div>
 
-                                                    <div class="info-item">
-                                                        <div class="info-label">
-                                                            <i class="bi bi-gender-ambiguous"></i>
-                                                            <span>الجنس</span>
+                                                        <div class="info-item">
+                                                            <div class="info-label">
+                                                                <i class="bi bi-gender-ambiguous"></i>
+                                                                <span>الجنس</span>
+                                                            </div>
+                                                            <div class="info-value">
+                                                                @if($user->patient && $user->patient->gender == 'male')
+                                                                    <i class="bi bi-gender-male text-primary me-1"></i> ذكر
+                                                                @elseif($user->patient && $user->patient->gender == 'female')
+                                                                    <i class="bi bi-gender-female text-danger me-1"></i> أنثى
+                                                                @else
+                                                                    غير محدد
+                                                                @endif
+                                                            </div>
                                                         </div>
-                                                        <div class="info-value">
-                                                            @if($user->patient && $user->patient->gender == 'male')
-                                                                <i class="bi bi-gender-male text-primary me-1"></i> ذكر
-                                                            @elseif($user->patient && $user->patient->gender == 'female')
-                                                                <i class="bi bi-gender-female text-danger me-1"></i> أنثى
-                                                            @else
-                                                                غير محدد
-                                                            @endif
-                                                        </div>
-                                                    </div>
 
-                                                    <div class="info-item">
-                                                        <div class="info-label">
-                                                            <i class="bi bi-geo-alt"></i>
-                                                            <span>العنوان</span>
-                                                        </div>
-                                                        <div class="info-value">
-                                                            {{ $user->patient && $user->patient->address ? $user->patient->address : 'غير محدد' }}
+                                                        <div class="info-item">
+                                                            <div class="info-label">
+                                                                <i class="bi bi-geo-alt"></i>
+                                                                <span>العنوان</span>
+                                                            </div>
+                                                            <div class="info-value">
+                                                                {{ $user->patient && $user->patient->address ? $user->patient->address : 'غير محدد' }}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
                                                 @endif
                                             </div>
                                         </div>
@@ -212,7 +222,8 @@
                                                                                 value="{{ old('name', $user->name) }}">
                                                                             @error('name')
                                                                                 <div class="invalid-feedback">
-                                                                                    {{ $message ?? 'الاسم مطلوب' }}</div>
+                                                                                    {{ $message ?? 'الاسم مطلوب' }}
+                                                                                </div>
                                                                             @enderror
                                                                         </div>
 
@@ -241,7 +252,8 @@
                                                                                 value="{{ old('phone_number', $user->phone_number) }}">
                                                                             @error('phone_number')
                                                                                 <div class="invalid-feedback">
-                                                                                    {{ $message ?? 'رقم الهاتف مطلوب' }}</div>
+                                                                                    {{ $message ?? 'رقم الهاتف مطلوب' }}
+                                                                                </div>
                                                                             @enderror
                                                                         </div>
 
@@ -282,7 +294,8 @@
                                                                                 </div>
                                                                                 @error('gender')
                                                                                     <div class="invalid-feedback d-block">
-                                                                                        {{ $message ?? 'الجنس مطلوب' }}</div>
+                                                                                        {{ $message ?? 'الجنس مطلوب' }}
+                                                                                    </div>
                                                                                 @enderror
                                                                             </div>
                                                                         </div>
@@ -343,7 +356,8 @@
                                                                 value="{{ old('date_of_birth') }}">
                                                             @error('date_of_birth')
                                                                 <div class="invalid-feedback">
-                                                                    {{ $message ?? 'صيغة تاريخ الميلاد غير صحيحة' }}</div>
+                                                                    {{ $message ?? 'صيغة تاريخ الميلاد غير صحيحة' }}
+                                                                </div>
                                                             @enderror
                                                         </div>
 
@@ -366,7 +380,8 @@
                                                                 </div>
                                                                 @error('gender')
                                                                     <div class="invalid-feedback d-block">
-                                                                        {{ $message ?? 'الجنس مطلوب' }}</div>
+                                                                        {{ $message ?? 'الجنس مطلوب' }}
+                                                                    </div>
                                                                 @enderror
                                                             </div>
                                                         </div>
@@ -380,7 +395,8 @@
                                                                 placeholder="أدخل عنوانك هنا...">{{ old('address') }}</textarea>
                                                             @error('address')
                                                                 <div class="invalid-feedback">
-                                                                    {{ $message ?? 'العنوان يتجاوز الحد المسموح به' }}</div>
+                                                                    {{ $message ?? 'العنوان يتجاوز الحد المسموح به' }}
+                                                                </div>
                                                             @enderror
                                                         </div>
 
@@ -414,184 +430,313 @@
                                                 </div>
 
                                                 @if($user->patient && count($user->patient->appointments) > 0)
-                                                    <div class="table-responsive appointments-table">
-                                                        <table class="table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>رقم الحجز</th>
-                                                                    <th>الطبيب</th>
-                                                                    <th>التخصص</th>
-                                                                    <th>التاريخ</th>
-                                                                    <th>الوقت</th>
-                                                                    <th>الحالة</th>
-                                                                    <th>الإجراءات</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @foreach($user->patient->appointments as $appointment)
+                                                    <div class="appointments-wrapper">
+                                                        <div class="table-responsive ">
+                                                            <table class="table table-hover align-middle data-table">
+                                                                <thead>
                                                                     <tr>
-                                                                        <td class="appointment-id">{{ $appointment->id }}</td>
-                                                                        <td>
-                                                                            <div class="doctor-info">
-                                                                                <div class="doctor-avatar">
-                                                                                    <i class="bi bi-person-badge"></i>
-                                                                                </div>
-                                                                                <span>{{ $appointment->doctor->user->name }}</span>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>{{ $appointment->doctor->specialization }}</td>
-                                                                        <td>{{ $appointment->date ? $appointment->date->format('Y-m-d') : 'غير محدد' }}
-                                                                        </td>
-                                                                        <td>{{ $appointment->time_slot }}</td>
-                                                                        <td>
-                                                                            @if($appointment->status == 'pending')
-                                                                                <span class="status-badge pending">
-                                                                                    <i class="bi bi-clock me-1"></i> قيد الانتظار
-                                                                                </span>
-                                                                            @elseif($appointment->status == 'confirmed')
-                                                                                <span class="status-badge confirmed">
-                                                                                    <i class="bi bi-check-circle me-1"></i> مؤكد
-                                                                                </span>
-                                                                            @elseif($appointment->status == 'completed')
-                                                                                <span class="status-badge completed">
-                                                                                    <i class="bi bi-check-all me-1"></i> مكتمل
-                                                                                </span>
-                                                                            @elseif($appointment->status == 'cancelled')
-                                                                                <span class="status-badge cancelled">
-                                                                                    <i class="bi bi-x-circle me-1"></i> ملغي
-                                                                                </span>
-                                                                            @endif
-                                                                        </td>
-                                                                        <td>
-                                                                            <div class="actions-group">
-                                                                                <a href="{{ route('appointments.show', $appointment->id) }}"
-                                                                                    class="btn btn-icon" title="عرض التفاصيل">
-                                                                                    <i class="bi bi-eye"></i>
-                                                                                </a>
-
-                                                                                @if($appointment->status == 'pending' || $appointment->status == 'confirmed')
-                                                                                    <form method="POST"
-                                                                                        action="{{ route('appointments.cancel', $appointment->id) }}"
-                                                                                        class="d-inline-block">
-                                                                                        @csrf
-                                                                                        @method('PUT')
-                                                                                        <button type="submit"
-                                                                                            class="btn btn-icon btn-danger"
-                                                                                            title="إلغاء الموعد"
-                                                                                            onclick="return confirm('هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟')">
-                                                                                            <i class="bi bi-x-circle"></i>
-                                                                                        </button>
-                                                                                    </form>
-                                                                                @endif
-
-                                                                                @if($appointment->status == 'completed')
-                                                                                    <button type="button" class="btn btn-icon btn-warning"
-                                                                                        title="تقييم الطبيب" data-bs-toggle="modal"
-                                                                                        data-bs-target="#rateModal{{ $appointment->id }}">
-                                                                                        <i class="bi bi-star"></i>
-                                                                                    </button>
-
-                                                                                    <!-- نافذة تقييم الطبيب -->
-                                                                                    <div class="modal fade"
-                                                                                        id="rateModal{{ $appointment->id }}" tabindex="-1"
-                                                                                        aria-hidden="true">
-                                                                                        <div class="modal-dialog modal-dialog-centered">
-                                                                                            <div class="modal-content">
-                                                                                                <div class="modal-header">
-                                                                                                    <h5 class="modal-title">
-                                                                                                        <i
-                                                                                                            class="bi bi-star-fill text-warning me-1"></i>تقييم
-                                                                                                        الطبيب
-                                                                                                    </h5>
-                                                                                                    <button type="button" class="btn-close"
-                                                                                                        data-bs-dismiss="modal"
-                                                                                                        aria-label="إغلاق"></button>
-                                                                                                </div>
-                                                                                                <form method="POST"
-                                                                                                    action="{{ route('doctors.rate', $appointment->doctor->id) }}">
-                                                                                                    @csrf
-                                                                                                    <input type="hidden"
-                                                                                                        name="appointment_id"
-                                                                                                        value="{{ $appointment->id }}">
-                                                                                                    <div class="modal-body">
-                                                                                                        <div class="doctor-profile">
-                                                                                                            <div
-                                                                                                                class="doctor-profile-avatar">
-                                                                                                                <i
-                                                                                                                    class="bi bi-person-badge"></i>
-                                                                                                            </div>
-                                                                                                            <div>
-                                                                                                                <h6 class="mb-1">د.
-                                                                                                                    {{ $appointment->doctor->user->name }}
-                                                                                                                </h6>
-                                                                                                                <p
-                                                                                                                    class="text-muted mb-0 small">
-                                                                                                                    {{ $appointment->doctor->specialization }}
-                                                                                                                </p>
-                                                                                                            </div>
-                                                                                                        </div>
-
-                                                                                                        <div class="rating-container">
-                                                                                                            <label
-                                                                                                                class="form-label fw-bold">التقييم</label>
-                                                                                                            <div class="star-rating">
-                                                                                                                <div class="stars">
-                                                                                                                    @for($i = 5; $i >= 1; $i--)
-                                                                                                                        <div class="star-item">
-                                                                                                                            <input
-                                                                                                                                class="visually-hidden"
-                                                                                                                                type="radio"
-                                                                                                                                name="rating"
-                                                                                                                                id="star{{ $i }}{{ $appointment->id }}"
-                                                                                                                                value="{{ $i }}">
-                                                                                                                            <label
-                                                                                                                                class="star-label"
-                                                                                                                                for="star{{ $i }}{{ $appointment->id }}">
-                                                                                                                                <i
-                                                                                                                                    class="bi bi-star-fill"></i>
-                                                                                                                            </label>
-                                                                                                                        </div>
-                                                                                                                    @endfor
-                                                                                                                </div>
-                                                                                                                <div class="rating-value">0
-                                                                                                                    من 5</div>
-                                                                                                            </div>
-                                                                                                        </div>
-
-                                                                                                        <div class="mb-3">
-                                                                                                            <label for="comment"
-                                                                                                                class="form-label fw-bold">تعليق</label>
-                                                                                                            <textarea class="form-control"
-                                                                                                                id="comment" name="comment"
-                                                                                                                rows="3"
-                                                                                                                placeholder="أضف تعليقك وتجربتك مع الطبيب..."></textarea>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div class="modal-footer">
-                                                                                                        <button type="button"
-                                                                                                            class="btn btn-secondary"
-                                                                                                            data-bs-dismiss="modal">
-                                                                                                            <i
-                                                                                                                class="bi bi-x-circle me-1"></i>إلغاء
-                                                                                                        </button>
-                                                                                                        <button type="submit"
-                                                                                                            class="btn btn-primary">
-                                                                                                            <i
-                                                                                                                class="bi bi-check2-circle me-1"></i>إرسال
-                                                                                                            التقييم
-                                                                                                        </button>
-                                                                                                    </div>
-                                                                                                </form>
-                                                                                            </div>
+                                                                        <th class="text-center">
+                                                                            <span class="d-block fw-bold">الرقم</span>
+                                                                        </th>
+                                                                        <th>
+                                                                            <span class="d-block fw-bold">الطبيب</span>
+                                                                        </th>
+                                                                        <th>
+                                                                            <span class="d-block fw-bold">التخصص</span>
+                                                                        </th>
+                                                                        <th>
+                                                                            <span class="d-block fw-bold">التاريخ</span>
+                                                                        </th>
+                                                                        <th>
+                                                                            <span class="d-block fw-bold">الوقت</span>
+                                                                        </th>
+                                                                        <th>
+                                                                            <span class="d-block fw-bold">الحالة</span>
+                                                                        </th>
+                                                                        <th>
+                                                                            <span class="d-block fw-bold">الإجراءات</span>
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach($user->patient->appointments as $appointment)
+                                                                        <tr
+                                                                            class=" {{ $appointment->status == 'cancelled' ? 'cancelled-row' : '' }}">
+                                                                            <td class="text-center appointment-id">
+                                                                                {{ $appointment->id }}
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="doctor-info">
+                                                                                    <div class="doctor-avatar">
+                                                                                        @if($appointment->doctor->image)
+                                                                                            <img src="{{ asset('storage/' . $appointment->doctor->image) }}"
+                                                                                                alt="{{ $appointment->doctor->user->name }}"
+                                                                                                class="img-fluid">
+                                                                                        @else
+                                                                                            <i class="bi bi-person-fill"></i>
+                                                                                        @endif
+                                                                                    </div>
+                                                                                    <div class="doctor-details">
+                                                                                        <div class="doctor-name">د.
+                                                                                            {{ $appointment->doctor->user->name }}
                                                                                         </div>
                                                                                     </div>
-                                                                                @endif
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <span class="specialization-badge">
+                                                                                    {{ $appointment->doctor->specialization }}
+                                                                                </span>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="date-info">
+                                                                                    <i
+                                                                                        class="bi bi-calendar-date fs-5 text-primary"></i>
+                                                                                    <div>
+                                                                                        <strong
+                                                                                            class="d-block appointment-date">{{ $appointment->scheduled_at ? $appointment->scheduled_at->locale('ar')->translatedFormat('l') : 'غير محدد' }}</strong>
+                                                                                        <span
+                                                                                            class="appointment-date-detail">{{ $appointment->scheduled_at ? $appointment->scheduled_at->locale('ar')->translatedFormat('d F Y') : '' }}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="time-info">
+                                                                                    <i class="bi bi-clock fs-5 text-primary"></i>
+                                                                                    <div>
+                                                                                        <strong
+                                                                                            class="appointment-time">{{ $appointment->scheduled_at ? $appointment->scheduled_at->format('h:i') : 'غير محدد' }}</strong>
+                                                                                        <span
+                                                                                            class="appointment-time-period">{{ $appointment->scheduled_at ? $appointment->scheduled_at->format('A') : '' }}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="status-badge {{ $appointment->status }}">
+                                                                                    <i class="bi bi-circle-fill me-2"></i>
+                                                                                    {{ $appointment->status_text }}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="action-buttons">
+                                                                                    <a href="{{ route('appointments.show', $appointment->id) }}"
+                                                                                        class="" data-bs-toggle="tooltip"
+                                                                                        title="عرض التفاصيل">
+                                                                                        <i class="bi bi-eye-fill"></i>
+                                                                                    </a>
+
+                                                                                    @if($appointment->status == 'pending' || $appointment->status == 'confirmed')
+                                                                                        <form method="POST"
+                                                                                            action="{{ route('appointments.cancel', $appointment->id) }}"
+                                                                                            class="d-inline-block cancel-form">
+                                                                                            @csrf
+                                                                                            @method('PUT')
+                                                                                            <button type="submit"
+                                                                                                class="action-btn cancel-btn"
+                                                                                                data-bs-toggle="tooltip"
+                                                                                                title="إلغاء الموعد">
+                                                                                                <i class="bi bi-x-circle-fill"></i>
+                                                                                            </button>
+                                                                                        </form>
+                                                                                    @endif
+
+                                                                                    @if($appointment->status == 'completed')
+                                                                                        <a type="button" class=" rate-btn"
+                                                                                            data-bs-toggle="modal"
+                                                                                            data-bs-target="#rateModal{{ $appointment->id }}"
+                                                                                            title="تقييم الطبيب">
+                                                                                            <i class="bi bi-star-fill"></i>
+                                                                                        </a>
+                                                                                    @endif
+
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                </tbody>
+                                                            </table>
+
+                                                            <!-- Modales de valoración para cada cita completada -->
+                                                            @foreach($user->patient->appointments as $appointment)
+                                                                @if($appointment->status == 'completed')
+                                                                    <!-- Verificar si ya existe una valoración para esta cita -->
+                                                                    @php
+                                                                        $existingRating = \App\Models\DoctorRating::where('doctor_id', $appointment->doctor->id)
+                                                                            ->where('patient_id', $appointment->patient_id)
+                                                                            ->where('appointment_id', $appointment->id)
+                                                                            ->first();
+                                                                    @endphp
+                                                                    <!-- Modal de valoración -->
+                                                                    <div class="modal fade" id="rateModal{{ $appointment->id }}"
+                                                                        tabindex="-1" aria-labelledby="rateModalLabel{{ $appointment->id }}"
+                                                                        aria-hidden="true">
+                                                                        <div class="modal-dialog modal-dialog-centered">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title"
+                                                                                        id="rateModalLabel{{ $appointment->id }}">
+                                                                                        <i class="bi bi-star-fill text-warning me-2"></i>
+                                                                                        @if($existingRating)
+                                                                                            عرض التقييم
+                                                                                        @else
+                                                                                            تقييم الدكتور
+                                                                                        @endif
+                                                                                    </h5>
+                                                                                    <button type="button" class="btn-close"
+                                                                                        data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                                                                </div>
+                                                                                <form
+                                                                                    action="{{ route('doctors.rate', $appointment->doctor->id) }}"
+                                                                                    method="POST" @if($existingRating) class="rated-form"
+                                                                                    @endif>
+                                                                                    @csrf
+                                                                                    <input type="hidden" name="appointment_id"
+                                                                                        value="{{ $appointment->id }}">
+                                                                                    <div class="modal-body">
+                                                                                        <!-- Doctor info -->
+                                                                                        <div class="doctor-profile mb-3">
+                                                                                            <div
+                                                                                                class="doctor-info d-flex align-items-center">
+                                                                                                <div class="doctor-avatar">
+                                                                                                    @if($appointment->doctor->image)
+                                                                                                        <img src="{{ Storage::url($appointment->doctor->image) }}"
+                                                                                                            alt="{{ $appointment->doctor->name }}">
+                                                                                                    @else
+                                                                                                        <i class="bi bi-person-badge-fill"></i>
+                                                                                                    @endif
+                                                                                                </div>
+                                                                                                <div class="doctor-details ms-3">
+                                                                                                    <h5 class="doctor-name mb-1">د.
+                                                                                                        {{ $appointment->doctor->name }}
+                                                                                                    </h5>
+                                                                                                    <div class="specialization-badge">
+                                                                                                        {{ $appointment->doctor->specialization }}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        @if($existingRating)
+                                                                                            <!-- Mostrar valoración existente -->
+                                                                                            <div class="alert alert-info">
+                                                                                                <i class="bi bi-info-circle me-2"></i>
+                                                                                                لقد قمت بتقييم الدكتور مسبقًا
+                                                                                            </div>
+                                                                                        @endif
+
+                                                                                        <!-- Star rating -->
+                                                                                        <div class="rating-container">
+                                                                                            <h6 class="text-center mb-2">
+                                                                                                @if($existingRating)
+                                                                                                    تقييمك للدكتور
+                                                                                                @else
+                                                                                                    كيف كانت تجربتك مع الدكتور؟
+                                                                                                @endif
+                                                                                            </h6>
+                                                                                            <div class="star-rating">
+                                                                                                <div class="stars">
+                                                                                                    <input type="radio"
+                                                                                                        id="star5-{{ $appointment->id }}"
+                                                                                                        name="rating" value="5"
+                                                                                                        class="visually-hidden"
+                                                                                                        @if($existingRating && $existingRating->rating == 5) checked
+                                                                                                        @endif @if($existingRating) disabled
+                                                                                                        @endif>
+                                                                                                    <label
+                                                                                                        for="star5-{{ $appointment->id }}"
+                                                                                                        class="star-label @if($existingRating && $existingRating->rating >= 5) selected @endif"
+                                                                                                        title="ممتاز - 5 نجوم">★</label>
+
+                                                                                                    <input type="radio"
+                                                                                                        id="star4-{{ $appointment->id }}"
+                                                                                                        name="rating" value="4"
+                                                                                                        class="visually-hidden"
+                                                                                                        @if($existingRating && $existingRating->rating == 4) checked
+                                                                                                        @endif @if($existingRating) disabled
+                                                                                                        @endif>
+                                                                                                    <label
+                                                                                                        for="star4-{{ $appointment->id }}"
+                                                                                                        class="star-label @if($existingRating && $existingRating->rating >= 4) selected @endif"
+                                                                                                        title="جيد جدا - 4 نجوم">★</label>
+
+                                                                                                    <input type="radio"
+                                                                                                        id="star3-{{ $appointment->id }}"
+                                                                                                        name="rating" value="3"
+                                                                                                        class="visually-hidden"
+                                                                                                        @if($existingRating && $existingRating->rating == 3) checked
+                                                                                                        @endif @if($existingRating) disabled
+                                                                                                        @endif>
+                                                                                                    <label
+                                                                                                        for="star3-{{ $appointment->id }}"
+                                                                                                        class="star-label @if($existingRating && $existingRating->rating >= 3) selected @endif"
+                                                                                                        title="جيد - 3 نجوم">★</label>
+
+                                                                                                    <input type="radio"
+                                                                                                        id="star2-{{ $appointment->id }}"
+                                                                                                        name="rating" value="2"
+                                                                                                        class="visually-hidden"
+                                                                                                        @if($existingRating && $existingRating->rating == 2) checked
+                                                                                                        @endif @if($existingRating) disabled
+                                                                                                        @endif>
+                                                                                                    <label
+                                                                                                        for="star2-{{ $appointment->id }}"
+                                                                                                        class="star-label @if($existingRating && $existingRating->rating >= 2) selected @endif"
+                                                                                                        title="مقبول - 2 نجوم">★</label>
+
+                                                                                                    <input type="radio"
+                                                                                                        id="star1-{{ $appointment->id }}"
+                                                                                                        name="rating" value="1"
+                                                                                                        class="visually-hidden"
+                                                                                                        @if($existingRating && $existingRating->rating == 1) checked
+                                                                                                        @endif @if($existingRating) disabled
+                                                                                                        @endif>
+                                                                                                    <label
+                                                                                                        for="star1-{{ $appointment->id }}"
+                                                                                                        class="star-label @if($existingRating && $existingRating->rating >= 1) selected @endif"
+                                                                                                        title="ضعيف - نجمة واحدة">★</label>
+                                                                                                </div>
+                                                                                                <div class="rating-value text-center mt-2">
+                                                                                                    @if($existingRating)
+                                                                                                        {{ $existingRating->rating }} من 5
+                                                                                                    @else
+                                                                                                        0 من 5
+                                                                                                    @endif
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <!-- Comment -->
+                                                                                        <div class="mb-3 mt-3">
+                                                                                            <label for="comment-{{ $appointment->id }}"
+                                                                                                class="form-label">تعليقك (اختياري)</label>
+                                                                                            <textarea class="form-control"
+                                                                                                id="comment-{{ $appointment->id }}"
+                                                                                                name="comment" rows="3" @if($existingRating)
+                                                                                                readonly @endif
+                                                                                                placeholder="اكتب تعليقك هنا...">{{ $existingRating ? $existingRating->comment : '' }}</textarea>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="modal-footer">
+                                                                                        <button type="button" class="btn btn-secondary"
+                                                                                            data-bs-dismiss="modal">
+                                                                                            @if($existingRating)
+                                                                                                إغلاق
+                                                                                            @else
+                                                                                                إلغاء
+                                                                                            @endif
+                                                                                        </button>
+                                                                                        @if(!$existingRating)
+                                                                                            <button type="submit" class="btn btn-primary">إرسال
+                                                                                                التقييم</button>
+                                                                                        @endif
+                                                                                    </div>
+                                                                                </form>
                                                                             </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
+                                                                        </div>
+                                                                    </div>
+                                                                @endif
+                                                            @endforeach
+                                                        </div>
                                                     </div>
                                                 @else
                                                     <div class="empty-state">
@@ -636,7 +781,8 @@
                                                     </div>
                                                     @error('current_password')
                                                         <div class="invalid-feedback d-block">
-                                                            {{ $message ?? 'كلمة المرور الحالية غير صحيحة' }}</div>
+                                                            {{ $message ?? 'كلمة المرور الحالية غير صحيحة' }}
+                                                        </div>
                                                     @enderror
                                                 </div>
 
@@ -654,7 +800,8 @@
                                                     </div>
                                                     @error('password')
                                                         <div class="invalid-feedback d-block">
-                                                            {{ $message ?? 'كلمة المرور الجديدة غير صالحة' }}</div>
+                                                            {{ $message ?? 'كلمة المرور الجديدة غير صالحة' }}
+                                                        </div>
                                                     @enderror
                                                 </div>
 
@@ -700,7 +847,6 @@
 
     @push('styles')
         <style>
-
             .profile-page {
                 padding: 20px 0;
             }
@@ -754,16 +900,35 @@
                 padding: 12px 15px;
                 margin-bottom: 5px;
                 transition: all 0.3s ease;
+                border-right: 3px solid transparent;
+                display: flex;
+                align-items: center;
             }
 
             .nav-pills .nav-link:hover {
-                background-color: #f2f2f2;
+                background-color: rgba(0, 0, 0, 0.04);
                 color: #343a40;
             }
 
+            .nav-pills .nav-link.active {
+                background-color: rgba(13, 110, 253, 0.08);
+                color: #0d6efd;
+                font-weight: 600;
+                border-right: 3px solid #0d6efd;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            }
 
-            .nav-pills .nav-link i {
-                font-size: 18px;
+            .appointments-count {
+                background-color: #0d6efd;
+                color: white;
+                font-size: 12px;
+                padding: 2px 8px;
+                border-radius: 20px;
+                margin-right: auto;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 24px;
             }
 
             .btn-create-appointment {
@@ -784,9 +949,7 @@
                 margin-bottom: 20px;
             }
 
-            .bi {
-                margin-inline-end: 8px
-            }
+
 
             .section-header {
                 margin-bottom: 20px;
@@ -840,7 +1003,9 @@
                 font-size: 14px;
             }
 
-            /* أزرار التحرير */
+            .action-buttons a {
+                font-size: 18px
+            }
 
             /* نماذج المدخلات */
             .profile-form {
@@ -906,44 +1071,7 @@
             }
 
             /* جدول الحجوزات */
-            .appointments-table {
-                margin-top: 20px;
-            }
 
-            .appointments-table table {
-                width: 100%;
-                border-collapse: separate;
-                border-spacing: 0;
-                border-radius: 8px;
-                overflow: hidden;
-            }
-
-            .appointments-table th {
-                background-color: #f2f2f2;
-                color: #343a40;
-                font-weight: 600;
-                padding: 12px;
-                text-align: right;
-                border-bottom: 2px solid #dee2e6;
-            }
-
-            .appointments-table td {
-                padding: 15px 12px;
-                vertical-align: middle;
-                border-bottom: 1px solid #f0f0f0;
-            }
-
-            .appointments-table tr:last-child td {
-                border-bottom: none;
-            }
-
-            .appointments-table tr {
-                transition: all 0.3s ease;
-            }
-
-            .appointments-table tr:hover {
-                background-color: #f2f2f2;
-            }
 
             .appointment-id {
                 font-weight: 600;
@@ -951,34 +1079,7 @@
             }
 
             /* حالة الحجز */
-            .status-badge {
-                padding: 5px 10px;
-                border-radius: 30px;
-                font-size: 13px;
-                display: inline-flex;
-                align-items: center;
-                white-space: nowrap;
-            }
 
-            .status-badge.pending {
-                background-color: #f2f2f2;
-                color: #666666;
-            }
-
-            .status-badge.confirmed {
-                background-color: #f2f2f2;
-                color: #444444;
-            }
-
-            .status-badge.completed {
-                background-color: #f2f2f2;
-                color: #343a40;
-            }
-
-            .status-badge.cancelled {
-                background-color: #ffebee;
-                color: #c62828;
-            }
 
             /* معلومات الطبيب في الجدول */
             .doctor-info {
@@ -1091,10 +1192,6 @@
                 margin-right: 15px;
             }
 
-            .doctor-profile-avatar i {
-                font-size: 24px;
-            }
-
             .rating-container {
                 margin-bottom: 20px;
             }
@@ -1120,10 +1217,26 @@
                 transition: all 0.3s ease;
             }
 
+            .star-label.selected,
             .star-label:hover,
-            .star-label:hover~.star-label,
-            input[type="radio"]:checked~.star-label {
-                color: #343a40;
+            .rate-btn,
+            .star-label:hover~.star-label {
+                color: #ffc107;
+            }
+
+            input[name="rating"]:checked~label {
+                color: #ffc107;
+            }
+
+            .visually-hidden {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                margin: -1px;
+                padding: 0;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                border: 0;
             }
 
             .rating-value {
@@ -1132,45 +1245,77 @@
                 color: #343a40;
             }
 
-            /* تحسينات للشاشات الصغيرة */
-            @media (max-width: 991.98px) {
-                .profile-sidebar-wrapper {
-                    border-left: none;
-                    border-bottom: 1px solid rgba(0, 0, 0, .08);
-                }
-
-                .profile-sidebar {
-                    padding: 15px;
-                }
-
-                .info-item {
-                    flex-direction: column;
-                }
-
-                .info-label {
-                    margin-bottom: 8px;
-                    min-width: auto;
-                }
-
-                .appointments-table {
-                    overflow-x: auto;
-                }
-
-                .appointments-table table {
-                    min-width: 800px;
-                }
+            /* Estilos para los formularios de valoración ya realizados */
+            .rated-form .stars .star-label {
+                cursor: default;
             }
 
-            @media (max-width: 767.98px) {
-                .profile-card {
-                    box-shadow: none;
-                    border-radius: 0;
-                }
+            .rated-form .star-label:hover {
+                color: inherit;
+                /* Evita el efecto hover en las estrellas */
+            }
 
-                .content-section {
-                    padding: 15px;
-                    border-radius: 8px;
-                }
+            .rated-form .star-label.selected {
+                color: #ffc107;
+                /* Mantiene el color de las estrellas seleccionadas */
+            }
+
+            /* Este selector evita que el efecto hover afecte a las demás estrellas cuando el formulario está deshabilitado */
+            .rated-form .star-label:hover~.star-label {
+                color: #d0d0d0;
+            }
+        </style>
+        <style>
+            /* تعديلات لنظام النجوم */
+            .stars {
+                display: flex;
+                justify-content: center;
+                direction: rtl;
+                gap: 10px;
+            }
+
+            .star-label {
+                cursor: pointer;
+                font-size: 30px;
+                color: #d0d0d0;
+                transition: all 0.3s ease;
+            }
+
+            .star-label.selected,
+            .star-label:hover,
+            .star-label:hover~.star-label {
+                color: #ffc107;
+            }
+
+            input[name="rating"]:checked~label {
+                color: #ffc107;
+            }
+
+            .visually-hidden {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                margin: -1px;
+                padding: 0;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                border: 0;
+            }
+
+            .rating-value {
+                margin-top: 10px;
+                font-weight: 600;
+                color: #343a40;
+            }
+
+            /* تعطيل تأثير التحويم للنجوم في النماذج المصنفة مسبقًا */
+            .rated-form .star-label {
+                cursor: default !important;
+                pointer-events: none !important;
+            }
+
+            .rated-form .star-label.selected {
+                color: #ffc107 !important;
             }
         </style>
     @endpush
@@ -1262,6 +1407,39 @@
                     });
                 }
 
+                // التعامل مع الهاش في URL عند تحديث الصفحة أو العودة
+                window.addEventListener('hashchange', function () {
+                    const hash = window.location.hash.substring(1);
+                    if (hash) {
+                        activateTab(hash);
+                    }
+                });
+
+                // إضافة تأثيرات انتقالية للعناصر
+                document.querySelectorAll('.info-item').forEach(item => {
+                    item.addEventListener('mouseenter', function () {
+                        this.style.transform = 'translateY(-2px)';
+                        this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                    });
+
+                    item.addEventListener('mouseleave', function () {
+                        this.style.transform = 'translateY(0)';
+                        this.style.boxShadow = 'none';
+                    });
+                });
+
+                // تحسين تأكيد إلغاء المواعيد
+                document.querySelectorAll('form[action*="appointments.cancel"]').forEach(form => {
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault();
+
+                        // إنشاء نافذة تأكيد مخصصة بدلاً من استخدام التأكيد الافتراضي
+                        if (confirm('هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟ لن تتمكن من التراجع عن هذه العملية.')) {
+                            this.submit();
+                        }
+                    });
+                });
+
                 // إغلاق التنبيهات تلقائيًا بعد فترة
                 document.querySelectorAll('.alert').forEach(function (alert) {
                     setTimeout(() => {
@@ -1270,6 +1448,141 @@
                             bsAlert.close();
                         }
                     }, 5000);
+                });
+
+                // تحسين عرض نموذج تقييم الطبيب
+                document.querySelectorAll('button[data-bs-target^="#rateModal"]').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const modalId = this.getAttribute('data-bs-target');
+                        const stars = document.querySelectorAll(`${modalId} .star-label`);
+
+                        // إضافة تأثير على النجوم
+                        stars.forEach((star, index) => {
+                            star.addEventListener('mouseenter', function () {
+                                // إضافة تأثير للنجوم التي تم التحويم فوقها
+                                for (let i = stars.length - 1; i >= index; i--) {
+                                    stars[i].classList.add('hover');
+                                }
+                            });
+
+                            star.addEventListener('mouseleave', function () {
+                                // إزالة التأثير
+                                stars.forEach(s => s.classList.remove('hover'));
+                            });
+                        });
+                    });
+                });
+            });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Manejar la selección de estrellas en modales de valoración
+                document.querySelectorAll('.modal').forEach(modal => {
+                    const appointmentId = modal.id.replace('rateModal', '');
+                    const stars = modal.querySelectorAll('.star-label');
+                    const ratingValue = modal.querySelector('.rating-value');
+                    const radioInputs = modal.querySelectorAll('input[name="rating"]');
+
+                    // Verificar si el formulario ya está clasificado (tiene la clase rated-form)
+                    const isRated = modal.querySelector('form.rated-form') !== null;
+
+                    // Si ya está clasificado, no agregamos los eventos de interacción
+                    if (isRated) {
+                        return;
+                    }
+
+                    // Inicializar el valor de la calificación
+                    let selectedRating = 0;
+
+                    // Función para actualizar la visualización de las estrellas
+                    function updateStarsDisplay(rating) {
+                        stars.forEach((star, index) => {
+                            // El índice es 0-based, pero las estrellas son 1-5
+                            const starValue = 5 - index;
+
+                            if (starValue <= rating) {
+                                star.classList.add('selected');
+                            } else {
+                                star.classList.remove('selected');
+                            }
+                        });
+
+                        // Actualizar el texto del valor
+                        ratingValue.textContent = rating + ' من 5';
+                    }
+
+                    // Evento de clic para cada estrella
+                    stars.forEach((star, index) => {
+                        star.addEventListener('click', function () {
+                            // Si el formulario ya está clasificado, no hacemos nada
+                            if (isRated) {
+                                return;
+                            }
+
+                            // Calcular el valor de la estrella (5 para la primera, 1 para la última)
+                            const value = 5 - index;
+                            selectedRating = value;
+
+                            // Marcar el radio button correspondiente
+                            radioInputs.forEach(input => {
+                                if (parseInt(input.value) === value) {
+                                    input.checked = true;
+                                }
+                            });
+
+                            // Actualizar la visualización
+                            updateStarsDisplay(value);
+                        });
+                    });
+
+                    // Eventos de hover para las estrellas
+                    stars.forEach((star, index) => {
+                        const starValue = 5 - index;
+
+                        star.addEventListener('mouseenter', function () {
+                            // Si el formulario ya está clasificado, no hacemos nada
+                            if (isRated) {
+                                return;
+                            }
+                            updateStarsDisplay(starValue);
+                        });
+
+                        star.addEventListener('mouseleave', function () {
+                            // Si el formulario ya está clasificado, no hacemos nada
+                            if (isRated) {
+                                return;
+                            }
+                            updateStarsDisplay(selectedRating);
+                        });
+                    });
+                });
+
+                // Manejar la confirmación de cancelación de citas
+                document.querySelectorAll('.cancel-form').forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        if (confirm('هل أنت متأكد من إلغاء هذا الموعد؟')) {
+                            this.submit();
+                        }
+                    });
+                });
+
+                // Manejar la visualización de contraseñas
+                document.querySelectorAll('.password-toggle').forEach(toggle => {
+                    toggle.addEventListener('click', function () {
+                        const input = this.previousElementSibling;
+                        const icon = this.querySelector('i');
+
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            icon.classList.remove('bi-eye');
+                            icon.classList.add('bi-eye-slash');
+                        } else {
+                            input.type = 'password';
+                            icon.classList.remove('bi-eye-slash');
+                            icon.classList.add('bi-eye');
+                        }
+                    });
                 });
             });
         </script>

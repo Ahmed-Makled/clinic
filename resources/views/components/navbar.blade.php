@@ -48,14 +48,31 @@
                                 <li><hr class="dropdown-divider"></li>
                             @endif
                             <li>
-                                <a class="dropdown-item" href="{{ route('profile') }}">
-                                    <i class="bi bi-person me-2"></i>حسابي
-                                </a>
+                                @if(auth()->user()->hasRole('Patient'))
+                                    <a class="dropdown-item" href="{{ route('profile') }}">
+                                        <i class="bi bi-person me-2"></i>حسابي
+                                    </a>
+                                @elseif(auth()->user()->hasRole('Doctor'))
+                                    <a class="dropdown-item" href="{{ route('doctors.profile') }}">
+                                        <i class="bi bi-person-badge me-2"></i>الملف الشخصي
+                                    </a>
+                                @else
+                                    <a class="dropdown-item" href="{{ route('profile') }}">
+                                        <i class="bi bi-person me-2"></i>حسابي
+                                    </a>
+                                @endif
                             </li>
-                            @if((auth()->user()->hasRole('Patient')))
+                            
+                            @if(auth()->user()->hasRole('Patient'))
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile') }}#appointments" id="navbar-appointments-link">
                                     <i class="bi bi-calendar2-check me-2"></i>حجوزاتي
+                                </a>
+                            </li>
+                            @elseif(auth()->user()->hasRole('Doctor'))
+                            <li>
+                                <a class="dropdown-item" href="{{ route('doctors.appointments') }}">
+                                    <i class="bi bi-calendar2-check me-2"></i>إدارة الحجوزات
                                 </a>
                             </li>
                             @endif

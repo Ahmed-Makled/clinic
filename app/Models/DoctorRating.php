@@ -10,6 +10,7 @@ class DoctorRating extends Model
     protected $fillable = [
         'doctor_id',
         'patient_id',
+        'appointment_id',
         'rating',
         'comment',
         'is_verified'
@@ -28,5 +29,10 @@ class DoctorRating extends Model
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function appointment(): BelongsTo
+    {
+        return $this->belongsTo(Appointment::class);
     }
 }

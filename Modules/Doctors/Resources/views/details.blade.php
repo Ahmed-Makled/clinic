@@ -68,16 +68,16 @@
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="rating">
                                         @for ($i = 1; $i <= 5; $i++)
-                                            @if ($i <= floor($doctor->rating))
+                                            @if ($i <= floor($avgRating))
                                                 <i class="bi bi-star-fill text-warning"></i>
-                                            @elseif ($i - 0.5 <= $doctor->rating)
+                                            @elseif ($i - 0.5 <= $avgRating)
                                                 <i class="bi bi-star-half text-warning"></i>
                                             @else
                                                 <i class="bi bi-star text-warning"></i>
                                             @endif
                                         @endfor
                                     </div>
-                                    <span class="text-muted">({{ $doctor->ratings_count ?? 0 }} تقييم)</span>
+                                    <span class="text-muted">({{ $ratingsCount }} تقييم)</span>
                                 </div>
                             </div>
                         </div>
@@ -287,42 +287,128 @@
 
 
                 @endif
+  <!-- جدول المواعيد -->
+  @if($doctor->schedules->isNotEmpty())
+  <h2 class="section-title mt-4">
+      <i class="bi bi-calendar-week me-2"></i>
+      جدول المواعيد
+  </h2>
+  <div class="schedule-grid">
+      @foreach($doctor->schedules as $schedule)
+          <div class="schedule-day {{ $schedule->is_active ? 'available' : 'unavailable' }}">
+              <div class="day-header">
+                  <span class="day-name">{{ $schedule->day_name }}</span>
+                  <span class="availability-badge">
+                      @if($schedule->is_active)
+                          <i class="bi bi-check-circle-fill text-success"></i>
+                          متاح
+                      @else
+                          <i class="bi bi-x-circle-fill text-danger"></i>
+                          غير متاح
+                      @endif
+                  </span>
+              </div>
+              @if($schedule->is_active)
+                  <div class="time-slots">
+                      <div class="time-slot">
+                          <i class="bi bi-clock"></i>
+                          <span>{{ date('h:i A', strtotime($schedule->start_time)) }}</span>
+                          <i class="bi bi-arrow-right"></i>
+                          <span>{{ date('h:i A', strtotime($schedule->end_time)) }}</span>
+                      </div>
+                  </div>
+              @endif
+          </div>
+      @endforeach
+  </div>
+@endif
+                <!-- قسم التقييمات -->
+                <h2 class="section-title mt-4">
+                    <i class="bi bi-star me-2"></i>
+                    التقييمات والمراجعات
+                    <span class="rating-count">({{ $ratingsCount }})</span>
+                </h2>
 
-                <!-- جدول المواعيد -->
-                @if($doctor->schedules->isNotEmpty())
-                    <h2 class="section-title mt-4">
-                        <i class="bi bi-calendar-week me-2"></i>
-                        جدول المواعيد
-                    </h2>
-                    <div class="schedule-grid">
-                        @foreach($doctor->schedules as $schedule)
-                            <div class="schedule-day {{ $schedule->is_active ? 'available' : 'unavailable' }}">
-                                <div class="day-header">
-                                    <span class="day-name">{{ $schedule->day_name }}</span>
-                                    <span class="availability-badge">
-                                        @if($schedule->is_active)
-                                            <i class="bi bi-check-circle-fill text-success"></i>
-                                            متاح
-                                        @else
-                                            <i class="bi bi-x-circle-fill text-danger"></i>
-                                            غير متاح
-                                        @endif
-                                    </span>
+                <div class="ratings-section">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="ratings-summary">
+                                <div class="average-rating">
+                                    <div class="rating-number">{{ number_format($avgRating, 1) }}</div>
+                                    <div class="rating-stars">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= floor($avgRating))
+                                                <i class="bi bi-star-fill"></i>
+                                            @elseif ($i - 0.5 <= $avgRating)
+                                                <i class="bi bi-star-half"></i>
+                                            @else
+                                                <i class="bi bi-star"></i>
+                                            @endif
+                                        @endfor
+                                    </div>
+                                    <div class="rating-count-text">بناءً على {{ $ratingsCount }} تقييم</div>
                                 </div>
-                                @if($schedule->is_active)
-                                    <div class="time-slots">
-                                        <div class="time-slot">
-                                            <i class="bi bi-clock"></i>
-                                            <span>{{ date('h:i A', strtotime($schedule->start_time)) }}</span>
-                                            <i class="bi bi-arrow-right"></i>
-                                            <span>{{ date('h:i A', strtotime($schedule->end_time)) }}</span>
+
+                                <div class="rating-bars">
+                                    @foreach($ratingStats as $stars => $data)
+                                        <div class="rating-bar-item">
+                                            <div class="star-label">{{ $stars }} <i class="bi bi-star-fill"></i></div>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ $data['percentage'] }}%" aria-valuenow="{{ $data['percentage'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <div class="rating-count">{{ $data['count'] }}</div>
                                         </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="ratings-list">
+                                @if($ratings->count() > 0)
+                                    @foreach($ratings as $rating)
+                                        <div class="rating-card">
+                                            <div class="rating-header">
+                                                <div class="reviewer-info">
+                                                    <div class="reviewer-avatar">
+                                                        <div class="avatar-text">{{ substr($rating->patient->user->name ?? 'م', 0, 2) }}</div>
+                                                    </div>
+                                                    <div class="reviewer-details">
+                                                        <h5 class="reviewer-name">{{ $rating->patient->user->name ?? 'مريض' }}</h5>
+                                                        <div class="rating-date">{{ $rating->created_at->locale('ar')->diffForHumans() }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="rating-value">
+                                                    <div class="stars">
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            @if ($i <= $rating->rating)
+                                                                <i class="bi bi-star-fill text-warning"></i>
+                                                            @else
+                                                                <i class="bi bi-star text-warning"></i>
+                                                            @endif
+                                                        @endfor
+                                                    </div>
+                                                    <div class="rating-text">{{ $rating->rating }}/5</div>
+                                                </div>
+                                            </div>
+                                            @if($rating->comment)
+                                                <div class="rating-content">
+                                                    <p>{{ $rating->comment }}</p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="empty-ratings">
+                                        <i class="bi bi-star text-muted"></i>
+                                        <p>لا توجد تقييمات حتى الآن</p>
                                     </div>
                                 @endif
                             </div>
-                        @endforeach
+                        </div>
                     </div>
-                @endif
+                </div>
+
+
             </div>
 
             <!-- الحجوزات -->
@@ -719,6 +805,172 @@
             border: 1px solid rgba(var(--bs-danger-rgb), 0.08);
         }
 
+        /* أنماط قسم التقييمات */
+        .ratings-section {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+        }
+
+        .rating-count {
+            font-size: 1rem;
+            color: #6c757d;
+            font-weight: normal;
+        }
+
+        .ratings-summary {
+            background-color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .average-rating {
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #212529;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-count-text {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .rating-bars {
+            margin-top: 1.5rem;
+        }
+
+        .rating-bar-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .star-label {
+            width: 50px;
+            text-align: right;
+            color: #495057;
+            font-size: 0.875rem;
+            margin-left: 0.5rem;
+        }
+
+        .progress {
+            flex-grow: 1;
+            height: 0.5rem;
+            border-radius: 1rem;
+            background-color: #e9ecef;
+            margin-left: 0.5rem;
+        }
+
+        .rating-count {
+            width: 30px;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .ratings-list {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-left: 1rem;
+        }
+
+        .rating-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .rating-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .reviewer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 1rem;
+        }
+
+        .avatar-text {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .reviewer-name {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .rating-date {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        .rating-value {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .rating-value .stars {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .rating-text {
+            font-size: 0.75rem;
+            color: #495057;
+        }
+
+        .rating-content {
+            color: #495057;
+            line-height: 1.5;
+        }
+
+        .rating-content p {
+            margin: 0;
+        }
+
+        .empty-ratings {
+            text-align: center;
+            padding: 3rem 0;
+            color: #6c757d;
+        }
+
+        .empty-ratings i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
         /* Responsive Styles */
         @media (max-width: 768px) {
             .profile-info {
@@ -749,6 +1001,11 @@
                 width: 36px;
                 height: 36px;
                 font-size: 1rem;
+            }
+
+            .ratings-list {
+                padding-left: 0;
+                margin-top: 1.5rem;
             }
         }
     </style>

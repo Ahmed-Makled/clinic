@@ -219,7 +219,7 @@
                                 </div>
                                 <div class="stat-details">
                                     <div class="stat-label">رقم الحجز</div>
-                                    <div class="stat-value">#{{ str_pad($appointment->id, 4, '0', STR_PAD_LEFT) }}</div>
+                                    <div class="stat-value">#{{ $appointment->id,}}</div>
                                     <div class="stat-subtext">{{ $appointment->created_at->locale('ar')->diffForHumans() }}
                                     </div>
                                 </div>
@@ -477,94 +477,6 @@
                 }
             }
 
-            /* ======= VARIABLES ======= */
-            :root {
-                --primary-color: #4361ee;
-                --primary-light: rgba(67, 97, 238, 0.1);
-                --success-color: #38c172;
-                --success-light: rgba(56, 193, 114, 0.1);
-                --danger-color: #e3342f;
-                --danger-light: rgba(227, 52, 47, 0.1);
-                --warning-color: #f6993f;
-                --warning-light: rgba(246, 153, 63, 0.1);
-                --info-color: #3490dc;
-                --info-light: rgba(52, 144, 220, 0.1);
-                --scheduled-color: #9333ea;
-                /* لون أرجواني لحالة في الانتظار */
-                --scheduled-light: rgba(147, 51, 234, 0.1);
-                /* خلفية شفافة للون الأرجواني */
-                --border-radius: 15px;
-            }
-
-            /* ======= GENERAL STYLES ======= */
-            body {
-                background-color: #f8fafc;
-            }
-
-            /* ======= ALERT CARD ======= */
-            .alert-card {
-                display: flex;
-                padding: 1.5rem;
-                border-radius: var(--border-radius);
-                background: #ffffff;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-                border-right: 5px solid var(--success-color);
-                animation: fadeIn 0.5s ease;
-            }
-
-            .alert-card.success {
-                border-right-color: var(--success-color);
-            }
-
-            .alert-icon {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 48px;
-                height: 48px;
-                border-radius: 50%;
-                background-color: var(--success-light);
-                margin-left: 1.5rem;
-                flex-shrink: 0;
-            }
-
-            .alert-card.success .alert-icon {
-                background-color: var(--success-light);
-                color: var(--success-color);
-            }
-
-            .alert-icon i {
-                font-size: 1.5rem;
-            }
-
-            .alert-content {
-                flex: 1;
-            }
-
-            .alert-heading {
-                font-weight: 600;
-                margin-bottom: 0.5rem;
-                font-size: 1.1rem;
-                color: var(--success-color);
-            }
-
-            .alert-card.success .alert-heading {
-                color: var(--success-color);
-            }
-
-            .alert-close {
-                background: none;
-                border: none;
-                color: #6c757d;
-                font-size: 1.25rem;
-                cursor: pointer;
-                margin-left: 1rem;
-                align-self: center;
-            }
-
-            .alert-close:hover {
-                color: #495057;
-            }
 
             /* ======= APPOINTMENT CARD STYLES ======= */
             .appointment-card,
@@ -615,33 +527,7 @@
                 color: #2d3748;
             }
 
-            .status-badge {
-                display: inline-flex;
-                align-items: center;
-                padding: 0.25rem 0.75rem;
-                border-radius: 50px;
-                font-size: 0.875rem;
-                margin-top: 0.5rem;
-            }
 
-            .status-badge.scheduled {
-                background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(147, 51, 234, 0.15) 100%);
-                color: #9333ea;
-            }
-
-            .status-badge.completed {
-                background-color: var(--success-light);
-                color: var(--success-color);
-            }
-
-            .status-badge.cancelled {
-                background-color: var(--danger-light);
-                color: var(--danger-color);
-            }
-
-            .status-badge i {
-                font-size: 0.75rem;
-            }
 
             /* ======= HEADER ACTIONS ======= */
             .header-actions {

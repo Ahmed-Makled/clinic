@@ -160,6 +160,60 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- قسم تقييم الطبيب -->
+                @if($appointment->status === 'completed')
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header border-0 py-3 d-flex align-items-center">
+                            <i class="bi bi-star me-2"></i>
+                            <h5 class="card-title mb-0 fw-bold">تقييم الطبيب</h5>
+                        </div>
+                        <div class="card-body">
+                            @php
+                                $existingRating = \App\Models\DoctorRating::where('appointment_id', $appointment->id)
+                                    ->where('patient_id', $appointment->patient_id)
+                                    ->first();
+                            @endphp
+
+                            @if($existingRating)
+                                <!-- عرض التقييم للمشاهدة فقط -->
+                                <div class="existing-rating">
+                                    <div class="rating-display mb-4">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="rating-stars">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    @if($i <= $existingRating->rating)
+                                                        <i class="bi bi-star-fill text-warning fs-3"></i>
+                                                    @else
+                                                        <i class="bi bi-star text-warning fs-3"></i>
+                                                    @endif
+                                                @endfor
+                                            </div>
+                                            <div class="rating-value ms-3">
+                                                <span class="fw-bold fs-4">{{ $existingRating->rating }}/5</span>
+                                            </div>
+                                        </div>
+
+                                        @if($existingRating->comment)
+                                            <div class="rating-comment p-3 bg-light rounded">
+                                                <i class="bi bi-quote me-2"></i>
+                                                {{ $existingRating->comment }}
+                                            </div>
+                                        @endif
+                                        <div class="rating-meta text-muted mt-2">
+                                            <small>تم التقييم في: {{ $existingRating->created_at->format('Y-m-d H:i') }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="no-rating text-center py-4">
+                                    <i class="bi bi-star text-muted fs-1 mb-3 d-block"></i>
+                                    <p class="text-muted">لم يقم المريض بتقييم الطبيب لهذا الموعد حتى الآن.</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <div class="col-xl-4">
@@ -494,8 +548,85 @@
             /* تغيير لون أيقونات معلومات الاتصال */
         }
 
+        /* أنماط نظام تقييم النجوم */
+        .stars {
+            display: flex;
+            justify-content: center;
+            direction: rtl;
+            gap: 10px;
+        }
 
+        .star-label {
+            cursor: pointer;
+            font-size: 30px;
+            color: #d0d0d0;
+            transition: all 0.3s ease;
+        }
 
+        .star-label.selected,
+        .star-label:hover,
+        .star-label:hover ~ .star-label {
+            color: #ffc107;
+        }
+
+        input[name="rating"]:checked ~ label {
+            color: #ffc107;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        .rating-value {
+            margin-top: 10px;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        /* تعطيل تأثير التحويم للنجوم في النماذج المصنفة مسبقًا */
+        .rated-form .star-label {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .rating-stars i {
+            color: #ffc107;
+        }
+
+        .rating-comment {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            color: #495057;
+        }
+
+        .alert-success {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border-color: #badbcc;
+            border-radius: 8px;
+        }
+
+        .rating-display {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 8px;
+        }
 
         @media (max-width: 768px) {
             .info-grid {
@@ -515,6 +646,87 @@
             .specialties {
                 justify-content: center;
             }
+
+            .stars {
+                gap: 5px;
+            }
+
+            .star-label {
+                font-size: 24px;
+            }
+
+            .rating-stars {
+                font-size: 20px;
+            }
         }
     </style>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // التعامل مع زر تعديل التقييم
+        const editRatingBtn = document.getElementById('editRatingBtn');
+        const editRatingForm = document.getElementById('editRatingForm');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+        if (editRatingBtn && editRatingForm && cancelEditBtn) {
+            editRatingBtn.addEventListener('click', function() {
+                editRatingForm.style.display = 'block';
+                editRatingBtn.style.display = 'none';
+            });
+
+            cancelEditBtn.addEventListener('click', function() {
+                editRatingForm.style.display = 'none';
+                editRatingBtn.style.display = 'inline-flex';
+            });
+        }
+
+        // التعامل مع نظام النجوم لإضافة تقييم جديد
+        const starLabels = document.querySelectorAll('.stars:not(.rated-form) .star-label');
+        const ratingValueDisplay = document.getElementById('rating-value');
+
+        if (starLabels.length > 0 && ratingValueDisplay) {
+            starLabels.forEach(label => {
+                label.addEventListener('click', function() {
+                    const ratingValue = this.previousElementSibling.value;
+                    const ratingText = ratingValue === '1' ? 'نجمة واحدة' : `${ratingValue} نجوم`;
+                    ratingValueDisplay.textContent = ratingText;
+
+                    // تحديد النجوم المحددة
+                    starLabels.forEach(innerLabel => {
+                        if (innerLabel.previousElementSibling.value <= ratingValue) {
+                            innerLabel.classList.add('selected');
+                        } else {
+                            innerLabel.classList.remove('selected');
+                        }
+                    });
+                });
+            });
+        }
+
+        // التعامل مع نظام النجوم لتعديل التقييم
+        const starLabelsEdit = document.querySelectorAll('#editRatingForm .star-label');
+        const ratingValueDisplayEdit = document.getElementById('rating-value-edit');
+
+        if (starLabelsEdit.length > 0 && ratingValueDisplayEdit) {
+            starLabelsEdit.forEach(label => {
+                label.addEventListener('click', function() {
+                    const ratingValue = this.previousElementSibling.value;
+                    const ratingText = ratingValue === '1' ? 'نجمة واحدة' : `${ratingValue} نجوم`;
+                    ratingValueDisplayEdit.textContent = ratingText;
+
+                    // تحديد النجوم المحددة
+                    starLabelsEdit.forEach(innerLabel => {
+                        if (innerLabel.previousElementSibling.value <= ratingValue) {
+                            innerLabel.classList.add('selected');
+                        } else {
+                            innerLabel.classList.remove('selected');
+                        }
+                    });
+                });
+            });
+        }
+    });
+</script>
+@endpush
