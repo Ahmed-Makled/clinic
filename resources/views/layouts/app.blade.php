@@ -38,6 +38,7 @@
     @include('components.navbar')
 
     <main>
+
         @yield('content')
     </main>
 

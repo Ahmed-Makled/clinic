@@ -77,12 +77,15 @@
                         </div>
 
                         <div class="col-md-3 col-6 mb-3">
-                            <label class="form-label">الحالة</label>
+                            <label class="form-label">الحالة *</label>
                             <div class="form-check form-switch mt-2">
-                                <input class="form-check-input" type="checkbox" name="status" id="status"
-                                    {{ old('status', $doctor->status) ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" name="status" id="status" value="1"
+                                    {{ old('status', $doctor->status) == true ? 'checked' : '' }}>
                                 <label class="form-check-label" for="status">نشط</label>
                             </div>
+                            @error('status')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -455,6 +458,20 @@ $(document).ready(function () {
     const imagePreview = $('#imagePreview');
     const previewImg = imagePreview.find('img');
     const uploadPlaceholder = $('.upload-placeholder');
+// Toggle time inputs based on schedule availability
+    // Toggle time inputs based on schedule availability
+    $('.schedule-availability').on('change', function() {
+        const row = $(this).closest('tr');
+        const timeInputs = row.find('.schedule-time');
+
+        if ($(this).is(':checked')) {
+            timeInputs.prop('disabled', false);
+        } else {
+            timeInputs.prop('disabled', true);
+            // Resetear los valores de tiempo a vacío cuando se deselecciona un día
+            timeInputs.val(null);
+        }
+    });
 
     // Handle drag and drop
     dropZone.on('dragover', function(e) {

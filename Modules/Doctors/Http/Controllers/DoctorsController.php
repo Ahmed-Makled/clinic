@@ -259,7 +259,7 @@ class DoctorsController extends Controller
             'address' => ['required', 'string', 'max:255'],
             'governorate_id' => ['required', 'exists:governorates,id'],
             'city_id' => ['required', 'exists:cities,id'],
-            'status' => ['nullable', 'boolean'],
+            'status' => ['required', 'boolean'],  // تحديث التحقق من حقل status
             'consultation_fee' => ['required', 'numeric', 'min:0'],
             'waiting_time' => ['nullable', 'integer', 'min:0'],
             'schedules' => ['required', 'array'],
@@ -273,6 +273,36 @@ class DoctorsController extends Controller
                 'date_format:H:i',
                 'after:schedules.*.start_time'
             ]
+        ], [
+            'title.required' => 'المسمى الوظيفي مطلوب',
+            'specialization.required' => 'التخصص مطلوب',
+            'categories.required' => 'التخصصات مطلوبة',
+            'categories.exists' => 'التخصص المختار غير موجود',
+            'gender.required' => 'النوع مطلوب',
+            'experience_years.required' => 'سنوات الخبرة مطلوبة',
+            'experience_years.integer' => 'سنوات الخبرة يجب أن تكون رقماً صحيحاً',
+            'experience_years.min' => 'سنوات الخبرة يجب أن تكون أكبر من صفر',
+            'description.max' => 'الوصف لا يمكن أن يتجاوز 1000 حرف',
+            'image.image' => 'الملف المرفق يجب أن يكون صورة',
+            'image.mimes' => 'صيغة الصورة غير مدعومة',
+            'image.max' => 'حجم الصورة لا يمكن أن يتجاوز 2 ميجابايت',
+            'address.required' => 'العنوان مطلوب',
+            'governorate_id.required' => 'المحافظة مطلوبة',
+            'governorate_id.exists' => 'المحافظة المختارة غير موجودة',
+            'city_id.required' => 'المدينة مطلوبة',
+            'city_id.exists' => 'المدينة المختارة غير موجودة',
+            'status.required' => 'حالة الحساب مطلوبة',
+            'status.boolean' => 'حالة الحساب يجب أن تكون صحيحة أو خاطئة',
+            'consultation_fee.required' => 'سعر الكشف مطلوب',
+            'consultation_fee.numeric' => 'سعر الكشف يجب أن يكون رقماً',
+            'consultation_fee.min' => 'سعر الكشف يجب أن يكون أكبر من صفر',
+            'waiting_time.integer' => 'مدة الانتظار يجب أن تكون رقماً صحيحاً',
+            'waiting_time.min' => 'مدة الانتظار يجب أن تكون أكبر من صفر',
+            'schedules.*.start_time.required_with' => 'يجب تحديد وقت البداية عند اختيار اليوم',
+            'schedules.*.start_time.date_format' => 'صيغة وقت البداية غير صحيحة',
+            'schedules.*.end_time.required_with' => 'يجب تحديد وقت النهاية عند اختيار اليوم',
+            'schedules.*.end_time.date_format' => 'صيغة وقت النهاية غير صحيحة',
+            'schedules.*.end_time.after' => 'يجب أن يكون وقت النهاية بعد وقت البداية'
         ]);
 
         try {
@@ -290,7 +320,7 @@ class DoctorsController extends Controller
                 'consultation_fee' => $validated['consultation_fee'],
                 'waiting_time' => $validated['waiting_time'] ?? 30,
                 'gender' => $validated['gender'],
-                'status' => $request->boolean('status'),
+                'status' => $request->boolean('status'),  // التأكد من تحويل القيمة إلى boolean
                 'address' => $validated['address'],
                 'governorate_id' => $validated['governorate_id'],
                 'city_id' => $validated['city_id']
@@ -829,6 +859,9 @@ class DoctorsController extends Controller
         $doctor = Doctor::where('user_id', $user->id)->firstOrFail();
 
         $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email,'.$user->id],
+            'phone' => ['required', 'string', 'unique:users,phone_number,'.$user->id],
             'title' => ['required', 'string', 'max:100'],
             'specialization' => ['required', 'string', 'max:100'],
             'categories' => ['required', 'array', 'exists:categories,id'],
@@ -840,26 +873,46 @@ class DoctorsController extends Controller
             'city_id' => ['required', 'exists:cities,id'],
             'consultation_fee' => ['required', 'numeric', 'min:0'],
             'waiting_time' => ['nullable', 'integer', 'min:0'],
-            'phone' => ['required', 'string', 'unique:users,phone_number,'.$user->id],
+            'schedules' => ['required', 'array'],
+            'schedules.*.is_available' => ['nullable', 'boolean'],
+            'schedules.*.start_time' => [
+                'required_with:schedules.*.is_available',
+                'date_format:H:i',
+            ],
+            'schedules.*.end_time' => [
+                'required_with:schedules.*.is_available',
+                'date_format:H:i',
+                'after:schedules.*.start_time'
+            ]
         ], [
+            'name.required' => 'الاسم مطلوب',
+            'email.required' => 'البريد الإلكتروني مطلوب',
+            'email.email' => 'صيغة البريد الإلكتروني غير صحيحة',
+            'email.unique' => 'البريد الإلكتروني مستخدم بالفعل',
+            'phone.required' => 'رقم الهاتف مطلوب',
+            'phone.unique' => 'رقم الهاتف مستخدم بالفعل',
             'title.required' => 'المسمى الوظيفي مطلوب',
             'specialization.required' => 'التخصص مطلوب',
             'categories.required' => 'التخصصات مطلوبة',
             'experience_years.required' => 'سنوات الخبرة مطلوبة',
             'address.required' => 'العنوان مطلوب',
             'consultation_fee.required' => 'سعر الكشف مطلوب',
-            'phone.required' => 'رقم الهاتف مطلوب',
-            'phone.unique' => 'رقم الهاتف مستخدم بالفعل'
+            'schedules.*.end_time.after' => 'يجب أن يكون وقت النهاية بعد وقت البداية',
         ]);
 
         try {
-            // Update user phone
+            DB::beginTransaction();
+
+            // Update user information
             $user->update([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
                 'phone_number' => $validated['phone']
             ]);
 
             // Update doctor info
             $doctor->update([
+                'name' => $validated['name'],
                 'title' => $validated['title'],
                 'specialization' => $validated['specialization'],
                 'experience_years' => $validated['experience_years'],
@@ -868,7 +921,9 @@ class DoctorsController extends Controller
                 'waiting_time' => $validated['waiting_time'] ?? 30,
                 'address' => $validated['address'],
                 'governorate_id' => $validated['governorate_id'],
-                'city_id' => $validated['city_id']
+                'city_id' => $validated['city_id'],
+                // Keep the existing status value instead of reading from the form
+                // status field is not modified by the doctor
             ]);
 
             // Handle image upload
@@ -881,9 +936,36 @@ class DoctorsController extends Controller
             // Sync categories
             $doctor->categories()->sync($request->categories);
 
+            // Update schedules
+            $days = [
+                'sunday' => 'الأحد',
+                'monday' => 'الإثنين',
+                'tuesday' => 'الثلاثاء',
+                'wednesday' => 'الأربعاء',
+                'thursday' => 'الخميس',
+                'friday' => 'الجمعة',
+                'saturday' => 'السبت'
+            ];
+
+            $scheduleData = [];
+            foreach ($request->schedules as $index => $schedule) {
+                $dayKey = array_keys($days)[$index];
+                $scheduleData[] = [
+                    'day' => $dayKey,
+                    'is_available' => isset($schedule['is_available']) && $schedule['is_available'] ? true : false,
+                    'start_time' => isset($schedule['start_time']) ? $schedule['start_time'] : null,
+                    'end_time' => isset($schedule['end_time']) ? $schedule['end_time'] : null
+                ];
+            }
+
+            $doctor->updateSchedule($scheduleData);
+
+            DB::commit();
+
             return redirect()->route('doctors.profile')
                 ->with('success', 'تم تحديث بيانات الحساب بنجاح');
         } catch (\Exception $e) {
+            DB::rollback();
             return back()->withInput()
                 ->with('error', 'حدث خطأ أثناء تحديث البيانات: ' . $e->getMessage());
         }

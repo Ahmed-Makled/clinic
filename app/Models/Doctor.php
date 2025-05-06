@@ -74,7 +74,8 @@ class Doctor extends Model
     public function getImageUrlAttribute()
     {
         if ($this->image) {
-            return Storage::disk('public')->url($this->image);
+            // استخدام دالة asset مع المسار الكامل للصورة
+            return asset('storage/' . $this->image);
         }
         return asset('images/default-doctor.png');
     }
@@ -202,16 +203,14 @@ class Doctor extends Model
         // Delete existing schedules
         $this->schedules()->delete();
 
-        // Add new schedules
+        // Add only available schedules
         foreach ($scheduleData as $schedule) {
-            if (isset($schedule['is_available']) &&
-                $schedule['is_available'] &&
-                isset($schedule['start_time']) &&
-                isset($schedule['end_time'])) {
+            // تحويل اسم اليوم إلى الإنجليزية إذا كان بالعربية
+            $englishDay = isset($schedule['day']) ? self::arabicToEnglishDay($schedule['day']) : '';
 
-                // Convert Arabic day name to English
-                $englishDay = self::arabicToEnglishDay($schedule['day']);
-
+            if (!empty($englishDay) && isset($schedule['is_available']) && $schedule['is_available'] &&
+                isset($schedule['start_time']) && isset($schedule['end_time'])) {
+                // إضافة اليوم المتاح فقط إلى جدول المواعيد
                 $this->schedules()->create([
                     'day' => $englishDay,
                     'start_time' => $schedule['start_time'],
