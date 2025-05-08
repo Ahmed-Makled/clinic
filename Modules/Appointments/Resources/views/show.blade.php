@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'تفاصيل الموعد')
+@section('title', 'تفاصيل الحجز')
 
 @section('content')
     <div class="container py-5 mt-5">
@@ -114,7 +114,7 @@
                         </div>
                     </div>
                     <div class="support-content">
-                        <p>هل تواجه مشكلة أو لديك استفسار بخصوص موعدك؟</p>
+                        <p>هل تواجه مشكلة أو لديك استفسار بخصوص حجزك؟</p>
                         <div class="support-options">
                             <a href="tel:+201066181942" class="support-option">
                                 <i class="bi bi-telephone-fill"></i>
@@ -133,7 +133,7 @@
                 </div>
             </div>
             <div class="col-lg-8">
-                <!-- بطاقة تفاصيل الموعد -->
+                <!-- بطاقة تفاصيل الحجز -->
                 <div class="appointment-card mb-4 h-100">
                     <div class="card-header">
                         <div class="d-flex align-items-center justify-content-between w-100">
@@ -156,7 +156,7 @@
 
                                     <button type="button" class="btn btn-danger" id="cancelbtn">
                                         <i class="bi bi-x-circle me-2"></i>
-                                        إلغاء الموعد
+                                        إلغاء الحجز
                                     </button>
 
                                 </div>
@@ -164,11 +164,11 @@
                         </div>
                     </div>
 
-                    <!-- معلومات الموعد الرئيسية -->
+                    <!-- معلومات الحجز الرئيسية -->
                     <div class="appointment-info-section">
                         <div class="section-title">
                             <i class="bi bi-info-circle-fill"></i>
-                            معلومات الموعد
+                            معلومات الحجز
                         </div>
                         <div class="stats-grid">
                             <div class="stat-card">
@@ -176,7 +176,7 @@
                                     <i class="bi bi-calendar2-event"></i>
                                 </div>
                                 <div class="stat-details">
-                                    <div class="stat-label">تاريخ الموعد</div>
+                                    <div class="stat-label">تاريخ الحجز</div>
                                     <div class="stat-value">
                                         {{ $appointment->scheduled_at->locale('ar')->translatedFormat('l') }}
                                     </div>
@@ -228,11 +228,11 @@
                     </div>
 
                     @if($appointment->notes)
-                        <!-- ملاحظات الموعد -->
+                        <!-- ملاحظات الحجز -->
                         <div class="appointment-notes-section">
                             <div class="section-title">
                                 <i class="bi bi-journal-text"></i>
-                                ملاحظات الموعد
+                                ملاحظات الحجز
                             </div>
                             <div class="notes-content">
                                 {{ $appointment->notes }}
@@ -250,7 +250,7 @@
                             <ul class="instructions-list">
                                 <li>
                                     <span class="instruction-icon"><i class="bi bi-clock-history"></i></span>
-                                    <span>يرجى الوصول قبل الموعد المحدد بـ 15-20 دقيقة لإتمام إجراءات التسجيل</span>
+                                    <span>يرجى الوصول قبل الحجز المحدد بـ 15-20 دقيقة لإتمام إجراءات التسجيل</span>
                                 </li>
                                 <li>
                                     <span class="instruction-icon"><i class="bi bi-file-earmark-medical"></i></span>
@@ -258,7 +258,7 @@
                                 </li>
                                 <li>
                                     <span class="instruction-icon"><i class="bi bi-x-circle"></i></span>
-                                    <span>في حالة الرغبة في إلغاء الموعد، يرجى الإلغاء قبل 24 ساعة على الأقل</span>
+                                    <span>في حالة الرغبة في إلغاء الحجز، يرجى الإلغاء قبل 24 ساعة على الأقل</span>
                                 </li>
                                 <li>
                                     <span class="instruction-icon"><i class="bi bi-telephone"></i></span>
@@ -313,10 +313,10 @@
                                     <div class="popup-icon warning">
                                         <i class="bi bi-exclamation-triangle-fill"></i>
                                     </div>
-                                    <h3 class="popup-title">تأكيد إلغاء الموعد</h3>
+                                    <h3 class="popup-title">تأكيد إلغاء الحجز</h3>
                                 </div>
                                 <div class="popup-body">
-                                    <p>هل أنت متأكد من إلغاء هذا الموعد؟</p>
+                                    <p>هل أنت متأكد من إلغاء هذا الحجز؟</p>
                                     <p class="text-danger small">لا يمكن التراجع عن هذه العملية بعد تأكيدها.</p>
                                 </div>
                                 <div class="popup-actions">

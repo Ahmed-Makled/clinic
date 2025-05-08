@@ -3,6 +3,40 @@
 @section('content')
 <div class="appointments-dashboard">
     <div class="container mt-5 py-5">
+        <div class="row">
+            <div class="col-12">
+
+                    @if (session('success'))
+                    <div class="alert-card success mb-4">
+                        <div class="alert-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div class="alert-content">
+                            <h6 class="alert-heading">تمت العملية بنجاح!</h6>
+                            <p class="mb-0">{!! session('success') !!}</p>
+                        </div>
+                        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="alert-card error mb-4">
+                        <div class="alert-icon">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                        <div class="alert-content">
+                            <h6 class="alert-heading">حدث خطأ!</h6>
+                            <p class="mb-0">{!! session('error') !!}</p>
+                        </div>
+                        <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                @endif
+            </div>
+        </div>
+
         <!-- رأس الصفحة -->
         <div class="dashboard-header mb-4">
             <div class="row align-items-center">
@@ -10,7 +44,7 @@
                     <h1 class="page-title">
                         <i class="bi bi-calendar-week-fill text-primary me-2" aria-hidden="true"></i>إدارة الحجوزات
                     </h1>
-                    <p class="page-subtitle">عرض وإدارة جميع المواعيد والحجوزات الخاصة بك</p>
+                    <p class="page-subtitle">عرض وإدارة جميع الحجوزات والحجوزات الخاصة بك</p>
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex flex-wrap justify-content-md-end mt-3 mt-md-0 gap-3">
@@ -21,7 +55,7 @@
                                 </div>
                                 <div class="stat-info">
                                     <span class="stat-value">{{ $appointments->where('status', 'scheduled')->count() }}</span>
-                                    <span class="stat-label">مجدولة</span>
+                                    <span class="stat-label">قيد الانتظار</span>
                                 </div>
                             </div>
                             <div class="stat-card completed">
@@ -59,7 +93,7 @@
                         <div class="icon-circle bg-primary-soft text-primary me-2">
                             <i class="bi bi-funnel" aria-hidden="true"></i>
                         </div>
-                        <h6 class="card-title m-0 fw-bold">تصفية المواعيد</h6>
+                        <h6 class="card-title m-0 fw-bold">تصفية الحجوزات</h6>
                     </div>
 
                 </div>
@@ -67,12 +101,12 @@
                     <form action="{{ route('doctors.appointments') }}" method="GET" class="row g-3">
                         <div class="col-lg-3 col-md-6">
                             <label for="status" class="form-label fw-medium">
-                                <i class="bi bi-check-circle-fill me-2 text-success"></i>حالة الموعد
+                                <i class="bi bi-check-circle-fill me-2 text-success"></i>حالة الحجز
                             </label>
                             <select class="form-select custom-select shadow-none" id="status" name="status">
                                 <option value="">جميع الحالات</option>
                                 <option value="scheduled" {{ request('status') == 'scheduled' ? 'selected' : '' }}>
-                                    <i class="bi bi-calendar-event"></i> مواعيد مجدولة
+                                    <i class="bi bi-calendar-event"></i> مواعيد قيد الانتظار
                                 </option>
                                 <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>
                                     مواعيد مكتملة
@@ -233,22 +267,23 @@
                                                     </button>
 
                                                     @if($appointment->status == 'scheduled')
-                                                        <form action="#" method="POST" class="d-inline">
+                                                        <form action="{{ route('doctors.appointments.complete', $appointment) }}" method="POST" class="d-inline">
                                                             @csrf
                                                             @method('PUT')
                                                             <input type="hidden" name="status" value="completed">
-                                                            <button type="submit" class="btn btn-icon complete-action" title="تم اكتمال الزيارة">
+                                                            <button type="submit" class="btn btn-icon complete-action" title="اكتمال الزيارة">
                                                                 <i class="bi bi-check-circle-fill"></i>
                                                             </button>
                                                         </form>
-
-                                                        <form action="#" method="POST" class="d-inline">
+                                                        <form action="{{ route('doctors.appointments.cancel', $appointment) }}" method="POST" class="d-inline">
                                                             @csrf
                                                             @method('PUT')
-                                                            <input type="hidden" name="status" value="cancelled">
+
                                                             <button type="submit" class="btn btn-icon cancel-action" title="إلغاء الزيارة">
                                                                 <i class="bi bi-x-circle-fill"></i>
                                                             </button>
+
+
                                                         </form>
                                                     @endif
                                                 </div>
@@ -295,11 +330,11 @@
                         </h5>
                         <p class="modal-subtitle mb-0">
                             @if($appointment->status == 'scheduled')
-                                <i class="bi bi-calendar-event"></i> موعد مجدول
+                                <i class="bi bi-calendar-event"></i> حجز مجدول
                             @elseif($appointment->status == 'completed')
-                                <i class="bi bi-check-circle"></i> موعد مكتمل
+                                <i class="bi bi-check-circle"></i> حجز مكتمل
                             @elseif($appointment->status == 'cancelled')
-                                <i class="bi bi-x-circle"></i> موعد ملغي
+                                <i class="bi bi-x-circle"></i> حجز ملغي
                             @endif
                         </p>
                     </div>
@@ -444,7 +479,7 @@
                             <div class="timeline-event">
                                 <div class="event-icon success"><i class="bi bi-check-circle"></i></div>
                                 <div class="event-content">
-                                    <h6>تم اكتمال الموعد</h6>
+                                    <h6>تم اكتمال الحجز</h6>
                                     <p>{{ \Carbon\Carbon::parse($appointment->updated_at)->format('Y-m-d h:i A') }}</p>
                                 </div>
                             </div>
@@ -452,7 +487,7 @@
                             <div class="timeline-event">
                                 <div class="event-icon danger"><i class="bi bi-x-circle"></i></div>
                                 <div class="event-content">
-                                    <h6>تم إلغاء الموعد</h6>
+                                    <h6>تم إلغاء الحجز</h6>
                                     <p>{{ \Carbon\Carbon::parse($appointment->updated_at)->format('Y-m-d h:i A') }}</p>
                                 </div>
                             </div>
@@ -471,7 +506,7 @@
                             @if($remainingTime && $appointment->status == 'scheduled')
                             <div class="appointment-countdown">
                                 <i class="bi bi-hourglass-split"></i>
-                                <span>متبقي على الموعد: {{ $remainingTime }}</span>
+                                <span>متبقي على الحجز: {{ $remainingTime }}</span>
                             </div>
                             @endif
                         </div>
@@ -481,7 +516,7 @@
                 <div class="modal-footer">
                     @if($appointment->status == 'scheduled')
                         <div class="appointment-actions">
-                            <form action="#" method="POST" class="d-inline">
+                            <form action="{{ route('doctors.appointments.complete', $appointment) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="status" value="completed">
@@ -491,7 +526,7 @@
                                 </button>
                             </form>
 
-                            <form action="#" method="POST" class="d-inline ms-2">
+                            <form action="{{ route('doctors.appointments.cancel', $appointment) }}" method="POST" class="d-inline ms-2">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="status" value="cancelled">
@@ -504,12 +539,12 @@
                     @elseif($appointment->status == 'completed')
                         <div class="completed-badge">
                             <i class="bi bi-patch-check"></i>
-                            تم اكتمال هذا الموعد بنجاح
+                            تم اكتمال هذا الحجز بنجاح
                         </div>
                     @elseif($appointment->status == 'cancelled')
                         <div class="cancelled-badge">
                             <i class="bi bi-x-octagon"></i>
-                            تم إلغاء هذا الموعد
+                            تم إلغاء هذا الحجز
                         </div>
                     @endif
 
@@ -838,12 +873,12 @@
     }
 
     .cancel-action {
-        color: var(--danger-color);
     }
 
     .cancel-action:hover {
         background-color: var(--danger-light);
-        color: var (--danger-color);
+        color: var(--danger-color);
+
     }
 
     /* === مودال التفاصيل === */
@@ -915,14 +950,9 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 1rem;
+
     }
 
-    .detail-item {
-        background-color: white;
-        border-radius: 10px;
-        padding: 1rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
 
     .detail-label {
         display: flex;
@@ -1247,7 +1277,7 @@
         const dateRangeSelect = document.getElementById('date_range');
         const dateCustomRangeFields = document.querySelectorAll('.date-custom-range');
         const clearFiltersBtn = document.getElementById('clearFilters');
-        
+
         // عرض/إخفاء قسم الفلاتر المتقدمة
         toggleFiltersBtn.addEventListener('click', function() {
             const filterBody = document.querySelector('.filter-body');
@@ -1273,7 +1303,7 @@
         clearFiltersBtn.addEventListener('click', function() {
             const form = this.closest('form');
             const inputs = form.querySelectorAll('input:not([type="hidden"]), select');
-            
+
             inputs.forEach(input => {
                 if (input.type === 'text' || input.type === 'number' || input.type === 'date') {
                     input.value = '';
@@ -1285,13 +1315,13 @@
             // إخفاء حقول التاريخ المخصصة
             dateCustomRangeFields.forEach(field => field.style.display = 'none');
         });
-        
+
         // إضافة سلوك الفلترة التلقائية عند التغيير (اختياري)
         // غير مفعّل افتراضيًا لأن المستخدم قد يريد ضبط عدة فلاتر قبل البحث
         /*
         const filterForm = document.querySelector('.filter-section form');
         const autoFilterInputs = filterForm.querySelectorAll('select');
-        
+
         autoFilterInputs.forEach(input => {
             input.addEventListener('change', function() {
                 filterForm.submit();

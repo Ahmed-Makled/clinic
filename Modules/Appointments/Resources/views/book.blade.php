@@ -212,8 +212,8 @@
 
                     <div class="booking-section">
                         <div class="section-header text-center mb-4">
-                            <h5 class="fw-bold mb-2">اختر موعد الحجز</h5>
-                            <p class="text-muted small">اختر التاريخ والوقت المناسب لموعدك</p>
+                            <h5 class="fw-bold mb-2">اختر حجز الحجز</h5>
+                            <p class="text-muted small">اختر التاريخ والوقت المناسب لحجزك</p>
                         </div>
 
                         <form id='bookingForm'  action="{{ route('appointments.store') }}" method="POST">
@@ -318,7 +318,7 @@
                             <div class="time-slots mb-4">
                                 <label class="form-label fw-medium d-flex align-items-center gap-2 mb-3">
                                     <i class="bi bi-clock text-primary"></i>
-                                    المواعيد المتاحة
+                                    الحجوزات المتاحة
                                     <span class="text-danger">*</span>
                                 </label>
                                 <div class="row g-2" id="timeSlots">
@@ -1013,7 +1013,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">جاري التحميل...</span>
                         </div>
-                        <p class="text-muted mt-2 mb-0">جاري تحميل المواعيد المتاحة...</p>
+                        <p class="text-muted mt-2 mb-0">جاري تحميل الحجوزات المتاحة...</p>
                     </div>
                 </div>
             `;
@@ -1053,7 +1053,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="col-12">
                             <div class="alert alert-danger text-center mb-0">
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                حدث خطأ أثناء تحميل المواعيد. يرجى المحاولة مرة أخرى.
+                                حدث خطأ أثناء تحميل الحجوزات. يرجى المحاولة مرة أخرى.
                             </div>
                         </div>
                     `;

@@ -280,9 +280,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- معلومات الكشف والمواعيد -->
+                                    <!-- معلومات الكشف والحجوزات -->
                                     <div class="section-divider mb-4 mt-4">
-                                        <h6 class="section-title text-primary fw-bold">معلومات الكشف والمواعيد</h6>
+                                        <h6 class="section-title text-primary fw-bold">معلومات الكشف والحجوزات</h6>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
@@ -570,11 +570,11 @@
                                                             $tomorrow = \Carbon\Carbon::tomorrow()->format('Y-m-d');
 
                                                             if ($appointmentDate == $today) {
-                                                                echo '<span class="badge bg-primary">اليوم</span>';
+                                                                echo '<span class="date-badge today"><i class="bi bi-calendar-check me-1"></i>اليوم</span>';
                                                             } elseif ($appointmentDate == $tomorrow) {
-                                                                echo '<span class="badge bg-info">غداً</span>';
+                                                                echo '<span class="date-badge tomorrow"><i class="bi bi-calendar-plus me-1"></i>غداً</span>';
                                                             } else {
-                                                                echo \Carbon\Carbon::parse($appointment->scheduled_at)->format('Y-m-d');
+                                                                echo '<span class="date-badge"><i class="bi bi-calendar-date me-1"></i>' . \Carbon\Carbon::parse($appointment->scheduled_at)->format('Y-m-d') . '</span>';
                                                             }
                                                         @endphp
                                                     </div>
@@ -588,11 +588,11 @@
                                                 <div class="appointment-cell status-info">
                                                     <div class="appointment-status {{ $appointment->status }}">
                                                         @if($appointment->status == 'scheduled')
-                                                            <i class="bi bi-calendar-event"></i> موعد مجدول
+                                                            <i class="bi bi-calendar-event"></i> حجز مجدول
                                                         @elseif($appointment->status == 'completed')
-                                                            <i class="bi bi-check-circle"></i> موعد مكتمل
+                                                            <i class="bi bi-check-circle"></i> حجز مكتمل
                                                         @elseif($appointment->status == 'cancelled')
-                                                            <i class="bi bi-x-circle"></i> موعد ملغي
+                                                            <i class="bi bi-x-circle"></i> حجز ملغي
                                                         @endif
                                                     </div>
                                                     <div class="payment-status">
@@ -607,20 +607,20 @@
 
                                                 <div class="appointment-cell actions">
                                                     @if($appointment->status == 'scheduled')
-                                                        <form action="#" method="POST" class="d-inline">
+                                                        <form action="{{ route('doctors.appointments.complete', $appointment) }}" method="POST" class="d-inline">
                                                             @csrf
                                                             @method('PUT')
                                                             <input type="hidden" name="status" value="completed">
-                                                            <button type="button" class="btn btn-sm btn-outline-success action-btn" title="تم اكتمال الزيارة">
+                                                            <button type="submit" class="btn btn-sm btn-outline-success action-btn" title="تم اكتمال الزيارة">
                                                                 <i class="bi bi-check-circle-fill"></i>
                                                                 {{-- <span class="action-text">اكتمال</span> --}}
                                                             </button>
                                                         </form>
-                                                        <form action="#" method="POST" class="d-inline">
+                                                        <form action="{{ route('doctors.appointments.cancel', $appointment) }}" method="POST" class="d-inline">
                                                             @csrf
                                                             @method('PUT')
                                                             <input type="hidden" name="status" value="cancelled">
-                                                            <button type="button" class="btn btn-sm btn-outline-danger action-btn" title="إلغاء الزيارة">
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger action-btn" title="إلغاء الزيارة">
                                                                 <i class="bi bi-x-circle-fill"></i>
                                                                 {{-- <span class="action-text">إلغاء</span> --}}
                                                             </button>
@@ -644,11 +644,11 @@
                                                                         </h5>
                                                                         <p class="modal-subtitle mb-0">
                                                                             @if($appointment->status == 'scheduled')
-                                                                                <i class="bi bi-calendar-event"></i> موعد مجدول
+                                                                                <i class="bi bi-calendar-event"></i> حجز مجدول
                                                                             @elseif($appointment->status == 'completed')
-                                                                                <i class="bi bi-check-circle"></i> موعد مكتمل
+                                                                                <i class="bi bi-check-circle"></i> حجز مكتمل
                                                                             @elseif($appointment->status == 'cancelled')
-                                                                                <i class="bi bi-x-circle"></i> موعد ملغي
+                                                                                <i class="bi bi-x-circle"></i> حجز ملغي
                                                                             @endif
                                                                         </p>
                                                                     </div>
@@ -745,13 +745,13 @@
                                                                             </div>
                                                                         </div>
 
-                                                                        <!-- معلومات الموعد -->
+                                                                        <!-- معلومات الحجز -->
                                                                         <div class="col-md-7">
                                                                             <div class="appointment-details-tabs">
                                                                                 <ul class="nav nav-tabs nav-fill mb-3" id="appointmentDetailTabs{{ $appointment->id }}" role="tablist">
                                                                                     <li class="nav-item" role="presentation">
                                                                                         <button class="nav-link active" id="appointment-info-tab{{ $appointment->id }}" data-bs-toggle="tab" data-bs-target="#appointment-info{{ $appointment->id }}" type="button" role="tab" aria-controls="appointment-info" aria-selected="true">
-                                                                                            <i class="bi bi-info-circle me-1"></i> معلومات الموعد
+                                                                                            <i class="bi bi-info-circle me-1"></i> معلومات الحجز
                                                                                         </button>
                                                                                     </li>
                                                                                     <li class="nav-item" role="presentation">
@@ -767,7 +767,7 @@
                                                                                             <div class="timeline-event">
                                                                                                 <div class="event-icon"><i class="bi bi-plus-circle"></i></div>
                                                                                                 <div class="event-content">
-                                                                                                    <h6>تم إنشاء الموعد</h6>
+                                                                                                    <h6>تم إنشاء الحجز</h6>
                                                                                                     <p>{{ \Carbon\Carbon::parse($appointment->created_at)->format('Y-m-d h:i A') }}</p>
                                                                                                 </div>
                                                                                             </div>
@@ -776,7 +776,7 @@
                                                                                             <div class="timeline-event">
                                                                                                 <div class="event-icon success"><i class="bi bi-check-circle"></i></div>
                                                                                                 <div class="event-content">
-                                                                                                    <h6>تم اكتمال الموعد</h6>
+                                                                                                    <h6>تم اكتمال الحجز</h6>
                                                                                                     <p>{{ \Carbon\Carbon::parse($appointment->updated_at)->format('Y-m-d h:i A') }}</p>
                                                                                                 </div>
                                                                                             </div>
@@ -784,7 +784,7 @@
                                                                                             <div class="timeline-event">
                                                                                                 <div class="event-icon danger"><i class="bi bi-x-circle"></i></div>
                                                                                                 <div class="event-content">
-                                                                                                    <h6>تم إلغاء الموعد</h6>
+                                                                                                    <h6>تم إلغاء الحجز</h6>
                                                                                                     <p>{{ \Carbon\Carbon::parse($appointment->updated_at)->format('Y-m-d h:i A') }}</p>
                                                                                                 </div>
                                                                                             </div>
@@ -803,7 +803,7 @@
                                                                                             @if($remainingTime && $appointment->status == 'scheduled')
                                                                                             <div class="appointment-countdown">
                                                                                                 <i class="bi bi-hourglass-split"></i>
-                                                                                                <span>متبقي على الموعد: {{ $remainingTime }}</span>
+                                                                                                <span>متبقي على الحجز: {{ $remainingTime }}</span>
                                                                                             </div>
                                                                                             @endif
                                                                                         </div>
@@ -819,7 +819,7 @@
                                                                                     <div class="tab-pane fade" id="appointment-notes{{ $appointment->id }}" role="tabpanel" aria-labelledby="appointment-notes-tab{{ $appointment->id }}">
                                                                                         @if($appointment->notes)
                                                                                             <div class="notes-container">
-                                                                                                <h6 class="notes-title"><i class="bi bi-journal-text me-2"></i>ملاحظات الموعد</h6>
+                                                                                                <h6 class="notes-title"><i class="bi bi-journal-text me-2"></i>ملاحظات الحجز</h6>
                                                                                                 <div class="appointment-notes">
                                                                                                     <p>{{ $appointment->notes }}</p>
                                                                                                 </div>
@@ -827,7 +827,7 @@
                                                                                         @else
                                                                                             <div class="empty-notes text-center py-4">
                                                                                                 <i class="bi bi-journal"></i>
-                                                                                                <p>لا توجد ملاحظات مسجلة لهذا الموعد</p>
+                                                                                                <p>لا توجد ملاحظات مسجلة لهذا الحجز</p>
                                                                                                 @if($appointment->status == 'scheduled')
                                                                                                 <button class="btn btn-sm btn-outline-primary mt-2">
                                                                                                     <i class="bi bi-plus-circle me-1"></i>
@@ -855,21 +855,21 @@
                                                                 <div class="modal-footer appointment-modal-footer">
                                                                     @if($appointment->status == 'scheduled')
                                                                         <div class="appointment-actions">
-                                                                            <form action="#" method="POST" class="d-inline">
+                                                                            <form action="{{ route('doctors.appointments.complete', $appointment) }}" method="POST" class="d-inline">
                                                                                 @csrf
                                                                                 @method('PUT')
                                                                                 <input type="hidden" name="status" value="completed">
-                                                                                <button type="button" class="btn btn-success">
+                                                                                <button type="submit" class="btn btn-success">
                                                                                     <i class="bi bi-check-circle me-1"></i>
                                                                                     تم اكتمال الزيارة
                                                                                 </button>
                                                                             </form>
 
-                                                                            <form action="#" method="POST" class="d-inline ms-2">
+                                                                            <form action="{{ route('doctors.appointments.cancel', $appointment) }}" method="POST" class="d-inline ms-2">
                                                                                 @csrf
                                                                                 @method('PUT')
                                                                                 <input type="hidden" name="status" value="cancelled">
-                                                                                <button type="button" class="btn btn-danger">
+                                                                                <button type="submit" class="btn btn-danger">
                                                                                     <i class="bi bi-x-circle me-1"></i>
                                                                                     إلغاء الزيارة
                                                                                 </button>
@@ -878,12 +878,12 @@
                                                                     @elseif($appointment->status == 'completed')
                                                                         <div class="completed-badge">
                                                                             <i class="bi bi-patch-check"></i>
-                                                                            تم اكتمال هذا الموعد بنجاح
+                                                                            تم اكتمال هذا الحجز بنجاح
                                                                         </div>
                                                                     @elseif($appointment->status == 'cancelled')
                                                                         <div class="cancelled-badge">
                                                                             <i class="bi bi-x-octagon"></i>
-                                                                            تم إلغاء هذا الموعد
+                                                                            تم إلغاء هذا الحجز
                                                                         </div>
                                                                     @endif
 
@@ -911,12 +911,12 @@
                             @endif
                         </div>
 
-                        <!-- جدول المواعيد -->
+                        <!-- جدول الحجوزات -->
                         <div class="card mt-4">
                             <div class="card-header">
                                 <h5 class="card-title m-0">
                                     <i class="bi bi-calendar-week me-2"></i>
-                                    جدول المواعيد الأسبوعي
+                                    جدول الحجوزات الأسبوعي
                                 </h5>
                             </div>
                             <div class="card-body">
@@ -953,7 +953,7 @@
                                     <div class="empty-state text-center py-5">
                                         <i class="bi bi-calendar2-x empty-icon"></i>
                                         <h5 class="mt-3">لا يوجد جدول مواعيد</h5>
-                                        <p class="text-muted">يرجى التواصل مع المسؤول لضبط جدول المواعيد</p>
+                                        <p class="text-muted">يرجى التواصل مع المسؤول لضبط جدول الحجوزات</p>
                                     </div>
                                 @endif
                             </div>
@@ -1672,12 +1672,12 @@
         color: #666;
     }
 
-    /* علامات تبويب تفاصيل الموعد */
+    /* علامات تبويب تفاصيل الحجز */
     .appointment-details-tabs .nav-tabs {
         margin-bottom: 1rem;
     }
 
-    /* مسار زمني للموعد */
+    /* مسار زمني للحجز */
     .appointment-timeline-details {
         padding: 1rem;
         background-color: #f9f9f9;
@@ -1766,7 +1766,7 @@
         margin-bottom: 0;
     }
 
-    /* ملاحظات الموعد */
+    /* ملاحظات الحجز */
     .notes-container {
         padding: 1rem;
         background-color: #f9f9f9;
@@ -1857,9 +1857,34 @@
             font-size: 0.8rem;
         }
     }
+
+    /* Estilos para los badges de fecha */
+    .date-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.875rem;
+        background-color: #f1f3f5;
+        color: #495057;
+        font-weight: 500;
+    }
+
+    .date-badge.today {
+        background-color: rgba(13, 110, 253, 0.15);
+        color: #0d6efd;
+    }
+
+    .date-badge.tomorrow {
+        background-color: rgba(23, 162, 184, 0.15);
+        color: #17a2b8;
+    }
+
+    .date-badge i {
+        margin-left: 0.25rem;
+    }
 </style>
-<!-- إضافة أنماط Select2 -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 <style>
     /* تخصيص أنماط Select2 للغة العربية */
     .select2-container {
@@ -1929,7 +1954,66 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Toggle time inputs based on schedule availability
+    // Improved tab handling function - runs on page load
+    function activateTabByHash() {
+        const hash = window.location.hash;
+        if (hash) {
+            const tabId = hash.substring(1);
+            const tabEl = document.querySelector(`#doctorProfileTabs .nav-link[data-bs-target="#${tabId}"]`);
+
+            if (tabEl) {
+                // Force manual tab activation
+                const tabPane = document.querySelector(`#${tabId}`);
+
+                // Update nav tab states
+                document.querySelectorAll('#doctorProfileTabs .nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    link.setAttribute('aria-selected', 'false');
+                });
+                tabEl.classList.add('active');
+                tabEl.setAttribute('aria-selected', 'true');
+
+                // Update tab pane states
+                document.querySelectorAll('#doctorProfileTabsContent > .tab-pane').forEach(pane => {
+                    pane.classList.remove('show', 'active');
+                });
+                if (tabPane) {
+                    tabPane.classList.add('show', 'active');
+
+                    // If it's the appointments tab, scroll to it
+                    if (tabId === 'appointments') {
+                        setTimeout(() => {
+                            const appointmentsHeader = document.querySelector('#appointments .card-header');
+                            if (appointmentsHeader) {
+                                appointmentsHeader.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }, 150);
+                    }
+                }
+            }
+        }
+    }
+
+    // Execute immediately
+    activateTabByHash();
+
+    // Correctly handle Bootstrap tab clicks for better hash management
+    $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        // Get the new active tab ID from the clicked tab target
+        const tabTarget = $(e.target).attr('data-bs-target');
+        const tabId = tabTarget.substring(1); // Remove the # character
+
+        // Update the URL hash directly to ensure it changes
+        if (history.pushState) {
+            // Modern browsers
+            history.pushState(null, null, '#' + tabId);
+        } else {
+            // Legacy fallback
+            window.location.hash = tabId;
+        }
+    });
+
+    // Schedule/time inputs handling
     $('.schedule-availability').on('change', function() {
         const row = $(this).closest('tr');
         const timeInputs = row.find('.schedule-time');
@@ -1938,13 +2022,12 @@ $(document).ready(function() {
             timeInputs.prop('disabled', false);
         } else {
             timeInputs.prop('disabled', true);
-            // Resetear los valores de tiempo a vacío cuando se deselecciona un día
+            // Reset time values when day is deselected
             timeInputs.val(null);
         }
     });
 
-
-    // إضافة كود التعامل مع المحافظات والمدن
+    // Handle province/city selection
     $('#governorate_id').on('change', function() {
         const governorateId = $(this).val();
         const cities = @json($governorates->pluck('cities', 'id'));
@@ -1959,12 +2042,12 @@ $(document).ready(function() {
         }
     });
 
-    // تحميل المدن عند تحميل الصفحة إذا كانت هناك محافظة محددة
+    // Load cities on page load if province is selected
     const oldGovernorate = $('#governorate_id').val();
     if (oldGovernorate) {
         $('#governorate_id').trigger('change');
 
-        // اختيار المدينة المحفوظة إن وجدت
+        // Select saved city if available
         const oldCity = "{{ old('city_id', $doctor->city_id) }}";
         if (oldCity) {
             $('#city_id').val(oldCity);

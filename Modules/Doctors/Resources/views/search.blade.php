@@ -159,7 +159,7 @@
                                                             <a href="{{ route('appointments.book', $doctor) }}"
                                                                 class="btn btn-primary btn-lg rounded-3 btn-sm ">
                                                                 <i class="bi bi-calendar-check me-2"></i>
-                                                                احجز موعد
+                                                                احجز حجز
                                                             </a>
                                                         </div>
                                                     </div>

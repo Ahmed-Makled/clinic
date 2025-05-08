@@ -19,13 +19,19 @@ Route::prefix('doctors')->group(function () {
         Route::get('/create-from-user', [DoctorsController::class, 'createFromUser'])->name('doctors.createFromUser');
         Route::post('/store-from-user', [DoctorsController::class, 'storeFromUser'])->name('doctors.storeFromUser');
     });
-    
+
     // Doctor profile routes
     Route::middleware(['auth:web', 'role:Doctor'])->group(function () {
         Route::get('/profile', [DoctorsController::class, 'profile'])->name('doctors.profile');
         Route::put('/profile/update', [DoctorsController::class, 'updateProfile'])->name('doctors.profile.update');
         Route::put('/profile/password', [DoctorsController::class, 'updatePassword'])->name('doctors.password.update');
         Route::get('/profile/appointments', [DoctorsController::class, 'appointments'])->name('doctors.appointments');
+
+        // Rutas para actualizar el estado de las citas
+        Route::put('/profile/appointments/{appointment}/complete', [DoctorsController::class, 'completeAppointment'])->name('doctors.appointments.complete');
+        Route::put('/profile/appointments/{appointment}/cancel', [DoctorsController::class, 'cancelAppointment'])->name('doctors.appointments.cancel');
+        Route::put('/profile/appointments/{appointment}/mark-as-paid', [DoctorsController::class, 'markAsPaid'])->name('doctors.appointments.mark-as-paid');
+        Route::put('/profile/appointments/{appointment}/mark-as-unpaid', [DoctorsController::class, 'markAsUnpaid'])->name('doctors.appointments.mark-as-unpaid');
     });
 });
 

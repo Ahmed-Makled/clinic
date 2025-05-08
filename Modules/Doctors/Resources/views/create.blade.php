@@ -155,9 +155,9 @@
                         </div>
                     </div>
 
-                    <!-- معلومات الكشف والمواعيد -->
+                    <!-- معلومات الكشف والحجوزات -->
                     <div class="section-divider mb-4 mt-4">
-                        <h6 class="section-title text-primary fw-bold">معلومات الكشف والمواعيد</h6>
+                        <h6 class="section-title text-primary fw-bold">معلومات الكشف والحجوزات</h6>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -479,7 +479,7 @@
                 }
             });
 
-            // التحكم في حقول جداول المواعيد
+            // التحكم في حقول جداول الحجوزات
             $('.schedule-availability').on('change', function() {
                 const row = $(this).closest('tr');
                 const timeInputs = row.find('.schedule-time');

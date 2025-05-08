@@ -138,7 +138,7 @@
                             </td>
                             <td>
                                 <span class="badge bg-secondary bg-opacity-10 text-dark">
-                                    {{ $patient->appointments_count ?? 0 }} موعد
+                                    {{ $patient->appointments_count ?? 0 }} حجز
                                 </span>
                             </td>
                             <td>

@@ -961,9 +961,9 @@
                         <ul class="nav flex-column">
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('appointments.create') }}" data-bs-toggle="tooltip"
-                                    data-bs-placement="left" data-bs-title="موعد جديد">
+                                    data-bs-placement="left" data-bs-title="حجز جديد">
                                     <i class="bi bi-plus-circle"></i>
-                                    <span>موعد جديد</span>
+                                    <span>حجز جديد</span>
                                 </a>
                             </li>
                             <li class="nav-item">

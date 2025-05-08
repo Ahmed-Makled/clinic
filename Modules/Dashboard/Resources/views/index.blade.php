@@ -20,7 +20,7 @@
                         <i class="bi bi-calendar-week"></i>
                     </div>
                     <div class="stat-info">
-                        <h3 class="stat-title">المواعيد</h3>
+                        <h3 class="stat-title">الحجوزات</h3>
                         <div class="stat-total">
                             {{ $stats['appointments']['total'] }}
                             <small class="text-muted ms-1">إجمالي</small>
@@ -133,7 +133,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">
                             <i class="bi bi-graph-up me-2"></i>
-                            تحليل المواعيد
+                            تحليل الحجوزات
                         </h5>
                         <div class="chart-actions">
                             <select class="form-select form-select-sm bg-light border-0 rounded-pill px-3" style="min-width: 120px;" id="chartPeriod">
@@ -280,9 +280,9 @@
                                 <i class="bi bi-calendar2-week"></i>
                                 <div class="notification-content">
                                     <h6 class="mb-1">مواعيد في الانتظار</h6>
-                                    <p class="mb-2">{{ $stats['pending_appointments'] }} موعد في قائمة الانتظار</p>
+                                    <p class="mb-2">{{ $stats['pending_appointments'] }} حجز في قائمة الانتظار</p>
                                     <a href="{{ route('appointments.index', ['status' => 'pending']) }}"
-                                       class="btn btn-sm btn-warning">عرض المواعيد</a>
+                                       class="btn btn-sm btn-warning">عرض الحجوزات</a>
                                 </div>
                             </div>
                         @endif
@@ -503,7 +503,7 @@
                         data: {
                             labels: data.labels,
                             datasets: [{
-                                label: 'المواعيد',
+                                label: 'الحجوزات',
                                 data: data.appointments,
                                 borderColor: getComputedStyle(document.documentElement)
                                     .getPropertyValue('--primary-color'),

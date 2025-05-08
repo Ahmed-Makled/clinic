@@ -26,13 +26,13 @@ class AppointmentCancelledNotification extends Notification
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('تم إلغاء الموعد')
-            ->line('تم إلغاء الموعد التالي:')
+            ->subject('تم إلغاء الحجز')
+            ->line('تم إلغاء الحجز التالي:')
             ->line("الطبيب: {$this->appointment->doctor->name}")
             ->line("المريض: {$this->appointment->patient->name}")
             ->line("التاريخ: {$this->appointment->formatted_date}")
             ->line("الوقت: {$this->appointment->formatted_time}")
-            ->action('عرض الموعد', route('appointments.show', $this->appointment));
+            ->action('عرض الحجز', route('appointments.show', $this->appointment));
     }
 
     public function toArray($notifiable): array
@@ -43,7 +43,7 @@ class AppointmentCancelledNotification extends Notification
             'patient_name' => $this->appointment->patient->name,
             'scheduled_at' => $this->appointment->scheduled_at,
             'type' => 'appointment_cancelled',
-            'message' => "تم إلغاء موعد المريض {$this->appointment->patient->name} مع الدكتور {$this->appointment->doctor->name}"
+            'message' => "تم إلغاء حجز المريض {$this->appointment->patient->name} مع الدكتور {$this->appointment->doctor->name}"
         ];
     }
 }

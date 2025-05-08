@@ -87,7 +87,7 @@ class AppointmentsController extends Controller
         return view('appointments::create', [
             'doctors' => $doctors,
             'patients' => $patients,
-            'title' => 'إضافة موعد جديد'
+            'title' => 'إضافة حجز جديد'
         ]);
     }
 
@@ -96,7 +96,7 @@ class AppointmentsController extends Controller
         // التحقق من تسجيل دخول المستخدم
         if (!auth()->check()) {
             return redirect()->route('login')
-                ->with('error', 'يجب تسجيل الدخول أولاً لتتمكن من حجز موعد');
+                ->with('error', 'يجب تسجيل الدخول أولاً لتتمكن من حجز حجز');
         }
 
         $user = auth()->user();
@@ -104,7 +104,7 @@ class AppointmentsController extends Controller
         // إذا كان المستخدم ليس آدمن وليس مريض
         if (!$user->hasRole('Admin') && !$user->isPatient()) {
             return back()
-                ->with('error', 'عذراً، فقط المرضى يمكنهم حجز المواعيد');
+                ->with('error', 'عذراً، فقط المرضى يمكنهم حجز الحجوزات');
         }
 
         // التحقق من وجود ملف المريض إذا كان المستخدم ليس آدمن
@@ -116,7 +116,7 @@ class AppointmentsController extends Controller
 
                 // نرجع إلى نفس الصفحة مع رسالة التحذير
                 return back()
-                    ->with('warning', 'يجب إكمال ملفك الشخصي كمريض أولاً لتتمكن من حجز موعد')
+                    ->with('warning', 'يجب إكمال ملفك الشخصي كمريض أولاً لتتمكن من حجز حجز')
                     ->with('profile_required', true)
                     ->with('doctor_id', $request->input('doctor_id'));
             }
@@ -138,10 +138,10 @@ class AppointmentsController extends Controller
         $messages = [
             'doctor_id.required' => 'يجب اختيار الطبيب',
             'doctor_id.exists' => 'الطبيب المحدد غير متوفر',
-            'appointment_date.required' => 'يجب اختيار تاريخ الموعد',
+            'appointment_date.required' => 'يجب اختيار تاريخ الحجز',
             'appointment_date.date' => 'صيغة التاريخ غير صحيحة',
-            'appointment_date.after_or_equal' => 'لا يمكن حجز موعد في تاريخ سابق',
-            'appointment_time.required' => 'يجب اختيار وقت الموعد',
+            'appointment_date.after_or_equal' => 'لا يمكن حجز حجز في تاريخ سابق',
+            'appointment_time.required' => 'يجب اختيار وقت الحجز',
             'appointment_time.regex' => 'صيغة الوقت غير صحيحة',
             'notes.max' => 'الملاحظات لا يمكن أن تتجاوز 1000 حرف'
         ];
@@ -176,13 +176,13 @@ class AppointmentsController extends Controller
             // Check if the time slot is available
             $doctor = Doctor::findOrFail($validated['doctor_id']);
 
-            // تحديد المواعيد المتاحة لهذا التاريخ
+            // تحديد الحجوزات المتاحة لهذا التاريخ
             $availableSlots = $doctor->getAvailableSlots($validated['appointment_date']);
 
             // التحقق من أن الوقت المطلوب ما زال متاحًا
             if (!in_array($validated['appointment_time'], $availableSlots)) {
                 return back()->withErrors([
-                    'appointment_time' => 'عذراً، هذا الموعد غير متاح للحجز. يرجى اختيار وقت آخر من القائمة.'
+                    'appointment_time' => 'عذراً، هذا الحجز غير متاح للحجز. يرجى اختيار وقت آخر من القائمة.'
                 ])->withInput();
             }
 
@@ -218,9 +218,9 @@ class AppointmentsController extends Controller
             $arabicDate = $scheduledAt->locale('ar')->translatedFormat('l d F Y');
             $arabicTime = $scheduledAt->format('h:i A');
 
-            $successMessage = 'تم تأكيد حجز موعدك بنجاح! ';
-            $successMessage .= 'موعدك مع د. ' . $doctor->name . ' يوم ' . $arabicDate . ' الساعة ' . $arabicTime . '. ';
-            $successMessage .= 'يرجى الوصول قبل الموعد بـ 15 دقيقة. سيتم إرسال تفاصيل إضافية إلى بريدك الإلكتروني.';
+            $successMessage = 'تم تأكيد حجز حجزك بنجاح! ';
+            $successMessage .= 'حجزك مع د. ' . $doctor->name . ' يوم ' . $arabicDate . ' الساعة ' . $arabicTime . '. ';
+            $successMessage .= 'يرجى الوصول قبل الحجز بـ 15 دقيقة. سيتم إرسال تفاصيل إضافية إلى بريدك الإلكتروني.';
 
             return redirect()->route('appointments.show', $appointment)
                 ->with('success', $successMessage);
@@ -233,7 +233,7 @@ class AppointmentsController extends Controller
             ]);
 
             return back()->withErrors([
-                'error' => 'عذراً، حدث خطأ أثناء حجز الموعد. يرجى المحاولة مرة أخرى أو التواصل مع الدعم الفني.'
+                'error' => 'عذراً، حدث خطأ أثناء حجز الحجز. يرجى المحاولة مرة أخرى أو التواصل مع الدعم الفني.'
             ])->withInput();
         }
     }
@@ -246,12 +246,12 @@ class AppointmentsController extends Controller
         if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Doctor')) {
             return view('appointments::details', [
                 'appointment' => $appointment,
-                'title' => 'تفاصيل الموعد'
+                'title' => 'تفاصيل الحجز'
             ]);
         } else {
             return view('appointments::show', [
                 'appointment' => $appointment,
-                'title' => 'تفاصيل الموعد'
+                'title' => 'تفاصيل الحجز'
             ]);
         }
     }
@@ -265,7 +265,7 @@ class AppointmentsController extends Controller
             'appointment' => $appointment,
             'doctors' => $doctors,
             'patients' => $patients,
-            'title' => 'تعديل الموعد'
+            'title' => 'تعديل الحجز'
         ]);
     }
 
@@ -288,12 +288,12 @@ class AppointmentsController extends Controller
             'doctor_id.exists' => 'الطبيب المختار غير موجود',
             'patient_id.required' => 'يرجى اختيار المريض',
             'patient_id.exists' => 'المريض المختار غير موجود',
-            'appointment_date.required' => 'يرجى اختيار تاريخ الموعد',
-            'appointment_date.date' => 'تاريخ الموعد غير صالح',
-            'appointment_time.required' => 'يرجى اختيار وقت الموعد',
-            'appointment_time.regex' => 'وقت الموعد غير صالح',
-            'status.required' => 'يرجى اختيار حالة الموعد',
-            'status.in' => 'حالة الموعد غير صالحة',
+            'appointment_date.required' => 'يرجى اختيار تاريخ الحجز',
+            'appointment_date.date' => 'تاريخ الحجز غير صالح',
+            'appointment_time.required' => 'يرجى اختيار وقت الحجز',
+            'appointment_time.regex' => 'وقت الحجز غير صالح',
+            'status.required' => 'يرجى اختيار حالة الحجز',
+            'status.in' => 'حالة الحجز غير صالحة',
             'notes.max' => 'الملاحظات لا يمكن أن تتجاوز 1000 حرف',
         ];
 
@@ -335,7 +335,7 @@ class AppointmentsController extends Controller
                 )->get();
 
                 if ($conflictingAppointments->isNotEmpty()) {
-                    return back()->withErrors(['appointment_time' => 'هذا الموعد محجوز بالفعل، يرجى اختيار وقت آخر'])->withInput();
+                    return back()->withErrors(['appointment_time' => 'هذا الحجز محجوز بالفعل، يرجى اختيار وقت آخر'])->withInput();
                 }
             }
 
@@ -366,7 +366,7 @@ class AppointmentsController extends Controller
             }
 
             return redirect()->route('appointments.index')
-                ->with('success', 'تم تحديث الموعد بنجاح');
+                ->with('success', 'تم تحديث الحجز بنجاح');
 
         } catch (\Exception $e) {
             Log::error('Error updating appointment:', [
@@ -374,7 +374,7 @@ class AppointmentsController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return back()->withErrors(['error' => 'حدث خطأ أثناء تحديث الموعد'])->withInput();
+            return back()->withErrors(['error' => 'حدث خطأ أثناء تحديث الحجز'])->withInput();
         }
     }
 
@@ -383,7 +383,7 @@ class AppointmentsController extends Controller
         $appointment->delete();
 
         return redirect()->route('appointments.index')
-            ->with('success', 'تم حذف الموعد بنجاح');
+            ->with('success', 'تم حذف الحجز بنجاح');
     }
 
     /**
@@ -401,14 +401,14 @@ class AppointmentsController extends Controller
                 $appointment->patient->user->notify(new AppointmentCompletedNotification($appointment));
             }
 
-            return redirect()->back()->with('success', 'تم إتمام الموعد بنجاح');
+            return redirect()->back()->with('success', 'تم إتمام الحجز بنجاح');
         } catch (\Exception $e) {
             Log::error('Error completing appointment:', [
                 'error' => $e->getMessage(),
                 'appointment_id' => $appointment->id
             ]);
 
-            return back()->withErrors(['error' => 'حدث خطأ أثناء إتمام الموعد']);
+            return back()->withErrors(['error' => 'حدث خطأ أثناء إتمام الحجز']);
         }
     }
 
@@ -456,7 +456,7 @@ class AppointmentsController extends Controller
                 // للمشرفين والأطباء
                 $doctor = $appointment->doctor;
                 $patient = $appointment->patient;
-                $successMessage = "تم إلغاء موعد المريض {$patient->name} مع الدكتور {$doctor->name} بنجاح";
+                $successMessage = "تم إلغاء حجز المريض {$patient->name} مع الدكتور {$doctor->name} بنجاح";
 
                 Log::info('Admin/Doctor redirect: back with success message');
                 return redirect()->back()->with('success', $successMessage);
@@ -466,8 +466,8 @@ class AppointmentsController extends Controller
                 $appointmentDate = $appointment->scheduled_at->locale('ar')->translatedFormat('l d F Y');
                 $appointmentTime = $appointment->scheduled_at->format('h:i A');
 
-                $successMessage = "تم إلغاء موعدك مع د. {$doctor->name} بتاريخ {$appointmentDate} الساعة {$appointmentTime} بنجاح";
-                $successMessage .= ".<br/>يمكنك حجز موعد جديد في أي وقت من صفحة الأطباء.";
+                $successMessage = "تم إلغاء حجزك مع د. {$doctor->name} بتاريخ {$appointmentDate} الساعة {$appointmentTime} بنجاح";
+                $successMessage .= ".<br/>يمكنك حجز حجز جديد في أي وقت من صفحة الأطباء.";
 
                 Log::info('Patient redirect: to appointment details with success message');
                 return redirect()->route('appointments.show', $appointment)
@@ -481,7 +481,7 @@ class AppointmentsController extends Controller
                 'appointment_id' => $appointment->id
             ]);
 
-            return back()->withErrors(['error' => 'حدث خطأ أثناء إلغاء الموعد: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'حدث خطأ أثناء إلغاء الحجز: ' . $e->getMessage()]);
         }
     }
 

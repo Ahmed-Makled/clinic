@@ -105,7 +105,7 @@ class Appointment extends Model
     protected static function booted()
     {
         static::creating(function ($appointment) {
-            // عند إنشاء موعد جديد، نقوم بتعيين الرسوم تلقائياً من سعر الكشف المحدد للطبيب
+            // عند إنشاء حجز جديد، نقوم بتعيين الرسوم تلقائياً من سعر الكشف المحدد للطبيب
             if (!$appointment->fees) {
                 $doctor = Doctor::find($appointment->doctor_id);
                 $appointment->fees = $doctor->consultation_fee;

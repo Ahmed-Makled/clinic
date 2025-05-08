@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل موعد')
+@section('title', 'تعديل حجز')
 
 @section('header_icon')
 <i class="bi bi-calendar2-check text-primary me-2 fs-5"></i>
@@ -13,14 +13,14 @@
 <li class="breadcrumb-item">
     <a href="{{ route('appointments.index') }}" class="text-decoration-none">الحجوزات</a>
 </li>
-<li class="breadcrumb-item active">تعديل موعد</li>
+<li class="breadcrumb-item active">تعديل حجز</li>
 @endsection
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="card shadow-sm">
         <div class="card-header border-bottom py-3">
-            <h5 class="mb-0">تعديل الموعد</h5>
+            <h5 class="mb-0">تعديل الحجز</h5>
         </div>
         <div class="card-body">
             @if ($errors->any())
@@ -78,7 +78,7 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="appointment_date" class="form-label">تاريخ الموعد <span class="text-danger">*</span></label>
+                        <label for="appointment_date" class="form-label">تاريخ الحجز <span class="text-danger">*</span></label>
                         <input type="date"
                                class="form-control @error('appointment_date') is-invalid @enderror"
                                id="appointment_date"
@@ -88,12 +88,12 @@
                         @error('appointment_date')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @else
-                            <div class="invalid-feedback">يرجى اختيار تاريخ الموعد</div>
+                            <div class="invalid-feedback">يرجى اختيار تاريخ الحجز</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="appointment_time" class="form-label">وقت الموعد <span class="text-danger">*</span></label>
+                        <label for="appointment_time" class="form-label">وقت الحجز <span class="text-danger">*</span></label>
                         <select class="form-select @error('appointment_time') is-invalid @enderror"
                                 id="appointment_time"
                                 name="appointment_time"
@@ -111,7 +111,7 @@
                         @error('appointment_time')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @else
-                            <div class="invalid-feedback">يرجى اختيار وقت الموعد</div>
+                            <div class="invalid-feedback">يرجى اختيار وقت الحجز</div>
                         @enderror
                     </div>
 
@@ -160,7 +160,7 @@
                                        name="is_important"
                                        value="1"
                                        {{ old('is_important', $appointment->is_important) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="is_important">موعد مهم</label>
+                                <label class="form-check-label" for="is_important">حجز مهم</label>
                             </div>
                         </div>
                     </div>

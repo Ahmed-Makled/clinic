@@ -168,7 +168,7 @@ class Doctor extends Model
         $availableSlots = $schedule->getAvailableSlots(new DateTime($date));
         $dateStr = $dateTime->format('Y-m-d');
 
-        // تحميل جميع المواعيد المحجوزة لهذا اليوم مسبقًا
+        // تحميل جميع الحجوزات المحجوزة لهذا اليوم مسبقًا
         $bookedAppointments = $this->appointments()
             ->whereDate('scheduled_at', $dateStr)
             ->where('status', 'scheduled')
@@ -210,7 +210,7 @@ class Doctor extends Model
 
             if (!empty($englishDay) && isset($schedule['is_available']) && $schedule['is_available'] &&
                 isset($schedule['start_time']) && isset($schedule['end_time'])) {
-                // إضافة اليوم المتاح فقط إلى جدول المواعيد
+                // إضافة اليوم المتاح فقط إلى جدول الحجوزات
                 $this->schedules()->create([
                     'day' => $englishDay,
                     'start_time' => $schedule['start_time'],

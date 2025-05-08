@@ -185,8 +185,8 @@ class DashboardController extends Controller
             ->map(function ($appointment) {
                 return [
                     'id' => $appointment->id,
-                    'title' => sprintf('موعد مع د. %s', $appointment->doctor->name),
-                    'description' => sprintf('موعد للمريض %s', $appointment->patient->name),
+                    'title' => sprintf('حجز مع د. %s', $appointment->doctor->name),
+                    'description' => sprintf('حجز للمريض %s', $appointment->patient->name),
                     'doctor_name' => $appointment->doctor->name,
                     'patient_name' => $appointment->patient->name,
                     'status' => $appointment->status,

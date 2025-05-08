@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة المواعيد')
+@section('title', 'إدارة الحجوزات')
 
 @section('header_icon')
     <i class="bi bi-calendar2-check text-primary me-2 fs-5"></i>
@@ -10,7 +10,7 @@
     <li class="breadcrumb-item">
         <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
     </li>
-    <li class="breadcrumb-item active">المواعيد</li>
+    <li class="breadcrumb-item active">الحجوزات</li>
 @endsection
 
 @section('actions')
@@ -26,19 +26,19 @@
             <div class="filters mb-4">
                 <div class="row g-3">
                     <div class="col-md-3">
-                        <label for="dateFilter" class="form-label">تاريخ الموعد</label>
+                        <label for="dateFilter" class="form-label">تاريخ الحجز</label>
                         <select name="date_filter" class="form-select select2" id="dateFilter">
                             <option value="">الكل</option>
                             <option value="today" {{ request('date_filter') === 'today' ? 'selected' : '' }}>اليوم</option>
-                            <option value="upcoming" {{ request('date_filter') === 'upcoming' ? 'selected' : '' }}>المواعيد القادمة</option>
-                            <option value="past" {{ request('date_filter') === 'past' ? 'selected' : '' }}>المواعيد السابقة</option>
+                            <option value="upcoming" {{ request('date_filter') === 'upcoming' ? 'selected' : '' }}>الحجوزات القادمة</option>
+                            <option value="past" {{ request('date_filter') === 'past' ? 'selected' : '' }}>الحجوزات السابقة</option>
                             <option value="week" {{ request('date_filter') === 'week' ? 'selected' : '' }}>هذا الأسبوع</option>
                             <option value="month" {{ request('date_filter') === 'month' ? 'selected' : '' }}>هذا الشهر</option>
                         </select>
                     </div>
 
                     <div class="col-md-3">
-                        <label for="statusFilter" class="form-label">حالة الموعد</label>
+                        <label for="statusFilter" class="form-label">حالة الحجز</label>
                         <select name="status_filter" class="form-select select2" id="statusFilter">
                             <option value="">الكل</option>
                             <option value="pending" {{ request('status_filter') === 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
@@ -90,7 +90,7 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">رقم الموعد</th>
+                            <th scope="col">رقم الحجز</th>
                             <th scope="col">المريض</th>
                             <th scope="col">الطبيب</th>
                             <th scope="col">التاريخ والوقت</th>
@@ -184,7 +184,7 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p>هل أنت متأكد من حذف هذا الموعد؟</p>
+                                                    <p>هل أنت متأكد من حذف هذا الحجز؟</p>
                                                     <div class="alert alert-warning">
                                                         <i class="bi bi-exclamation-triangle me-2"></i>
                                                         لا يمكن التراجع عن هذا الإجراء.

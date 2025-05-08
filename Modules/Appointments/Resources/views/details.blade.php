@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الموعد')
+@section('title', 'تفاصيل الحجز')
 @section('breadcrumbs')
     <li class="breadcrumb-item">
         <a href="{{ route('dashboard.index') }}" class="text-decoration-none">لوحة التحكم</a>
     </li>
     <li class="breadcrumb-item">
-        <a href="{{ route('appointments.index') }}" class="text-decoration-none">المواعيد</a>
+        <a href="{{ route('appointments.index') }}" class="text-decoration-none">الحجوزات</a>
     </li>
-    <li class="breadcrumb-item active">تفاصيل الموعد</li>
+    <li class="breadcrumb-item active">تفاصيل الحجز</li>
 @endsection
 @section('actions')
     <div class="d-flex gap-2">
@@ -17,7 +17,7 @@
                 @csrf
                 @method('PUT')
                 <button type="submit" class="btn btn-soft-success">
-                    <i class="bi bi-check-circle me-2"></i> إتمام الموعد
+                    <i class="bi bi-check-circle me-2"></i> إتمام الحجز
                 </button>
             </form>
         @endif
@@ -27,7 +27,7 @@
                 @csrf
                 @method('PUT')
                 <button type="submit" class="btn btn-soft-danger">
-                    <i class="bi bi-x-circle me-2"></i> إلغاء الموعد
+                    <i class="bi bi-x-circle me-2"></i> إلغاء الحجز
                 </button>
             </form>
         @endif
@@ -51,7 +51,7 @@
         @endif
 
         <a href="{{ route('appointments.edit', $appointment) }}" class="btn btn-soft-primary">
-            <i class="bi bi-pencil me-2"></i> تعديل الموعد
+            <i class="bi bi-pencil me-2"></i> تعديل الحجز
         </a>
     </div>
 @endsection
@@ -60,11 +60,11 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xl-8">
-                <!-- تفاصيل الموعد -->
+                <!-- تفاصيل الحجز -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-header border-0 py-3 d-flex align-items-center">
                         <i class="bi bi-calendar-check me-2 "></i>
-                        <h5 class="card-title mb-0 fw-bold">تفاصيل الموعد</h5>
+                        <h5 class="card-title mb-0 fw-bold">تفاصيل الحجز</h5>
                     </div>
                     <div class="card-body">
                         <div class="appointment-info">
@@ -74,7 +74,7 @@
                                         <i class="bi bi-hash"></i>
                                     </div>
                                     <div class="info-content">
-                                        <label>رقم الموعد</label>
+                                        <label>رقم الحجز</label>
                                         <div class="info-value">#{{ $appointment->id }}</div>
                                     </div>
                                 </div>
@@ -139,7 +139,7 @@
                                         <div class="info-content">
                                             <label>الأهمية</label>
                                             <div class="info-value">
-                                                <span class="important-badge">موعد مهم</span>
+                                                <span class="important-badge">حجز مهم</span>
                                             </div>
                                         </div>
                                     </div>
@@ -208,7 +208,7 @@
                             @else
                                 <div class="no-rating text-center py-4">
                                     <i class="bi bi-star text-muted fs-1 mb-3 d-block"></i>
-                                    <p class="text-muted">لم يقم المريض بتقييم الطبيب لهذا الموعد حتى الآن.</p>
+                                    <p class="text-muted">لم يقم المريض بتقييم الطبيب لهذا الحجز حتى الآن.</p>
                                 </div>
                             @endif
                         </div>

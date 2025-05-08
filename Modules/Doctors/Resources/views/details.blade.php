@@ -287,11 +287,11 @@
 
 
                 @endif
-  <!-- جدول المواعيد -->
+  <!-- جدول الحجوزات -->
   @if($doctor->schedules->isNotEmpty())
   <h2 class="section-title mt-4">
       <i class="bi bi-calendar-week me-2"></i>
-      جدول المواعيد
+      جدول الحجوزات
   </h2>
   <div class="schedule-grid">
       @foreach($doctor->schedules as $schedule)
@@ -464,7 +464,7 @@
                                             @if($appointment->is_important)
                                                 <div class="important-flag">
                                                     <i class="bi bi-star-fill"></i>
-                                                    موعد مهم
+                                                    حجز مهم
                                                 </div>
                                             @endif
                                         </div>

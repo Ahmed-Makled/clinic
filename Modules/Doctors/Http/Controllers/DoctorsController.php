@@ -17,6 +17,7 @@ use App\Notifications\DoctorUpdatedNotification;
 use App\Notifications\DoctorDeletedNotification;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DoctorsController extends Controller
 {
@@ -160,7 +161,7 @@ class DoctorsController extends Controller
             'governorate_id.exists' => 'المحافظة المختارة غير موجودة',
             'city_id.required' => 'المدينة مطلوبة',
             'city_id.exists' => 'المدينة المختارة غير موجودة',
-            'schedules.required' => 'جدول المواعيد مطلوب',
+            'schedules.required' => 'جدول الحجوزات مطلوب',
             'schedules.*.start_time.required_with' => 'يجب تحديد وقت البداية عند اختيار اليوم',
             'schedules.*.start_time.date_format' => 'صيغة وقت البداية غير صحيحة',
             'schedules.*.end_time.required_with' => 'يجب تحديد وقت النهاية عند اختيار اليوم',
@@ -240,7 +241,7 @@ class DoctorsController extends Controller
 
     public function edit(Doctor $doctor)
     {
-        $doctor->load(['schedules']); // تحميل جداول المواعيد
+        $doctor->load(['schedules']); // تحميل جداول الحجوزات
         $categories = Category::all();
         $governorates = Governorate::with('cities')->get();
         return view('doctors::edit', compact('doctor', 'categories', 'governorates'));
@@ -397,7 +398,7 @@ class DoctorsController extends Controller
             'user',
             'governorate',
             'city',
-            'schedules' // إضافة تحميل جداول المواعيد
+            'schedules' // إضافة تحميل جداول الحجوزات
         ]);
 
         $appointments = Appointment::where('doctor_id', $doctor->id)
@@ -718,13 +719,13 @@ class DoctorsController extends Controller
             'comment.max' => 'التعليق يجب أن لا يتجاوز 500 حرف',
         ]);
 
-        // التحقق من أن المستخدم الحالي هو صاحب الموعد
+        // التحقق من أن المستخدم الحالي هو صاحب الحجز
         $appointment = \App\Models\Appointment::find($validated['appointment_id']);
         if (!$appointment || $appointment->patient_id != auth()->user()->patient->id) {
-            return back()->with('error', 'لا يمكنك تقييم هذا الطبيب لهذا الموعد');
+            return back()->with('error', 'لا يمكنك تقييم هذا الطبيب لهذا الحجز');
         }
 
-        // التحقق من عدم وجود تقييم سابق لنفس الموعد
+        // التحقق من عدم وجود تقييم سابق لنفس الحجز
         $existingRating = \App\Models\DoctorRating::where('doctor_id', $doctor->id)
             ->where('patient_id', auth()->user()->patient->id)
             ->where('appointment_id', $validated['appointment_id'])
@@ -1089,5 +1090,111 @@ class DoctorsController extends Controller
         $appointments = $query->orderBy('scheduled_at')->paginate(15);
 
         return view('doctors::appointments', compact('doctor', 'appointments'));
+    }
+
+    /**
+     * Mark an appointment as completed
+     *
+     * @param \App\Models\Appointment $appointment
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function completeAppointment(Appointment $appointment)
+    {
+        $user = auth()->user();
+        $doctor = Doctor::where('user_id', $user->id)->firstOrFail();
+
+        // Check if the appointment belongs to the logged in doctor
+        if ($appointment->doctor_id !== $doctor->id) {
+            return redirect()->back()->with('error', 'ليس لديك صلاحية للوصول إلى هذا الحجز');
+        }
+
+        try {
+            $appointment->update(['status' => 'completed']);
+
+            // Notify patient
+            $appointment->patient->user->notify(new \App\Notifications\AppointmentCompletedNotification($appointment));
+
+            return redirect()->back()->with('success', 'تم تحديث الحجز كمكتمل بنجاح');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث حالة الحجز: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Mark an appointment as cancelled
+     *
+     * @param \App\Models\Appointment $appointment
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function cancelAppointment(Appointment $appointment)
+    {
+        $user = auth()->user();
+        $doctor = Doctor::where('user_id', $user->id)->firstOrFail();
+
+        // Check if the appointment belongs to the logged in doctor
+        if ($appointment->doctor_id !== $doctor->id) {
+            return redirect()->back()->with('error', 'ليس لديك صلاحية للوصول إلى هذا الحجز');
+        }
+
+        try {
+            $appointment->update(['status' => 'cancelled']);
+
+            // Notify patient
+            $appointment->patient->user->notify(new \App\Notifications\AppointmentCancelledNotification($appointment));
+
+            return redirect()->back()->with('success', 'تم إلغاء الحجز بنجاح');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'حدث خطأ أثناء إلغاء الحجز: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Mark an appointment as paid
+     *
+     * @param \App\Models\Appointment $appointment
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function markAsPaid(Appointment $appointment)
+    {
+        $user = auth()->user();
+        $doctor = Doctor::where('user_id', $user->id)->firstOrFail();
+
+        // Check if the appointment belongs to the logged in doctor
+        if ($appointment->doctor_id !== $doctor->id) {
+            return redirect()->back()->with('error', 'ليس لديك صلاحية للوصول إلى هذا الحجز');
+        }
+
+        try {
+            $appointment->update(['is_paid' => true]);
+
+            return redirect()->back()->with('success', 'تم تحديث حالة الدفع بنجاح');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث حالة الدفع: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Mark an appointment as unpaid
+     *
+     * @param \App\Models\Appointment $appointment
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function markAsUnpaid(Appointment $appointment)
+    {
+        $user = auth()->user();
+        $doctor = Doctor::where('user_id', $user->id)->firstOrFail();
+
+        // Check if the appointment belongs to the logged in doctor
+        if ($appointment->doctor_id !== $doctor->id) {
+            return redirect()->back()->with('error', 'ليس لديك صلاحية للوصول إلى هذا الحجز');
+        }
+
+        try {
+            $appointment->update(['is_paid' => false]);
+
+            return redirect()->back()->with('success', 'تم تحديث حالة الدفع بنجاح');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث حالة الدفع: ' . $e->getMessage());
+        }
     }
 }

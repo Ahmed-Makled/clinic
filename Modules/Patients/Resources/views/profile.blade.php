@@ -334,7 +334,7 @@
                                                         <i class="bi bi-info-circle-fill text-info fs-4 me-3"></i>
                                                         <div>
                                                             <h5 class="alert-heading mb-1">مطلوب استكمال البيانات</h5>
-                                                            <p class="mb-0">من فضلك قم بإكمال بياناتك الطبية لتتمكن من حجز المواعيد
+                                                            <p class="mb-0">من فضلك قم بإكمال بياناتك الطبية لتتمكن من حجز الحجوزات
                                                             </p>
                                                         </div>
                                                     </div>
@@ -425,7 +425,7 @@
                                                         <h5 class="mb-0 fw-bold">حجوزاتي</h5>
                                                     </div>
                                                     <a href="{{ route('search') }}" class="btn btn-sm btn-primary">
-                                                        <i class="bi bi-plus-circle me-1"></i> حجز موعد جديد
+                                                        <i class="bi bi-plus-circle me-1"></i> حجز حجز جديد
                                                     </a>
                                                 </div>
 
@@ -534,7 +534,7 @@
                                                                                             <button type="submit"
                                                                                                 class="action-btn cancel-btn"
                                                                                                 data-bs-toggle="tooltip"
-                                                                                                title="إلغاء الموعد">
+                                                                                                title="إلغاء الحجز">
                                                                                                 <i class="bi bi-x-circle-fill"></i>
                                                                                             </button>
                                                                                         </form>
@@ -744,9 +744,9 @@
                                                             <i class="bi bi-calendar-x"></i>
                                                         </div>
                                                         <h5>لا توجد حجوزات حالية</h5>
-                                                        <p class="text-muted">يمكنك حجز موعد جديد مع أطبائنا</p>
+                                                        <p class="text-muted">يمكنك حجز حجز جديد مع أطبائنا</p>
                                                         <a href="{{ route('search') }}" class="btn btn-primary">
-                                                            <i class="bi bi-plus-circle me-1"></i> حجز موعد جديد
+                                                            <i class="bi bi-plus-circle me-1"></i> حجز حجز جديد
                                                         </a>
                                                     </div>
                                                 @endif
@@ -833,11 +833,11 @@
                     </div>
                 </div>
 
-                <!-- زر العودة لحجز موعد في حالة وجود redirect_to -->
+                <!-- زر العودة لحجز حجز في حالة وجود redirect_to -->
                 @if($user->isPatient() && request()->has('redirect_to'))
                     <div class="text-center mt-3">
                         <a href="{{ request('redirect_to') }}" class="btn btn-secondary">
-                            <i class="bi bi-calendar-check me-1"></i> العودة لحجز الموعد
+                            <i class="bi bi-calendar-check me-1"></i> العودة لحجز الحجز
                         </a>
                     </div>
                 @endif
@@ -1428,13 +1428,13 @@
                     });
                 });
 
-                // تحسين تأكيد إلغاء المواعيد
+                // تحسين تأكيد إلغاء الحجوزات
                 document.querySelectorAll('form[action*="appointments.cancel"]').forEach(form => {
                     form.addEventListener('submit', function (event) {
                         event.preventDefault();
 
                         // إنشاء نافذة تأكيد مخصصة بدلاً من استخدام التأكيد الافتراضي
-                        if (confirm('هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟ لن تتمكن من التراجع عن هذه العملية.')) {
+                        if (confirm('هل أنت متأكد من رغبتك في إلغاء هذا الحجز؟ لن تتمكن من التراجع عن هذه العملية.')) {
                             this.submit();
                         }
                     });
@@ -1561,7 +1561,7 @@
                 document.querySelectorAll('.cancel-form').forEach(form => {
                     form.addEventListener('submit', function (e) {
                         e.preventDefault();
-                        if (confirm('هل أنت متأكد من إلغاء هذا الموعد؟')) {
+                        if (confirm('هل أنت متأكد من إلغاء هذا الحجز؟')) {
                             this.submit();
                         }
                     });
