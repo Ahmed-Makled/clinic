@@ -153,12 +153,17 @@
                             <!-- أزرار الإجراءات في الهيدر -->
                             @if($appointment->status === 'scheduled')
                                 <div class="header-actions">
+                                    @if(!$appointment->is_paid)
+                                        <a href="{{ route('payments.stripe.checkout', $appointment) }}" class="btn btn-primary me-2">
+                                            <i class="bi bi-credit-card-2-front me-2"></i>
+                                            دفع الآن
+                                        </a>
+                                    @endif
 
                                     <button type="button" class="btn btn-danger" id="cancelbtn">
                                         <i class="bi bi-x-circle me-2"></i>
                                         إلغاء الحجز
                                     </button>
-
                                 </div>
                             @endif
                         </div>
@@ -210,6 +215,20 @@
                                             class="bi {{ $appointment->is_paid ? 'bi-check-circle-fill' : 'bi-clock-history' }}"></i>
                                         {{ $appointment->is_paid ? 'مدفوع' : 'غير مدفوع' }}
                                     </div>
+                                    @if($appointment->is_paid && $appointment->payment_method)
+                                        <div class="payment-method mt-2">
+                                            <span class="payment-method-label">طريقة الدفع:</span>
+                                            <span class="payment-method-value">
+                                                @if($appointment->payment_method == 'stripe')
+                                                    <i class="bi bi-credit-card-2-front me-1"></i> بطاقة الدفع
+                                                @elseif($appointment->payment_method == 'cash')
+                                                    <i class="bi bi-cash me-1"></i> نقدي
+                                                @else
+                                                    {{ $appointment->payment_method }}
+                                                @endif
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -1013,6 +1032,59 @@
                 }
 
                 .header-actions .btn-danger {
+                    width: 100%;
+                }
+            }
+
+            /* Payment Section Styles */
+            .payment-section {
+                padding: 1.5rem;
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .payment-options {
+                background-color: #f8fafc;
+                border-radius: 12px;
+                border: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .btn-primary {
+                background-color: #4f46e5;
+                border-color: #4f46e5;
+                transition: all 0.3s ease;
+                padding: 0.75rem 1.5rem;
+                font-weight: 500;
+            }
+
+            .btn-primary:hover {
+                background-color: #4338ca;
+                border-color: #4338ca;
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+                transform: translateY(-2px);
+            }
+
+            .header-actions .btn-primary {
+                background-color: #4f46e5;
+                border-color: #4f46e5;
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+                white-space: nowrap;
+            }
+
+            .header-actions .btn-primary:hover {
+                background-color: #4338ca;
+                box-shadow: 0 4px 8px rgba(79, 70, 229, 0.25);
+                transform: translateY(-2px);
+            }
+
+            @media (max-width: 575.98px) {
+                .header-actions {
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    width: 100%;
+                }
+
+                .header-actions .btn {
                     width: 100%;
                 }
             }

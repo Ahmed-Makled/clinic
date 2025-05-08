@@ -223,7 +223,7 @@
                                 <i class="bi bi-calendar-check fs-1 text-primary"></i>
                             </div>
                         </div>
-                        <h4 class="mb-3">احجز حجزك</h4>
+                        <h4 class="mb-3">احجز موعدك</h4>
                         <p class="text-muted mb-3">احجز ميعادك اونلاين وهنأكدلك الحجز فورًا عبر الرسائل النصية</p>
                         <div class="step-features">
                             <div class="d-flex align-items-center mb-2">
@@ -291,7 +291,7 @@
                             </div>
                         </div>
                         <h5 class="mb-3 fw-bold">حجز سريع</h5>
-                        <p class="text-muted mb-3">احجز حجزك في أقل من دقيقة واحدة، وتلقى تأكيداً فورياً عبر الرسائل النصية والبريد الإلكتروني</p>
+                        <p class="text-muted mb-3">احجز موعدك في أقل من دقيقة واحدة، وتلقى تأكيداً فورياً عبر الرسائل النصية والبريد الإلكتروني</p>
                         <div class="feature-details">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -422,7 +422,7 @@
             <!-- زر الحجز -->
             <div class="text-center mt-5 animate__animated animate__fadeInUp">
                 <a href="{{ route('search') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm hover-scale-lg">
-                    <i class="bi bi-calendar-check me-2"></i> احجز حجزك الآن
+                    <i class="bi bi-calendar-check me-2"></i> احجز موعدك الآن
                 </a>
             </div>
 

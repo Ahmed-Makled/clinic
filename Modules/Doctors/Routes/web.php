@@ -14,10 +14,6 @@ Route::prefix('doctors')->group(function () {
         Route::get('/{doctor}/edit', [DoctorsController::class, 'edit'])->name('doctors.edit');
         Route::put('/{doctor}', [DoctorsController::class, 'update'])->name('doctors.update');
         Route::delete('/{doctor}', [DoctorsController::class, 'destroy'])->name('doctors.destroy');
-
-        // مسارات إضافة بيانات طبيب من مستخدم موجود
-        Route::get('/create-from-user', [DoctorsController::class, 'createFromUser'])->name('doctors.createFromUser');
-        Route::post('/store-from-user', [DoctorsController::class, 'storeFromUser'])->name('doctors.storeFromUser');
     });
 
     // Doctor profile routes

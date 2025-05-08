@@ -375,12 +375,62 @@
                             </div>
 
                             <!-- Submit Button -->
-                            <button type="submit" class="btn btn-primary btn-lg w-100">
-                                <div class="d-flex align-items-center justify-content-center gap-2">
-                                    <i class="bi bi-calendar-check"></i>
-                                    <span>تأكيد الحجز</span>
+                            <div class="payment-options mb-4">
+                                <div class="payment-selection">
+                                    <h6 class="form-label fw-medium d-flex align-items-center gap-2 mb-3">
+                                        <i class="bi bi-credit-card-fill text-primary"></i>
+                                        اختر طريقة الدفع
+                                    </h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <input type="radio" class="btn-check payment-method" name="payment_method" id="payment_later" value="later" checked>
+                                            <label class="payment-option-card w-100" for="payment_later">
+                                                <div class="payment-option-content">
+                                                    <div class="payment-option-icon">
+                                                        <i class="bi bi-cash-coin"></i>
+                                                    </div>
+                                                    <div class="payment-option-text">
+                                                        <h6 class="mb-0">الدفع في العيادة</h6>
+                                                        <small class="text-muted">ادفع نقداً عند الوصول</small>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="radio" class="btn-check payment-method" name="payment_method" id="payment_stripe" value="stripe">
+                                            <label class="payment-option-card w-100" for="payment_stripe">
+                                                <div class="payment-option-content">
+                                                    <div class="payment-option-icon">
+                                                        <i class="bi bi-credit-card-2-front"></i>
+                                                    </div>
+                                                    <div class="payment-option-text">
+                                                        <h6 class="mb-0">دفع إلكتروني</h6>
+                                                        <small class="text-muted">Stripe البطاقة الائتمانية عبر</small>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
-                            </button>
+                            </div>
+
+                            <div class="d-grid gap-3">
+                                <button type="submit" id="submit-btn" class="btn btn-primary btn-lg">
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <i class="bi bi-calendar-check"></i>
+                                        <span>تأكيد الحجز</span>
+                                    </div>
+                                </button>
+
+                                <div id="stripe-payment-button" style="display: none;">
+                                    <button type="button" id="stripe-btn" class="btn btn-info btn-lg w-100">
+                                        <div class="d-flex align-items-center justify-content-center gap-2">
+                                            <i class="bi bi-credit-card-2-front"></i>
+                                            <span>الدفع باستخدام Stripe</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
                         </form>
                     </div>
 
@@ -975,6 +1025,45 @@ document.addEventListener('DOMContentLoaded', function() {
     const bookingForm = document.getElementById('bookingForm');
     const appointmentDateInput = bookingForm.querySelector('input[name="appointment_date"]');
     const timeSlotsContainer = document.getElementById('timeSlots');
+
+    // إضافة التعامل مع طرق الدفع
+    const paymentMethodInputs = document.querySelectorAll('.payment-method');
+    const stripePaymentButton = document.getElementById('stripe-payment-button');
+    const submitBtn = document.getElementById('submit-btn');
+    const stripeBtn = document.getElementById('stripe-btn');
+
+    // تبديل عرض أزرار الدفع بناءً على طريقة الدفع المختارة
+    paymentMethodInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            if (this.value === 'stripe') {
+                stripePaymentButton.style.display = 'block';
+                submitBtn.textContent = 'متابعة';
+            } else {
+                stripePaymentButton.style.display = 'none';
+                submitBtn.textContent = 'تأكيد الحجز';
+            }
+        });
+    });
+
+    // إضافة إجراء لزر الدفع بواسطة Stripe
+    if (stripeBtn) {
+        stripeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // التأكد من اختيار التاريخ والوقت قبل الانتقال للدفع
+            const selectedDate = bookingForm.querySelector('input[name="appointment_date"]:checked');
+            const selectedTime = bookingForm.querySelector('input[name="appointment_time"]:checked');
+
+            if (!selectedDate || !selectedTime) {
+                alert('يرجى اختيار تاريخ ووقت الحجز أولاً');
+                return false;
+            }
+
+            // إرسال نموذج الحجز إلى الخادم مع توجيه لمعالج Stripe
+            bookingForm.action = '{{ route("appointments.stripe.create") }}';
+            bookingForm.submit();
+        });
+    }
 
     // تحويل الوقت إلى معرف صالح
     const sanitizeId = (id) => {

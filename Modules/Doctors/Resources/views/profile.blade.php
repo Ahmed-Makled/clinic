@@ -1979,16 +1979,6 @@ $(document).ready(function() {
                 });
                 if (tabPane) {
                     tabPane.classList.add('show', 'active');
-
-                    // If it's the appointments tab, scroll to it
-                    if (tabId === 'appointments') {
-                        setTimeout(() => {
-                            const appointmentsHeader = document.querySelector('#appointments .card-header');
-                            if (appointmentsHeader) {
-                                appointmentsHeader.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }, 150);
-                    }
                 }
             }
         }
