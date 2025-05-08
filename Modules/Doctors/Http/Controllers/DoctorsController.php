@@ -1027,12 +1027,63 @@ class DoctorsController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Filter by date
+        // Filter by specific date
         if ($request->filled('date')) {
             $query->whereDate('scheduled_at', $request->date);
-        } else {
-            // Default to today's and future appointments
-            $query->whereDate('scheduled_at', '>=', now());
+        }
+
+        // Filter by date range
+        if ($request->filled('date_range')) {
+            switch ($request->date_range) {
+                case 'today':
+                    $query->whereDate('scheduled_at', Carbon::today());
+                    break;
+                case 'tomorrow':
+                    $query->whereDate('scheduled_at', Carbon::tomorrow());
+                    break;
+                case 'this_week':
+                    $query->whereBetween('scheduled_at', [
+                        Carbon::now()->startOfWeek(),
+                        Carbon::now()->endOfWeek(),
+                    ]);
+                    break;
+                case 'next_week':
+                    $query->whereBetween('scheduled_at', [
+                        Carbon::now()->addWeek()->startOfWeek(),
+                        Carbon::now()->addWeek()->endOfWeek(),
+                    ]);
+                    break;
+                case 'this_month':
+                    $query->whereMonth('scheduled_at', Carbon::now()->month)
+                          ->whereYear('scheduled_at', Carbon::now()->year);
+                    break;
+                case 'custom':
+                    if ($request->filled(['date_from', 'date_to'])) {
+                        $query->whereBetween('scheduled_at', [
+                            Carbon::parse($request->date_from)->startOfDay(),
+                            Carbon::parse($request->date_to)->endOfDay(),
+                        ]);
+                    }
+                    break;
+            }
+        }
+
+        // Filter by patient name
+        if ($request->filled('patient_name')) {
+            $query->whereHas('patient', function($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->patient_name . '%');
+            });
+        }
+
+        // Filter by appointment ID
+        if ($request->filled('appointment_id')) {
+            $query->where('id', $request->appointment_id);
+        }
+
+        // Filter by payment status
+        if ($request->filled('payment_status')) {
+            $isPaid = $request->payment_status === 'paid';
+            $query->where('is_paid', $isPaid);
         }
 
         $appointments = $query->orderBy('scheduled_at')->paginate(15);

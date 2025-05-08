@@ -288,6 +288,7 @@ h6,
 }
 
 
+
 /* Action Buttons */
 .action-btn {
     padding: 0.4rem;
@@ -601,6 +602,7 @@ h6,
 
 .status-badge i {
     font-size: 0.875em;
+    margin-inline-end: 4px;
 }
 
 .status-badge.active {
