@@ -2,7 +2,7 @@
 
 @section('header_icon')
 <i class="bi bi-people text-primary me-2 fs-5"></i>
-@endsection
+@endsection ر
 
 @section('breadcrumbs')
 <li class="breadcrumb-item">
@@ -35,7 +35,7 @@
                                    value="{{ old('name') }}"
                                    required>
                             @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -48,7 +48,7 @@
                                    value="{{ old('email') }}"
                                    required>
                             @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -61,7 +61,7 @@
                                    value="{{ old('phone') }}"
                                    required>
                             @error('phone')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -79,7 +79,7 @@
                                 @endforeach
                             </select>
                             @error('role')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -91,17 +91,20 @@
                                    name="password"
                                    required>
                             @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="mb-3 col-md-6">
                             <label class="form-label" for="password_confirmation">تأكيد كلمة المرور *</label>
                             <input type="password"
-                                   class="form-control"
+                                   class="form-control @error('password_confirmation') is-invalid @enderror"
                                    id="password_confirmation"
                                    name="password_confirmation"
                                    required>
+                            @error('password_confirmation')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3 col-md-12">
@@ -115,7 +118,7 @@
                                 <label class="form-check-label" for="status">نشط</label>
                             </div>
                             @error('status')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>

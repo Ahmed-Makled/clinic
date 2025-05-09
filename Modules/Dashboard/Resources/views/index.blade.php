@@ -85,6 +85,14 @@
                                     <i class="bi bi-check-circle"></i>
                                     {{ $stats['doctors']['active'] }} نشط
                                 </span>
+                                @if(isset($stats['doctors']['incomplete']) && $stats['doctors']['incomplete'] > 0)
+                                <span class="text-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <a href="{{ route('doctors.incomplete_profiles') }}" class="text-warning text-decoration-none">
+                                        {{ $stats['doctors']['incomplete'] }} غير مكتمل
+                                    </a>
+                                </span>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -295,6 +303,18 @@
                                     <p class="mb-2">{{ number_format($stats['unpaid_fees']) }} ج.م في انتظار التحصيل</p>
                                     <a href="{{ route('appointments.index', ['payment_status' => 'unpaid']) }}"
                                        class="btn btn-sm btn-danger">إدارة المدفوعات</a>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if(isset($stats['doctors']['incomplete']) && $stats['doctors']['incomplete'] > 0)
+                            <div class="notification-item warning">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                <div class="notification-content">
+                                    <h6 class="mb-1">بيانات أطباء غير مكتملة</h6>
+                                    <p class="mb-2">{{ $stats['doctors']['incomplete'] }} طبيب بحاجة لاستكمال البيانات</p>
+                                    <a href="{{ route('doctors.incomplete_profiles') }}"
+                                       class="btn btn-sm btn-warning">عرض القائمة</a>
                                 </div>
                             </div>
                         @endif

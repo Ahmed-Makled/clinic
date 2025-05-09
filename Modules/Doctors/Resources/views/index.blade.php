@@ -13,9 +13,16 @@
 @endsection
 
 @section('actions')
-    <a href="{{ route('doctors.create') }}" class="btn btn-primary btn-sm px-3">
-        <i class="bi bi-plus-lg me-1"></i> إضافة
-    </a>
+    <div class="d-flex gap-2">
+        @if(isset($stats['doctors']['incomplete']) && $stats['doctors']['incomplete'] > 0)
+        <a href="{{ route('doctors.incomplete_profiles') }}" class="btn btn-warning btn-sm px-3">
+            <i class="bi bi-exclamation-triangle me-1"></i> {{ $stats['doctors']['incomplete'] }} ملف غير مكتمل
+        </a>
+        @endif
+        <a href="{{ route('doctors.create') }}" class="btn btn-primary btn-sm px-3">
+            <i class="bi bi-plus-lg me-1"></i> إضافة
+        </a>
+    </div>
 @endsection
 
 @section('content')

@@ -916,9 +916,17 @@
                                     data-bs-placement="left" data-bs-title="الأطباء">
                                     <i class="bi bi-person-badge"></i>
                                     <span>الأطباء</span>
-
                                 </a>
                             </li>
+                            {{-- <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('doctors.incomplete_profiles') ? 'active' : '' }}"
+                                    href="{{ route('doctors.incomplete_profiles') }}" data-bs-toggle="tooltip"
+                                    data-bs-placement="left" data-bs-title="ملفات غير مكتملة">
+                                    <i class="bi bi-exclamation-triangle text-warning"></i>
+                                    <span>ملفات غير مكتملة</span>
+                                    <span class="badge bg-warning text-dark">جديد</span>
+                                </a>
+                            </li> --}}
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('patients.*') ? 'active' : '' }}"
                                     href="{{ route('patients.index') }}" data-bs-toggle="tooltip"
@@ -1079,15 +1087,49 @@
                 </div>
             </div>
 
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-check-circle-fill me-2"></i>
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+
+                        @if (session('success'))
+                        <div class="alert-card success mb-4">
+                            <div class="alert-icon">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <div class="alert-content">
+                                <h6 class="alert-heading">تمت العملية بنجاح!</h6>
+                                <p class="mb-0">{!! session('success') !!}</p>
+                            </div>
+                            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    @endif
+                    @if (session('error'))
+                        <div class="alert-card error mb-4">
+                            <div class="alert-icon">
+                                <i class="bi bi-exclamation-triangle"></i>
+                            </div>
+                            <div class="alert-content">
+                                <h6 class="alert-heading">حدث خطأ!</h6>
+                                <p class="mb-0">{!! session('error') !!}</p>
+                            </div>
+                            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    @endif
+                    @if (session('info'))
+                        <div class="alert-card info mb-4">
+                            <div class="alert-icon">
+                                <i class="bi bi-info-circle"></i>
+                            </div>
+                            <div class="alert-content">
+                                <h6 class="alert-heading">معلومات!</h6>
+                                <p class="mb-0">{!! session('info') !!}</p>
+                            </div>
+                            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    @endif
 
             @if($errors->any())
                  <!-- إضافة مكون عرض الأخطاء -->

@@ -26,6 +26,10 @@
                     @csrf
                     @method('PUT')
 
+                    @if(request()->has('redirect_to'))
+                        <input type="hidden" name="redirect_to" value="{{ request('redirect_to') }}">
+                    @endif
+
                     <!-- المعلومات الأساسية -->
                     <div class="section-divider mb-4">
                         <h6 class="section-title text-primary fw-bold">المعلومات الأساسية</h6>
@@ -34,7 +38,7 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label" for="name">الاسم *</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
-                                name="name" value="{{ old('name', $doctor->name) }}" placeholder="اسم الطبيب" required />
+                                name="name" value="{{ old('name', $doctor->name) }}" placeholder="اسم الطبيب"  />
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -44,7 +48,7 @@
                             <label class="form-label" for="email">البريد الإلكتروني *</label>
                             <input type="email" style="direction: rtl;"
                                 class="form-control @error('email') is-invalid @enderror" id="email" name="email"
-                                value="{{ old('email', $doctor->email) }}" placeholder="البريد الإلكتروني" required />
+                                value="{{ old('email', $doctor->email) }}" placeholder="البريد الإلكتروني"  />
                             @error('email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -55,7 +59,7 @@
                             <div class="input-group">
                                 <span class="input-group-text">+20</span>
                                 <input type="text" class="form-control" id="phone"
-                                    name="phone" value="{{ old('phone', $doctor->phone) }}" placeholder="ادخل رقم الهاتف" required />
+                                    name="phone" value="{{ old('phone', $doctor->phone) }}" placeholder="ادخل رقم الهاتف"  />
                             </div>
                             @error('phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -65,12 +69,12 @@
                         <div class="col-md-3 col-6 mb-3">
                             <label class="form-label d-block">الجنس *</label>
                             <div class="form-check form-check-inline mt-2">
-                                <input class="form-check-input" type="radio" name="gender" id="male" value="ذكر"
-                                    {{ old('gender', $doctor->gender) == 'ذكر' ? 'checked' : '' }} required>
+                                <input class="form-check-input @error('gender') is-invalid @enderror" type="radio" name="gender" id="male" value="ذكر"
+                                    {{ old('gender', $doctor->gender) == 'ذكر' ? 'checked' : '' }} >
                                 <label class="form-check-label" for="male">ذكر</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="gender" id="female" value="انثي"
+                                <input class="form-check-input @error('gender') is-invalid @enderror" type="radio" name="gender" id="female" value="انثي"
                                     {{ old('gender', $doctor->gender) == 'انثي' ? 'checked' : '' }}>
                                 <label class="form-check-label" for="female">أنثى</label>
                             </div>
@@ -98,7 +102,7 @@
                             <label class="form-label" for="title">المسمى الوظيفي *</label>
                             <input type="text" class="form-control @error('title') is-invalid @enderror"
                                 id="title" name="title" value="{{ old('title', $doctor->title) }}"
-                                placeholder="مثال: استشاري، أخصائي، طبيب" required>
+                                placeholder="مثال: استشاري، أخصائي، طبيب" >
                             @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -106,18 +110,18 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="categories" class="form-label">التخصصات *</label>
-                            <select name="categories[]" id="categories" class="form-select"
-                                data-icon="bi-briefcase-medical" data-color="#0d6efd" required>
+                            <select name="categories[]" id="categories" class="form-select @error('categories') is-invalid @enderror"
+                                data-icon="bi-briefcase-medical" data-color="#0d6efd" >
                                 <option value="">اختر التخصص</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" data-icon="bi-heart-pulse"
-                                        {{ old('categories', $doctor->categories->contains($category->id)) ? 'selected' : '' }}>
+                                        {{ in_array($category->id, old('categories', $doctor->categories->pluck('id')->toArray())) ? 'selected' : '' }}>
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
                             </select>
                             @error('categories')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -125,7 +129,7 @@
                             <label class="form-label" for="specialization">التخصص الدقيق *</label>
                             <input type="text" class="form-control @error('specialization') is-invalid @enderror"
                                 id="specialization" name="specialization" value="{{ old('specialization', $doctor->specialization) }}"
-                                placeholder="مثال: جراحة عامة، باطنة، أطفال" required>
+                                placeholder="مثال: جراحة عامة، باطنة، أطفال" >
                             @error('specialization')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -136,7 +140,7 @@
                             <input type="number" style="direction: rtl"
                                 class="form-control @error('experience_years') is-invalid @enderror"
                                 id="experience_years" name="experience_years" value="{{ old('experience_years', $doctor->experience_years) }}"
-                                placeholder="عدد سنوات الخبرة" min="0" required />
+                                placeholder="عدد سنوات الخبرة" min="0"  />
                             @error('experience_years')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -164,7 +168,7 @@
                                 <input type="number" style="direction: rtl"
                                     class="form-control @error('consultation_fee') is-invalid @enderror"
                                     id="consultation_fee" name="consultation_fee" value="{{ old('consultation_fee', $doctor->consultation_fee) }}"
-                                    placeholder="سعر الكشف" min="0" required />
+                                    placeholder="سعر الكشف" min="0"  />
                                 <span class="input-group-text">جنيه</span>
                             </div>
                             @error('consultation_fee')
@@ -175,7 +179,7 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label" for="waiting_time">مدة الانتظار (بالدقائق) *</label>
                             <div class="input-group">
-                                <input type="number" class="form-control @error('waiting_time') is-invalid @enderror"
+                                <input type="number" class="form-control  @error('waiting_time') is-invalid @enderror"
                                     name="waiting_time" id="waiting_time"
                                     value="{{ old('waiting_time', $doctor->waiting_time) }}"
                                     min="0" />
@@ -249,8 +253,8 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="governorate_id" class="form-label">المحافظة *</label>
-                            <select name="governorate_id" id="governorate_id" class="form-select" data-icon="bi-geo-alt"
-                                data-color="#198754" required>
+                            <select name="governorate_id" id="governorate_id" class="form-select @error('governorate_id') is-invalid @enderror " data-icon="bi-geo-alt"
+                                data-color="#198754" >
                                 <option value="">اختر المحافظة</option>
                                 @foreach($governorates as $governorate)
                                     <option value="{{ $governorate->id }}" data-icon="bi-pin-map"
@@ -266,7 +270,7 @@
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label" for="city_id">المدينة *</label>
-                            <select class="form-select @error('city_id') is-invalid @enderror" name="city_id" id="city_id" required>
+                            <select class="form-select @error('city_id') is-invalid @enderror" name="city_id" id="city_id" >
                                 <option value="">اختر المدينة</option>
                             </select>
                             @error('city_id')
@@ -278,7 +282,7 @@
                             <label class="form-label" for="address">عنوان العيادة *</label>
                             <textarea class="form-control @error('address') is-invalid @enderror"
                                 id="address" name="address" rows="2"
-                                placeholder="العنوان التفصيلي للعيادة" required>{{ old('address', $doctor->address) }}</textarea>
+                                placeholder="العنوان التفصيلي للعيادة" >{{ old('address', $doctor->address) }}</textarea>
                             @error('address')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

@@ -33,7 +33,8 @@ class Doctor extends Model
         'gender',
         'status',
         'title',
-        'specialization'
+        'specialization',
+        'is_profile_completed'
     ];
 
     protected $searchable = [
@@ -264,6 +265,88 @@ class Doctor extends Model
         }
 
         return $stats;
+    }
+
+    /**
+     * تحديد ما إذا كانت بيانات الطبيب مكتملة أم لا
+     */
+    public function isProfileCompleted()
+    {
+        // التحقق من وجود البيانات الأساسية
+        $hasBasicInfo = !empty($this->title) &&
+                        !empty($this->specialization) &&
+                        !empty($this->experience_years) &&
+                        !empty($this->address) &&
+                        !empty($this->governorate_id) &&
+                        !empty($this->city_id) &&
+                        !empty($this->consultation_fee) &&
+                        !empty($this->waiting_time);
+
+        // التحقق من وجود تخصصات مرتبطة
+        $hasCategories = $this->categories()->count() > 0;
+
+        // التحقق من وجود جدول مواعيد
+        $hasSchedule = $this->schedules()->count() > 0;
+
+        $isCompleted = $hasBasicInfo && $hasCategories && $hasSchedule;
+
+        // تحديث حالة اكتمال الملف الشخصي إذا كانت مختلفة عن القيمة المخزنة
+        if ($this->is_profile_completed !== $isCompleted) {
+            $this->is_profile_completed = $isCompleted;
+            $this->save();
+        }
+
+        return $isCompleted;
+    }
+
+    /**
+     * البيانات المتبقية لاستكمال الملف الشخصي
+     */
+    public function getMissingProfileDataAttribute()
+    {
+        $missingData = [];
+
+        if (empty($this->title)) {
+            $missingData[] = 'المسمى الوظيفي';
+        }
+
+        if (empty($this->specialization)) {
+            $missingData[] = 'التخصص';
+        }
+
+        if (empty($this->experience_years)) {
+            $missingData[] = 'سنوات الخبرة';
+        }
+
+        if (empty($this->address)) {
+            $missingData[] = 'العنوان';
+        }
+
+        if (empty($this->governorate_id)) {
+            $missingData[] = 'المحافظة';
+        }
+
+        if (empty($this->city_id)) {
+            $missingData[] = 'المدينة';
+        }
+
+        if (empty($this->consultation_fee)) {
+            $missingData[] = 'رسوم الاستشارة';
+        }
+
+        if (empty($this->waiting_time)) {
+            $missingData[] = 'وقت الانتظار';
+        }
+
+        if ($this->categories()->count() == 0) {
+            $missingData[] = 'التخصصات';
+        }
+
+        if ($this->schedules()->count() == 0) {
+            $missingData[] = 'جدول المواعيد';
+        }
+
+        return $missingData;
     }
 
 }

@@ -143,6 +143,20 @@ class PatientController extends Controller
             $admin->notify(new PatientUpdatedNotification($patient->patient));
         });
 
+        // التحقق من وجود معلمة redirect في URL
+        if ($request->has('redirect') && $request->redirect === 'users') {
+            return redirect()->route('users.index')
+                ->with('success', 'تم تحديث بيانات المريض بنجاح');
+        }
+
+        // أو التحقق من وجود URL مصدر في الجلسة
+        if ($request->session()->has('redirect_back')) {
+            $redirectBack = $request->session()->get('redirect_back');
+            $request->session()->forget('redirect_back');
+            return redirect()->to($redirectBack)
+                ->with('success', 'تم تحديث بيانات المريض بنجاح');
+        }
+
         return redirect()->route('patients.index')
             ->with('success', 'تم تحديث بيانات المريض بنجاح');
     }

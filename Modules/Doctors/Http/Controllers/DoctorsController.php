@@ -90,7 +90,19 @@ class DoctorsController extends Controller
         $categories = Category::active()->get();
         $governorates = Governorate::all();
 
-        return view('doctors::index', compact('doctors', 'categories', 'governorates'));
+        // إحصائيات الأطباء للعرض في الواجهة
+        $stats = [
+            'doctors' => [
+                'total' => Doctor::count(),
+                'active' => Doctor::where('status', true)->count(),
+                'incomplete' => Doctor::where(function($query) {
+                                $query->where('is_profile_completed', false)
+                                     ->orWhereNull('is_profile_completed');
+                            })->count()
+            ]
+        ];
+
+        return view('doctors::index', compact('doctors', 'categories', 'governorates', 'stats'));
     }
 
     public function create()
@@ -108,7 +120,7 @@ class DoctorsController extends Controller
             'phone' => ['required', 'string', 'unique:users,phone_number'],
             'password' => ['required', 'string', 'min:8'],
             'consultation_fee' => ['required', 'numeric', 'min:0'],
-            'waiting_time' => ['nullable', 'integer', 'min:0'],
+            'waiting_time' => ['required', 'integer', 'min:0'],
             'title' => ['required', 'string', 'max:100'],
             'specialization' => ['required', 'string', 'max:100'],
             'categories' => ['required', 'array', 'exists:categories,id'],
@@ -142,6 +154,7 @@ class DoctorsController extends Controller
             'consultation_fee.required' => 'سعر الكشف مطلوب',
             'consultation_fee.numeric' => 'سعر الكشف يجب أن يكون رقماً',
             'consultation_fee.min' => 'سعر الكشف يجب أن يكون أكبر من صفر',
+            'waiting_time.required' => 'مدة الانتظار مطلوبة',
             'waiting_time.integer' => 'مدة الانتظار يجب أن تكون رقماً صحيحاً',
             'waiting_time.min' => 'مدة الانتظار يجب أن تكون أكبر من صفر',
             'title.required' => 'المسمى الوظيفي مطلوب',
@@ -184,6 +197,25 @@ class DoctorsController extends Controller
 
             $user->assignRole('Doctor');
 
+            // التحقق من وجود جميع الحقول المطلوبة لتحديد اكتمال الملف الشخصي
+            $hasAllRequiredFields = !empty($validated['title']) &&
+                                   !empty($validated['specialization']) &&
+                                   !empty($validated['experience_years']) &&
+                                   !empty($validated['address']) &&
+                                   !empty($validated['governorate_id']) &&
+                                   !empty($validated['city_id']) &&
+                                   !empty($validated['consultation_fee']) &&
+                                   !empty($validated['waiting_time']) &&
+                                   isset($validated['categories']) &&
+                                   count($validated['categories']) > 0;
+
+            // تحديد قيمة حقل اكتمال الملف الشخصي
+            $isProfileCompleted = $hasAllRequiredFields &&
+                                 (isset($request->schedules) &&
+                                 count(array_filter($request->schedules, function($schedule) {
+                                     return isset($schedule['is_available']) && $schedule['is_available'];
+                                 })) > 0);
+
             // Create doctor
             $doctor = Doctor::create([
                 'user_id' => $user->id,
@@ -198,7 +230,8 @@ class DoctorsController extends Controller
                 'status' => true,
                 'address' => $validated['address'],
                 'governorate_id' => $validated['governorate_id'],
-                'city_id' => $validated['city_id']
+                'city_id' => $validated['city_id'],
+                'is_profile_completed' => $isProfileCompleted
             ]);
 
             // Handle image upload
@@ -230,6 +263,14 @@ class DoctorsController extends Controller
             $doctor->updateSchedule($scheduleData);
 
             DB::commit();
+
+            // التحقق إذا كانت البيانات مكتملة
+            if (!$isProfileCompleted) {
+                // إذا كانت البيانات غير مكتملة، اعرض رسالة تنبيه للمستخدم
+                return redirect()->route('doctors.edit', $doctor->id)
+                    ->with('warning', 'تم إضافة الطبيب لكن يجب استكمال بياناته لتفعيل حسابه بشكل كامل');
+            }
+
             return redirect()->route('doctors.index')->with('success', 'تم إضافة الطبيب بنجاح');
 
         } catch (\Exception $e) {
@@ -262,7 +303,7 @@ class DoctorsController extends Controller
             'city_id' => ['required', 'exists:cities,id'],
             'status' => ['required', 'boolean'],  // تحديث التحقق من حقل status
             'consultation_fee' => ['required', 'numeric', 'min:0'],
-            'waiting_time' => ['nullable', 'integer', 'min:0'],
+            'waiting_time' => ['required', 'integer', 'min:0'],
             'schedules' => ['required', 'array'],
             'schedules.*.is_available' => ['nullable', 'boolean'],
             'schedules.*.start_time' => [
@@ -297,6 +338,7 @@ class DoctorsController extends Controller
             'consultation_fee.required' => 'سعر الكشف مطلوب',
             'consultation_fee.numeric' => 'سعر الكشف يجب أن يكون رقماً',
             'consultation_fee.min' => 'سعر الكشف يجب أن يكون أكبر من صفر',
+            'waiting_time.required' => 'مدة الانتظار مطلوبة',
             'waiting_time.integer' => 'مدة الانتظار يجب أن تكون رقماً صحيحاً',
             'waiting_time.min' => 'مدة الانتظار يجب أن تكون أكبر من صفر',
             'schedules.*.start_time.required_with' => 'يجب تحديد وقت البداية عند اختيار اليوم',
@@ -354,13 +396,37 @@ class DoctorsController extends Controller
                 $admin->notify(new DoctorUpdatedNotification($doctor));
             });
 
+            // التحقق من وجود معلمة redirect في URL
+            if ($request->has('redirect')) {
+                return redirect($request->redirect)
+                    ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
+            }
+            
+            // التحقق من وجود معلمة redirect_to في URL
+            if ($request->has('redirect_to')) {
+                return redirect($request->redirect_to)
+                    ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
+            }
+            
+            // التحقق من إذا كان الطلب قادما من صفحة المستخدمين
+            if ($request->has('redirect') && $request->redirect === 'users') {
+                return redirect()->route('users.index')
+                    ->with('success', 'تم اضافة المستخدم واستكمال البيانات بنجاح');
+            }
+
+            // التحقق من وجود URL مصدر في رأس الطلب HTTP_REFERER
+            if ($request->header('referer') && strpos($request->header('referer'), '/doctors/') === false) {
+                return redirect($request->header('referer'))
+                    ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
+            }
+
             return redirect()->route('doctors.index')
                 ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
 
         } catch (\Exception $e) {
             \Log::error('Error updating doctor: ' . $e->getMessage());
             return back()->withInput()
-                ->with('error', 'حدث خطأ أثناء تحديث بيانات الطبيب');
+                ->with('error', 'حدث خطأ أثناء تحديث بيانات الطبيب: ' . $e->getMessage());
         }
     }
 
@@ -1119,6 +1185,109 @@ class DoctorsController extends Controller
             return redirect()->back()->with('success', 'تم تحديث حالة الدفع بنجاح');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث حالة الدفع: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * عرض الأطباء الذين لم يكملوا بياناتهم
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function incompleteProfiles(Request $request)
+    {
+        $query = Doctor::with(['categories', 'user', 'schedules'])
+            ->where('is_profile_completed', false)
+            ->orWhereNull('is_profile_completed');
+
+        // تطبيق الفلاتر إذا وجدت
+        $query = $this->applyFilters($query, $request);
+
+        $doctors = $query->latest()->paginate(10);
+
+        // حساب البيانات الناقصة لكل طبيب
+        foreach ($doctors as $doctor) {
+            $missingData = [];
+
+            if (!$doctor->image) {
+                $missingData[] = 'صورة الطبيب';
+            }
+
+            if ($doctor->categories->isEmpty()) {
+                $missingData[] = 'التخصصات';
+            }
+
+            // فحص جدول المواعيد بشكل أكثر دقة
+            if ($doctor->schedules->isEmpty() || $doctor->schedules->where('is_active', true)->count() === 0) {
+                $missingData[] = 'جدول المواعيد';
+            }
+
+            if (!$doctor->consultation_fee || $doctor->consultation_fee <= 0) {
+                $missingData[] = 'رسوم الاستشارة';
+            }
+
+            if (!$doctor->waiting_time || $doctor->waiting_time <= 0) {
+                $missingData[] = 'وقت الانتظار';
+            }
+
+            if (empty($doctor->address) || !$doctor->governorate_id || !$doctor->city_id) {
+                $missingData[] = 'العنوان';
+            }
+
+            // Asignar missing_data como propiedad virtual, no para guardar en la base de datos
+            $doctor->setAttribute('missing_data', $missingData);
+
+            // تحديث حقل اكتمال الملف الشخصي إذا كانت البيانات مكتملة ولكن الحقل يشير إلى غير ذلك
+            // if (empty($missingData) && (!$doctor->is_profile_completed || is_null($doctor->is_profile_completed))) {
+            //     // Actualizar solo el campo is_profile_completed
+            //     Doctor::where('id', $doctor->id)->update(['is_profile_completed' => true]);
+            // }
+        }
+
+        $categories = Category::active()->get();
+
+        return view('doctors::incomplete_profiles', compact('doctors', 'categories'));
+    }
+
+    /**
+     * تحديث حالة اكتمال ملفات الأطباء
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateProfilesCompletionStatus()
+    {
+        try {
+            $doctors = Doctor::with(['categories', 'schedules'])->get();
+            $updatedCount = 0;
+
+            foreach ($doctors as $doctor) {
+                $isComplete =
+                    // التحقق من وجود صورة
+                    !empty($doctor->image) &&
+                    // التحقق من وجود تخصصات
+                    $doctor->categories->isNotEmpty() &&
+                    // التحقق من وجود جدول مواعيد مع يوم واحد على الأقل متاح
+                    $doctor->schedules->where('is_active', true)->count() > 0 &&
+                    // التحقق من وجود رسوم استشارة
+                    $doctor->consultation_fee > 0 &&
+                    // التحقق من وجود وقت انتظار
+                    $doctor->waiting_time > 0 &&
+                    // التحقق من وجود عنوان كامل
+                    !empty($doctor->address) && $doctor->governorate_id && $doctor->city_id;
+
+                // تحديث حقل اكتمال الملف الشخصي إذا كان مختلفاً
+                if ($doctor->is_profile_completed != $isComplete) {
+                    $doctor->is_profile_completed = $isComplete;
+                    $doctor->save();
+                    $updatedCount++;
+                }
+            }
+
+            return redirect()->route('doctors.incomplete_profiles')
+                ->with('success', "تم تحديث حالة اكتمال بيانات {$updatedCount} طبيب بنجاح");
+        } catch (\Exception $e) {
+            \Log::error('Error updating doctors completion status: ' . $e->getMessage());
+            return redirect()->route('doctors.incomplete_profiles')
+                ->with('error', 'حدث خطأ أثناء تحديث حالة اكتمال البيانات: ' . $e->getMessage());
         }
     }
 }

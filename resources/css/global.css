@@ -554,6 +554,10 @@ h6,
     border-color: var(--gray-200);
 }
 
+input[type="number"]{
+    direction: rtl!important;
+}
+
 /* Button Refinements */
 .btn {
     --bs-btn-padding-x: 1rem;
@@ -761,7 +765,6 @@ i::before {
     padding: 0.25rem 0.75rem;
     border-radius: 50px;
     font-size: 0.875rem;
-    margin-top: 0.5rem;
 }
 
 .status-badge.scheduled {
@@ -819,12 +822,22 @@ i::before {
 
 .alert-card.success .alert-icon {
     background-color: var(--success-light);
-    color: var(--success-color);
+    /* color: var(--success-color); */
+    color: #fff;
 }
 
 .alert-card.error .alert-icon {
     background-color: var(--danger-light);
-    color: var(--danger-color);
+    /* color: var(--danger-color); */
+    color: #fff;
+
+}
+
+.alert-card.info .alert-icon {
+    background-color: var(--primary-light);
+    /* color: var(--danger-color); */
+    color: #fff;
+
 }
 
 .alert-icon i {
@@ -839,7 +852,7 @@ i::before {
     font-weight: 600;
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
-    color: var(--success-color);
+    color: var(--primary-color);
 }
 
 .alert-card.success .alert-heading {
@@ -848,6 +861,9 @@ i::before {
 
 .alert-card.error .alert-heading {
     color: var(--danger-color);
+}
+.alert-card.info .alert-heading {
+    color: var(--primary-color);
 }
 
 .alert-close {

@@ -69,15 +69,33 @@ class UsersController extends Controller
 
         $user->assignRole($validated['role']);
 
+        // Guardamos explícitamente la URL del listado de usuarios en lugar de la URL anterior
+        // para asegurar que el redirect_back funcione correctamente
+        $request->session()->put('redirect_back', route('users.index'));
+
         // التوجيه حسب نوع المستخدم
         if ($validated['role'] === 'Doctor') {
-            // إذا كان الدور هو طبيب، قم بتوجيه المستخدم لإضافة بياناته كطبيب
-            return redirect()->route('doctors.createFromUser', ['user' => $user->id])
-                ->with('info', 'تم إضافة المستخدم بنجاح. الرجاء إضافة المعلومات الإضافية للطبيب');
+            // إنشاء سجل طبيب فارغ لهذا المستخدم
+            $doctor = Doctor::create([
+                'user_id' => $user->id,
+            ]);
+
+            // توجيه المستخدم لتعديل بيانات الطبيب مع إضافة معلمة redirect
+            return redirect()->route('doctors.edit', [
+                'doctor' => $doctor->id,
+                'redirect' => 'users'
+            ])->with('info', 'تم إضافة المستخدم بنجاح. يرجى استكمال بيانات الطبيب');
         } elseif ($validated['role'] === 'Patient') {
-            // إذا كان الدور هو مريض، قم بتوجيه المستخدم لإضافة بياناته كمريض
-            return redirect()->route('patients.createFromUser', ['user' => $user->id])
-                ->with('info', 'تم إضافة المستخدم بنجاح. الرجاء إضافة المعلومات الإضافية للمريض');
+            // إنشاء سجل مريض فارغ لهذا المستخدم
+            $patient = Patient::create([
+                'user_id' => $user->id,
+            ]);
+
+            // توجيه المستخدم لتعديل بيانات المريض مع إضافة معلمة redirect
+            return redirect()->route('patients.edit', [
+                'patient' => $patient->id,
+                'redirect' => 'users'
+            ])->with('info', 'تم إضافة المستخدم بنجاح. يرجى استكمال بيانات المريض');
         }
 
         // إذا كان دوراً آخر، قم بالتوجيه للصفحة الرئيسية كالمعتاد

@@ -36,7 +36,7 @@
                                            id="name"
                                            name="name"
                                            value="{{ old('name', $patient->name) }}"
-                                           required>
+                                           >
                                     @error('name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -49,7 +49,7 @@
                                            id="email"
                                            name="email"
                                            value="{{ old('email', $patient->email) }}"
-                                           required>
+                                           >
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -62,7 +62,7 @@
                                            id="phone_number"
                                            name="phone_number"
                                            value="{{ old('phone_number', $patient->phone_number) }}"
-                                           required>
+                                           >
                                     @error('phone_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -75,7 +75,7 @@
                                     <select class="form-select @error('gender') is-invalid @enderror"
                                             id="gender"
                                             name="gender"
-                                            required>
+                                            >
                                         <option value="">اختر الجنس</option>
                                         <option value="male" {{ old('gender', optional($patient->patient)->gender) == 'male' ? 'selected' : '' }}>ذكر</option>
                                         <option value="female" {{ old('gender', optional($patient->patient)->gender) == 'female' ? 'selected' : '' }}>أنثى</option>

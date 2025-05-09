@@ -14,6 +14,10 @@ Route::prefix('doctors')->group(function () {
         Route::get('/{doctor}/edit', [DoctorsController::class, 'edit'])->name('doctors.edit');
         Route::put('/{doctor}', [DoctorsController::class, 'update'])->name('doctors.update');
         Route::delete('/{doctor}', [DoctorsController::class, 'destroy'])->name('doctors.destroy');
+
+        // مسارات الأطباء الذين تحتاج بياناتهم للاستكمال
+        Route::get('/incomplete-profiles', [DoctorsController::class, 'incompleteProfiles'])->name('doctors.incomplete_profiles');
+        Route::get('/update-completion-status', [DoctorsController::class, 'updateProfilesCompletionStatus'])->name('doctors.update_completion_status');
     });
 
     // Doctor profile routes

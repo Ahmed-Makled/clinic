@@ -54,7 +54,11 @@ class DashboardController extends Controller
     {
         return [
             'total' => Doctor::count(),
-            'active' => Doctor::where('status', true)->count()
+            'active' => Doctor::where('status', true)->count(),
+            'incomplete' => Doctor::where(function($query) {
+                            $query->where('is_profile_completed', false)
+                                 ->orWhereNull('is_profile_completed');
+                        })->count()
         ];
     }
 
