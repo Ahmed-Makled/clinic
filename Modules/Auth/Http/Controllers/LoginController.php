@@ -3,6 +3,8 @@
 namespace Modules\Auth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Doctor;
+use App\Notifications\IncompleteProfileNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,6 +30,28 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
+            // Check if user is a doctor with incomplete profile
+            $user = Auth::user();
+            if ($user->hasRole('Doctor')) {
+                $doctor = Doctor::where('user_id', $user->id)->first();
+
+                if ($doctor && !$doctor->is_profile_completed) {
+                    // Update profile completion status by calling the isProfileCompleted method
+                    // This will automatically save the doctor model if the status changes
+                    $doctor->isProfileCompleted();
+
+                    // If profile is still not completed, redirect to profile page
+                    if (!$doctor->is_profile_completed) {
+                        // Still send notification for record keeping
+                        $user->notify(new IncompleteProfileNotification($doctor));
+
+                        // Redirect directly to profile page with warning message
+                        return redirect('/doctors/profile')->with('warning', 'يرجى استكمال بيانات ملفك الشخصي للاستفادة من جميع خدمات المنصة');
+                    }
+                }
+            }
+
             return redirect()->intended($this->redirectTo);
         }
 

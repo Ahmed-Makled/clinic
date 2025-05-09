@@ -33,6 +33,35 @@
                     </button>
                 </div>
             @endif
+            @if (session('warning'))
+                <div class="alert-card warning mb-4">
+                    <div class="alert-icon">
+                        <i class="bi bi-exclamation-circle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h6 class="alert-heading">تنبيه!</h6>
+                        <p class="mb-0">{!! session('warning') !!}</p>
+                    </div>
+                    <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            @endif
+
+            @if (!$doctor->is_profile_completed)
+                <div class="alert-card warning mb-4">
+                    <div class="alert-icon">
+                        <i class="bi bi-exclamation-circle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h6 class="alert-heading">الملف الشخصي غير مكتمل</h6>
+                        <p class="mb-0">يرجى استكمال بيانات ملفك الشخصي للاستفادة من جميع خدمات المنصة</p>
+                    </div>
+                    <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -94,11 +123,19 @@
                         </div>
                         <div class="contact-item">
                             <i class="bi bi-geo-alt"></i>
-                            <span>{{ $doctor->governorate->name }} - {{ $doctor->city->name }}</span>
+                            <span>
+                                @if($doctor->governorate && $doctor->city)
+                                    {{ $doctor->governorate->name }} - {{ $doctor->city->name }}
+                                @elseif($doctor->governorate)
+                                    {{ $doctor->governorate->name }}
+                                @else
+                                    غير محدد
+                                @endif
+                            </span>
                         </div>
                         <div class="contact-item">
                             <i class="bi bi-building"></i>
-                            <span>{{ $doctor->address }}</span>
+                            <span>{{ $doctor->address ?? 'غير محدد' }}</span>
                         </div>
                     </div>
 
@@ -394,11 +431,13 @@
                                             <label class="form-label" for="city_id">المدينة *</label>
                                             <select class="form-select @error('city_id') is-invalid @enderror" name="city_id" id="city_id" >
                                                 <option value="">اختر المدينة</option>
-                                                @foreach($doctor->governorate->cities as $city)
-                                                    <option value="{{ $city->id }}" {{ old('city_id', $doctor->city_id) == $city->id ? 'selected' : '' }}>
-                                                        {{ $city->name }}
-                                                    </option>
-                                                @endforeach
+                                                @if($doctor->governorate)
+                                                    @foreach($doctor->governorate->cities as $city)
+                                                        <option value="{{ $city->id }}" {{ old('city_id', $doctor->city_id) == $city->id ? 'selected' : '' }}>
+                                                            {{ $city->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                             @error('city_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>

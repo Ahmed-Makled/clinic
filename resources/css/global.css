@@ -807,6 +807,9 @@ i::before {
 .alert-card.error {
     border-right-color: var(--danger-color);
 }
+.alert-card.warning {
+    border-right-color: var(--warning-color);
+}
 
 .alert-icon {
     display: flex;
@@ -840,6 +843,13 @@ i::before {
 
 }
 
+.alert-card.warning .alert-icon {
+    background-color: var(--warning-light);
+    /* color: var(--danger-color); */
+    color: #000;
+
+}
+
 .alert-icon i {
     font-size: 1.5rem;
 }
@@ -864,6 +874,9 @@ i::before {
 }
 .alert-card.info .alert-heading {
     color: var(--primary-color);
+}
+.alert-card.warning .alert-heading {
+    color: var(--warning-color);
 }
 
 .alert-close {

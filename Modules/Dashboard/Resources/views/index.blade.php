@@ -314,7 +314,7 @@
                                     <h6 class="mb-1">بيانات أطباء غير مكتملة</h6>
                                     <p class="mb-2">{{ $stats['doctors']['incomplete'] }} طبيب بحاجة لاستكمال البيانات</p>
                                     <a href="{{ route('doctors.incomplete_profiles') }}"
-                                       class="btn btn-sm btn-warning">عرض القائمة</a>
+                                       class="btn btn-sm btn-warning">عرض الملفات</a>
                                 </div>
                             </div>
                         @endif

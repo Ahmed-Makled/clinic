@@ -401,13 +401,13 @@ class DoctorsController extends Controller
                 return redirect($request->redirect)
                     ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
             }
-            
+
             // التحقق من وجود معلمة redirect_to في URL
             if ($request->has('redirect_to')) {
                 return redirect($request->redirect_to)
                     ->with('success', 'تم تحديث بيانات الطبيب بنجاح');
             }
-            
+
             // التحقق من إذا كان الطلب قادما من صفحة المستخدمين
             if ($request->has('redirect') && $request->redirect === 'users') {
                 return redirect()->route('users.index')
@@ -1237,10 +1237,10 @@ class DoctorsController extends Controller
             $doctor->setAttribute('missing_data', $missingData);
 
             // تحديث حقل اكتمال الملف الشخصي إذا كانت البيانات مكتملة ولكن الحقل يشير إلى غير ذلك
-            // if (empty($missingData) && (!$doctor->is_profile_completed || is_null($doctor->is_profile_completed))) {
-            //     // Actualizar solo el campo is_profile_completed
-            //     Doctor::where('id', $doctor->id)->update(['is_profile_completed' => true]);
-            // }
+            if (empty($missingData) && (!$doctor->is_profile_completed || is_null($doctor->is_profile_completed))) {
+                // Actualizar solo el campo is_profile_completed
+                Doctor::where('id', $doctor->id)->update(['is_profile_completed' => true]);
+            }
         }
 
         $categories = Category::active()->get();
