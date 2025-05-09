@@ -196,7 +196,7 @@ class StripeController extends Controller
 
             if (!$appointment) {
                 Log::error('Appointment not found: ' . $appointmentId);
-                return redirect('/appointments/14')
+                return redirect('/appointments')
                     ->with('error', 'لم نتمكن من العثور على الحجز المرتبط بعملية الدفع.');
             }
 
@@ -208,19 +208,15 @@ class StripeController extends Controller
 
             Log::info('Payment marked as successful for appointment #' . $appointment->id);
 
-            // Direct URL construction without using named routes
-            $directUrl = url('/appointments/' . $appointment->id);
-            Log::info('Redirecting to: ' . $directUrl);
-
-            return redirect($directUrl)
-                ->with('success', 'تم الدفع بنجاح وتأكيد حجزك.');
+            // Redirect to success page
+            return redirect()->route('payments.success', ['appointment' => $appointment->id]);
 
         } catch (\Exception $e) {
             // Log detailed error information
             Log::error('Error in Stripe success callback: ' . $e->getMessage());
             Log::error('Error trace: ' . $e->getTraceAsString());
 
-            return redirect('/appointments/14')
+            return redirect('/appointments')
                 ->with('error', 'حدث خطأ في معالجة نتيجة الدفع الخاصة بك. يرجى الاتصال بالدعم.');
         }
     }
@@ -234,8 +230,7 @@ class StripeController extends Controller
         if ($appointmentId) {
             $appointment = Appointment::find($appointmentId);
             if ($appointment) {
-                return redirect()->route('appointments.show', $appointment)
-                    ->with('warning', 'تم إلغاء عملية الدفع. يمكنك المحاولة مرة أخرى.');
+                return redirect()->route('payments.cancel', ['appointment' => $appointment->id]);
             }
         }
 

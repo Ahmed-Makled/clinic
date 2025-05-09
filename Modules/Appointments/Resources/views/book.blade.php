@@ -374,45 +374,7 @@
                                 @enderror
                             </div>
 
-                            <!-- Submit Button -->
-                            <div class="payment-options mb-4">
-                                <div class="payment-selection">
-                                    <h6 class="form-label fw-medium d-flex align-items-center gap-2 mb-3">
-                                        <i class="bi bi-credit-card-fill text-primary"></i>
-                                        اختر طريقة الدفع
-                                    </h6>
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <input type="radio" class="btn-check payment-method" name="payment_method" id="payment_later" value="later" checked>
-                                            <label class="payment-option-card w-100" for="payment_later">
-                                                <div class="payment-option-content">
-                                                    <div class="payment-option-icon">
-                                                        <i class="bi bi-cash-coin"></i>
-                                                    </div>
-                                                    <div class="payment-option-text">
-                                                        <h6 class="mb-0">الدفع في العيادة</h6>
-                                                        <small class="text-muted">ادفع نقداً عند الوصول</small>
-                                                    </div>
-                                                </div>
-                                            </label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input type="radio" class="btn-check payment-method" name="payment_method" id="payment_stripe" value="stripe">
-                                            <label class="payment-option-card w-100" for="payment_stripe">
-                                                <div class="payment-option-content">
-                                                    <div class="payment-option-icon">
-                                                        <i class="bi bi-credit-card-2-front"></i>
-                                                    </div>
-                                                    <div class="payment-option-text">
-                                                        <h6 class="mb-0">دفع إلكتروني</h6>
-                                                        <small class="text-muted">Stripe البطاقة الائتمانية عبر</small>
-                                                    </div>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
 
                             <div class="d-grid gap-3">
                                 <button type="submit" id="submit-btn" class="btn btn-primary btn-lg">

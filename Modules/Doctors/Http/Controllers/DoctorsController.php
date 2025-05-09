@@ -593,7 +593,8 @@ class DoctorsController extends Controller
         $query = Doctor::with(['categories', 'governorate', 'city'])
             ->whereHas('user', function ($q) {
                 $q->where('status', true);
-            });
+            })
+            ->where('is_profile_completed', true); // Only show doctors with complete profiles
 
         if ($request->filled('category')) {
             $query->whereHas('categories', function ($q) use ($request) {

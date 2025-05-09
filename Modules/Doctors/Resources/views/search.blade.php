@@ -138,8 +138,16 @@
                                                         </div>
                                                         <div class="d-flex align-items-center text-muted">
                                                             <i class="bi bi-geo-alt-fill text-danger me-2"></i>
-                                                            <span>{{ $doctor->governorate->name }} -
-                                                                {{ $doctor->city->name }}</span>
+                                                            <span>
+                                                                @if($doctor->governorate)
+                                                                    {{ $doctor->governorate->name }}
+                                                                    @if($doctor->city)
+                                                                        - {{ $doctor->city->name }}
+                                                                    @endif
+                                                                @else
+                                                                    غير محدد
+                                                                @endif
+                                                            </span>
                                                         </div>
 
                                                     </div>

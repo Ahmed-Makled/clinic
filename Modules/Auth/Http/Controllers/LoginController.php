@@ -47,7 +47,7 @@ class LoginController extends Controller
                         $user->notify(new IncompleteProfileNotification($doctor));
 
                         // Redirect directly to profile page with warning message
-                        return redirect('/doctors/profile')->with('warning', 'يرجى استكمال بيانات ملفك الشخصي للاستفادة من جميع خدمات المنصة');
+                        return redirect('/doctors/profile');
                     }
                 }
             }

@@ -214,7 +214,7 @@
         left: 0;
         right: 0;
         height: 2px;
-        background-color: #e9ecef;
+        background-color: #4f46e5;
         z-index: 1;
     }
 
@@ -236,9 +236,10 @@
         align-items: center;
         justify-content: center;
         margin-bottom: 0.5rem;
-        color: #6c757d;
         font-size: 1.25rem;
         transition: all 0.3s ease;
+        border: 1px solid #4f46e5;
+        color: #4f46e5;
     }
 
     .progress-step.active .step-icon {
@@ -293,8 +294,8 @@
         min-width: 32px;
         height: 32px;
         border-radius: 50%;
-        background-color: rgba(79, 70, 229, 0.1);
-        color: #4f46e5;
+        background-color: rgba(90, 89, 89, 0.129);
+        color: #00;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -361,26 +362,7 @@
         color: #6c757d;
     }
 
-    /* أنماط الأزرار */
-    .btn-primary {
-        background-color: #4f46e5;
-        border-color: #4f46e5;
-    }
 
-    .btn-primary:hover {
-        background-color: #4338ca;
-        border-color: #4338ca;
-    }
-
-    .btn-success {
-        background-color: #10b981;
-        border-color: #10b981;
-    }
-
-    .btn-success:hover {
-        background-color: #059669;
-        border-color: #059669;
-    }
 </style>
 
 @push('scripts')

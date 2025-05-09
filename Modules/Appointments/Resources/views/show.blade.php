@@ -1352,8 +1352,7 @@
 
 
             .header-actions .btn-primary:hover {
-                background-color: #4338ca;
-                box-shadow: 0 4px 8px rgba(79, 70, 229, 0.25);
+                box-shadow: 0 4px 8px rgba(90, 134, 237, 0.25);
                 transform: translateY(-2px);
             }
 

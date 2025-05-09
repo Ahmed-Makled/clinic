@@ -19,7 +19,9 @@ class PageController extends Controller
             'categories' => Category::where('status', 1 )->get(),
             'governorates' => Governorate::with('cities')->get(),
             'cities' => City::all(),
-            'doctors' => Doctor::where('status', true)->get(),
+            'doctors' => Doctor::where('status', true)
+                         ->where('is_profile_completed', true)
+                         ->get(),
         ]);
     }
 
@@ -55,6 +57,7 @@ class PageController extends Controller
     {
         $query = Doctor::query()
             ->where('status', true)
+            ->where('is_profile_completed', true) // Only show doctors with complete profiles
             ->with(['categories', 'governorate', 'city']);
 
         if ($request->filled('category')) {
