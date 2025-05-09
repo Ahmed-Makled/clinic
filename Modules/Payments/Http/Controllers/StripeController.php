@@ -30,7 +30,7 @@ class StripeController extends Controller
             return redirect()->route('appointments.show', $appointment)->with('info', 'تم دفع رسوم الحجز بالفعل');
         }
 
-        return view('payments::stripe.checkout', compact('appointment'));
+        return view('payments::.checkout', compact('appointment'));
     }
 
     /**

@@ -3,106 +3,409 @@
 @section('title', 'صفحة الدفع')
 
 @section('content')
-<div class="container py-5">
+<div class="container mt-5 py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card border-0 shadow-lg">
-                <div class="card-body p-5">
-                    <div class="text-center mb-5">
-                        <div class="mb-3">
-                            <i class="bi bi-credit-card text-primary display-1"></i>
-                        </div>
-                        <h2 class="h3">الدفع باستخدام بطاقة الائتمان</h2>
-                        <p class="text-muted">يرجى إكمال عملية الدفع للتأكيد النهائي للحجز</p>
+        <div class="col-lg-9">
+            <!-- شريط التقدم -->
+            <div class="progress-steps mb-5">
+                <div class="progress-step active">
+                    <div class="step-icon">
+                        <i class="bi bi-calendar-check"></i>
                     </div>
-
-                    <div class="appointment-summary mb-5">
-                        <h5 class="border-bottom pb-2 mb-4">تفاصيل الحجز</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-wrapper me-3 rounded-circle bg-light p-2">
-                                        <i class="bi bi-person-badge"></i>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted d-block">الطبيب</small>
-                                        <div class="fw-medium">{{ $appointment->doctor->name }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-wrapper me-3 rounded-circle bg-light p-2">
-                                        <i class="bi bi-calendar-check"></i>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted d-block">تاريخ الحجز</small>
-                                        <div class="fw-medium">{{ $appointment->formatted_date }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-wrapper me-3 rounded-circle bg-light p-2">
-                                        <i class="bi bi-clock"></i>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted d-block">الوقت</small>
-                                        <div class="fw-medium">{{ $appointment->scheduled_at->format('h:i A') }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="icon-wrapper me-3 rounded-circle bg-light p-2">
-                                        <i class="bi bi-cash"></i>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted d-block">رسوم الكشف</small>
-                                        <div class="fw-bold text-primary">{{ number_format($appointment->fees) }} ج.م</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <span class="step-label">الحجز</span>
+                </div>
+                <div class="progress-step active">
+                    <div class="step-icon">
+                        <i class="bi bi-credit-card"></i>
                     </div>
-
-                    <div class="text-center">
-                        <button id="checkout-button" class="btn btn-primary btn-lg">
-                            <i class="bi bi-credit-card me-2"></i> الدفع الآن ({{ number_format($appointment->fees) }} ج.م)
-                        </button>
-                        <p class="mt-3 small text-muted">
-                            <i class="bi bi-shield-check me-1"></i>
-                            جميع المعاملات مشفرة وآمنة
-                        </p>
+                    <span class="step-label">الدفع</span>
+                </div>
+                <div class="progress-step">
+                    <div class="step-icon">
+                        <i class="bi bi-check-circle"></i>
                     </div>
+                    <span class="step-label">التأكيد</span>
                 </div>
             </div>
-            <div class="text-center mt-4">
-                <a href="{{ route('appointments.show', $appointment) }}" class="btn btn-link">
-                    <i class="bi bi-arrow-left me-1"></i> العودة لصفحة الحجز
-                </a>
+
+            <div class="row">
+                <!-- تفاصيل الحجز -->
+                <div class="col-md-5 mb-4 mb-md-0">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-transparent border-0">
+                            <h5 class="mb-0 py-2"><i class="bi bi-info-circle me-2 text-primary"></i>تفاصيل الحجز</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="appointment-details">
+                                <!-- معلومات الطبيب -->
+                                <div class="doctor-info mb-4 pb-4 border-bottom">
+                                    <div class="d-flex align-items-center">
+                                        <div class="doctor-avatar me-3">
+                                            @if($appointment->doctor->image)
+                                                <img src="{{ asset('storage/' . $appointment->doctor->image) }}" alt="{{ $appointment->doctor->name }}" class="rounded-circle">
+                                            @else
+                                                <div class="avatar-placeholder">
+                                                    <i class="bi bi-person"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">{{ $appointment->doctor->name }}</h6>
+                                            <p class="text-muted small mb-0">{{ $appointment->doctor->title ?? 'أخصائي' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- تفاصيل الموعد -->
+                                <div class="mb-4 pb-3 border-bottom">
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="bi bi-calendar3"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <span class="detail-label">تاريخ الحجز</span>
+                                            <span class="detail-value">{{ $appointment->scheduled_at->locale('ar')->translatedFormat('l، d F Y') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="bi bi-clock"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <span class="detail-label">وقت الحجز</span>
+                                            <span class="detail-value">{{ $appointment->scheduled_at->format('h:i A') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="detail-item">
+                                        <div class="detail-icon">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <div class="detail-content">
+                                            <span class="detail-label">المريض</span>
+                                            <span class="detail-value">{{ $appointment->patient->name }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- الرسوم -->
+                                <div class="fees-section">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">رسوم الكشف</span>
+                                        <span>{{ number_format($appointment->fees) }} ج.م</span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">رسوم الخدمة</span>
+                                        <span>{{ number_format(0) }} ج.م</span>
+                                    </div>
+
+                                    <div class="total-line mt-3 pt-3 border-top">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="fw-bold">الإجمالي</span>
+                                            <span class="fw-bold text-primary">{{ number_format($appointment->fees) }} ج.م</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- طرق الدفع -->
+                <div class="col-md-7">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-transparent border-0">
+                            <h5 class="mb-0 py-2"><i class="bi bi-credit-card me-2 text-primary"></i>اختر طريقة الدفع</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- خيارات الدفع -->
+                            <div class="payment-options">
+                                <!-- بطاقة الائتمان -->
+                                <div class="payment-option active" id="card-option">
+                                    <div class="payment-option-header">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="payment_method" id="payment_card" value="card" checked>
+                                            <label class="form-check-label d-flex align-items-center" for="payment_card">
+                                                <span>بطاقة الائتمان</span>
+                                                <div class="ms-auto">
+                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d6/Visa_2021.svg" alt="Visa" class="payment-card-icon">
+                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" alt="MasterCard" class="payment-card-icon">
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="payment-option-body">
+                                        <p class="text-muted small mb-4">
+                                            سيتم تحويلك إلى صفحة الدفع الإلكتروني لإتمام العملية بشكل آمن ومشفر.
+                                        </p>
+                                        <form action="{{ route('payments.stripe.create-session', $appointment) }}" method="POST" id="card-payment-form">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                                <i class="bi bi-credit-card2-front me-2"></i> متابعة للدفع
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- الدفع عند الوصول -->
+                                <div class="payment-option" id="cash-option">
+                                    <div class="payment-option-header">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="payment_method" id="payment_cash" value="cash">
+                                            <label class="form-check-label d-flex align-items-center" for="payment_cash">
+                                                <span>الدفع عند الوصول</span>
+                                                <div class="ms-auto">
+                                                    <i class="bi bi-cash text-success fs-5"></i>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="payment-option-body d-none">
+                                        <p class="text-muted small mb-4">
+                                            يمكنك الدفع نقدًا في العيادة عند حضورك للموعد.
+                                        </p>
+                                        <form action="{{ route('appointments.confirm-cash', $appointment) }}" method="POST" id="cash-payment-form">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success btn-lg w-100">
+                                                <i class="bi bi-cash me-2"></i> تأكيد الحجز بدون دفع
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- معلومات الأمان -->
+                            <div class="security-info mt-4 text-center">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-shield-check text-success me-2"></i>
+                                    <span class="text-muted small">جميع البيانات مشفرة ومؤمنة</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- زر العودة -->
+                    <div class="text-center mt-4">
+                        <a href="{{ route('appointments.show', $appointment) }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-right me-2"></i> العودة لصفحة الحجز
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
+
+<style>
+    /* أنماط شريط التقدم */
+    .progress-steps {
+        display: flex;
+        justify-content: center;
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .progress-steps::before {
+        content: '';
+        position: absolute;
+        top: 24px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: #e9ecef;
+        z-index: 1;
+    }
+
+    .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        position: relative;
+        z-index: 2;
+    }
+
+    .step-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+        color: #6c757d;
+        font-size: 1.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .progress-step.active .step-icon {
+        background-color: #4f46e5;
+        color: white;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+    }
+
+    .step-label {
+        font-size: 0.875rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .progress-step.active .step-label {
+        color: #4f46e5;
+        font-weight: 600;
+    }
+
+    /* أنماط تفاصيل الحجز */
+    .doctor-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .doctor-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e9ecef;
+        color: #6c757d;
+        font-size: 1.5rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .detail-icon {
+        min-width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: rgba(79, 70, 229, 0.1);
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 1rem;
+    }
+
+    .detail-content {
+        flex: 1;
+    }
+
+    .detail-label {
+        display: block;
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+
+    .detail-value {
+        display: block;
+        font-weight: 500;
+    }
+
+    .fees-section {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .total-line {
+        color: #2d3748;
+    }
+
+    /* أنماط طرق الدفع */
+    .payment-option {
+        border: 1px solid #e9ecef;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+
+    .payment-option.active {
+        border-color: #4f46e5;
+    }
+
+    .payment-option-header {
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid transparent;
+    }
+
+    .payment-option.active .payment-option-header {
+        background-color: #f0f4ff;
+    }
+
+    .payment-option-body {
+        padding: 1rem;
+    }
+
+    .payment-card-icon {
+        height: 20px;
+        margin-right: 0.5rem;
+    }
+
+    .security-info {
+        color: #6c757d;
+    }
+
+    /* أنماط الأزرار */
+    .btn-primary {
+        background-color: #4f46e5;
+        border-color: #4f46e5;
+    }
+
+    .btn-primary:hover {
+        background-color: #4338ca;
+        border-color: #4338ca;
+    }
+
+    .btn-success {
+        background-color: #10b981;
+        border-color: #10b981;
+    }
+
+    .btn-success:hover {
+        background-color: #059669;
+        border-color: #059669;
+    }
+</style>
 
 @push('scripts')
-<script src="https://js.stripe.com/v3/"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const stripe = Stripe('{{ config('stripe.key') }}');
-    const checkoutButton = document.getElementById('checkout-button');
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentOptions = document.querySelectorAll('input[name="payment_method"]');
 
-    checkoutButton.addEventListener('click', function() {
-      stripe.redirectToCheckout({
-        sessionId: '{{ $checkout_session->id }}'
-      }).then(function(result) {
-        if (result.error) {
-          alert('خطأ: ' + result.error.message);
-        }
-      });
+        paymentOptions.forEach(option => {
+            option.addEventListener('change', function() {
+                // إزالة الكلاس النشط من جميع الخيارات
+                document.querySelectorAll('.payment-option').forEach(opt => {
+                    opt.classList.remove('active');
+                    opt.querySelector('.payment-option-body').classList.add('d-none');
+                });
+
+                // إضافة الكلاس النشط للخيار المحدد
+                const selectedOption = this.closest('.payment-option');
+                selectedOption.classList.add('active');
+                selectedOption.querySelector('.payment-option-body').classList.remove('d-none');
+            });
+        });
+
+        // تهيئة الصفحة بإظهار الخيار المحدد افتراضياً
+        document.getElementById('card-option').querySelector('.payment-option-body').classList.remove('d-none');
     });
-  });
 </script>
 @endpush
+@endsection

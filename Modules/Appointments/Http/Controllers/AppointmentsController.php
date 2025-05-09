@@ -96,7 +96,7 @@ class AppointmentsController extends Controller
         // التحقق من تسجيل دخول المستخدم
         if (!auth()->check()) {
             return redirect()->route('login')
-                ->with('error', 'يجب تسجيل الدخول أولاً لتتمكن من حجز حجز');
+                ->with('error', 'يجب تسجيل الدخول أولاً لتتمكن من حجز موعد');
         }
 
         $user = auth()->user();
@@ -116,7 +116,7 @@ class AppointmentsController extends Controller
 
                 // نرجع إلى نفس الصفحة مع رسالة التحذير
                 return back()
-                    ->with('warning', 'يجب إكمال ملفك الشخصي كمريض أولاً لتتمكن من حجز حجز')
+                    ->with('warning', 'يجب إكمال ملفك الشخصي كمريض أولاً لتتمكن من حجز موعد')
                     ->with('profile_required', true)
                     ->with('doctor_id', $request->input('doctor_id'));
             }
@@ -140,7 +140,7 @@ class AppointmentsController extends Controller
             'doctor_id.exists' => 'الطبيب المحدد غير متوفر',
             'appointment_date.required' => 'يجب اختيار تاريخ الحجز',
             'appointment_date.date' => 'صيغة التاريخ غير صحيحة',
-            'appointment_date.after_or_equal' => 'لا يمكن حجز حجز في تاريخ سابق',
+            'appointment_date.after_or_equal' => 'لا يمكن حجز موعد في تاريخ سابق',
             'appointment_time.required' => 'يجب اختيار وقت الحجز',
             'appointment_time.regex' => 'صيغة الوقت غير صحيحة',
             'notes.max' => 'الملاحظات لا يمكن أن تتجاوز 1000 حرف'
@@ -218,7 +218,7 @@ class AppointmentsController extends Controller
             $arabicDate = $scheduledAt->locale('ar')->translatedFormat('l d F Y');
             $arabicTime = $scheduledAt->format('h:i A');
 
-            $successMessage = 'تم تأكيد حجز حجزك بنجاح! ';
+            $successMessage = 'تم تأكيد حجز موعدك بنجاح! ';
             $successMessage .= 'حجزك مع د. ' . $doctor->name . ' يوم ' . $arabicDate . ' الساعة ' . $arabicTime . '. ';
             $successMessage .= 'يرجى الوصول قبل الحجز بـ 15 دقيقة. سيتم إرسال تفاصيل إضافية إلى بريدك الإلكتروني.';
 
@@ -242,16 +242,23 @@ class AppointmentsController extends Controller
     {
         $appointment->load(['doctor', 'patient']);
 
+        // تحقق من وجود تقييم سابق للطبيب في هذا الحجز
+        $existingRating = \App\Models\DoctorRating::where('appointment_id', $appointment->id)
+            ->where('patient_id', $appointment->patient_id)
+            ->first();
+
         // استخدام قالب مختلف حسب نوع المستخدم
         if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Doctor')) {
             return view('appointments::details', [
                 'appointment' => $appointment,
-                'title' => 'تفاصيل الحجز'
+                'title' => 'تفاصيل الحجز',
+                'existingRating' => $existingRating
             ]);
         } else {
             return view('appointments::show', [
                 'appointment' => $appointment,
-                'title' => 'تفاصيل الحجز'
+                'title' => 'تفاصيل الحجز',
+                'existingRating' => $existingRating
             ]);
         }
     }
@@ -467,7 +474,7 @@ class AppointmentsController extends Controller
                 $appointmentTime = $appointment->scheduled_at->format('h:i A');
 
                 $successMessage = "تم إلغاء حجزك مع د. {$doctor->name} بتاريخ {$appointmentDate} الساعة {$appointmentTime} بنجاح";
-                $successMessage .= ".<br/>يمكنك حجز حجز جديد في أي وقت من صفحة الأطباء.";
+                $successMessage .= ".<br/>يمكنك حجز موعد جديد في أي وقت من صفحة الأطباء.";
 
                 Log::info('Patient redirect: to appointment details with success message');
                 return redirect()->route('appointments.show', $appointment)
@@ -553,5 +560,49 @@ class AppointmentsController extends Controller
         $availableSlots = $doctor->getAvailableSlots($selectedDate);
 
         return view('appointments::book', compact('doctor', 'availableSlots', 'selectedDate', 'schedules', 'days'));
+    }
+
+    /**
+     * تأكيد الحجز مع اختيار الدفع النقدي عند الوصول.
+     * في هذه الحالة، نحتفظ بحالة الدفع كـ "غير مدفوع" حيث أن الدفع سيتم فعلياً عند وصول المريض للعيادة.
+     */
+    public function confirmCashPayment(Appointment $appointment)
+    {
+        try {
+            // تحديث بيانات الحجز بتحديد طريقة الدفع نقداً
+            // لاحظ أننا نترك is_paid كما هي (false) لأن الدفع لم يتم بعد
+            $appointment->update([
+                'payment_method' => 'cash',
+                'is_paid' => false // نؤكد أن حالة الدفع تبقى "غير مدفوع" حتى يتم الدفع عند الوصول
+            ]);
+
+            Log::info('Cash payment option confirmed for appointment:', [
+                'appointment_id' => $appointment->id,
+                'patient_id' => $appointment->patient->id,
+                'doctor_id' => $appointment->doctor->id,
+                'payment_method' => 'cash',
+                'is_paid' => false
+            ]);
+
+            // إعداد رسالة تأكيد مناسبة
+            $doctor = $appointment->doctor;
+            $appointmentDate = $appointment->scheduled_at->locale('ar')->translatedFormat('l d F Y');
+            $appointmentTime = $appointment->scheduled_at->format('h:i A');
+
+            $successMessage = "تم تأكيد حجزك مع د. {$doctor->name} بتاريخ {$appointmentDate} الساعة {$appointmentTime} بنجاح";
+            $successMessage .= ".<br/>سيتم الدفع نقداً عند وصولك للعيادة. يرجى الوصول قبل الموعد بـ 15 دقيقة.";
+
+            return redirect()->route('appointments.show', $appointment)
+                ->with('success', $successMessage);
+
+        } catch (\Exception $e) {
+            Log::error('Error confirming cash payment option:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'appointment_id' => $appointment->id
+            ]);
+
+            return back()->withErrors(['error' => 'حدث خطأ أثناء تأكيد خيار الدفع النقدي، يرجى المحاولة مرة أخرى.']);
+        }
     }
 }

@@ -5,31 +5,52 @@
 @section('content')
     <div class="container py-5 mt-5">
         <!-- رسالة التأكيد -->
+
         @if (session('success'))
-            <div class="alert-card success mb-4">
-                <div class="alert-icon">
-                    <i class="bi bi-check-circle-fill"></i>
-                </div>
-                <div class="alert-content">
-                    <h6 class="alert-heading">تمت العملية بنجاح!</h6>
-                    <p class="mb-0">{!! session('success') !!}</p>
-                </div>
-                <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
-                    <i class="bi bi-x"></i>
-                </button>
+        <div class="alert-card success mb-4">
+            <div class="alert-icon">
+                <i class="bi bi-check-circle-fill"></i>
             </div>
-        @endif
+            <div class="alert-content">
+                <h6 class="alert-heading">تمت العملية بنجاح!</h6>
+                <p class="mb-0">{!! session('success') !!}</p>
+            </div>
+            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert-card error mb-4">
+            <div class="alert-icon">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <div class="alert-content">
+                <h6 class="alert-heading">حدث خطأ!</h6>
+                <p class="mb-0">{!! session('error') !!}</p>
+            </div>
+            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+    @endif
 
         <div class="row">
 
             <div class="col-lg-4">
                 <!-- بطاقة معلومات الطبيب -->
                 <div class="doctor-card mb-4">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <div class="section-title">
                             <i class="bi bi-person-badge"></i>
                             معلومات الطبيب
                         </div>
+                        @if($appointment->status === 'completed' )
+                        <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#rateModal{{ $appointment->id }}">
+                            <i class="bi bi-star-fill me-1"></i>
+                            تقييم الدكتور
+                        </button>
+                        @endif
                     </div>
                     <div class="doctor-profile">
                         <div class="doctor-avatar">
@@ -57,17 +78,17 @@
                         <div class="doctor-rating">
                             <div class="stars">
                                 @for ($i = 1; $i <= 5; $i++)
-                                    @if ($i <= floor($appointment->doctor->rating))
+                                    @if ($i <= floor($appointment->doctor->rating_avg))
                                         <i class="bi bi-star-fill"></i>
-                                    @elseif ($i - 0.5 <= $appointment->doctor->rating)
+                                    @elseif ($i - 0.5 <= $appointment->doctor->rating_avg)
                                         <i class="bi bi-star-half"></i>
                                     @else
                                         <i class="bi bi-star"></i>
                                     @endif
                                 @endfor
                             </div>
-                            <div class="rating-text">{{ number_format($appointment->doctor->rating, 1) }}
-                                ({{ $appointment->doctor->ratings_count ?? 0 }} تقييم)</div>
+                            <div class="rating-text">{{ number_format($appointment->doctor->rating_avg, 1) }}
+                                ({{ $appointment->doctor->ratings_count }} تقييم)</div>
                         </div>
                     </div>
 
@@ -153,8 +174,8 @@
                             <!-- أزرار الإجراءات في الهيدر -->
                             @if($appointment->status === 'scheduled')
                                 <div class="header-actions">
-                                    @if(!$appointment->is_paid)
-                                        <a href="{{ route('payments.stripe.checkout', $appointment) }}" class="btn btn-primary me-2">
+                                    @if(!$appointment->is_paid && $appointment->payment_method !== 'cash')
+                                        <a href="{{ route('payments..checkout', $appointment) }}" class="btn btn-primary me-2">
                                             <i class="bi bi-credit-card-2-front me-2"></i>
                                             دفع الآن
                                         </a>
@@ -175,7 +196,19 @@
                             <i class="bi bi-info-circle-fill"></i>
                             معلومات الحجز
                         </div>
+
                         <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon id">
+                                    <i class="bi bi-upc-scan"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <div class="stat-label">رقم الحجز</div>
+                                    <div class="stat-value">#{{ $appointment->id,}}</div>
+                                    {{-- <div class="stat-subtext">{{ $appointment->created_at->locale('ar')->diffForHumans() }}
+                                    </div> --}}
+                                </div>
+                            </div>
                             <div class="stat-card">
                                 <div class="stat-icon date">
                                     <i class="bi bi-calendar2-event"></i>
@@ -198,10 +231,19 @@
                                 <div class="stat-details">
                                     <div class="stat-label">وقت الكشف</div>
                                     <div class="stat-value">{{ $appointment->scheduled_at->format('h:i A') }}</div>
-                                    <div class="stat-subtext">مدة الانتظار {{ $appointment->doctor->waiting_time ?? 30 }}
-                                        دقيقة</div>
                                 </div>
                             </div>
+
+                            <div class="stat-card">
+                                <div class="stat-icon time">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <div class="stat-label">وقت الانتظار</div>
+                                    <div class="stat-value">{{ $appointment->doctor->waiting_time }} دقيقة</div>
+                                </div>
+                            </div>
+
 
                             <div class="stat-card">
                                 <div class="stat-icon price">
@@ -210,39 +252,45 @@
                                 <div class="stat-details">
                                     <div class="stat-label">تكلفة الكشف</div>
                                     <div class="stat-value">{{ $appointment->fees }} <span class="currency">ج.م</span></div>
+
+                                    <!-- حالة الدفع -->
                                     <div class="stat-badge {{ $appointment->is_paid ? 'paid' : 'unpaid' }}">
-                                        <i
-                                            class="bi {{ $appointment->is_paid ? 'bi-check-circle-fill' : 'bi-clock-history' }}"></i>
+                                        <i class="bi {{ $appointment->is_paid ? 'bi-check-circle-fill' : 'bi-clock-history' }}"></i>
                                         {{ $appointment->is_paid ? 'مدفوع' : 'غير مدفوع' }}
                                     </div>
-                                    @if($appointment->is_paid && $appointment->payment_method)
-                                        <div class="payment-method mt-2">
-                                            <span class="payment-method-label">طريقة الدفع:</span>
-                                            <span class="payment-method-value">
-                                                @if($appointment->payment_method == 'stripe')
-                                                    <i class="bi bi-credit-card-2-front me-1"></i> بطاقة الدفع
-                                                @elseif($appointment->payment_method == 'cash')
-                                                    <i class="bi bi-cash me-1"></i> نقدي
-                                                @else
-                                                    {{ $appointment->payment_method }}
-                                                @endif
-                                            </span>
-                                        </div>
-                                    @endif
                                 </div>
                             </div>
 
-                            <div class="stat-card">
-                                <div class="stat-icon id">
-                                    <i class="bi bi-upc-scan"></i>
-                                </div>
-                                <div class="stat-details">
-                                    <div class="stat-label">رقم الحجز</div>
-                                    <div class="stat-value">#{{ $appointment->id,}}</div>
-                                    <div class="stat-subtext">{{ $appointment->created_at->locale('ar')->diffForHumans() }}
-                                    </div>
-                                </div>
-                            </div>
+                          <!-- إضافة بطاقة إحصائية منفصلة لطريقة الدفع -->
+                          @if($appointment->payment_method)
+                          <div class="stat-card">
+                              <div class="stat-icon payment">
+                                  @if($appointment->payment_method == 'stripe')
+                                      <i class="bi bi-credit-card-2-front"></i>
+                                  @elseif($appointment->payment_method == 'cash')
+                                      <i class="bi bi-cash"></i>
+                                  @else
+                                      <i class="bi bi-wallet2"></i>
+                                  @endif
+                              </div>
+                              <div class="stat-details">
+                                  <div class="stat-label">طريقة الدفع</div>
+                                  <div class="stat-value">
+                                      @if($appointment->payment_method == 'stripe')
+                                          الدفع ببطاقة الائتمان
+                                      @elseif($appointment->payment_method == 'cash')
+                                          الدفع نقدًا عند الوصول
+
+                                      @endif
+                                  </div>
+
+                              </div>
+                          </div>
+                          @endif
+
+
+
+
                         </div>
                     </div>
 
@@ -259,31 +307,77 @@
                         </div>
                     @endif
 
-                    <!-- تعليمات هامة -->
+                    <!-- تعليمات هامة محسنة مع تصنيف التعليمات وإضافة معلومات أكثر فائدة -->
                     <div class="instructions-section">
                         <div class="section-title">
                             <i class="bi bi-exclamation-triangle"></i>
                             تعليمات هامة
                         </div>
                         <div class="instructions-content">
-                            <ul class="instructions-list">
-                                <li>
-                                    <span class="instruction-icon"><i class="bi bi-clock-history"></i></span>
-                                    <span>يرجى الوصول قبل الحجز المحدد بـ 15-20 دقيقة لإتمام إجراءات التسجيل</span>
-                                </li>
-                                <li>
-                                    <span class="instruction-icon"><i class="bi bi-file-earmark-medical"></i></span>
-                                    <span>يجب إحضار البطاقة الشخصية وأي تقارير طبية سابقة إن وجدت</span>
-                                </li>
-                                <li>
-                                    <span class="instruction-icon"><i class="bi bi-x-circle"></i></span>
-                                    <span>في حالة الرغبة في إلغاء الحجز، يرجى الإلغاء قبل 24 ساعة على الأقل</span>
-                                </li>
-                                <li>
-                                    <span class="instruction-icon"><i class="bi bi-telephone"></i></span>
-                                    <span>في حالة وجود استفسارات يمكنكم التواصل عبر رقم الدعم: +201066181942</span>
-                                </li>
-                            </ul>
+                            <div class="instructions-category mb-3">
+                                <div class="category-header">
+                                    <i class="bi bi-clock-history text-primary me-2"></i>
+                                    <span class="category-title">قبل الزيارة</span>
+                                </div>
+                                <ul class="instructions-list">
+                                    <li>
+                                        <span class="instruction-icon"><i class="bi bi-arrow-up-circle"></i></span>
+                                        <span>يرجى الوصول قبل الموعد بـ 15-20 دقيقة لإتمام إجراءات التسجيل</span>
+                                    </li>
+                                    <li>
+                                        <span class="instruction-icon"><i class="bi bi-file-earmark-medical"></i></span>
+                                        <span>يجب إحضار البطاقة الشخصية وأي تقارير طبية سابقة إن وجدت</span>
+                                    </li>
+                                    @if($appointment->payment_method == 'cash')
+                                    <li>
+                                        <span class="instruction-icon"><i class="bi bi-cash"></i></span>
+                                        <span>يرجى إحضار المبلغ المطلوب نقداً ({{ $appointment->fees }} ج.م)</span>
+                                    </li>
+                                    @endif
+                                </ul>
+                            </div>
+
+                            <div class="instructions-category mb-3">
+                                <div class="category-header">
+                                    <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                                    <span class="category-title">سياسات الإلغاء والتأجيل</span>
+                                </div>
+                                <ul class="instructions-list">
+                                    <li>
+                                        <span class="instruction-icon"><i class="bi bi-x-circle"></i></span>
+                                        <span>في حالة الرغبة في إلغاء الحجز، يرجى الإلغاء قبل 24 ساعة على الأقل</span>
+                                    </li>
+                                    <li>
+                                        <span class="instruction-icon"><i class="bi bi-arrow-repeat"></i></span>
+                                        <span>إذا أردت تأجيل الموعد، يرجى التواصل قبل الموعد بـ 12 ساعة على الأقل</span>
+                                    </li>
+                                    <li>
+                                        <span class="instruction-icon"><i class="bi bi-currency-exchange"></i></span>
+                                        <span>في حالة الإلغاء قبل 24 ساعة، يمكنك استرداد قيمة الحجز، أما بعد ذلك فيتم خصم 50% من القيمة</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="instructions-category">
+                                <div class="category-header">
+                                    <i class="bi bi-headset text-success me-2"></i>
+                                    <span class="category-title">الدعم والمساعدة</span>
+                                </div>
+                                <ul class="instructions-list">
+                                    <li>
+                                        <span class="instruction-icon"><i class="bi bi-telephone"></i></span>
+                                        <span>في حالة وجود استفسارات يمكنك التواصل عبر رقم الدعم: +201066181942</span>
+                                    </li>
+                                    <li>
+                                        <span class="instruction-icon"><i class="bi bi-envelope"></i></span>
+                                        <span>للاستفسارات عبر البريد الإلكتروني: support@clinic.com</span>
+                                    </li>
+                                    <li>
+                                        <span class="instruction-icon"><i class="bi bi-map"></i></span>
+                                        <span>يمكنك الاطلاع على الخريطة والاتجاهات من خلال الضغط على زر الخريطة في ملف الطبيب</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -291,6 +385,178 @@
 
         </div>
     </div>
+
+
+
+<!-- Modal تقييم الدكتور -->
+<div class="modal fade" id="rateModal{{ $appointment->id }}"
+    tabindex="-1" aria-labelledby="rateModalLabel{{ $appointment->id }}"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"
+                    id="rateModalLabel{{ $appointment->id }}">
+                    <i class="bi bi-star-fill text-warning me-2"></i>
+                    @if($existingRating ?? false)
+                        عرض التقييم
+                    @else
+                        تقييم الدكتور
+                    @endif
+                </h5>
+                <button type="button" class="btn-close"
+                    data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <form
+                action="{{ route('doctors.rate', $appointment->doctor->id) }}"
+                method="POST" @if($existingRating ?? false) class="rated-form"
+                @endif>
+                @csrf
+                <input type="hidden" name="appointment_id"
+                    value="{{ $appointment->id }}">
+                <div class="modal-body">
+                    <!-- Doctor info -->
+                    <div class="doctor-profile mb-3">
+                        <div
+                            class="doctor-info d-flex align-items-center">
+                            <div class="doctor-avatar">
+                                @if($appointment->doctor->image)
+                                    <img src="{{ Storage::url($appointment->doctor->image) }}"
+                                        alt="{{ $appointment->doctor->name }}">
+                                @else
+                                    <i class="bi bi-person-badge-fill"></i>
+                                @endif
+                            </div>
+                            <div class="doctor-details ms-3">
+                                <h5 class="doctor-name mb-1">د.
+                                    {{ $appointment->doctor->name }}
+                                </h5>
+                                <div class="specialization-badge">
+                                    {{ $appointment->doctor->specialization }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if($existingRating ?? false)
+                        <!-- Mostrar valoración existente -->
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            لقد قمت بتقييم الدكتور مسبقًا
+                        </div>
+                    @endif
+
+                    <!-- Star rating -->
+                    <div class="rating-container">
+                        <h6 class="text-center mb-2">
+                            @if($existingRating ?? false)
+                                تقييمك للدكتور
+                            @else
+                                كيف كانت تجربتك مع الدكتور؟
+                            @endif
+                        </h6>
+                        <div class="star-rating">
+                            <div class="stars @if($existingRating ?? false) readonly @endif">
+                                <input type="radio"
+                                    id="star5-{{ $appointment->id }}"
+                                    name="rating" value="5"
+                                    class="visually-hidden"
+                                    @if(($existingRating ?? false) && $existingRating->rating == 5) checked
+                                    @endif @if($existingRating ?? false) disabled
+                                    @endif>
+                                <label
+                                    for="star5-{{ $appointment->id }}"
+                                    class="star-label @if(($existingRating ?? false) && $existingRating->rating >= 5) selected @endif"
+                                    title="ممتاز - 5 نجوم">★</label>
+
+                                <input type="radio"
+                                    id="star4-{{ $appointment->id }}"
+                                    name="rating" value="4"
+                                    class="visually-hidden"
+                                    @if(($existingRating ?? false) && $existingRating->rating == 4) checked
+                                    @endif @if($existingRating ?? false) disabled
+                                    @endif>
+                                <label
+                                    for="star4-{{ $appointment->id }}"
+                                    class="star-label @if(($existingRating ?? false) && $existingRating->rating >= 4) selected @endif"
+                                    title="جيد جدا - 4 نجوم">★</label>
+
+                                <input type="radio"
+                                    id="star3-{{ $appointment->id }}"
+                                    name="rating" value="3"
+                                    class="visually-hidden"
+                                    @if(($existingRating ?? false) && $existingRating->rating == 3) checked
+                                    @endif @if($existingRating ?? false) disabled
+                                    @endif>
+                                <label
+                                    for="star3-{{ $appointment->id }}"
+                                    class="star-label @if(($existingRating ?? false) && $existingRating->rating >= 3) selected @endif"
+                                    title="جيد - 3 نجوم">★</label>
+
+                                <input type="radio"
+                                    id="star2-{{ $appointment->id }}"
+                                    name="rating" value="2"
+                                    class="visually-hidden"
+                                    @if(($existingRating ?? false) && $existingRating->rating == 2) checked
+                                    @endif @if($existingRating ?? false) disabled
+                                    @endif>
+                                <label
+                                    for="star2-{{ $appointment->id }}"
+                                    class="star-label @if(($existingRating ?? false) && $existingRating->rating >= 2) selected @endif"
+                                    title="مقبول - 2 نجوم">★</label>
+
+                                <input type="radio"
+                                    id="star1-{{ $appointment->id }}"
+                                    name="rating" value="1"
+                                    class="visually-hidden"
+                                    @if(($existingRating ?? false) && $existingRating->rating == 1) checked
+                                    @endif @if($existingRating ?? false) disabled
+                                    @endif>
+                                <label
+                                    for="star1-{{ $appointment->id }}"
+                                    class="star-label @if(($existingRating ?? false) && $existingRating->rating >= 1) selected @endif"
+                                    title="ضعيف - نجمة واحدة">★</label>
+                            </div>
+                            <div class="rating-value text-center mt-2">
+                                @if($existingRating ?? false)
+                                    {{ $existingRating->rating }} من 5
+                                @else
+                                    <span class="text-muted">اختر تقييمك</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comment -->
+                    <div class="mb-3 mt-3">
+                        <label for="comment-{{ $appointment->id }}"
+                            class="form-label">تعليقك (اختياري)</label>
+                        <textarea class="form-control"
+                            id="comment-{{ $appointment->id }}"
+                            name="comment" rows="3" @if($existingRating ?? false)
+                            readonly @endif
+                            placeholder="اكتب تعليقك هنا...">{{ ($existingRating ?? false) ? $existingRating->comment : '' }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                        @if($existingRating ?? false)
+                            إغلاق
+                        @else
+                            إلغاء
+                        @endif
+                    </button>
+                    @if(!($existingRating ?? false))
+                        <button type="submit" class="btn btn-primary">إرسال
+                            التقييم</button>
+                    @endif
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
     @push('scripts')
         <script>
@@ -641,9 +907,19 @@
                 color: var(--success-color);
             }
 
+            .stat-icon.payment {
+                background-color: var(--purple-light, #f3e8ff);
+                color: var(--purple-color, #9333ea);
+            }
+
             .stat-icon.id {
                 background-color: var(--warning-light);
                 color: var(--warning-color);
+            }
+
+            .stat-icon.duration {
+                background-color: var(--info-light);
+                color: var(--info-color);
             }
 
             .stat-details {
@@ -675,6 +951,32 @@
                 color: #64748b;
             }
 
+            .payment-info {
+                display: flex;
+                align-items: center;
+                margin-top: 0.5rem;
+                gap: 0.5rem;
+            }
+
+            .payment-card-icon {
+                width: 30px;
+                height: 20px;
+                border-radius: 4px;
+                background-color: #f8f9fa;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.75rem;
+                color: #6c757d;
+                border: 1px solid rgba(0,0,0,0.1);
+            }
+
+            .payment-info-text {
+                font-size: 0.75rem;
+                color: #64748b;
+                font-style: italic;
+            }
+
             .stat-badge {
                 display: inline-flex;
                 align-items: center;
@@ -695,6 +997,22 @@
 
             .stat-badge i {
                 margin-left: 0.25rem;
+            }
+
+            .duration-details {
+                margin-top: 0.5rem;
+            }
+
+            .duration-item {
+                display: flex;
+                align-items: center;
+                font-size: 0.875rem;
+                color: #4a5568;
+                margin-bottom: 0.25rem;
+            }
+
+            .duration-item i {
+                margin-right: 0.5rem;
             }
 
             /* ======= NOTES SECTION STYLES ======= */
@@ -923,23 +1241,6 @@
                 color: var(--primary-color);
             }
 
-            /* ======= BUTTONS STYLES ======= */
-            .btn {
-                font-weight: 500;
-                padding: 0.75rem 1.5rem;
-                border-radius: 8px;
-                transition: all 0.3s ease;
-            }
-
-            .btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            }
-
-            .btn-danger {
-                background-color: var(--danger-color);
-                border-color: var(--danger-color);
-            }
 
             /* ======= ANIMATIONS ======= */
             @keyframes fadeIn {
@@ -1048,28 +1349,7 @@
                 border: 1px solid rgba(0, 0, 0, 0.05);
             }
 
-            .btn-primary {
-                background-color: #4f46e5;
-                border-color: #4f46e5;
-                transition: all 0.3s ease;
-                padding: 0.75rem 1.5rem;
-                font-weight: 500;
-            }
 
-            .btn-primary:hover {
-                background-color: #4338ca;
-                border-color: #4338ca;
-                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
-                transform: translateY(-2px);
-            }
-
-            .header-actions .btn-primary {
-                background-color: #4f46e5;
-                border-color: #4f46e5;
-                padding: 0.5rem 1rem;
-                font-size: 0.875rem;
-                white-space: nowrap;
-            }
 
             .header-actions .btn-primary:hover {
                 background-color: #4338ca;
@@ -1088,6 +1368,93 @@
                     width: 100%;
                 }
             }
+
+            /* Star Rating Styles */
+            .star-rating {
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+
+            .stars {
+                display: inline-flex;
+                flex-direction: row-reverse;
+                justify-content: center;
+                font-size: 2rem;
+            }
+
+            .star-label {
+                cursor: pointer;
+                color: #ddd;
+                padding: 0 0.2rem;
+                transition: all 0.2s ease;
+            }
+
+            .star-label:hover,
+            .star-label:hover ~ .star-label,
+            input[type="radio"]:checked ~ .star-label {
+                color: #ffb700;
+            }
+
+            .star-label.selected {
+                color: #ffb700;
+            }
+
+            .rating-value {
+                font-weight: bold;
+                color: #4a5568;
+            }
+
+            /* Doctor Avatar in Modal */
+            .modal .doctor-avatar {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                overflow: hidden;
+                flex-shrink: 0;
+                background-color: #f8f9fa;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .modal .doctor-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .modal .doctor-avatar i {
+                font-size: 1.5rem;
+                color: #6c757d;
+            }
+
+            .modal .doctor-details {
+                flex: 1;
+            }
+
+            .specialization-badge {
+                background-color: rgba(13, 110, 253, 0.1);
+                color: var(--primary-color);
+                border-radius: 50px;
+                padding: 0.25rem 0.75rem;
+                font-size: 0.75rem;
+                display: inline-block;
+            }
+
+            /* تنسيق النجوم في وضع القراءة فقط */
+            .stars.readonly .star-label {
+                cursor: default;
+                pointer-events: none;
+            }
+
+            .stars.readonly .star-label:hover,
+            .stars.readonly .star-label:hover ~ .star-label {
+                color: inherit; /* لا تغير لون النجوم عند التحويم في حالة القراءة فقط */
+            }
         </style>
     @endpush
-@endsection
+
+
+
+ @endsection

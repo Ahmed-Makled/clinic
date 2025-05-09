@@ -97,14 +97,15 @@
                                                         <h4 class="fw-bold text-primary">{{ $doctor->name }}</h4>
                                                         <div class="rating-text">
                                                             @for ($i = 1; $i <= 5; $i++)
-                                                                @if ($i <= floor($doctor->average_rating))
+                                                                @if ($i <= floor($doctor->rating_avg))
                                                                     <i class="bi bi-star-fill text-warning"></i>
-                                                                @elseif ($i - 0.5 <= $doctor->average_rating)
+                                                                @elseif ($i - 0.5 <= $doctor->rating_avg)
                                                                     <i class="bi bi-star-half text-warning"></i>
                                                                 @else
                                                                     <i class="bi bi-star text-warning"></i>
                                                                 @endif
                                                             @endfor
+                                                            <span class="text-muted">({{ $doctor->ratings_count }} تقييم)</span>
                                                         </div>
                                                     </div>
 

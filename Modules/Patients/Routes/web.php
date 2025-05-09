@@ -27,9 +27,5 @@ Route::middleware(['web', 'auth:web', 'role:Admin'])->group(function () {
     Route::get('/{patient}/edit', [PatientController::class, 'edit'])->name('patients.edit');
     Route::put('/{patient}', [PatientController::class, 'update'])->name('patients.update');
     Route::delete('/{patient}', [PatientController::class, 'destroy'])->name('patients.destroy');
-
-    // مسارات إضافة بيانات مريض من مستخدم موجود
-    Route::get('/create-from-user', [PatientController::class, 'createFromUser'])->name('patients.createFromUser');
-    Route::post('/store-from-user', [PatientController::class, 'storeFromUser'])->name('patients.storeFromUser');
 });
 });

@@ -68,16 +68,16 @@
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="rating">
                                         @for ($i = 1; $i <= 5; $i++)
-                                            @if ($i <= floor($avgRating))
+                                            @if ($i <= floor($doctor->rating_avg))
                                                 <i class="bi bi-star-fill text-warning"></i>
-                                            @elseif ($i - 0.5 <= $avgRating)
+                                            @elseif ($i - 0.5 <= $doctor->rating_avg)
                                                 <i class="bi bi-star-half text-warning"></i>
                                             @else
                                                 <i class="bi bi-star text-warning"></i>
                                             @endif
                                         @endfor
                                     </div>
-                                    <span class="text-muted">({{ $ratingsCount }} تقييم)</span>
+                                    <span class="text-muted">({{ $doctor->ratings_count }} تقييم)</span>
                                 </div>
                             </div>
                         </div>
@@ -326,7 +326,7 @@
                 <h2 class="section-title mt-4">
                     <i class="bi bi-star me-2"></i>
                     التقييمات والمراجعات
-                    <span class="rating-count">({{ $ratingsCount }})</span>
+                    <span class="rating-count">({{ $doctor->ratings_count }})</span>
                 </h2>
 
                 <div class="ratings-section">
@@ -334,23 +334,23 @@
                         <div class="col-md-4">
                             <div class="ratings-summary">
                                 <div class="average-rating">
-                                    <div class="rating-number">{{ number_format($avgRating, 1) }}</div>
+                                    <div class="rating-number">{{ number_format($doctor->rating_avg, 1) }}</div>
                                     <div class="rating-stars">
                                         @for ($i = 1; $i <= 5; $i++)
-                                            @if ($i <= floor($avgRating))
+                                            @if ($i <= floor($doctor->rating_avg))
                                                 <i class="bi bi-star-fill"></i>
-                                            @elseif ($i - 0.5 <= $avgRating)
+                                            @elseif ($i - 0.5 <= $doctor->rating_avg)
                                                 <i class="bi bi-star-half"></i>
                                             @else
                                                 <i class="bi bi-star"></i>
                                             @endif
                                         @endfor
                                     </div>
-                                    <div class="rating-count-text">بناءً على {{ $ratingsCount }} تقييم</div>
+                                    <div class="rating-count-text">بناءً على {{ $doctor->ratings_count }} تقييم</div>
                                 </div>
 
                                 <div class="rating-bars">
-                                    @foreach($ratingStats as $stars => $data)
+                                    @foreach($doctor->rating_stats as $stars => $data)
                                         <div class="rating-bar-item">
                                             <div class="star-label">{{ $stars }} <i class="bi bi-star-fill"></i></div>
                                             <div class="progress">
@@ -415,7 +415,7 @@
             @if($appointments->isNotEmpty())
                 <div class="appointments-section">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="section-title m-0">
+                        <h2 class="section-title م-0">
                             <i class="bi bi-calendar2-week me-2"></i>
                             الحجوزات
                             <span class="appointments-count">({{ $appointments->count() }})</span>

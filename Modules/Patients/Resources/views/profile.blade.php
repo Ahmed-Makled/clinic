@@ -425,7 +425,7 @@
                                                         <h5 class="mb-0 fw-bold">حجوزاتي</h5>
                                                     </div>
                                                     <a href="{{ route('search') }}" class="btn btn-sm btn-primary">
-                                                        <i class="bi bi-plus-circle me-1"></i> حجز حجز جديد
+                                                        <i class="bi bi-plus-circle me-1"></i> حجز موعد جديد
                                                     </a>
                                                 </div>
 
@@ -471,7 +471,7 @@
                                                                                         @if($appointment->doctor->image)
                                                                                             <img src="{{ asset('storage/' . $appointment->doctor->image) }}"
                                                                                                 alt="{{ $appointment->doctor->user->name }}"
-                                                                                                class="img-fluid">
+                                                                                                class="img-fluid ">
                                                                                         @else
                                                                                             <i class="bi bi-person-fill"></i>
                                                                                         @endif
@@ -600,7 +600,7 @@
                                                                                                 <div class="doctor-avatar">
                                                                                                     @if($appointment->doctor->image)
                                                                                                         <img src="{{ Storage::url($appointment->doctor->image) }}"
-                                                                                                            alt="{{ $appointment->doctor->name }}">
+                                                                                                            alt="{{ $appointment->doctor->name }}" class="img-fluid ">
                                                                                                     @else
                                                                                                         <i class="bi bi-person-badge-fill"></i>
                                                                                                     @endif
@@ -609,8 +609,22 @@
                                                                                                     <h5 class="doctor-name mb-1">د.
                                                                                                         {{ $appointment->doctor->name }}
                                                                                                     </h5>
-                                                                                                    <div class="specialization-badge">
-                                                                                                        {{ $appointment->doctor->specialization }}
+                                                                                                    <div class="d-flex align-items-center gap-2">
+                                                                                                        <div class="specialization-badge">
+                                                                                                            {{ $appointment->doctor->specialization }}
+                                                                                                        </div>
+                                                                                                        <div class="rating-mini">
+                                                                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                                                                @if ($i <= floor($appointment->doctor->rating_avg))
+                                                                                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                                                                                @elseif ($i - 0.5 <= $appointment->doctor->rating_avg)
+                                                                                                                    <i class="bi bi-star-half text-warning"></i>
+                                                                                                                @else
+                                                                                                                    <i class="bi bi-star text-warning"></i>
+                                                                                                                @endif
+                                                                                                            @endfor
+                                                                                                            <span class="text-muted small">({{ $appointment->doctor->ratings_count }})</span>
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
@@ -744,9 +758,9 @@
                                                             <i class="bi bi-calendar-x"></i>
                                                         </div>
                                                         <h5>لا توجد حجوزات حالية</h5>
-                                                        <p class="text-muted">يمكنك حجز حجز جديد مع أطبائنا</p>
+                                                        <p class="text-muted">يمكنك حجز موعد جديد مع أطبائنا</p>
                                                         <a href="{{ route('search') }}" class="btn btn-primary">
-                                                            <i class="bi bi-plus-circle me-1"></i> حجز حجز جديد
+                                                            <i class="bi bi-plus-circle me-1"></i> حجز موعد جديد
                                                         </a>
                                                     </div>
                                                 @endif
@@ -833,7 +847,7 @@
                     </div>
                 </div>
 
-                <!-- زر العودة لحجز حجز في حالة وجود redirect_to -->
+                <!-- زر العودة لحجز موعد في حالة وجود redirect_to -->
                 @if($user->isPatient() && request()->has('redirect_to'))
                     <div class="text-center mt-3">
                         <a href="{{ request('redirect_to') }}" class="btn btn-secondary">

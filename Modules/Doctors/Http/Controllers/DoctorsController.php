@@ -633,8 +633,20 @@ class DoctorsController extends Controller
 
         // التحقق من أن المستخدم الحالي هو صاحب الحجز
         $appointment = \App\Models\Appointment::find($validated['appointment_id']);
+
+        // التحقق من وجود الحجز وأن المستخدم هو صاحب الحجز
         if (!$appointment || $appointment->patient_id != auth()->user()->patient->id) {
             return back()->with('error', 'لا يمكنك تقييم هذا الطبيب لهذا الحجز');
+        }
+
+        // التحقق من اكتمال الحجز قبل السماح بالتقييم
+        if ($appointment->status != 'completed') {
+            return back()->with('error', 'لا يمكن تقييم الطبيب إلا بعد اكتمال الزيارة');
+        }
+
+        // التحقق من أن الطبيب المراد تقييمه هو نفس طبيب الحجز
+        if ($appointment->doctor_id != $doctor->id) {
+            return back()->with('error', 'لا يمكنك تقييم طبيب مختلف عن طبيب الحجز');
         }
 
         // التحقق من عدم وجود تقييم سابق لنفس الحجز

@@ -58,7 +58,8 @@ class Appointment extends Model
         'fees',
         'waiting_time',
         'is_paid',
-        'is_important'
+        'is_important',
+        'payment_method'
     ];
 
     /**

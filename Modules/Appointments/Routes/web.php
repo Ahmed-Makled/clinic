@@ -9,6 +9,7 @@ Route::middleware(['web', 'auth:web'])->group(function () {
     Route::post('/appointments', [AppointmentsController::class, 'store'])->name('appointments.store');
     Route::get('/appointments/{appointment}', [AppointmentsController::class, 'show'])->name('appointments.show');
     Route::put('/appointments/{appointment}/cancel', [AppointmentsController::class, 'cancel'])->name('appointments.cancel');
+    Route::post('/appointments/{appointment}/confirm-cash', [AppointmentsController::class, 'confirmCashPayment'])->name('appointments.confirm-cash');
 });
 
 // Admin routes

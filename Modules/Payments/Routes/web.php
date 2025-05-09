@@ -20,16 +20,16 @@ Route::middleware(['auth'])->group(function () {
     // Regular payment routes
     Route::get('/checkout/{appointment}', [PaymentsController::class, 'checkout'])->name('payments.checkout');
     Route::post('/process-payment/{appointment}', [PaymentsController::class, 'processPayment'])->name('payments.process');
-    
+
     // Stripe payment routes
-    Route::get('/stripe/checkout/{appointment}', [StripeController::class, 'checkout'])->name('payments.stripe.checkout');
+    Route::get('/stripe/checkout/{appointment}', [StripeController::class, 'checkout'])->name('payments..checkout');
     Route::post('/stripe/create-session/{appointment}', [StripeController::class, 'createSession'])->name('payments.stripe.create-session');
     Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook'])->name('payments.stripe.webhook');
     Route::get('/stripe/success', [StripeController::class, 'success'])->name('payments.stripe.success');
     Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('payments.stripe.cancel');
 });
 
-// Route for direct stripe booking during appointment creation
+// // Route for direct stripe booking during appointment creation
 Route::post('/appointments/stripe/create', [StripeController::class, 'createAppointmentAndCheckout'])
     ->middleware(['auth'])
     ->name('appointments.stripe.create');

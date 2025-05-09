@@ -221,4 +221,49 @@ class Doctor extends Model
         }
     }
 
+    /**
+     * الحصول على عدد التقييمات لهذا الطبيب
+     */
+    public function getRatingsCountAttribute()
+    {
+        return \App\Models\DoctorRating::where('doctor_id', $this->id)
+            ->where('is_verified', true)
+            ->count();
+    }
+
+    /**
+     * الحصول على متوسط تقييم الطبيب
+     */
+    public function getRatingAvgAttribute()
+    {
+        return \App\Models\DoctorRating::where('doctor_id', $this->id)
+            ->where('is_verified', true)
+            ->avg('rating') ?? 0;
+    }
+
+    /**
+     * الحصول على التقييمات المرتبة حسب عدد النجوم (5 إلى 1)
+     */
+    public function getRatingStatsAttribute()
+    {
+        $stats = [];
+        $totalRatings = $this->ratings_count;
+
+        for ($i = 5; $i >= 1; $i--) {
+            $count = \App\Models\DoctorRating::where('doctor_id', $this->id)
+                ->where('is_verified', true)
+                ->where('rating', $i)
+                ->count();
+
+            $percentage = $totalRatings > 0 ? ($count / $totalRatings) * 100 : 0;
+
+            $stats[$i] = [
+                'count' => $count,
+                'percentage' => $percentage
+            ];
+        }
+
+        return $stats;
+    }
+
 }
