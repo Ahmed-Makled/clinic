@@ -67,8 +67,12 @@ class AppointmentsController extends Controller
         // الإحصائيات المالية والعامة
         $stats = [
             'total_fees' => Appointment::sum('fees'),
-            'paid_fees' => Appointment::where('is_paid', true)->sum('fees'),
-            'unpaid_fees' => Appointment::where('is_paid', false)->sum('fees'),
+            'paid_fees' => Appointment::whereHas('payment', function($query) {
+                $query->where('status', 'completed');
+            })->sum('fees'),
+            'unpaid_fees' => Appointment::whereDoesntHave('payment', function($query) {
+                $query->where('status', 'completed');
+            })->sum('fees'),
             'total_appointments' => Appointment::count(),
             'today_appointments' => Appointment::today()->count()
         ];
@@ -194,9 +198,20 @@ class AppointmentsController extends Controller
                 'status' => 'scheduled',
                 'notes' => $validated['notes'] ?? null,
                 'fees' => $doctor->consultation_fee,
-                'is_paid' => false,
                 'is_important' => false
             ]);
+
+            // Create pending payment record
+            if ($appointment) {
+                \Modules\Payments\Entities\Payment::create([
+                    'appointment_id' => $appointment->id,
+                    'amount' => $doctor->consultation_fee,
+                    'currency' => config('stripe.currency', 'EGP'),
+                    'status' => 'pending',
+                    'payment_method' => 'cash', // Default to cash, can be changed later
+                    'transaction_id' => \Modules\Payments\Entities\Payment::generateTransactionId()
+                ]);
+            }
 
             // Notify relevant parties
             $doctor->user->notify(new NewAppointmentNotification($appointment));

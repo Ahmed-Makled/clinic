@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Payments\Http\Controllers\PaymentController;
+use Modules\Payments\Http\Controllers\PaymentAdminController;
 use Modules\Payments\Http\Controllers\PaymentsController;
 use Modules\Payments\Http\Controllers\StripeController;
 
@@ -33,3 +34,13 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/appointments/stripe/create', [StripeController::class, 'createAppointmentAndCheckout'])
     ->middleware(['auth'])
     ->name('appointments.stripe.create');
+
+// Admin payment management routes
+Route::prefix('admin')->middleware(['web', 'auth', 'role:Admin'])->group(function () {
+    // Payment management routes
+    Route::get('/payments', [PaymentAdminController::class, 'index'])->name('admin.payments.index');
+    Route::get('/payments/export', [PaymentAdminController::class, 'export'])->name('admin.payments.export');
+    Route::get('/payments/{payment}', [PaymentAdminController::class, 'show'])->name('admin.payments.show');
+    Route::patch('/payments/{payment}/mark-completed', [PaymentAdminController::class, 'markAsCompleted'])->name('admin.payments.mark-completed');
+    Route::patch('/payments/{payment}/mark-failed', [PaymentAdminController::class, 'markAsFailed'])->name('admin.payments.mark-failed');
+});

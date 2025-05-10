@@ -513,13 +513,17 @@ class DoctorsController extends Controller
         // حساب إجمالي الإيرادات وتحليلها
         $totalEarnings = $doctor->appointments()
             ->where('status', 'completed')
-            ->where('is_paid', true)
+            ->whereHas('payment', function($query) {
+                $query->where('status', 'completed');
+            })
             ->sum('fees');
 
         $lastMonthEarnings = $doctor->appointments()
             ->whereMonth('scheduled_at', $lastMonth)
             ->where('status', 'completed')
-            ->where('is_paid', true)
+            ->whereHas('payment', function($query) {
+                $query->where('status', 'completed');
+            })
             ->sum('fees');
 
         $earningsGrowthRate = $lastMonthEarnings > 0

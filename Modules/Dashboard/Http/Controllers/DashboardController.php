@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Modules\Doctors\Entities\Doctor;
 use Modules\Patients\Entities\Patient;
 use Modules\Appointments\Entities\Appointment;
+use Modules\Payments\Entities\Payment;
 use Modules\Specialties\Entities\Category;
 use Modules\Users\Entities\User;
 use Carbon\Carbon;
@@ -24,7 +25,9 @@ class DashboardController extends Controller
             'appointments' => $appointmentsStats,
             'financial' => $this->getFinancialStats(),
             'pending_appointments' => Appointment::where('status', 'scheduled')->count(),
-            'unpaid_fees' => Appointment::where('is_paid', false)->sum('fees')
+            'unpaid_fees' => Appointment::whereDoesntHave('payment', function($query) {
+                $query->where('status', 'completed');
+            })->sum('fees')
         ];
 
         $stats['completion_rate'] = $appointmentsStats['completion_rate'];
@@ -92,11 +95,13 @@ class DashboardController extends Controller
 
     private function getFinancialStats()
     {
-        $collectedAmount = Appointment::where('status', 'completed')
-            ->where('is_paid', true)
-            ->sum('fees');
+        $collectedAmount = Appointment::whereHas('payment', function($query) {
+            $query->where('status', 'completed');
+        })->sum('fees');
 
-        $pendingAmount = Appointment::where('is_paid', false)->sum('fees');
+        $pendingAmount = Appointment::whereDoesntHave('payment', function($query) {
+            $query->where('status', 'completed');
+        })->sum('fees');
 
         $totalAmount = $collectedAmount + $pendingAmount;
 
@@ -182,7 +187,7 @@ class DashboardController extends Controller
 
     private function getRecentActivities()
     {
-        return Appointment::with(['doctor', 'patient'])
+        return Appointment::with(['doctor', 'patient', 'payment'])
             ->latest('scheduled_at')
             ->take(10)
             ->get()
@@ -197,7 +202,7 @@ class DashboardController extends Controller
                     'status_color' => $appointment->status_color,
                     'scheduled_at' => $appointment->scheduled_at,
                     'fees' => $appointment->fees,
-                    'is_paid' => $appointment->is_paid
+                    'is_paid' => $appointment->payment && $appointment->payment->status === 'completed'
                 ];
             });
     }

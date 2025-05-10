@@ -4,8 +4,10 @@ namespace Modules\Payments\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Modules\Appointments\Entities\Appointment;
+use Modules\Payments\Entities\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
@@ -23,19 +25,31 @@ class PaymentController extends Controller
     public function checkout(Appointment $appointment)
     {
         // Prevent double payment
-        if ($appointment->is_paid) {
+        if ($appointment->payment && $appointment->payment->isCompleted()) {
             return redirect()->route('appointments.show', $appointment)
                 ->with('info', 'تم دفع رسوم هذا الحجز مسبقًا.');
         }
 
         try {
+            // Create a pending payment record in database
+            $payment = Payment::firstOrCreate(
+                ['appointment_id' => $appointment->id],
+                [
+                    'amount' => $appointment->fees,
+                    'currency' => config('stripe.currency'),
+                    'status' => 'pending',
+                    'payment_method' => 'stripe',
+                    'transaction_id' => Payment::generateTransactionId()
+                ]
+            );
+
             $checkout_session = Session::create([
                 'payment_method_types' => ['card'],
                 'line_items' => [
                     [
                         'price_data' => [
-                            'currency' => config('stripe.currency'),
-                            'unit_amount' => $appointment->fees * 100, // Amount in cents
+                            'currency' => $payment->currency,
+                            'unit_amount' => $payment->amount * 100, // Amount in cents
                             'product_data' => [
                                 'name' => 'حجز كشف - ' . $appointment->doctor->name,
                                 'description' => 'تاريخ الحجز: ' . $appointment->formatted_date . ' الساعة ' . $appointment->scheduled_at->format('h:i A'),
@@ -47,15 +61,26 @@ class PaymentController extends Controller
                 'mode' => 'payment',
                 'success_url' => route('payments.success', ['appointment' => $appointment->id]),
                 'cancel_url' => route('payments.cancel', ['appointment' => $appointment->id]),
-                'client_reference_id' => $appointment->id,
+                'client_reference_id' => $payment->transaction_id,
                 'metadata' => [
-                    'appointment_id' => $appointment->id
+                    'appointment_id' => $appointment->id,
+                    'payment_id' => $payment->id
+                ]
+            ]);
+
+            // Update payment with Stripe checkout session ID
+            $payment->update([
+                'payment_id' => $checkout_session->id,
+                'metadata' => [
+                    'stripe_session_id' => $checkout_session->id,
+                    'stripe_session_url' => $checkout_session->url
                 ]
             ]);
 
             return view('payments::checkout', [
                 'checkout_session' => $checkout_session,
-                'appointment' => $appointment
+                'appointment' => $appointment,
+                'payment' => $payment
             ]);
 
         } catch (ApiErrorException $e) {
@@ -69,7 +94,19 @@ class PaymentController extends Controller
      */
     public function success(Request $request, Appointment $appointment)
     {
-        $appointment->update(['is_paid' => true]);
+        DB::transaction(function () use ($appointment) {
+            // Update the payment record to completed
+            $payment = Payment::where('appointment_id', $appointment->id)->first();
+            if ($payment) {
+                $payment->update([
+                    'status' => 'completed',
+                    'paid_at' => now()
+                ]);
+            }
+
+            // Update the appointment with the payment reference
+            $appointment->update(['payment_id' => $payment->id]);
+        });
 
         return view('payments::success', [
             'appointment' => $appointment
@@ -81,6 +118,12 @@ class PaymentController extends Controller
      */
     public function cancel(Request $request, Appointment $appointment)
     {
+        // Update the payment record to failed
+        $payment = Payment::where('appointment_id', $appointment->id)->first();
+        if ($payment) {
+            $payment->update(['status' => 'failed']);
+        }
+
         return view('payments::cancel', [
             'appointment' => $appointment
         ]);
@@ -112,14 +155,32 @@ class PaymentController extends Controller
             case 'checkout.session.completed':
                 $session = $event->data->object;
                 $appointmentId = $session->metadata->appointment_id;
+                $paymentId = $session->metadata->payment_id ?? null;
 
-                if ($appointmentId) {
-                    $appointment = Appointment::find($appointmentId);
-                    if ($appointment) {
-                        $appointment->update(['is_paid' => true]);
-                        Log::info('Payment completed for appointment #' . $appointmentId);
+                DB::transaction(function () use ($appointmentId, $paymentId, $session) {
+                    // Update the payment record
+                    $payment = $paymentId ? Payment::find($paymentId) :
+                            Payment::where('appointment_id', $appointmentId)->first();
+
+                    if ($payment) {
+                        $payment->update([
+                            'status' => 'completed',
+                            'payment_id' => $session->payment_intent,
+                            'paid_at' => now(),
+                            'metadata' => array_merge((array) $payment->metadata, [
+                                'stripe_payment_intent' => $session->payment_intent,
+                                'stripe_payment_status' => $session->payment_status,
+                            ])
+                        ]);
+
+                        // Update the appointment with payment reference
+                        $appointment = Appointment::find($appointmentId);
+                        if ($appointment) {
+                            $appointment->update(['payment_id' => $payment->id]);
+                            Log::info('Payment completed for appointment #' . $appointmentId);
+                        }
                     }
-                }
+                });
                 break;
             default:
                 Log::info('Unhandled event type: ' . $event->type);

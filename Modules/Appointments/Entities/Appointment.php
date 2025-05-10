@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
 use Modules\Doctors\Entities\Doctor;
 use Modules\Patients\Entities\Patient;
+use Modules\Payments\Entities\Payment;
 
 class Appointment extends Model
 {
@@ -59,10 +60,8 @@ class Appointment extends Model
         'notes',
         'fees',
         'waiting_time',
-        'is_paid',
         'is_important',
-        'payment_method',
-        'payment_id'
+        'payment_id'  // Updated to only include payment_id as FK
     ];
 
     /**
@@ -133,6 +132,14 @@ class Appointment extends Model
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    /**
+     * Get the payment associated with the appointment.
+     */
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class);
     }
 
     /**
@@ -213,6 +220,26 @@ class Appointment extends Model
     public function getFormattedTimeAttribute(): string
     {
         return format_time($this->scheduled_at, 'h:i A');
+    }
+
+    /**
+     * Determine if the appointment is paid.
+     *
+     * @return bool
+     */
+    public function getIsPaidAttribute(): bool
+    {
+        return $this->payment && $this->payment->isCompleted();
+    }
+
+    /**
+     * Get the payment method used for this appointment.
+     *
+     * @return string|null
+     */
+    public function getPaymentMethodAttribute(): ?string
+    {
+        return $this->payment ? $this->payment->payment_method : null;
     }
 
     /**

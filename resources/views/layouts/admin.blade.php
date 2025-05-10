@@ -953,6 +953,14 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}"
+                                    href="{{ route('admin.payments.index') }}" data-bs-toggle="tooltip"
+                                    data-bs-placement="left" data-bs-title="المدفوعات">
+                                    <i class="bi bi-cash-coin"></i>
+                                    <span>المدفوعات</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('specialties.*') ? 'active' : '' }}"
                                     href="{{ route('specialties.index') }}" data-bs-toggle="tooltip"
                                     data-bs-placement="left" data-bs-title="التخصصات">
