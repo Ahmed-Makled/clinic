@@ -3,7 +3,7 @@
 namespace Modules\Payments\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Appointment;
+use Modules\Appointments\Entities\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\Exception\ApiErrorException;

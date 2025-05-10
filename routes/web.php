@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\GovernorateController;
 use Modules\Doctors\Http\Controllers\DoctorsController;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +17,6 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Categories routes
-Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
 
 // Dynamic data loading routes
 Route::get('/governorates/{governorate}/cities', [GovernorateController::class, 'getCities'])->name('cities.by.governorate');

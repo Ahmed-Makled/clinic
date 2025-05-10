@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Governorate;
+use Modules\Users\Entities\Governorate;
 use App\Models\City;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

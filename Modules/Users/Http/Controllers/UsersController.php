@@ -3,7 +3,7 @@
 namespace Modules\Users\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use Modules\Users\Entities\User;
 use App\Models\Doctor;
 use App\Models\Patient;
 use Illuminate\Http\Request;

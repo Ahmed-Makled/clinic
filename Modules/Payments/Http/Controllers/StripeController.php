@@ -2,7 +2,7 @@
 
 namespace Modules\Payments\Http\Controllers;
 
-use App\Models\Appointment;
+use Modules\Appointments\Entities\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;

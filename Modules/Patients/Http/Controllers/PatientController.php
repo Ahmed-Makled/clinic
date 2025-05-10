@@ -3,15 +3,15 @@
 namespace Modules\Patients\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use Modules\Users\Entities\User;
 use Modules\Users\Entities\Users;
-use App\Models\Patient;
+use Modules\Patients\Entities\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
-use App\Notifications\NewPatientNotification;
-use App\Notifications\PatientUpdatedNotification;
-use App\Notifications\PatientDeletedNotification;
+use Modules\Patients\Notifications\NewPatientNotification;
+use Modules\Patients\Notifications\PatientUpdatedNotification;
+use Modules\Patients\Notifications\PatientDeletedNotification;
 
 class PatientController extends Controller
 {

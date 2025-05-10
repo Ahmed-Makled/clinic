@@ -5,9 +5,9 @@ namespace Modules\Dashboard\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
 use App\Models\Patient;
-use App\Models\Appointment;
-use App\Models\Category;
-use App\Models\User;
+use Modules\Appointments\Entities\Appointment;
+use Modules\Specialties\Entities\Category;
+use Modules\Users\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 

@@ -3,18 +3,20 @@
 namespace Modules\Doctors\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Doctor;
-use App\Models\Category;
-use App\Models\Governorate;
-use App\Models\User;
-use App\Models\Appointment;
+use Modules\Doctors\Entities\Doctor;
+use Modules\Doctors\Entities\DoctorRating;
+use Modules\Doctors\Entities\DoctorSchedule;
+use Modules\Specialties\Entities\Category;
+use Modules\Users\Entities\Governorate;
+use Modules\Users\Entities\User;
+use Modules\Appointments\Entities\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
-use App\Notifications\NewDoctorNotification;
-use App\Notifications\DoctorUpdatedNotification;
-use App\Notifications\DoctorDeletedNotification;
+use Modules\Doctors\Notifications\NewDoctorNotification;
+use Modules\Doctors\Notifications\DoctorUpdatedNotification;
+use Modules\Doctors\Notifications\DoctorDeletedNotification;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -539,7 +541,7 @@ class DoctorsController extends Controller
         }
 
         // تحميل تقييمات الدكتور
-        $ratings = \App\Models\DoctorRating::where('doctor_id', $doctor->id)
+        $ratings = Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
             ->where('is_verified', true)
             ->with('patient.user')
             ->latest()
@@ -547,19 +549,19 @@ class DoctorsController extends Controller
             ->get();
 
         // حساب إجمالي عدد التقييمات
-        $ratingsCount = \App\Models\DoctorRating::where('doctor_id', $doctor->id)
+        $ratingsCount = Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
             ->where('is_verified', true)
             ->count();
 
         // حساب متوسط التقييم
-        $avgRating = \App\Models\DoctorRating::where('doctor_id', $doctor->id)
+        $avgRating = Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
             ->where('is_verified', true)
             ->avg('rating') ?? 0;
 
         // حساب عدد التقييمات لكل نجمة
         $ratingStats = [];
         for ($i = 5; $i >= 1; $i--) {
-            $count = \App\Models\DoctorRating::where('doctor_id', $doctor->id)
+            $count = Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
                 ->where('is_verified', true)
                 ->where('rating', $i)
                 ->count();
@@ -717,7 +719,7 @@ class DoctorsController extends Controller
         }
 
         // التحقق من عدم وجود تقييم سابق لنفس الحجز
-        $existingRating = \App\Models\DoctorRating::where('doctor_id', $doctor->id)
+        $existingRating = Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
             ->where('patient_id', auth()->user()->patient->id)
             ->where('appointment_id', $validated['appointment_id'])
             ->first();
@@ -732,7 +734,7 @@ class DoctorsController extends Controller
             $message = 'تم تحديث تقييمك بنجاح';
         } else {
             // إنشاء تقييم جديد
-            \App\Models\DoctorRating::create([
+            Modules\Doctors\Entities\DoctorRating::create([
                 'doctor_id' => $doctor->id,
                 'patient_id' => auth()->user()->patient->id,
                 'appointment_id' => $validated['appointment_id'],
@@ -765,7 +767,7 @@ class DoctorsController extends Controller
      */
     private function updateDoctorRating(Doctor $doctor)
     {
-        $avgRating = \App\Models\DoctorRating::where('doctor_id', $doctor->id)
+        $avgRating = DoctorRating::where('doctor_id', $doctor->id)
             ->where('is_verified', true)
             ->avg('rating') ?? 0;
 

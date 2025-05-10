@@ -3,7 +3,7 @@
 namespace Modules\Specialties\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use Modules\Specialties\Entities\Category;
 use Illuminate\Http\Request;
 
 class SpecialtyController extends Controller

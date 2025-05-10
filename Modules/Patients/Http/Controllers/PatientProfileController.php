@@ -3,7 +3,7 @@
 namespace Modules\Patients\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Patient;
+use Modules\Patients\Entities\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;

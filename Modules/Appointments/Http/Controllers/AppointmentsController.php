@@ -3,10 +3,10 @@
 namespace Modules\Appointments\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Appointment;
+use Modules\Appointments\Entities\Appointment;
 use App\Models\Doctor;
 use App\Models\Patient;
-use App\Models\User;
+use Modules\Users\Entities\User;
 use App\Notifications\NewAppointmentNotification;
 use App\Notifications\AppointmentCancelledNotification;
 use App\Notifications\AppointmentCompletedNotification;

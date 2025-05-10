@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Models\Appointment;
+use Modules\Appointments\Entities\Appointment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;

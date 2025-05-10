@@ -2,7 +2,7 @@
 
 namespace Modules\Auth\Http\Controllers;
 
-use App\Models\User;
+use Modules\Users\Entities\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\Governorate;
-use App\Models\City;
-use App\Models\Doctor;
+use Modules\Users\Entities\Governorate;
+use Modules\Specialties\Entities\Category;
+
+use Modules\Users\Entities\City;
+
+use Modules\Doctors\Entities\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
