@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Models\Patient;
+use Modules\Patients\Entities\Patient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;

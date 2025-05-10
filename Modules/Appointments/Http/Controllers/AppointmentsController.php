@@ -4,8 +4,8 @@ namespace Modules\Appointments\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Modules\Appointments\Entities\Appointment;
-use App\Models\Doctor;
-use App\Models\Patient;
+use Modules\Doctors\Entities\Doctor;
+use Modules\Patients\Entities\Patient;
 use Modules\Users\Entities\User;
 use App\Notifications\NewAppointmentNotification;
 use App\Notifications\AppointmentCancelledNotification;

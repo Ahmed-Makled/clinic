@@ -25,15 +25,12 @@ class Doctor extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'bio',
         'description',
         'image',
         'governorate_id',
         'city_id',
         'address',
         'degree',
-        'price',
-        'rating',
         'waiting_time',
         'consultation_fee',
         'experience_years',
@@ -41,14 +38,15 @@ class Doctor extends Model
         'status',
         'title',
         'specialization',
-        'is_profile_completed'
+        'is_profile_completed',
+        'first_name',
+        'last_name',
+        'rating_avg'
     ];
 
     protected $searchable = [
-        'name',
-        'email',
-        'phone',
-        'bio',
+        'first_name',
+        'last_name',
         'description'
     ];
 

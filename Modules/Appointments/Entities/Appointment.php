@@ -61,7 +61,8 @@ class Appointment extends Model
         'waiting_time',
         'is_paid',
         'is_important',
-        'payment_method'
+        'payment_method',
+        'payment_id'
     ];
 
     /**
@@ -74,7 +75,9 @@ class Appointment extends Model
         'fees' => 'decimal:2',
         'is_paid' => 'boolean',
         'is_important' => 'boolean',
-        'waiting_time' => 'integer'
+        'waiting_time' => 'integer',
+        'payment_method' => 'string',
+        'payment_id' => 'string'
     ];
 
     /**

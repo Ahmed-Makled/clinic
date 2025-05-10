@@ -3,8 +3,8 @@
 namespace Modules\Dashboard\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Doctor;
-use App\Models\Patient;
+use Modules\Doctors\Entities\Doctor;
+use Modules\Patients\Entities\Patient;
 use Modules\Appointments\Entities\Appointment;
 use Modules\Specialties\Entities\Category;
 use Modules\Users\Entities\User;

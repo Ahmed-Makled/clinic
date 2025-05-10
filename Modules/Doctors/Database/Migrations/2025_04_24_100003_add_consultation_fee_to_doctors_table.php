@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('doctors', function (Blueprint $table) {
-            $table->decimal('consultation_fee', 10, 2)->nullable()->after('price');
+            $table->decimal('consultation_fee', 10, 2)->nullable();
             $table->integer('experience_years')->nullable()->after('consultation_fee');
         });
     }

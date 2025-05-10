@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Drop old table if it exists
+        Schema::dropIfExists('doctor_schedules');
+
+        // Create the consolidated doctor_schedules table
         Schema::create('doctor_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('doctor_id')->constrained()->onDelete('cascade');
@@ -19,6 +23,9 @@ return new class extends Migration
             $table->time('end_time');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            // Add index for faster lookups
+            $table->index(['doctor_id', 'day']);
         });
     }
 

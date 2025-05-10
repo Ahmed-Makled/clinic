@@ -4,8 +4,8 @@ namespace Modules\Users\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Modules\Users\Entities\User;
-use App\Models\Doctor;
-use App\Models\Patient;
+use Modules\Doctors\Entities\Doctor;
+use Modules\Patients\Entities\Patient;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;

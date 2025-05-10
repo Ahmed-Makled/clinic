@@ -1,7 +1,5 @@
 <?php
 
-namespace Modules\Appointments\Database\Migrations;
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('appointments', function (Blueprint $table) {
-            $table->integer('waiting_time')->nullable()->after('fees')->comment('Waiting time in minutes');
+        Schema::create('consolidated_doctor_ratings', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
         });
     }
 
@@ -23,8 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('appointments', function (Blueprint $table) {
-            $table->dropColumn('waiting_time');
-        });
+        Schema::dropIfExists('consolidated_doctor_ratings');
     }
 };

@@ -3,7 +3,7 @@
 namespace Modules\Auth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Doctor;
+use Modules\Doctors\Entities\Doctor;
 use App\Notifications\IncompleteProfileNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
