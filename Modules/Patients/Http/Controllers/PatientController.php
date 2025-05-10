@@ -48,12 +48,12 @@ class PatientController extends Controller
         $query->latest();
 
         $patients = $query->paginate(10)->withQueryString();
-        return view('patients::index', compact('patients'));
+        return view('patients::admin.index', compact('patients'));
     }
 
     public function create()
     {
-        return view('patients::create');
+        return view('patients::admin.create');
     }
 
     public function store(Request $request)
@@ -105,7 +105,7 @@ class PatientController extends Controller
     public function edit(User $patient)
     {
         $patient->load('patient');
-        return view('patients::edit', compact('patient'));
+        return view('patients::admin.edit', compact('patient'));
     }
 
     public function update(Request $request, User $patient)
@@ -178,6 +178,6 @@ class PatientController extends Controller
     public function details(User $patient)
     {
         $patient->load('patient');
-        return view('patients::details', compact('patient'));
+        return view('patients::admin.details', compact('patient'));
     }
 }

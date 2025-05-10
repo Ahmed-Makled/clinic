@@ -80,7 +80,7 @@ class AppointmentsController extends Controller
         $appointments = $query->orderBy('scheduled_at', 'desc')->paginate(15);
         $doctors = Doctor::all();
 
-        return view('appointments::index', compact('appointments', 'doctors', 'stats', 'request'));
+        return view('appointments::admin.index', compact('appointments', 'doctors', 'stats', 'request'));
     }
 
     public function create()
@@ -88,7 +88,7 @@ class AppointmentsController extends Controller
         $doctors = Doctor::all();
         $patients = Patient::all();
 
-        return view('appointments::create', [
+        return view('appointments::admin.create', [
             'doctors' => $doctors,
             'patients' => $patients,
             'title' => 'إضافة حجز جديد'
@@ -264,7 +264,7 @@ class AppointmentsController extends Controller
 
         // استخدام قالب مختلف حسب نوع المستخدم
         if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Doctor')) {
-            return view('appointments::details', [
+            return view('appointments::admin.details', [
                 'appointment' => $appointment,
                 'title' => 'تفاصيل الحجز',
                 'existingRating' => $existingRating
@@ -283,7 +283,7 @@ class AppointmentsController extends Controller
         $doctors = Doctor::all();
         $patients = Patient::all();
 
-        return view('appointments::edit', [
+        return view('appointments::admin.edit', [
             'appointment' => $appointment,
             'doctors' => $doctors,
             'patients' => $patients,

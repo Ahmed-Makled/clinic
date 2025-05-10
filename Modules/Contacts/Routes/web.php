@@ -14,7 +14,7 @@ Route::prefix('contact')->group(function() {
     Route::post('/', [ContactsController::class, 'store'])->name('contact.store');
 
     // مسارات إدارة الاتصال
-    Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function() {
+    Route::middleware(['web', 'auth:web', 'role:Admin'])->prefix('admin')->group(function() {
         Route::get('/list', [ContactsController::class, 'adminIndex'])->name('admin.contacts.index');
     });
 });

@@ -997,6 +997,14 @@
                         <div class="nav-section-title">النظام</div>
                         <ul class="nav flex-column">
                             <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}"
+                                   href="{{ route('admin.contacts.index') }}" data-bs-toggle="tooltip"
+                                   data-bs-placement="left" data-bs-title="رسائل التواصل">
+                                    <i class="bi bi-envelope"></i>
+                                    <span>رسائل التواصل</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ url('/') }}" target="_blank" data-bs-toggle="tooltip"
                                     data-bs-placement="left" data-bs-title="زيارة الموقع">
                                     <i class="bi bi-globe"></i>

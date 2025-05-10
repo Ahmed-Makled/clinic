@@ -104,14 +104,14 @@ class DoctorsController extends Controller
             ]
         ];
 
-        return view('doctors::index', compact('doctors', 'categories', 'governorates', 'stats'));
+        return view('doctors::admin.index', compact('doctors', 'categories', 'governorates', 'stats'));
     }
 
     public function create()
     {
         $categories = Category::active()->get();
         $governorates = Governorate::with('cities')->get();
-        return view('doctors::create', compact('categories', 'governorates'));
+        return view('doctors::admin.create', compact('categories', 'governorates'));
     }
 
     public function store(Request $request)
@@ -287,7 +287,7 @@ class DoctorsController extends Controller
         $doctor->load(['schedules']); // تحميل جداول الحجوزات
         $categories = Category::all();
         $governorates = Governorate::with('cities')->get();
-        return view('doctors::edit', compact('doctor', 'categories', 'governorates'));
+        return view('doctors::admin.edit', compact('doctor', 'categories', 'governorates'));
     }
 
     public function update(Request $request, Doctor $doctor)
@@ -578,7 +578,7 @@ class DoctorsController extends Controller
             ];
         }
 
-        return view('doctors::details', compact(
+        return view('doctors::admin.details', compact(
             'doctor',
             'appointments',
             'completedAppointments',
@@ -1252,7 +1252,7 @@ class DoctorsController extends Controller
 
         $categories = Category::active()->get();
 
-        return view('doctors::incomplete_profiles', compact('doctors', 'categories'));
+        return view('doctors::admin.incomplete_profiles', compact('doctors', 'categories'));
     }
 
     /**
