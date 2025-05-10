@@ -2,7 +2,6 @@
 
 namespace Modules\Doctors\Notifications;
 
-use Modules\Doctors\Entities\Doctor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;

@@ -24,8 +24,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map(): void
     {
-        $this->mapApiRoutes();
+        // Only use web routes for MVC approach
         $this->mapWebRoutes();
+
+        // API routes removed as per MVC architecture
     }
 
     /**
@@ -36,15 +38,5 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes(): void
     {
         Route::middleware('web')->group(module_path($this->name, '/Routes/web.php'));
-    }
-
-    /**
-     * Define the "api" routes for the application.
-     *
-     * These routes are typically stateless.
-     */
-    protected function mapApiRoutes(): void
-    {
-        Route::middleware('api')->prefix('api')->name('api.')->group(module_path($this->name, '/Routes/api.php'));
     }
 }

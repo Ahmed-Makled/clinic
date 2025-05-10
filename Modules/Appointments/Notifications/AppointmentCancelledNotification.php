@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace Modules\Appointments\Notifications;
 
 use Modules\Appointments\Entities\Appointment;
 use Illuminate\Bus\Queueable;

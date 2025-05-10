@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use Modules\Users\Entities\Governorate;
-use App\Models\City;
+use Modules\Users\Entities\City;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class GovernorateAndCitySeeder extends Seeder
 {

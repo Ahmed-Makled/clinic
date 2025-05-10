@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Notifications;
+namespace Modules\Appointments\Notifications;
 
 use Modules\Appointments\Entities\Appointment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class NewAppointmentNotification extends Notification
+class AppointmentCompletedNotification extends Notification
 {
     use Queueable;
 
@@ -26,8 +26,8 @@ class NewAppointmentNotification extends Notification
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('حجز جديد')
-            ->line('تم إضافة حجز جديد')
+            ->subject('تم اكتمال الحجز')
+            ->line('تم اكتمال الحجز التالي:')
             ->line("الطبيب: {$this->appointment->doctor->name}")
             ->line("المريض: {$this->appointment->patient->name}")
             ->line("التاريخ: {$this->appointment->formatted_date}")
@@ -42,8 +42,8 @@ class NewAppointmentNotification extends Notification
             'doctor_name' => $this->appointment->doctor->name,
             'patient_name' => $this->appointment->patient->name,
             'scheduled_at' => $this->appointment->scheduled_at,
-            'type' => 'new_appointment',
-            'message' => "حجز جديد للمريض {$this->appointment->patient->name} مع الدكتور {$this->appointment->doctor->name}"
+            'type' => 'appointment_completed',
+            'message' => "تم اكتمال حجز المريض {$this->appointment->patient->name} مع الدكتور {$this->appointment->doctor->name}"
         ];
     }
 }

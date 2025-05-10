@@ -1,21 +1,28 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Contacts\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Modules\Contacts\Entities\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
-class ContactController extends Controller
+class ContactsController extends Controller
 {
+    /**
+     * عرض صفحة الاتصال
+     */
     public function index()
     {
-        return view('contact',[
+        return view('contacts::index', [
             'title' => 'Contact Us',
             'classes' => 'bg-white'
         ]);
     }
 
+    /**
+     * حفظ رسالة اتصال جديدة
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -31,12 +38,12 @@ class ContactController extends Controller
             'message.required' => 'يرجى إدخال نص الرسالة',
         ]);
 
-        // Store the contact message in database
+        // حفظ رسالة الاتصال في قاعدة البيانات
         Contact::create($validated);
 
-        // Send email notification with error handling
+        // إرسال إشعار بريد إلكتروني مع معالجة الأخطاء
         try {
-            // Create a more structured email message
+            // إنشاء رسالة بريد إلكتروني منظمة
             $emailContent = view('emails.contact', [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
@@ -45,7 +52,7 @@ class ContactController extends Controller
             ])->render();
 
             Mail::html($emailContent, function($message) use ($validated) {
-                $message->to('ahmed.makled@roboost.app')
+                $message->to(config('contacts.admin_email', 'ahmed.makled@roboost.app'))
                         ->subject('رسالة جديدة من نموذج الاتصال: ' . $validated['subject'])
                         ->from($validated['email'], $validated['name']);
             });
@@ -70,5 +77,18 @@ class ContactController extends Controller
         }
 
         return redirect()->back()->with('success', 'تم إرسال رسالتك بنجاح. سنقوم بالرد عليك في أقرب وقت.');
+    }
+
+    /**
+     * عرض قائمة رسائل الاتصال (للمسؤول)
+     */
+    public function adminIndex()
+    {
+        $contacts = Contact::latest()->paginate(10);
+
+        return view('contacts::admin.index', [
+            'contacts' => $contacts,
+            'title' => 'إدارة رسائل الاتصال'
+        ]);
     }
 }
