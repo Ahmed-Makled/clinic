@@ -35,14 +35,6 @@ class PageController extends Controller
         ]);
     }
 
-    /**
-     * تم نقل الدوال التالية إلى Modules\Patients\Http\Controllers\PatientProfileController:
-     * - profile()
-     * - storeProfile()
-     * - updateProfile()
-     * - updatePassword()
-     */
-
     public function getCities(Governorate $governorate)
     {
         $cities = $governorate->cities->map(function($city) {
@@ -59,7 +51,7 @@ class PageController extends Controller
     {
         $query = Doctor::query()
             ->where('status', true)
-            ->where('is_profile_completed', true) // Only show doctors with complete profiles
+            ->where('is_profile_completed', true)
             ->with(['categories', 'governorate', 'city']);
 
         if ($request->filled('category')) {

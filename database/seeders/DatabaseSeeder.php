@@ -8,16 +8,17 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create roles first
         $this->call(RoleSeeder::class);
-
-        // Then create the admin user and assign role
         $this->call(AdminSeeder::class);
 
-        // Other seeders
         $this->call([
             CategorySeeder::class,
             GovernorateAndCitySeeder::class,
         ]);
+
+        if ($this->command->option('fake')) {
+            $this->call(FakeDataSeeder::class);
+            $this->command->info('Fake data has been added successfully!');
+        }
     }
 }

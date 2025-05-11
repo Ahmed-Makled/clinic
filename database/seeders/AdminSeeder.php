@@ -10,7 +10,6 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create admin users
         $admin = User::firstOrCreate(
             ['email' => 'admin@clinic.com'],
             [

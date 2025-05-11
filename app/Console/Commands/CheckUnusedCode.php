@@ -15,17 +15,12 @@ class CheckUnusedCode extends Command
     protected $description = 'Check and optionally delete unused Models, Controllers, Migrations, and Entities';
 
     protected $ignored = [
-        // Controllers
         'Controller', 'BaseController', 'AuthController',
-        // Models
         'Model', 'BaseModel', 'User',
-        // Common base classes
         'BaseEntity', 'Entity',
-        // Migration-related classes
         'Migration',
     ];
 
-    // Extensions to check for code references
     protected $codeExtensions = ['php', 'blade.php', 'js', 'vue', 'json'];
 
     public function handle()
@@ -36,7 +31,6 @@ class CheckUnusedCode extends Command
             'Migrations' => database_path('migrations'),
         ];
 
-        // Check if entities folder exists and add it
         if (File::isDirectory(app_path('Entities'))) {
             $paths['Entities'] = app_path('Entities');
         } elseif (File::isDirectory(base_path('Entities'))) {
@@ -61,7 +55,6 @@ class CheckUnusedCode extends Command
                 $filesChecked++;
                 $className = pathinfo($file, PATHINFO_FILENAME);
 
-                // Skip migrations in numerical format
                 if ($type === 'Migrations' && preg_match('/^\d{4}_\d{2}_\d{2}_\d{6}_/', $className)) {
                     $className = $this->extractMigrationClassName($className);
                 }
@@ -86,7 +79,7 @@ class CheckUnusedCode extends Command
         }
 
         $bar->finish();
-        $this->line(''); // New line after progress bar
+        $this->line('');
 
         $this->info("Analysis complete! Checked $filesChecked files.");
 
@@ -115,11 +108,9 @@ class CheckUnusedCode extends Command
 
     private function extractMigrationClassName($filename)
     {
-        // Extract the descriptive part of the migration name
         $parts = explode('_', $filename, 5);
         if (count($parts) >= 5) {
             $descriptiveName = $parts[4];
-            // Convert snake_case to PascalCase
             return Str::studly($descriptiveName);
         }
         return $filename;
@@ -157,13 +148,11 @@ class CheckUnusedCode extends Command
         $namespace = $this->extractNamespace($fileContent);
         $fullClassName = $namespace . '\\' . $className;
 
-        // For Controllers, check both ControllerName and {ControllerName}Controller
         $searchTerms = [$className];
         if ($type === 'Controllers' && !Str::endsWith($className, 'Controller')) {
             $searchTerms[] = $className . 'Controller';
         }
 
-        // For migrations, check for table name references
         if ($type === 'Migrations') {
             $tableName = $this->getTableNameFromMigration($fileContent);
             if ($tableName) {
@@ -171,46 +160,38 @@ class CheckUnusedCode extends Command
             }
         }
 
-        // For Models, also check for table name usage
         if ($type === 'Models') {
-            // Guess the table name (pluralized model name)
             $tableName = Str::snake(Str::plural($className));
             $searchTerms[] = $tableName;
 
-            // Get actual table name if defined in the model
             $definedTable = $this->getTableNameFromModel($fileContent);
             if ($definedTable) {
                 $searchTerms[] = $definedTable;
             }
         }
 
-        // Check relevant files throughout project
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(base_path()));
         $regexIterator = new RegexIterator($iterator, '/\.(' . implode('|', $this->codeExtensions) . ')$/i');
 
         foreach ($regexIterator as $file) {
             $currentFilePath = $file->getPathname();
 
-            // Skip the file we're checking
             if ($currentFilePath === $filePath) {
                 continue;
             }
 
-            // Skip vendor directory to improve performance
             if (Str::contains($currentFilePath, '/vendor/')) {
                 continue;
             }
 
             $content = File::get($currentFilePath);
 
-            // Check for class name
             foreach ($searchTerms as $term) {
                 if (str_contains($content, $term)) {
                     return true;
                 }
             }
 
-            // Check for namespace usage
             if (str_contains($content, $fullClassName) ||
                 str_contains($content, str_replace('\\', '\\\\', $fullClassName))) {
                 return true;

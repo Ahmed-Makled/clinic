@@ -1,8 +1,6 @@
-<!-- Modern Footer with Three Columns -->
 <footer class="footer mt-auto py-5">
     <div class="container">
         <div class="row g-4">
-            <!-- Patient Links -->
             <div class="col-lg-4 col-md-6">
                 <h5 class="footer-heading mb-4">روابط المرضى</h5>
                 <ul class="footer-links">
@@ -14,7 +12,6 @@
                 </ul>
             </div>
 
-            <!-- Doctor Links -->
             <div class="col-lg-4 col-md-6">
                 <h5 class="footer-heading mb-4">روابط الأطباء</h5>
                 <ul class="footer-links">
@@ -26,7 +23,6 @@
                 </ul>
             </div>
 
-            <!-- Help & Resources -->
             <div class="col-lg-4 col-md-12">
                 <h5 class="footer-heading mb-4">المساعدة والموارد</h5>
                 <ul class="footer-links">
@@ -37,7 +33,6 @@
                     <li><a href="{{ route('about') }}">الشروط والأحكام</a></li>
                 </ul>
 
-                <!-- Social Icons -->
                 <div class="social-icons mt-4">
                     <h6 class="text-muted mb-3">تابعنا على</h6>
                     <div class="d-flex gap-3">
@@ -58,7 +53,6 @@
             </div>
         </div>
 
-        <!-- Copyright -->
         <div class="footer-bottom text-center mt-5 pt-4 border-top">
             <p class="mb-0">© {{ date('Y') }} جميع الحقوق محفوظة</p>
         </div>

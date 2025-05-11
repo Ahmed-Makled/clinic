@@ -1,13 +1,6 @@
 <?php
 
 if (!function_exists('format_date')) {
-    /**
-     * Format a date for display.
-     *
-     * @param mixed $date
-     * @param string $format
-     * @return string
-     */
     function format_date($date, string $format = 'Y-m-d'): string
     {
         if (!$date) {
@@ -27,20 +20,13 @@ if (!function_exists('format_date')) {
 }
 
 if (!function_exists('format_time')) {
-    /**
-     * Format a time for display.
-     *
-     * @param mixed $time
-     * @param string $format
-     * @return string
-     */
     function format_time($time, string $format = 'h:i A'): string
     {
         if (!$time) {
             return '';
         }
 
-        if (is_string($time) && strlen($time) <= 8) { // Handling time strings like "14:30:00"
+        if (is_string($time) && strlen($time) <= 8) {
             $time = \Carbon\Carbon::createFromFormat('H:i:s', $time);
         } elseif (is_string($time)) {
             $time = new \DateTime($time);
@@ -55,13 +41,6 @@ if (!function_exists('format_time')) {
 }
 
 if (!function_exists('format_datetime')) {
-    /**
-     * Format a datetime for display.
-     *
-     * @param mixed $datetime
-     * @param string $format
-     * @return string
-     */
     function format_datetime($datetime, string $format = 'Y-m-d h:i A'): string
     {
         if (!$datetime) {
@@ -81,14 +60,6 @@ if (!function_exists('format_datetime')) {
 }
 
 if (!function_exists('get_appointment_time_slots')) {
-    /**
-     * Get available appointment time slots.
-     *
-     * @param int $intervalMinutes
-     * @param string $startTime
-     * @param string $endTime
-     * @return array
-     */
     function get_appointment_time_slots(int $intervalMinutes = 30, string $startTime = '09:00', string $endTime = '17:00'): array
     {
         $slots = [];
@@ -105,12 +76,6 @@ if (!function_exists('get_appointment_time_slots')) {
 }
 
 if (!function_exists('get_status_badge_class')) {
-    /**
-     * Get CSS class for status badge.
-     *
-     * @param string $status
-     * @return string
-     */
     function get_status_badge_class(string $status): string
     {
         $map = [
@@ -128,41 +93,20 @@ if (!function_exists('get_status_badge_class')) {
 }
 
 if (!function_exists('is_valid_phone')) {
-    /**
-     * Validate a phone number.
-     *
-     * @param string $phone
-     * @return bool
-     */
     function is_valid_phone(string $phone): bool
     {
-        // No validation - accept any phone number
         return true;
     }
 }
 
 if (!function_exists('sanitize_phone')) {
-    /**
-     * Sanitize a phone number.
-     *
-     * @param string $phone
-     * @return string
-     */
     function sanitize_phone(string $phone): string
     {
-        // No sanitization - return phone as is
         return $phone;
     }
 }
 
 if (!function_exists('mask_sensitive_data')) {
-    /**
-     * Mask sensitive data for display.
-     *
-     * @param string $data
-     * @param int $visibleChars
-     * @return string
-     */
     function mask_sensitive_data(string $data, int $visibleChars = 4): string
     {
         if (strlen($data) <= $visibleChars) {
@@ -177,14 +121,6 @@ if (!function_exists('mask_sensitive_data')) {
 }
 
 if (!function_exists('success_response')) {
-    /**
-     * Create a standardized success response.
-     *
-     * @param mixed $data
-     * @param string $message
-     * @param int $statusCode
-     * @return array
-     */
     function success_response($data = null, string $message = 'Operation successful', int $statusCode = 200): array
     {
         return [
@@ -197,14 +133,6 @@ if (!function_exists('success_response')) {
 }
 
 if (!function_exists('error_response')) {
-    /**
-     * Create a standardized error response.
-     *
-     * @param string $message
-     * @param mixed $errors
-     * @param int $statusCode
-     * @return array
-     */
     function error_response(string $message = 'An error occurred', $errors = null, int $statusCode = 400): array
     {
         return [
@@ -217,14 +145,6 @@ if (!function_exists('error_response')) {
 }
 
 if (!function_exists('format_money')) {
-    /**
-     * Format a number as currency.
-     *
-     * @param float $amount
-     * @param string $currency
-     * @param int $decimals
-     * @return string
-     */
     function format_money(float $amount, string $currency = 'USD', int $decimals = 2): string
     {
         $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::CURRENCY);
