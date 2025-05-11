@@ -11,7 +11,7 @@ class SpecialtyController extends Controller
     public function index()
     {
         $specialties = Category::withCount('doctors')->paginate(15);
-        return view('specialties::index', [
+        return view('specialties::admin.index', [
             'specialties' => $specialties,
             'title' => 'التخصصات'
         ]);
@@ -19,7 +19,7 @@ class SpecialtyController extends Controller
 
     public function create()
     {
-        return view('specialties::create', [
+        return view('specialties::admin.create', [
             'title' => 'إضافة تخصص جديد'
         ]);
     }
@@ -40,7 +40,7 @@ class SpecialtyController extends Controller
 
     public function edit(Category $specialty)
     {
-        return view('specialties::edit', [
+        return view('specialties::admin.edit', [
             'specialty' => $specialty,
             'title' => 'تعديل التخصص'
         ]);

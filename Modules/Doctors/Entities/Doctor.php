@@ -79,10 +79,29 @@ class Doctor extends Model
      */
     public function getImageUrlAttribute()
     {
-        if ($this->image) {
-            return asset('storage/' . $this->image);
+        // المسار الافتراضي للصورة
+        $defaultImagePath = 'images/default-doctor.png';
+
+        // التحقق من وجود صورة محددة للطبيب
+        if (!empty($this->image)) {
+            $imagePath = 'storage/' . $this->image;
+
+            // التحقق من وجود الملف فعليًا
+            if (file_exists(public_path($imagePath))) {
+                return asset($imagePath);
+            }
+
+            // إذا كان المسار موجود ولكن الملف غير موجود، نسجل هذا في السجلات
+            \Illuminate\Support\Facades\Log::warning("صورة الطبيب غير موجودة: {$this->image} للطبيب رقم: {$this->id}");
         }
-        return asset('images/default-doctor.png');
+
+        // التحقق من وجود الصورة الافتراضية، وإلا استخدم صورة افتراضية أخرى
+        if (file_exists(public_path($defaultImagePath))) {
+            return asset($defaultImagePath);
+        }
+
+        // إذا لم تكن الصورة الافتراضية موجودة، استخدم صورة افتراضية من UI Avatars
+        return "https://ui-avatars.com/api/?name=" . urlencode($this->name) . "&background=random&color=fff&size=256";
     }
 
     /**

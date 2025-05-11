@@ -153,7 +153,7 @@
                                         {{ $appointment->status_text }}
                                     </span>
                                     @if($appointment->is_important)
-                                        <span class="badge bg-danger text-white">
+                                        <span class="badge bg-danger text-white important">
                                             <i class="bi bi-star-fill"></i>
                                         </span>
                                     @endif
@@ -526,6 +526,11 @@
         }
         .badge.bg-danger {
             background-color: var(--danger-bg-subtle) !important;
+            color: var(--danger-color);
+        }
+        .badge.bg-danger.important {
+            margin-inline-start: 4px;
+            background-color: rgba(var(--bs-danger-rgb),var(--bs-bg-opacity))!important ;
             color: var(--danger-color);
         }
         .badge.bg-success {

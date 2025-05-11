@@ -31,7 +31,7 @@
                             <option value="">الكل</option>
                             <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>مكتمل</option>
                             <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>معلق</option>
-                            <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>فاشل</option>
+                            <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>مرفوض</option>
                             <option value="refunded" {{ request('status') == 'refunded' ? 'selected' : '' }}>مسترجع</option>
                         </select>
                     </div>
@@ -104,9 +104,7 @@
                                     <div class="d-flex align-items-center">
                                         @if ($payment->appointment && $payment->appointment->patient)
                                             <div>
-                                                <a href="{{ route('patients.show', $payment->appointment->patient) }}">
-                                                    {{ $payment->appointment->patient->name }}
-                                                </a>
+                                                {{ $payment->appointment->patient->name }}
                                             </div>
                                         @else
                                             <div>غير متوفر</div>
@@ -122,9 +120,7 @@
                                                      class="doctor-avatar">
                                             @endif
                                             <div>
-                                                <a href="{{ route('doctors.show', $payment->appointment->doctor) }}">
-                                                    {{ $payment->appointment->doctor->name }}
-                                                </a>
+                                                {{ $payment->appointment->doctor->name }}
                                             </div>
                                         @else
                                             <div>غير متوفر</div>
@@ -145,7 +141,7 @@
                                         </span>
                                     @elseif ($payment->status == 'failed')
                                         <span class="status-badge inactive">
-                                            <i class="bi bi-x-circle-fill"></i> فاشل
+                                            <i class="bi bi-x-circle-fill"></i> مرفوض
                                         </span>
                                     @elseif ($payment->status == 'refunded')
                                         <span class="status-badge refunded">
@@ -181,84 +177,6 @@
                                             data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="عرض">
                                             <i class="bi bi-eye"></i>
                                         </a>
-
-                                        @if ($payment->status == 'pending')
-                                            <button type="button" class="btn-action btn-mark-completed"
-                                                data-bs-toggle="modal" data-bs-target="#markCompletedModal{{ $payment->id }}"
-                                                data-bs-tooltip="tooltip" data-bs-placement="top" title="تأكيد المدفوعات">
-                                                <i class="bi bi-check-circle"></i>
-                                            </button>
-
-                                            <button type="button" class="btn-action btn-mark-failed"
-                                                data-bs-toggle="modal" data-bs-target="#markFailedModal{{ $payment->id }}"
-                                                data-bs-tooltip="tooltip" data-bs-placement="top" title="رفض المدفوعات">
-                                                <i class="bi bi-x-circle"></i>
-                                            </button>
-
-                                            <!-- Mark Completed Modal -->
-                                            <div class="modal fade" id="markCompletedModal{{ $payment->id }}" tabindex="-1">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">تأكيد إتمام الدفع</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p>هل أنت متأكد من تحديث حالة الدفع إلى مكتمل؟</p>
-                                                            <div class="alert alert-info">
-                                                                <i class="bi bi-info-circle me-2"></i>
-                                                                سيتم تأكيد استلام مبلغ {{ number_format($payment->amount) }} {{ $payment->currency }}
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-light"
-                                                                data-bs-dismiss="modal">إلغاء</button>
-                                                            <form action="{{ route('admin.payments.mark-completed', $payment) }}"
-                                                                method="POST" class="d-inline">
-                                                                @csrf
-                                                                @method('PATCH')
-                                                                <button type="submit" class="btn btn-success">
-                                                                    <i class="bi bi-check me-2"></i>
-                                                                    تأكيد الدفع
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Mark Failed Modal -->
-                                            <div class="modal fade" id="markFailedModal{{ $payment->id }}" tabindex="-1">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">تأكيد فشل الدفع</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p>هل أنت متأكد من تحديث حالة الدفع إلى فاشل؟</p>
-                                                            <div class="alert alert-warning">
-                                                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                                                لن يتم احتساب مبلغ {{ number_format($payment->amount) }} {{ $payment->currency }} كإيرادات
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-light"
-                                                                data-bs-dismiss="modal">إلغاء</button>
-                                                            <form action="{{ route('admin.payments.mark-failed', $payment) }}"
-                                                                method="POST" class="d-inline">
-                                                                @csrf
-                                                                @method('PATCH')
-                                                                <button type="submit" class="btn btn-danger">
-                                                                    <i class="bi bi-x me-2"></i>
-                                                                    تأكيد فشل الدفع
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
                                     </div>
                                 </td>
                             </tr>

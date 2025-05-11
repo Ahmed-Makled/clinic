@@ -545,7 +545,7 @@ class DoctorsController extends Controller
         }
 
         // تحميل تقييمات الدكتور
-        $ratings = Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
+        $ratings = DoctorRating::where('doctor_id', $doctor->id)
             ->where('is_verified', true)
             ->with('patient.user')
             ->latest()
@@ -553,19 +553,19 @@ class DoctorsController extends Controller
             ->get();
 
         // حساب إجمالي عدد التقييمات
-        $ratingsCount = Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
+        $ratingsCount = DoctorRating::where('doctor_id', $doctor->id)
             ->where('is_verified', true)
             ->count();
 
         // حساب متوسط التقييم
-        $avgRating = Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
+        $avgRating = DoctorRating::where('doctor_id', $doctor->id)
             ->where('is_verified', true)
             ->avg('rating') ?? 0;
 
         // حساب عدد التقييمات لكل نجمة
         $ratingStats = [];
         for ($i = 5; $i >= 1; $i--) {
-            $count = Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
+            $count = DoctorRating::where('doctor_id', $doctor->id)
                 ->where('is_verified', true)
                 ->where('rating', $i)
                 ->count();

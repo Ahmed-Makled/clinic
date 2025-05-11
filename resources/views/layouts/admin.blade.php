@@ -493,21 +493,6 @@
         /* Table Styles */
 
         /* Badge Styles */
-        .badge {
-            padding: 0.5em 0.8em;
-            font-weight: 500;
-            border-radius: 6px;
-        }
-
-        .badge.bg-primary {
-            background-color: var(--primary-bg-subtle) !important;
-            color: var(--primary-color);
-        }
-
-        .badge.bg-success {
-            background-color: var(--success-bg-subtle) !important;
-            color: var(--success-color);
-        }
 
         .badge.bg-danger.notifications-count {
             background-color: var(--danger-bg-subtle) !important;
