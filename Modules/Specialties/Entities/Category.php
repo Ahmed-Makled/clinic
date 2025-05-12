@@ -52,22 +52,26 @@ class Category extends Model
         });
     }
 
+    /**
+     * Get all doctors that belong to this category
+     */
     public function doctors()
     {
-        return $this->belongsToMany(Doctor::class, 'doctor_category')
-                    ->withTimestamps();
+        return $this->hasMany(Doctor::class);
     }
 
+    /**
+     * Get all appointments through doctors that belong to this category
+     */
     public function appointments()
     {
         return $this->hasManyThrough(
             Appointment::class,
             Doctor::class,
-            null,
-            'doctor_id'
-        )->join('doctor_category', function($join) {
-            $join->on('doctors.id', '=', 'doctor_category.doctor_id')
-                 ->where('doctor_category.category_id', '=', $this->id);
-        });
+            'category_id', // Foreign key on doctors table
+            'doctor_id',   // Foreign key on appointments table
+            'id',          // Local key on categories table
+            'id'           // Local key on doctors table
+        );
     }
 }

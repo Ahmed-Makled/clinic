@@ -38,5 +38,5 @@ return [
         'store' => 'default',
     ],
 
-    'guard_name' => 'web'  // Changed to use 'web' guard
+    'guard_name' => 'web'
 ];

@@ -87,14 +87,17 @@
 
                                 <div class="mb-3">
                                     <label for="date_of_birth" class="form-label">تاريخ الميلاد</label>
-                                    <input type="date"
-                                           class="form-control @error('date_of_birth') is-invalid @enderror"
-                                           id="date_of_birth"
-                                           name="date_of_birth"
-                                           value="{{ old('date_of_birth', $patient->date_of_birth ? date('Y-m-d', strtotime($patient->date_of_birth)) : '') }}">
+                                    <div class="d-flex gap-2">
+                                        <input type="date"
+                                               class="form-control @error('date_of_birth') is-invalid @enderror"
+                                               id="date_of_birth"
+                                               name="date_of_birth"
+                                               value="{{ old('date_of_birth', (optional($patient->patient)->date_of_birth ? $patient->patient->date_of_birth->format('Y-m-d') : '')) }}">
+                                    </div>
                                     @error('date_of_birth')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+
                                 </div>
 
                                 <div class="mb-3">
@@ -102,7 +105,7 @@
                                     <textarea class="form-control @error('address') is-invalid @enderror"
                                               id="address"
                                               name="address"
-                                              rows="3">{{ old('address', $patient->address) }}</textarea>
+                                              rows="3">{{ old('address', optional($patient->patient)->address) }}</textarea>
                                     @error('address')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -114,6 +117,74 @@
                                         <input class="form-check-input" type="checkbox" name="status" id="status"
                                             {{ old('status', $patient->status) ? 'checked' : '' }}>
                                         <label class="form-check-label" for="status">نشط</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- بيانات طبية إضافية -->
+                        <div class="card mt-4 mb-3">
+                            <div class="card-header py-2 bg-light">
+                                <h6 class="mb-0">المعلومات الطبية</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="medical_history" class="form-label">التاريخ الطبي</label>
+                                            <textarea class="form-control @error('medical_history') is-invalid @enderror"
+                                                    id="medical_history"
+                                                    name="medical_history"
+                                                    rows="3">{{ old('medical_history', optional($patient->patient)->medical_history) }}</textarea>
+                                            @error('medical_history')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="blood_type" class="form-label">فصيلة الدم</label>
+                                            <select class="form-select @error('blood_type') is-invalid @enderror"
+                                                    id="blood_type"
+                                                    name="blood_type">
+                                                <option value="">اختر فصيلة الدم</option>
+                                                <option value="A+" {{ old('blood_type', optional($patient->patient)->blood_type) == 'A+' ? 'selected' : '' }}>A+</option>
+                                                <option value="A-" {{ old('blood_type', optional($patient->patient)->blood_type) == 'A-' ? 'selected' : '' }}>A-</option>
+                                                <option value="B+" {{ old('blood_type', optional($patient->patient)->blood_type) == 'B+' ? 'selected' : '' }}>B+</option>
+                                                <option value="B-" {{ old('blood_type', optional($patient->patient)->blood_type) == 'B-' ? 'selected' : '' }}>B-</option>
+                                                <option value="AB+" {{ old('blood_type', optional($patient->patient)->blood_type) == 'AB+' ? 'selected' : '' }}>AB+</option>
+                                                <option value="AB-" {{ old('blood_type', optional($patient->patient)->blood_type) == 'AB-' ? 'selected' : '' }}>AB-</option>
+                                                <option value="O+" {{ old('blood_type', optional($patient->patient)->blood_type) == 'O+' ? 'selected' : '' }}>O+</option>
+                                                <option value="O-" {{ old('blood_type', optional($patient->patient)->blood_type) == 'O-' ? 'selected' : '' }}>O-</option>
+                                            </select>
+                                            @error('blood_type')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="emergency_contact" class="form-label">رقم الاتصال في حالات الطوارئ</label>
+                                            <input type="text"
+                                                   class="form-control @error('emergency_contact') is-invalid @enderror"
+                                                   id="emergency_contact"
+                                                   name="emergency_contact"
+                                                   value="{{ old('emergency_contact', optional($patient->patient)->emergency_contact) }}">
+                                            @error('emergency_contact')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="allergies" class="form-label">الحساسية</label>
+                                            <textarea class="form-control @error('allergies') is-invalid @enderror"
+                                                    id="allergies"
+                                                    name="allergies"
+                                                    rows="3">{{ old('allergies', optional($patient->patient)->allergies) }}</textarea>
+                                            @error('allergies')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
                             </div>

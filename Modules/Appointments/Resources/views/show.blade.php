@@ -70,9 +70,9 @@
                         <p class="doctor-title">{{ $appointment->doctor->title }}</p>
 
                         <div class="doctor-categories">
-                            @foreach($appointment->doctor->categories as $index => $category)
-                                <span class="category-badge category-badge-{{ $index % 6 }}">{{ $category->name }}</span>
-                            @endforeach
+                            @if($appointment->doctor->category)
+                                <span class="category-badge category-badge-0">{{ $appointment->doctor->category->name }}</span>
+                            @endif
                         </div>
 
                         <div class="doctor-rating">
@@ -422,7 +422,8 @@
                             <div class="doctor-avatar">
                                 @if($appointment->doctor->image)
                                     <img src="{{ Storage::url($appointment->doctor->image) }}"
-                                        alt="{{ $appointment->doctor->name }}">
+                                        alt="{{ $appointment->doctor->name }}"
+                                        onerror="this.src='{{ asset('images/default-doctor.png') }}'; this.onerror=null;">
                                 @else
                                     <i class="bi bi-person-badge-fill"></i>
                                 @endif
@@ -919,7 +920,7 @@
 
             .stat-icon.duration {
                 background-color: var(--info-light);
-                color: var(--info-color);
+                color: var (--info-color);
             }
 
             .stat-details {

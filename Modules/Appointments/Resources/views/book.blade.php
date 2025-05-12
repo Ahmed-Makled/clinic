@@ -29,8 +29,7 @@
                                 <div class="">
                                     <span class="  text-primary d-inline-flex align-items-center gap-2">
                                         <i class="bi bi-award-fill"></i>
-                                        {{ $doctor->categories->pluck('name')->implode(', ') }}
-
+                                        {{ $doctor->category ? $doctor->category->name : 'غير محدد' }}
                                     </span>
                                 </div>
                                 <div class="location-badge">

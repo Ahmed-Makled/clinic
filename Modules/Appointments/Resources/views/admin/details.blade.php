@@ -239,9 +239,9 @@
                             <div class="profile-details">
                                 <h5 class="doctor-name">د. {{ $appointment->doctor->name }}</h5>
                                 <div class="specialties">
-                                    @foreach($appointment->doctor->categories as $category)
-                                        <span class="specialty-badge">{{ $category->name }}</span>
-                                    @endforeach
+                                    @if($appointment->doctor->category)
+                                        <span class="specialty-badge">{{ $appointment->doctor->category->name }}</span>
+                                    @endif
                                 </div>
                                 <div class="contact-info">
                                     <div class="contact-item">

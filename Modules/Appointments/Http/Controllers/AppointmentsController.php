@@ -5,11 +5,12 @@ namespace Modules\Appointments\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Modules\Appointments\Entities\Appointment;
 use Modules\Doctors\Entities\Doctor;
+use Modules\Doctors\Entities\DoctorRating;
 use Modules\Patients\Entities\Patient;
 use Modules\Users\Entities\User;
-use App\Notifications\NewAppointmentNotification;
-use App\Notifications\AppointmentCancelledNotification;
-use App\Notifications\AppointmentCompletedNotification;
+use Modules\Appointments\Notifications\NewAppointmentNotification;
+use Modules\Appointments\Notifications\AppointmentCancelledNotification;
+use Modules\Appointments\Notifications\AppointmentCompletedNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -258,7 +259,7 @@ class AppointmentsController extends Controller
         $appointment->load(['doctor', 'patient']);
 
         // تحقق من وجود تقييم سابق للطبيب في هذا الحجز
-        $existingRating = \App\Models\DoctorRating::where('appointment_id', $appointment->id)
+        $existingRating = DoctorRating::where('appointment_id', $appointment->id)
             ->where('patient_id', $appointment->patient_id)
             ->first();
 
@@ -619,5 +620,30 @@ class AppointmentsController extends Controller
 
             return back()->withErrors(['error' => 'حدث خطأ أثناء تأكيد خيار الدفع النقدي، يرجى المحاولة مرة أخرى.']);
         }
+    }
+
+    /**
+     * Get available time slots for a specific doctor and date.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAvailableSlots(Request $request)
+    {
+        $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+            'date' => 'required|date|after_or_equal:today',
+        ]);
+
+        $doctor = Doctor::findOrFail($request->doctor_id);
+        $date = $request->date;
+
+        // Get available slots for the doctor on the specified date
+        $availableSlots = $doctor->getAvailableSlots($date);
+
+        return response()->json([
+            'success' => true,
+            'slots' => $availableSlots,
+        ]);
     }
 }

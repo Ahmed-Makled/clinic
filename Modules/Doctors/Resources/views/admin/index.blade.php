@@ -113,12 +113,16 @@
                                 </td>
                                 <td>
                                     <div class="d-flex flex-wrap gap-1">
-                                        @foreach($doctor->categories as $category)
-                                            <span class="badge category-badge-{{ $category->id % 6 }} fs-8"
-                                                data-id="{{ $category->id }}">
-                                                {{ $category->name }}
+                                        @if($doctor->category)
+                                            <span class="badge category-badge-{{ $doctor->category->id % 6 }} fs-8"
+                                                data-id="{{ $doctor->category->id }}">
+                                                {{ $doctor->category->name }}
                                             </span>
-                                        @endforeach
+                                        @else
+                                            <span class="badge bg-light text-dark fs-8">
+                                                غير محدد
+                                            </span>
+                                        @endif
                                     </div>
                                 </td>
                                 <td>

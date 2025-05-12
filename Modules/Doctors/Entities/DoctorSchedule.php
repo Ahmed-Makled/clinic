@@ -14,7 +14,6 @@ class DoctorSchedule extends Model
         'day',
         'start_time',
         'end_time',
-        'slot_duration',
         'is_active'
     ];
 
@@ -44,7 +43,7 @@ class DoctorSchedule extends Model
         $slots = [];
         $startTime = new DateTime($date->format('Y-m-d ') . $this->start_time->format('H:i'));
         $endTime = new DateTime($date->format('Y-m-d ') . $this->end_time->format('H:i'));
-        $interval = new DateInterval('PT' . ($this->slot_duration ?? 30) . 'M');
+        $interval = new DateInterval('PT30M'); // Fixed 30-minute interval
 
         while ($startTime < $endTime) {
             $slots[] = $startTime->format('H:i');

@@ -27,7 +27,6 @@ Route::prefix('doctors')->group(function () {
         Route::put('/profile/password', [DoctorsController::class, 'updatePassword'])->name('doctors.password.update');
         Route::get('/profile/appointments', [DoctorsController::class, 'appointments'])->name('doctors.appointments');
 
-        // Rutas para actualizar el estado de las citas
         Route::put('/profile/appointments/{appointment}/complete', [DoctorsController::class, 'completeAppointment'])->name('doctors.appointments.complete');
         Route::put('/profile/appointments/{appointment}/cancel', [DoctorsController::class, 'cancelAppointment'])->name('doctors.appointments.cancel');
         Route::put('/profile/appointments/{appointment}/mark-as-paid', [DoctorsController::class, 'markAsPaid'])->name('doctors.appointments.mark-as-paid');
@@ -35,7 +34,6 @@ Route::prefix('doctors')->group(function () {
     });
 });
 
-// Rutas públicas que requieren autenticación
 Route::middleware(['web', 'auth:web'])->group(function () {
     Route::get('/search', [DoctorsController::class, 'search'])->name('search');
     Route::post('/doctors/{doctor}/rate', [DoctorsController::class, 'rate'])->name('doctors.rate');

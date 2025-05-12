@@ -104,9 +104,9 @@
                     <div class="doctor-specialties mb-3">
                         <span class="specialty-badge main">{{ $doctor->title }}</span>
                         <div class="mt-2">
-                            @foreach($doctor->categories as $category)
-                                <span class="specialty-badge">{{ $category->name }}</span>
-                            @endforeach
+                            @if($doctor->category)
+                                <span class="specialty-badge">{{ $doctor->category->name }}</span>
+                            @endif
                         </div>
                     </div>
 
@@ -263,6 +263,7 @@
                                             <input type="text" class="form-control @error('title') is-invalid @enderror"
                                                 id="title" name="title" value="{{ old('title', $doctor->title) }}"
                                                 placeholder="مثال: استشاري، أخصائي، طبيب" >
+                                            <small class="text-muted">المسمى الوظيفي الرسمي للطبيب مثل (استشاري - أخصائي - طبيب)</small>
                                             @error('title')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -275,11 +276,12 @@
                                                 <option value="">اختر التخصص</option>
                                                 @foreach($categories as $category)
                                                     <option value="{{ $category->id }}"
-                                                        {{ old('categories', $doctor->categories->contains($category->id)) ? 'selected' : '' }}>
+                                                        {{ old('categories', $doctor->category_id == $category->id) ? 'selected' : '' }}>
                                                         {{ $category->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            <small class="text-muted">المجالات الطبية العامة مثل (طب أطفال - جراحة - باطنة)</small>
                                             @error('categories')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -290,6 +292,7 @@
                                             <input type="text" class="form-control @error('specialization') is-invalid @enderror"
                                                 id="specialization" name="specialization" value="{{ old('specialization', $doctor->specialization) }}"
                                                 placeholder="مثال: جراحة عامة، باطنة، أطفال" >
+                                            <small class="text-muted">التخصص الدقيق ضمن المجال الطبي مثل (جراحة تجميل، أمراض قلب، حساسية أطفال)</small>
                                             @error('specialization')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror

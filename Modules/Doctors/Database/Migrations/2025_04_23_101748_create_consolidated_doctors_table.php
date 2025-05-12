@@ -23,8 +23,7 @@ return new class extends Migration
             $table->index('user_id');
 
             // Name fields
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
+            $table->string('name')->nullable();
 
             // Main fields
             $table->string('image')->nullable();

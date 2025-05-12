@@ -93,7 +93,7 @@
                                     </div>
                                 </td>
                                 <td>{{ $user->email }}</td>
-                                <td dir="ltr">{{ $user->phone_number }}</td>
+                                <td dir="rtl">{{ $user->phone_number }}</td>
                                 <td>
                                     @foreach($user->roles as $role)
                                         <span class="role-badge {{ strtolower($role->name) }}-role">

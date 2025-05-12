@@ -165,8 +165,7 @@ class DashboardController extends Controller
             ->withCount(['doctors as active_doctors_count' => function($query) {
                 $query->where('doctors.status', true);
             }])
-            ->leftJoin('doctor_category', 'categories.id', '=', 'doctor_category.category_id')
-            ->leftJoin('doctors', 'doctor_category.doctor_id', '=', 'doctors.id')
+            ->leftJoin('doctors', 'categories.id', '=', 'doctors.category_id')
             ->leftJoin('appointments', function($join) {
                 $join->on('doctors.id', '=', 'appointments.doctor_id')
                      ->where('appointments.status', '=', 'completed');

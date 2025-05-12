@@ -39,9 +39,7 @@ class DoctorsController extends Controller
         // تطبيق فلتر التخصص
         if ($request->filled('category') || $request->filled('category_filter')) {
             $categoryId = $request->category ?? $request->category_filter;
-            $query->whereHas('categories', function ($q) use ($categoryId) {
-                $q->where('categories.id', $categoryId);
-            });
+            $query->where('category_id', $categoryId);
         }
 
         // فلتر المحافظة
@@ -118,14 +116,12 @@ class DoctorsController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users'],
+            'email' => ['required', 'email', 'unique:users,email'],
             'phone' => ['required', 'string', 'unique:users,phone_number'],
             'password' => ['required', 'string', 'min:8'],
-            'consultation_fee' => ['required', 'numeric', 'min:0'],
-            'waiting_time' => ['required', 'integer', 'min:0'],
             'title' => ['required', 'string', 'max:100'],
             'specialization' => ['required', 'string', 'max:100'],
-            'categories' => ['required', 'array', 'exists:categories,id'],
+            'category_id' => ['required', 'exists:categories,id'], // تعديل من مصفوفة تخصصات إلى تخصص واحد
             'gender' => ['required', Rule::in(['ذكر', 'انثي'])],
             'experience_years' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -143,7 +139,11 @@ class DoctorsController extends Controller
                 'required_with:schedules.*.is_available',
                 'date_format:H:i',
                 'after:schedules.*.start_time'
-            ]
+            ],
+            'status' => ['boolean'],
+            'consultation_fee' => ['required', 'numeric', 'min:0'],
+            'waiting_time' => ['nullable', 'integer', 'min:0'],
+            'degree' => ['nullable', 'string', 'max:100']
         ], [
             'name.required' => 'اسم الطبيب مطلوب',
             'email.required' => 'البريد الإلكتروني مطلوب',
@@ -153,16 +153,10 @@ class DoctorsController extends Controller
             'phone.unique' => 'رقم الهاتف مستخدم بالفعل',
             'password.required' => 'كلمة المرور مطلوبة',
             'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
-            'consultation_fee.required' => 'سعر الكشف مطلوب',
-            'consultation_fee.numeric' => 'سعر الكشف يجب أن يكون رقماً',
-            'consultation_fee.min' => 'سعر الكشف يجب أن يكون أكبر من صفر',
-            'waiting_time.required' => 'مدة الانتظار مطلوبة',
-            'waiting_time.integer' => 'مدة الانتظار يجب أن تكون رقماً صحيحاً',
-            'waiting_time.min' => 'مدة الانتظار يجب أن تكون أكبر من صفر',
             'title.required' => 'المسمى الوظيفي مطلوب',
             'specialization.required' => 'التخصص مطلوب',
-            'categories.required' => 'التخصصات مطلوبة',
-            'categories.exists' => 'التخصص المختار غير موجود',
+            'category_id.required' => 'التخصص مطلوب', // تعديل الرسالة
+            'category_id.exists' => 'التخصص المختار غير موجود', // تعديل الرسالة
             'gender.required' => 'النوع مطلوب',
             'experience_years.required' => 'سنوات الخبرة مطلوبة',
             'experience_years.integer' => 'سنوات الخبرة يجب أن تكون رقماً صحيحاً',
@@ -176,18 +170,20 @@ class DoctorsController extends Controller
             'governorate_id.exists' => 'المحافظة المختارة غير موجودة',
             'city_id.required' => 'المدينة مطلوبة',
             'city_id.exists' => 'المدينة المختارة غير موجودة',
-            'schedules.required' => 'جدول الحجوزات مطلوب',
-            'schedules.*.start_time.required_with' => 'يجب تحديد وقت البداية عند اختيار اليوم',
-            'schedules.*.start_time.date_format' => 'صيغة وقت البداية غير صحيحة',
-            'schedules.*.end_time.required_with' => 'يجب تحديد وقت النهاية عند اختيار اليوم',
-            'schedules.*.end_time.date_format' => 'صيغة وقت النهاية غير صحيحة',
-            'schedules.*.end_time.after' => 'يجب أن يكون وقت النهاية بعد وقت البداية'
+            'status.boolean' => 'حالة الحساب يجب أن تكون صحيحة أو خاطئة',
+            'consultation_fee.required' => 'سعر الكشف مطلوب',
+            'consultation_fee.numeric' => 'سعر الكشف يجب أن يكون رقماً',
+            'consultation_fee.min' => 'سعر الكشف يجب أن يكون أكبر من صفر',
+            'waiting_time.required' => 'مدة الانتظار مطلوبة',
+            'waiting_time.integer' => 'مدة الانتظار يجب أن تكون رقماً صحيحاً',
+            'waiting_time.min' => 'مدة الانتظار يجب أن تكون أكبر من صفر',
+            'degree.max' => 'الدرجة العلمية لا يمكن أن تتجاوز 100 حرف'
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Create user
+            // إنشاء حساب المستخدم
             $user = User::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
@@ -208,8 +204,7 @@ class DoctorsController extends Controller
                                    !empty($validated['city_id']) &&
                                    !empty($validated['consultation_fee']) &&
                                    !empty($validated['waiting_time']) &&
-                                   isset($validated['categories']) &&
-                                   count($validated['categories']) > 0;
+                                   isset($validated['category_id']); // تعديل التحقق من التخصصات
 
             // تحديد قيمة حقل اكتمال الملف الشخصي
             $isProfileCompleted = $hasAllRequiredFields &&
@@ -233,6 +228,7 @@ class DoctorsController extends Controller
                 'address' => $validated['address'],
                 'governorate_id' => $validated['governorate_id'],
                 'city_id' => $validated['city_id'],
+                'category_id' => $validated['category_id'], // إضافة حقل التخصص
                 'is_profile_completed' => $isProfileCompleted
             ]);
 
@@ -241,9 +237,6 @@ class DoctorsController extends Controller
                 $doctor->image = Doctor::uploadImage($request->file('image'));
                 $doctor->save();
             }
-
-            // Link categories
-            $doctor->categories()->sync($validated['categories']);
 
             // Add schedules
             $days = [
@@ -263,6 +256,11 @@ class DoctorsController extends Controller
             }
 
             $doctor->updateSchedule($scheduleData);
+
+            // Send notification to admin
+            User::role('Admin')->each(function ($admin) use ($doctor) {
+                $admin->notify(new NewDoctorNotification($doctor));
+            });
 
             DB::commit();
 
@@ -295,7 +293,7 @@ class DoctorsController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:100'],
             'specialization' => ['required', 'string', 'max:100'],
-            'categories' => ['required', 'array', 'exists:categories,id'],
+            'category_id' => ['required', 'exists:categories,id'], // تعديل من مصفوفة تخصصات إلى تخصص واحد
             'gender' => ['required', Rule::in(['ذكر', 'انثي'])],
             'experience_years' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -316,12 +314,13 @@ class DoctorsController extends Controller
                 'required_with:schedules.*.is_available',
                 'date_format:H:i',
                 'after:schedules.*.start_time'
-            ]
+            ],
+            'degree' => ['nullable', 'string', 'max:100']
         ], [
             'title.required' => 'المسمى الوظيفي مطلوب',
             'specialization.required' => 'التخصص مطلوب',
-            'categories.required' => 'التخصصات مطلوبة',
-            'categories.exists' => 'التخصص المختار غير موجود',
+            'category_id.required' => 'التخصص مطلوب', // تعديل الرسالة
+            'category_id.exists' => 'التخصص المختار غير موجود', // تعديل الرسالة
             'gender.required' => 'النوع مطلوب',
             'experience_years.required' => 'سنوات الخبرة مطلوبة',
             'experience_years.integer' => 'سنوات الخبرة يجب أن تكون رقماً صحيحاً',
@@ -347,7 +346,8 @@ class DoctorsController extends Controller
             'schedules.*.start_time.date_format' => 'صيغة وقت البداية غير صحيحة',
             'schedules.*.end_time.required_with' => 'يجب تحديد وقت النهاية عند اختيار اليوم',
             'schedules.*.end_time.date_format' => 'صيغة وقت النهاية غير صحيحة',
-            'schedules.*.end_time.after' => 'يجب أن يكون وقت النهاية بعد وقت البداية'
+            'schedules.*.end_time.after' => 'يجب أن يكون وقت النهاية بعد وقت البداية',
+            'degree.max' => 'الدرجة العلمية لا يمكن أن تتجاوز 100 حرف'
         ]);
 
         try {
@@ -368,13 +368,12 @@ class DoctorsController extends Controller
                 'status' => $request->boolean('status'),  // التأكد من تحويل القيمة إلى boolean
                 'address' => $validated['address'],
                 'governorate_id' => $validated['governorate_id'],
-                'city_id' => $validated['city_id']
+                'city_id' => $validated['city_id'],
+                'category_id' => $validated['category_id'], // تحديث حقل التخصص
+                'degree' => $validated['degree'] ?? null
             ]);
 
-            // Sync categories
-            $doctor->categories()->sync($request->categories);
-
-            // Update schedules
+            // تحديث جداول المواعيد
             $days = [
                 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'
             ];
@@ -435,7 +434,6 @@ class DoctorsController extends Controller
     public function destroy(Doctor $doctor)
     {
         $doctorName = $doctor->name;
-        $doctor->categories()->detach();
 
         // Get the user ID before deleting the doctor
         $userId = $doctor->user_id;
@@ -462,7 +460,7 @@ class DoctorsController extends Controller
     public function details(Doctor $doctor)
     {
         $doctor->load([
-            'categories',
+            'category', // Cambiar de categories a category (singular)
             'user',
             'governorate',
             'city',
@@ -500,9 +498,7 @@ class DoctorsController extends Controller
             : 0;
 
         // حساب متوسط أسعار الكشف في نفس التخصص
-        $averageConsultationFee = Doctor::whereHas('categories', function ($query) use ($doctor) {
-            $query->whereIn('categories.id', $doctor->categories->pluck('id'));
-        })
+        $averageConsultationFee = Doctor::where('category_id', $doctor->category_id) // Usar category_id
             ->where('id', '!=', $doctor->id)
             ->avg('consultation_fee') ?? 0;
 
@@ -603,9 +599,7 @@ class DoctorsController extends Controller
             ->where('is_profile_completed', true); // Only show doctors with complete profiles
 
         if ($request->filled('category')) {
-            $query->whereHas('categories', function ($q) use ($request) {
-                $q->where('categories.id', $request->category);
-            });
+            $query->where('category_id', $request->category);
         }
 
         if ($request->filled('governorate_id')) {
@@ -666,9 +660,7 @@ class DoctorsController extends Controller
         );
 
         // حساب متوسط أسعار الكشف في نفس التخصص
-        $stats['averageConsultationFee'] = Doctor::whereHas('categories', function ($query) use ($doctor) {
-            $query->whereIn('categories.id', $doctor->categories->pluck('id'));
-        })
+        $stats['averageConsultationFee'] = Doctor::where('category_id', $doctor->category_id)
             ->where('id', '!=', $doctor->id)
             ->avg('consultation_fee') ?? 0;
 
@@ -1219,7 +1211,7 @@ class DoctorsController extends Controller
                 $missingData[] = 'صورة الطبيب';
             }
 
-            if ($doctor->categories->isEmpty()) {
+            if (empty($doctor->category_id)) {
                 $missingData[] = 'التخصصات';
             }
 
@@ -1244,10 +1236,10 @@ class DoctorsController extends Controller
             $doctor->setAttribute('missing_data', $missingData);
 
             // تحديث حقل اكتمال الملف الشخصي إذا كانت البيانات مكتملة ولكن الحقل يشير إلى غير ذلك
-            if (empty($missingData) && (!$doctor->is_profile_completed || is_null($doctor->is_profile_completed))) {
-                // Actualizar solo el campo is_profile_completed
-                Doctor::where('id', $doctor->id)->update(['is_profile_completed' => true]);
-            }
+            // if (empty($missingData) && (!$doctor->is_profile_completed || is_null($doctor->is_profile_completed))) {
+            //     // Actualizar solo el campo is_profile_completed
+            //     Doctor::where('id', $doctor->id)->update(['is_profile_completed' => true]);
+            // }
         }
 
         $categories = Category::active()->get();
@@ -1263,15 +1255,15 @@ class DoctorsController extends Controller
     public function updateProfilesCompletionStatus()
     {
         try {
-            $doctors = Doctor::with(['categories', 'schedules'])->get();
+            $doctors = Doctor::with(['schedules'])->get();
             $updatedCount = 0;
 
             foreach ($doctors as $doctor) {
                 $isComplete =
                     // التحقق من وجود صورة
                     !empty($doctor->image) &&
-                    // التحقق من وجود تخصصات
-                    $doctor->categories->isNotEmpty() &&
+                    // التحقق من وجود تخصص
+                    !empty($doctor->category_id) &&
                     // التحقق من وجود جدول مواعيد مع يوم واحد على الأقل متاح
                     $doctor->schedules->where('is_active', true)->count() > 0 &&
                     // التحقق من وجود رسوم استشارة

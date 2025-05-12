@@ -112,7 +112,11 @@
                                                     <div class="doctor-details">
                                                         <p class="text-muted mb-3 doctor-speciality">
                                                             <i class="bi bi-award-fill text-primary me-2"></i>
-                                                                 {{ $doctor->categories->pluck('name')->implode(', ') }}
+                                                            @if($doctor->category)
+                                                                 {{ $doctor->category->name }}
+                                                                @else
+                                                                 غير محدد
+                                                                @endif
                                                         </p>
 
                                                         @if($doctor->description)

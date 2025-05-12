@@ -25,28 +25,26 @@ class Doctor extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'description',
-        'image',
+        'description',       // نبذة تعريفية عن الطبيب
+        'image',            // صورة الملف الشخصي
         'governorate_id',
         'city_id',
+        'category_id',      // حقل التخصص الواحد
         'address',
-        'degree',
-        'waiting_time',
-        'consultation_fee',
-        'experience_years',
-        'gender',
-        'status',
-        'title',
-        'specialization',
+        'degree',           // الدرجة العلمية: دكتوراه، ماجستير، بكالوريوس طب
+        'waiting_time',      // متوسط وقت الانتظار للكشف بالدقائق
+        'consultation_fee',  // رسوم الكشف
+        'experience_years',  // عدد سنوات الخبرة
+        'gender',           // الجنس: ذكر، أنثى
+        'status',           // حالة الحساب: نشط أو غير نشط
+        'title',            // المسمى الوظيفي: استشاري، أخصائي، طبيب
+        'specialization',    // التخصص الدقيق: مثلاً للأطفال سلوكيات، أو مخ وأعصاب
         'is_profile_completed',
-        'first_name',
-        'last_name',
         'rating_avg'
     ];
 
     protected $searchable = [
-        'first_name',
-        'last_name',
+        'name',
         'description'
     ];
 
@@ -113,14 +111,16 @@ class Doctor extends Model
     }
 
     /**
-     * Get the doctor's name by combining first and last name.
+     * Get the doctor's name from the associated user.
      */
     public function getNameAttribute()
     {
         if ($this->user) {
             return $this->user->name;
         }
-        return trim($this->first_name . ' ' . $this->last_name);
+
+        // إرجاع attributes['name'] إذا كان موجوداً، وإلا إرجاع قيمة افتراضية
+        return $this->attributes['name'] ?? 'طبيب';
     }
 
     /**
@@ -139,10 +139,25 @@ class Doctor extends Model
         return $this->user ? $this->user->phone_number : null;
     }
 
+    /**
+     * Get the category that the doctor belongs to.
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * @deprecated This method is kept for backward compatibility and will be removed in the future.
+     * Use category() instead.
+     *
+     * This returns a collection containing the single category for compatibility with old code
+     * that expects multiple categories
+     */
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'doctor_category')
-                    ->withTimestamps();
+        // Create a collection-like response with only the related category
+        return $this->hasOne(Category::class, 'id', 'category_id');
     }
 
     /**
@@ -305,13 +320,13 @@ class Doctor extends Model
                         !empty($this->consultation_fee) &&
                         !empty($this->waiting_time);
 
-        // التحقق من وجود تخصصات مرتبطة
-        $hasCategories = $this->categories()->count() > 0;
+        // التحقق من وجود تخصص واحد
+        $hasCategory = !empty($this->category_id);
 
         // التحقق من وجود جدول مواعيد
         $hasSchedule = $this->schedules()->count() > 0;
 
-        $isCompleted = $hasBasicInfo && $hasCategories && $hasSchedule;
+        $isCompleted = $hasBasicInfo && $hasCategory && $hasSchedule;
 
         // تحديث حالة اكتمال الملف الشخصي إذا كانت مختلفة عن القيمة المخزنة
         if ($this->is_profile_completed !== $isCompleted) {
@@ -334,7 +349,7 @@ class Doctor extends Model
         }
 
         if (empty($this->specialization)) {
-            $missingData[] = 'التخصص';
+            $missingData[] = 'التخصص الدقيق';
         }
 
         if (empty($this->experience_years)) {
@@ -361,8 +376,9 @@ class Doctor extends Model
             $missingData[] = 'وقت الانتظار';
         }
 
-        if ($this->categories()->count() == 0) {
-            $missingData[] = 'التخصصات';
+        // التحقق من وجود تخصص واحد
+        if (empty($this->category_id)) {
+            $missingData[] = 'التخصص';
         }
 
         if ($this->schedules()->count() == 0) {

@@ -103,25 +103,38 @@
                             <input type="text" class="form-control @error('title') is-invalid @enderror"
                                 id="title" name="title" value="{{ old('title', $doctor->title) }}"
                                 placeholder="مثال: استشاري، أخصائي، طبيب" >
+                            <small class="text-muted">المسمى الوظيفي الرسمي للطبيب مثل (استشاري - أخصائي - طبيب)</small>
                             @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="categories" class="form-label">التخصصات *</label>
-                            <select name="categories[]" id="categories" class="form-select @error('categories') is-invalid @enderror"
-                                data-icon="bi-briefcase-medical" data-color="#0d6efd" >
+                            <label class="form-label" for="degree">الدرجة العلمية</label>
+                            <input type="text" class="form-control @error('degree') is-invalid @enderror"
+                                id="degree" name="degree" value="{{ old('degree', $doctor->degree) }}"
+                                placeholder="مثال: دكتوراه، ماجستير، بكالوريوس طب">
+                            <small class="text-muted">المؤهل العلمي للطبيب مثل (دكتوراه - ماجستير - بكالوريوس)</small>
+                            @error('degree')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="category_id" class="form-label">التخصص *</label>
+                            <select name="category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror"
+                                data-icon="bi-briefcase-medical" data-color="#0d6efd" required>
                                 <option value="">اختر التخصص</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" data-icon="bi-heart-pulse"
-                                        {{ in_array($category->id, old('categories', $doctor->categories->pluck('id')->toArray())) ? 'selected' : '' }}>
+                                        {{ old('category_id', $doctor->category_id) == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('categories')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            <small class="text-muted">اختر تخصصاً واحداً للطبيب مثل (طب أطفال - طب أسنان - جراحة)</small>
+                            @error('category_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -130,6 +143,7 @@
                             <input type="text" class="form-control @error('specialization') is-invalid @enderror"
                                 id="specialization" name="specialization" value="{{ old('specialization', $doctor->specialization) }}"
                                 placeholder="مثال: جراحة عامة، باطنة، أطفال" >
+                            <small class="text-muted">التخصص الدقيق ضمن المجال الطبي مثل (جراحة تجميل، أمراض قلب، حساسية أطفال)</small>
                             @error('specialization')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

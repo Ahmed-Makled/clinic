@@ -23,15 +23,6 @@
             <h5 class="mb-0">إضافة حجز جديد</h5>
         </div>
         <div class="card-body">
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
 
             <form action="{{ route('appointments.store') }}" method="POST" class="needs-validation" novalidate>
                 @csrf
@@ -99,14 +90,9 @@
                                 name="appointment_time"
                                 required>
                             <option value="">اختر الوقت</option>
-                            @php
-                                $timeSlots = get_appointment_time_slots(30, '09:00', '17:00');
-                            @endphp
-                            @foreach($timeSlots as $slot)
-                                <option value="{{ $slot }}" {{ old('appointment_time') == $slot ? 'selected' : '' }}>
-                                    {{ $slot }}
-                                </option>
-                            @endforeach
+                            <div id="time-slots-container">
+                                <!-- سيتم تحديث الأوقات المتاحة بناءً على اختيار الطبيب والتاريخ -->
+                            </div>
                         </select>
                         @error('appointment_time')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -153,6 +139,64 @@ document.addEventListener('DOMContentLoaded', function() {
     const dateInput = document.getElementById('appointment_date');
     const timeSelect = document.getElementById('appointment_time');
 
+    // Function to load available time slots
+    function loadAvailableTimeSlots() {
+        const doctorId = doctorSelect.value;
+        const appointmentDate = dateInput.value;
+
+        // Only proceed if both doctor and date are selected
+        if (!doctorId || !appointmentDate) {
+            return;
+        }
+
+        // Clear existing options except the default one
+        while (timeSelect.options.length > 1) {
+            timeSelect.remove(1);
+        }
+
+        // Add loading option
+        const loadingOption = document.createElement('option');
+        loadingOption.textContent = 'جاري تحميل الأوقات المتاحة...';
+        timeSelect.appendChild(loadingOption);
+
+        // Fetch available slots using AJAX
+        fetch(`/appointments/available-slots?doctor_id=${doctorId}&date=${appointmentDate}`)
+            .then(response => response.json())
+            .then(data => {
+                // Remove loading option
+                timeSelect.remove(timeSelect.options.length - 1);
+
+                if (data.slots && data.slots.length > 0) {
+                    // Add each available slot as an option
+                    data.slots.forEach(slot => {
+                        const option = document.createElement('option');
+                        option.value = slot;
+                        option.textContent = slot;
+                        timeSelect.appendChild(option);
+                    });
+                } else {
+                    // No slots available
+                    const noSlotsOption = document.createElement('option');
+                    noSlotsOption.textContent = 'لا توجد أوقات متاحة في هذا اليوم';
+                    noSlotsOption.disabled = true;
+                    timeSelect.appendChild(noSlotsOption);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching time slots:', error);
+                timeSelect.remove(timeSelect.options.length - 1);
+
+                const errorOption = document.createElement('option');
+                errorOption.textContent = 'حدث خطأ أثناء تحميل الأوقات المتاحة';
+                errorOption.disabled = true;
+                timeSelect.appendChild(errorOption);
+            });
+    }
+
+    // Event listeners for doctor and date changes
+    doctorSelect.addEventListener('change', loadAvailableTimeSlots);
+    dateInput.addEventListener('change', loadAvailableTimeSlots);
+
     form.addEventListener('submit', function(event) {
         if (!form.checkValidity()) {
             event.preventDefault();
@@ -173,6 +217,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // If doctor and date are already selected on page load (e.g. after validation error)
+    if (doctorSelect.value && dateInput.value) {
+        loadAvailableTimeSlots();
+    }
 });
 </script>
 @endpush

@@ -85,9 +85,12 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label">الحالة</label>
                             <div class="form-check form-switch mt-2">
-                                <input class="form-check-input" type="checkbox" name="status" id="status" {{ old('status') ? 'checked' : '' }}>
+                                <input class="form-check-input" type="checkbox" name="status" id="status" value="1" {{ old('status') ? 'checked' : '' }}>
                                 <label class="form-check-label" for="status">نشط</label>
                             </div>
+                            @error('status')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -101,24 +104,37 @@
                             <input type="text" class="form-control @error('title') is-invalid @enderror"
                                 id="title" name="title" value="{{ old('title') }}"
                                 placeholder="مثال: استشاري، أخصائي، طبيب" required>
+                            <small class="text-muted">المسمى الوظيفي الرسمي للطبيب مثل (استشاري - أخصائي - طبيب)</small>
                             @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="categories" class="form-label">التخصصات *</label>
-                            <select name="categories[]" id="categories" class="form-select @error('categories') is-invalid @enderror"
+                            <label class="form-label" for="degree">الدرجة العلمية</label>
+                            <input type="text" class="form-control @error('degree') is-invalid @enderror"
+                                id="degree" name="degree" value="{{ old('degree') }}"
+                                placeholder="مثال: دكتوراه، ماجستير، بكالوريوس طب">
+                            <small class="text-muted">المؤهل العلمي للطبيب مثل (دكتوراه - ماجستير - بكالوريوس)</small>
+                            @error('degree')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="category_id" class="form-label">التخصص *</label>
+                            <select name="category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror"
                                 data-icon="bi-briefcase-medical" data-color="#0d6efd" required>
                                 <option value="">اختر التخصص</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}"
-                                        {{ (is_array(old('categories')) && in_array($category->id, old('categories'))) ? 'selected' : '' }}>
+                                        {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('categories')
+                            <small class="text-muted">اختر تخصصاً واحداً للطبيب مثل (طب أطفال - طب أسنان - جراحة)</small>
+                            @error('category_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -128,6 +144,7 @@
                             <input type="text" class="form-control @error('specialization') is-invalid @enderror"
                                 id="specialization" name="specialization" value="{{ old('specialization') }}"
                                 placeholder="مثال: جراحة عامة، باطنة، أطفال" required>
+                            <small class="text-muted">التخصص الدقيق ضمن المجال الطبي مثل (جراحة تجميل، أمراض قلب، حساسية أطفال)</small>
                             @error('specialization')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -297,17 +314,17 @@
                                 <div class="upload-placeholder" style="cursor: pointer;">
                                     <i class="bi bi-cloud-upload upload-icon"></i>
                                     <h6 class="mb-2">اسحب الصورة هنا أو انقر للاختيار</h6>
-                                    <small class="text-muted d-block">يفضل رفع صورة بأبعاد 400×400 بيكسل</small>
-                                    <small class="text-muted d-block">الصيغ المدعومة: JPG, JPEG, PNG, WEBP</small>
+                                    <small class="text-muted د-block">يفضل رفع صورة بأبعاد 400×400 بيكسل</small>
+                                    <small class="text-muted د-block">الصيغ المدعومة: JPG, JPEG, PNG, WEBP</small>
                                 </div>
 
-                                <div class="image-preview d-none" id="imagePreview">
+                                <div class="image-preview د-none" id="imagePreview">
                                     <img src="#" alt="معاينة الصورة">
                                     <span class="remove-image" title="حذف الصورة">&times;</span>
                                 </div>
 
                                 @error('image')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    <div class="invalid-feedback د-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>

@@ -110,12 +110,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    @if($doctor->categories->count() > 0)
+                                    @if($doctor->category)
                                         <div class="d-flex flex-wrap gap-1">
-                                            @foreach($doctor->categories as $index => $category)
-                                                <span
-                                                    class="category-badge category-badge-{{ $index % 6 }}">{{ $category->name }}</span>
-                                            @endforeach
+                                            <span class="category-badge category-badge-{{ $doctor->category->id % 6 }}">
+                                                {{ $doctor->category->name }}
+                                            </span>
                                         </div>
                                     @else
                                         <span class="text-danger fw-semibold small">

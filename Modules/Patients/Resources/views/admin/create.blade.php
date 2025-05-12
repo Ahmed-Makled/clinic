@@ -130,6 +130,74 @@
                             </div>
                         </div>
 
+                        <!-- بيانات طبية إضافية -->
+                        <div class="card mt-4 mb-3">
+                            <div class="card-header py-2 bg-light">
+                                <h6 class="mb-0">المعلومات الطبية</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="medical_history" class="form-label">التاريخ الطبي</label>
+                                            <textarea class="form-control @error('medical_history') is-invalid @enderror"
+                                                    id="medical_history"
+                                                    name="medical_history"
+                                                    rows="3">{{ old('medical_history') }}</textarea>
+                                            @error('medical_history')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="blood_type" class="form-label">فصيلة الدم</label>
+                                            <select class="form-select @error('blood_type') is-invalid @enderror"
+                                                    id="blood_type"
+                                                    name="blood_type">
+                                                <option value="">اختر فصيلة الدم</option>
+                                                <option value="A+" {{ old('blood_type') == 'A+' ? 'selected' : '' }}>A+</option>
+                                                <option value="A-" {{ old('blood_type') == 'A-' ? 'selected' : '' }}>A-</option>
+                                                <option value="B+" {{ old('blood_type') == 'B+' ? 'selected' : '' }}>B+</option>
+                                                <option value="B-" {{ old('blood_type') == 'B-' ? 'selected' : '' }}>B-</option>
+                                                <option value="AB+" {{ old('blood_type') == 'AB+' ? 'selected' : '' }}>AB+</option>
+                                                <option value="AB-" {{ old('blood_type') == 'AB-' ? 'selected' : '' }}>AB-</option>
+                                                <option value="O+" {{ old('blood_type') == 'O+' ? 'selected' : '' }}>O+</option>
+                                                <option value="O-" {{ old('blood_type') == 'O-' ? 'selected' : '' }}>O-</option>
+                                            </select>
+                                            @error('blood_type')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="emergency_contact" class="form-label">رقم الاتصال في حالات الطوارئ</label>
+                                            <input type="text"
+                                                   class="form-control @error('emergency_contact') is-invalid @enderror"
+                                                   id="emergency_contact"
+                                                   name="emergency_contact"
+                                                   value="{{ old('emergency_contact') }}">
+                                            @error('emergency_contact')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="allergies" class="form-label">الحساسية</label>
+                                            <textarea class="form-control @error('allergies') is-invalid @enderror"
+                                                    id="allergies"
+                                                    name="allergies"
+                                                    rows="3">{{ old('allergies') }}</textarea>
+                                            @error('allergies')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary ms-1">حفظ</button>
                             <a href="{{ route('patients.index') }}" class="btn btn-label-secondary">إلغاء</a>

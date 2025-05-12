@@ -56,9 +56,9 @@
                             <!-- التخصصات والحالة -->
                             <div class="badges">
                                 <span class="specialty-badge">{{ $doctor->title }}</span>
-                                @foreach($doctor->categories as $category)
-                                    <span class="specialty-badge">{{ $category->name }}</span>
-                                @endforeach
+                                @if($doctor->category)
+                                    <span class="specialty-badge">{{ $doctor->category->name }}</span>
+                                @endif
                                 <span class="status-badge {{ $doctor->status ? 'active' : 'inactive' }}">
                                     {{ $doctor->status ? 'نشط' : 'غير نشط' }}
                                 </span>

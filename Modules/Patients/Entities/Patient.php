@@ -43,4 +43,16 @@ class Patient extends Model
     {
         return $this->user->name;
     }
+
+    // Calculate patient's age based on date_of_birth
+    public function getAgeAttribute()
+    {
+        if (!$this->date_of_birth) {
+            return null;
+        }
+
+        // Force correct calculation direction from date_of_birth to now
+        // and cast to integer to remove decimal places
+        return (int) $this->date_of_birth->diffInYears(\Carbon\Carbon::now(), false);
+    }
 }

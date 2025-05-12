@@ -65,7 +65,12 @@ class PatientController extends Controller
             'password' => 'required|min:6|confirmed',
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
-            'gender' => 'required|in:male,female'
+            'gender' => 'required|in:male,female',
+            // Campos adicionales
+            'medical_history' => 'nullable|string',
+            'emergency_contact' => 'nullable|string',
+            'blood_type' => 'nullable|string',
+            'allergies' => 'nullable|string'
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -86,7 +91,12 @@ class PatientController extends Controller
             'user_id' => $user->id,
             'date_of_birth' => $validated['date_of_birth'],
             'gender' => $validated['gender'],
-            'address' => $validated['address']
+            'address' => $validated['address'],
+            // Añadir campos adicionales
+            'medical_history' => $validated['medical_history'],
+            'emergency_contact' => $validated['emergency_contact'],
+            'blood_type' => $validated['blood_type'],
+            'allergies' => $validated['allergies']
         ]);
 
         // Assign patient role with web guard
@@ -117,7 +127,12 @@ class PatientController extends Controller
             'phone_number' => 'required', // Removed string|max:20 validation
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
-            'gender' => 'required|in:male,female'
+            'gender' => 'required|in:male,female',
+            // Campos adicionales
+            'medical_history' => 'nullable|string',
+            'emergency_contact' => 'nullable|string',
+            'blood_type' => 'nullable|string',
+            'allergies' => 'nullable|string'
         ]);
 
         // Handle status toggle - convert checkbox value to boolean
@@ -135,7 +150,12 @@ class PatientController extends Controller
         $patient->patient->update([
             'date_of_birth' => $validated['date_of_birth'],
             'gender' => $validated['gender'],
-            'address' => $validated['address']
+            'address' => $validated['address'],
+            // Actualizar campos adicionales
+            'medical_history' => $validated['medical_history'],
+            'emergency_contact' => $validated['emergency_contact'],
+            'blood_type' => $validated['blood_type'],
+            'allergies' => $validated['allergies']
         ]);
 
         // Send notification to admins

@@ -2,12 +2,20 @@
 
 namespace Database\Factories;
 
+use Modules\Users\Entities\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class UserFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = User::class;
+
     protected static ?string $password;
 
     public function definition(): array
