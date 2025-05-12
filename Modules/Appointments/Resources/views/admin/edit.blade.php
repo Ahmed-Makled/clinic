@@ -99,14 +99,13 @@
                                 name="appointment_time"
                                 required>
                             <option value="">اختر الوقت</option>
-                            @php
-                                $timeSlots = get_appointment_time_slots(30, '09:00', '17:00');
-                            @endphp
-                            @foreach($timeSlots as $slot)
-                                <option value="{{ $slot }}" {{ old('appointment_time', $appointment->scheduled_at->format('H:i')) == $slot ? 'selected' : '' }}>
-                                    {{ $slot }}
+                            <div id="time-slots-container">
+                                <!-- سيتم تحديث الأوقات المتاحة بناءً على اختيار الطبيب والتاريخ -->
+                                <!-- Current appointment time is pre-selected -->
+                                <option value="{{ $appointment->scheduled_at->format('H:i') }}" selected>
+                                    {{ $appointment->scheduled_at->format('H:i') }}
                                 </option>
-                            @endforeach
+                            </div>
                         </select>
                         @error('appointment_time')
                             <div class="invalid-feedback">{{ $message }}</div>

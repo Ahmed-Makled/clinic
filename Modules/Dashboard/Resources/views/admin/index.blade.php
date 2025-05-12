@@ -145,7 +145,7 @@
                         </h5>
                         <div class="chart-actions">
                             <select class="form-select form-select-sm bg-light border-0 rounded-pill px-3" style="min-width: 120px;" id="chartPeriod">
-                                <option value="week">آخر أسبوع</option>
+                                <option value="week" selected>آخر أسبوع</option>
                                 <option value="month">آخر شهر</option>
                                 <option value="year">آخر سنة</option>
                             </select>
@@ -491,7 +491,6 @@
             document.addEventListener('DOMContentLoaded', function() {
                 // Initialize charts
                 initCharts(@json($chartData));
-
                 // Handle period change
                 document.getElementById('chartPeriod').addEventListener('change', function() {
                     updateChart(this.value);

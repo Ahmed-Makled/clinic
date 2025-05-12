@@ -38,7 +38,7 @@ class DashboardController extends Controller
 
         $activities = $this->getRecentActivities();
 
-        return view('dashboard::index', compact('stats', 'chartData', 'activities'));
+        return view('dashboard::admin.index', compact('stats', 'chartData', 'activities'));
     }
 
     private function getUsersStats()
@@ -122,7 +122,13 @@ class DashboardController extends Controller
         $period = request('period', 'week');
 
         switch ($period) {
+
             case 'year':
+                // Get data for past 12 months + upcoming appointments for next 12 months
+                $startDate = Carbon::now()->startOfMonth()->subMonths(11);
+                $endDate = Carbon::now()->addMonths(12);
+
+                // First add the past 12 months
                 for ($i = 11; $i >= 0; $i--) {
                     $date = Carbon::now()->startOfMonth()->subMonths($i);
                     $dates->push($date->format('Y-m'));
@@ -131,23 +137,81 @@ class DashboardController extends Controller
                         ->count();
                     $appointments->push($monthCount);
                 }
+
+                // Then get upcoming appointments grouped by month and add them to chart
+                $upcomingAppointments = Appointment::select(
+                    DB::raw('DATE_FORMAT(scheduled_at, "%Y-%m") as month'),
+                    DB::raw('COUNT(*) as count')
+                )
+                ->where('scheduled_at', '>', Carbon::now()->endOfMonth())
+                ->where('scheduled_at', '<=', $endDate)
+                ->groupBy(DB::raw('DATE_FORMAT(scheduled_at, "%Y-%m")'))
+                ->orderBy('month')
+                ->get();
+
+                foreach ($upcomingAppointments as $appointment) {
+                    $dates->push($appointment->month);
+                    $appointments->push($appointment->count);
+                }
                 break;
 
             case 'month':
+                // Get data for past 30 days + upcoming appointments for next 60 days
+                $startDate = Carbon::now()->subDays(29); // Last 30 days including today
+                $endDate = Carbon::now()->addDays(60);
+
+                // First add the past 30 days
                 for ($i = 29; $i >= 0; $i--) {
                     $date = Carbon::now()->subDays($i);
                     $dates->push($date->format('Y-m-d'));
                     $dayCount = Appointment::whereDate('scheduled_at', $date)->count();
                     $appointments->push($dayCount);
                 }
+
+                // Then get upcoming appointments and add them to chart
+                $upcomingAppointments = Appointment::select(
+                    DB::raw('DATE(scheduled_at) as date'),
+                    DB::raw('COUNT(*) as count')
+                )
+                ->where('scheduled_at', '>', Carbon::now())
+                ->where('scheduled_at', '<=', $endDate)
+                ->groupBy(DB::raw('DATE(scheduled_at)'))
+                ->orderBy('date')
+                ->get();
+
+                foreach ($upcomingAppointments as $appointment) {
+                    $dates->push(Carbon::parse($appointment->date)->format('Y-m-d'));
+                    $appointments->push($appointment->count);
+                }
                 break;
 
             default: // week
+                // Get data for past week + upcoming appointments for next 3 weeks
+                $startDate = Carbon::now()->subDays(6); // Last 7 days including today
+                $endDate = Carbon::now()->addDays(21); // Next 3 weeks
+
+                // First add the past 7 days
                 for ($i = 6; $i >= 0; $i--) {
                     $date = Carbon::now()->subDays($i);
                     $dates->push($date->format('Y-m-d'));
                     $dayCount = Appointment::whereDate('scheduled_at', $date)->count();
                     $appointments->push($dayCount);
+                }
+
+                // Then get upcoming appointments and add them to chart
+                $upcomingAppointments = Appointment::select(
+                    DB::raw('DATE(scheduled_at) as date'),
+                    DB::raw('COUNT(*) as count')
+                )
+                ->where('scheduled_at', '>', Carbon::now())
+                ->where('scheduled_at', '<=', $endDate)
+                ->groupBy(DB::raw('DATE(scheduled_at)'))
+                ->orderBy('date')
+                ->get();
+
+                foreach ($upcomingAppointments as $appointment) {
+                    $dates->push(Carbon::parse($appointment->date)->format('Y-m-d'));
+                    $appointments->push($appointment->count);
                 }
                 break;
         }
