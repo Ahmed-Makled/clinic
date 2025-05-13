@@ -29,8 +29,6 @@ Route::prefix('doctors')->group(function () {
 
         Route::put('/profile/appointments/{appointment}/complete', [DoctorsController::class, 'completeAppointment'])->name('doctors.appointments.complete');
         Route::put('/profile/appointments/{appointment}/cancel', [DoctorsController::class, 'cancelAppointment'])->name('doctors.appointments.cancel');
-        Route::put('/profile/appointments/{appointment}/mark-as-paid', [DoctorsController::class, 'markAsPaid'])->name('doctors.appointments.mark-as-paid');
-        Route::put('/profile/appointments/{appointment}/mark-as-unpaid', [DoctorsController::class, 'markAsUnpaid'])->name('doctors.appointments.mark-as-unpaid');
     });
 });
 

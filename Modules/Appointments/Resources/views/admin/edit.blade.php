@@ -139,15 +139,15 @@
 
 
                     <div class="row">
-                        <div class="col-md-3     mb-3">
-                            <div class="form-check form-switch">
-                                <input type="checkbox"
-                                       class="form-check-input"
-                                       id="is_paid"
-                                       name="is_paid"
-                                       value="1"
-                                       {{ old('is_paid', $appointment->is_paid) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="is_paid">تم الدفع</label>
+                        <div class="col-md-3 mb-3">
+                            <div class="payment-status-info">
+                                <span class="{{ $appointment->is_paid ? 'text-success' : 'text-warning' }}">
+                                    @if($appointment->is_paid)
+                                        <i class="bi bi-check-circle-fill me-1"></i> تم الدفع 
+                                    @else
+                                        <i class="bi bi-exclamation-circle me-1"></i> لم يتم الدفع
+                                    @endif
+                                </span>
                             </div>
                         </div>
 

@@ -1145,55 +1145,7 @@ class DoctorsController extends Controller
         }
     }
 
-    /**
-     * Mark an appointment as paid
-     *
-     * @param \App\Models\Appointment $appointment
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function markAsPaid(Appointment $appointment)
-    {
-        $user = auth()->user();
-        $doctor = Doctor::where('user_id', $user->id)->firstOrFail();
-
-        // Check if the appointment belongs to the logged in doctor
-        if ($appointment->doctor_id !== $doctor->id) {
-            return redirect()->back()->with('error', 'ليس لديك صلاحية للوصول إلى هذا الحجز');
-        }
-
-        try {
-            $appointment->update(['is_paid' => true]);
-
-            return redirect()->back()->with('success', 'تم تحديث حالة الدفع بنجاح');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث حالة الدفع: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Mark an appointment as unpaid
-     *
-     * @param \App\Models\Appointment $appointment
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function markAsUnpaid(Appointment $appointment)
-    {
-        $user = auth()->user();
-        $doctor = Doctor::where('user_id', $user->id)->firstOrFail();
-
-        // Check if the appointment belongs to the logged in doctor
-        if ($appointment->doctor_id !== $doctor->id) {
-            return redirect()->back()->with('error', 'ليس لديك صلاحية للوصول إلى هذا الحجز');
-        }
-
-        try {
-            $appointment->update(['is_paid' => false]);
-
-            return redirect()->back()->with('success', 'تم تحديث حالة الدفع بنجاح');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث حالة الدفع: ' . $e->getMessage());
-        }
-    }
+    // Methods for manual payment marking removed as clinic only uses Stripe payments
 
     /**
      * عرض الأطباء الذين لم يكملوا بياناتهم

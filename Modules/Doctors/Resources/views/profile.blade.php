@@ -639,9 +639,9 @@
                                                     </div>
                                                     <div class="payment-status">
                                                         @if($appointment->is_paid)
-                                                            <span class="paid"><i class="bi bi-check-circle-fill"></i> مدفوع</span>
+                                                            <span class="paid"><i class="bi bi-check-circle-fill"></i> تم الدفع </span>
                                                         @else
-                                                            <span class="unpaid"><i class="bi bi-exclamation-circle"></i> غير مدفوع</span>
+                                                            <span class="unpaid"><i class="bi bi-exclamation-circle"></i> لم يتم الدفع</span>
                                                         @endif
                                                         <span class="fee">{{ $appointment->fees }} ج.م</span>
                                                     </div>
@@ -738,9 +738,9 @@
                                                                                 <span class="overview-label">حالة الدفع</span>
                                                                                 <span class="overview-value">
                                                                                     @if($appointment->is_paid)
-                                                                                        <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> مدفوع</span>
+                                                                                        <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> تم الدفع</span>
                                                                                     @else
-                                                                                        <span class="text-warning"><i class="bi bi-exclamation-circle me-1"></i> غير مدفوع</span>
+                                                                                        <span class="text-warning"><i class="bi bi-exclamation-circle me-1"></i> لم يتم الدفع</span>
                                                                                     @endif
                                                                                 </span>
                                                                             </div>

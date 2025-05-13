@@ -32,24 +32,6 @@
             </form>
         @endif
 
-        @if(!$appointment->is_paid)
-            <form action="{{ route('appointments.mark-as-paid', $appointment) }}" method="POST" class="d-inline">
-                @csrf
-                @method('PUT')
-                <button type="submit" class="btn btn-soft-success">
-                    <i class="bi bi-cash-coin me-2"></i> تأكيد الدفع
-                </button>
-            </form>
-        @else
-            <form action="{{ route('appointments.mark-as-unpaid', $appointment) }}" method="POST" class="d-inline">
-                @csrf
-                @method('PUT')
-                <button type="submit" class="btn btn-soft-warning">
-                    <i class="bi bi-cash-stack me-2"></i> إلغاء الدفع
-                </button>
-            </form>
-        @endif
-
         <a href="{{ route('appointments.edit', $appointment) }}" class="btn btn-soft-primary">
             <i class="bi bi-pencil me-2"></i> تعديل الحجز
         </a>

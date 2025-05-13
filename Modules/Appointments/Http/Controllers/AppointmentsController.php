@@ -291,7 +291,7 @@ class AppointmentsController extends Controller
             'appointment_time' => ['required', 'regex:/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/'],
             'status' => 'required|in:scheduled,completed,cancelled',
             'notes' => 'nullable|string|max:1000',
-            'is_paid' => 'boolean',
+            // is_paid field removed as payment status is managed by Stripe
             'is_important' => 'boolean'
         ];
 
@@ -360,7 +360,7 @@ class AppointmentsController extends Controller
                 'scheduled_at' => $scheduledAt,
                 'status' => $validated['status'],
                 'notes' => $validated['notes'] ?? null,
-                'is_paid' => $validated['is_paid'] ?? false,
+                // is_paid field removed as payment status is managed by Stripe
                 'is_important' => $validated['is_important'] ?? false
             ]);
 
@@ -495,30 +495,6 @@ class AppointmentsController extends Controller
 
             return back()->withErrors(['error' => 'حدث خطأ أثناء إلغاء الحجز: ' . $e->getMessage()]);
         }
-    }
-
-    /**
-     * Mark an appointment as paid.
-     */
-    public function markAsPaid(Appointment $appointment)
-    {
-        $appointment->update(['is_paid' => true]);
-
-        return redirect()
-            ->back()
-            ->with('success', 'تم تأكيد الدفع بنجاح');
-    }
-
-    /**
-     * Mark an appointment as unpaid.
-     */
-    public function markAsUnpaid(Appointment $appointment)
-    {
-        $appointment->update(['is_paid' => false]);
-
-        return redirect()
-            ->back()
-            ->with('success', 'تم إلغاء حالة الدفع بنجاح');
     }
 
     /**

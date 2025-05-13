@@ -250,7 +250,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <span class="fw-medium">{{ $appointment->fees }} جنيه</span>
                                                     <span class="status-badge {{ $appointment->is_paid ? 'active' : 'inactive' }} ms-2">
-                                                        {{ $appointment->is_paid ? 'مدفوع' : 'غير مدفوع' }}
+                                                        {{ $appointment->is_paid ? 'تم الدفع ' : 'لم يتم الدفع' }}
                                                     </span>
                                                 </div>
                                             </td>
@@ -382,9 +382,9 @@
                                 <span class="overview-label">حالة الدفع</span>
                                 <span class="overview-value">
                                     @if($appointment->is_paid)
-                                        <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> مدفوع</span>
+                                        <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> تم الدفع</span>
                                     @else
-                                        <span class="text-warning"><i class="bi bi-exclamation-circle me-1"></i> غير مدفوع</span>
+                                        <span class="text-warning"><i class="bi bi-exclamation-circle me-1"></i> لم يتم الدفع</span>
                                     @endif
                                 </span>
                             </div>
