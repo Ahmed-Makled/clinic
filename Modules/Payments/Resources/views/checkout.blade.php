@@ -140,36 +140,10 @@
                                         <p class="text-muted small mb-4">
                                             سيتم تحويلك إلى صفحة الدفع الإلكتروني لإتمام العملية بشكل آمن ومشفر.
                                         </p>
-                                        <form action="{{ route('payments.stripe.create-session', $appointment) }}" method="POST" id="card-payment-form">
+                                        <form action="{{ route('payments.payment.create-session', $appointment) }}" method="POST" id="card-payment-form">
                                             @csrf
                                             <button type="submit" class="btn btn-primary btn-lg w-100">
                                                 <i class="bi bi-credit-card2-front me-2"></i> متابعة للدفع
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                <!-- الدفع عند الوصول -->
-                                <div class="payment-option" id="cash-option">
-                                    <div class="payment-option-header">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="payment_method" id="payment_cash" value="cash">
-                                            <label class="form-check-label d-flex align-items-center" for="payment_cash">
-                                                <span>الدفع عند الوصول</span>
-                                                <div class="ms-auto">
-                                                    <i class="bi bi-cash text-success fs-5"></i>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="payment-option-body d-none">
-                                        <p class="text-muted small mb-4">
-                                            يمكنك الدفع نقدًا في العيادة عند حضورك للموعد.
-                                        </p>
-                                        <form action="{{ route('appointments.confirm-cash', $appointment) }}" method="POST" id="cash-payment-form">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success btn-lg w-100">
-                                                <i class="bi bi-cash me-2"></i> تأكيد الحجز بدون دفع
                                             </button>
                                         </form>
                                     </div>
@@ -368,25 +342,18 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const paymentOptions = document.querySelectorAll('input[name="payment_method"]');
+        // المراقبة فقط على النموذج الوحيد المتوفر (بطاقة الائتمان)
+        const cardForm = document.getElementById('card-payment-form');
 
-        paymentOptions.forEach(option => {
-            option.addEventListener('change', function() {
-                // إزالة الكلاس النشط من جميع الخيارات
-                document.querySelectorAll('.payment-option').forEach(opt => {
-                    opt.classList.remove('active');
-                    opt.querySelector('.payment-option-body').classList.add('d-none');
-                });
-
-                // إضافة الكلاس النشط للخيار المحدد
-                const selectedOption = this.closest('.payment-option');
-                selectedOption.classList.add('active');
-                selectedOption.querySelector('.payment-option-body').classList.remove('d-none');
+        if (cardForm) {
+            cardForm.addEventListener('submit', function() {
+                const button = this.querySelector('button[type="submit"]');
+                if (button) {
+                    button.disabled = true;
+                    button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> جاري التحويل للدفع...';
+                }
             });
-        });
-
-        // تهيئة الصفحة بإظهار الخيار المحدد افتراضياً
-        document.getElementById('card-option').querySelector('.payment-option-body').classList.remove('d-none');
+        }
     });
 </script>
 @endpush

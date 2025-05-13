@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Payments\Http\Controllers\PaymentController;
 use Modules\Payments\Http\Controllers\PaymentAdminController;
-use Modules\Payments\Http\Controllers\StripeController;
 
 // Payment routes that require authentication
 Route::middleware(['web', 'auth:web'])->group(function () {
@@ -11,26 +10,25 @@ Route::middleware(['web', 'auth:web'])->group(function () {
     Route::get('/payments/checkout/{appointment}', [PaymentController::class, 'checkout'])->name('payments.checkout');
 });
 
-// Webhook route (no auth needed as it's called by Stripe)
-Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook'])->name('stripe.webhook');
+// Webhook route (no auth needed as it's called by payment provider)
+Route::post('/payment/webhook', [PaymentController::class, 'handleWebhook'])->name('payment.webhook');
 
 Route::middleware(['auth'])->group(function () {
-    // Regular payment routes (redirected to PaymentController since PaymentsController was removed)
-    Route::get('/checkout/{appointment}', [PaymentController::class, 'checkout'])->name('checkout');
+    // Regular payment routes - using the main checkout route from above instead of duplicating
     Route::post('/process-payment/{appointment}', [PaymentController::class, 'processPayment'])->name('payments.process');
 
-    // Stripe payment routes
-    Route::get('/stripe/checkout/{appointment}', [StripeController::class, 'checkout'])->name('stripe.checkout');
-    Route::post('/stripe/create-session/{appointment}', [StripeController::class, 'createSession'])->name('payments.stripe.create-session');
+    // Payment routes
+    Route::get('/payment/checkout/{appointment}', [PaymentController::class, 'checkout'])->name('payment.checkout');
+    Route::post('/payment/create-session/{appointment}', [PaymentController::class, 'createSession'])->name('payments.payment.create-session');
     // Removed duplicate webhook route that was causing conflict
-    Route::get('/stripe/success', [StripeController::class, 'success'])->name('payments.stripe.success');
-    Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('payments.stripe.cancel');
+    Route::get('/payment/success', [PaymentController::class, 'success'])->name('payments.payment.success');
+    Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payments.payment.cancel');
 });
 
-// Route for direct stripe booking during appointment creation
-Route::post('/appointments/stripe/create', [StripeController::class, 'createAppointmentAndCheckout'])
+// Route for direct payment booking during appointment creation
+Route::post('/appointments/payment/create', [PaymentController::class, 'createAppointmentAndCheckout'])
     ->middleware(['auth'])
-    ->name('appointments.stripe.create');
+    ->name('appointments.payment.create');
 
 // Admin payment management routes
 Route::prefix('admin')->middleware(['web', 'auth', 'role:Admin'])->group(function () {

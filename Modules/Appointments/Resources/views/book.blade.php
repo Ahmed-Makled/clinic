@@ -1021,7 +1021,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // إرسال نموذج الحجز إلى الخادم مع توجيه لمعالج Stripe
-            bookingForm.action = '{{ route("appointments.stripe.create") }}';
+            bookingForm.action = '{{ route("appointments.payment.create") }}';
             bookingForm.submit();
         });
     }

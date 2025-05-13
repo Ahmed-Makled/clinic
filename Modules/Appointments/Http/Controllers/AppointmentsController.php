@@ -202,17 +202,6 @@ class AppointmentsController extends Controller
                 'is_important' => false
             ]);
 
-            // Create pending payment record
-            if ($appointment) {
-                \Modules\Payments\Entities\Payment::create([
-                    'appointment_id' => $appointment->id,
-                    'amount' => $doctor->consultation_fee,
-                    'currency' => config('stripe.currency', 'EGP'),
-                    'status' => 'pending',
-                    'payment_method' => 'cash', // Default to cash, can be changed later
-                    'transaction_id' => \Modules\Payments\Entities\Payment::generateTransactionId()
-                ]);
-            }
 
             // Notify relevant parties
             $doctor->user->notify(new NewAppointmentNotification($appointment));
@@ -578,49 +567,7 @@ class AppointmentsController extends Controller
         return view('appointments::book', compact('doctor', 'availableSlots', 'selectedDate', 'schedules', 'days'));
     }
 
-    /**
-     * تأكيد الحجز مع اختيار الدفع النقدي عند الوصول.
-     * في هذه الحالة، نحتفظ بحالة الدفع كـ "غير مدفوع" حيث أن الدفع سيتم فعلياً عند وصول المريض للعيادة.
-     */
-    public function confirmCashPayment(Appointment $appointment)
-    {
-        try {
-            // تحديث بيانات الحجز بتحديد طريقة الدفع نقداً
-            // لاحظ أننا نترك is_paid كما هي (false) لأن الدفع لم يتم بعد
-            $appointment->update([
-                'payment_method' => 'cash',
-                'is_paid' => false // نؤكد أن حالة الدفع تبقى "غير مدفوع" حتى يتم الدفع عند الوصول
-            ]);
 
-            Log::info('Cash payment option confirmed for appointment:', [
-                'appointment_id' => $appointment->id,
-                'patient_id' => $appointment->patient->id,
-                'doctor_id' => $appointment->doctor->id,
-                'payment_method' => 'cash',
-                'is_paid' => false
-            ]);
-
-            // إعداد رسالة تأكيد مناسبة
-            $doctor = $appointment->doctor;
-            $appointmentDate = $appointment->scheduled_at->locale('ar')->translatedFormat('l d F Y');
-            $appointmentTime = $appointment->scheduled_at->format('h:i A');
-
-            $successMessage = "تم تأكيد حجزك مع د. {$doctor->name} بتاريخ {$appointmentDate} الساعة {$appointmentTime} بنجاح";
-            $successMessage .= ".<br/>سيتم الدفع نقداً عند وصولك للعيادة. يرجى الوصول قبل الموعد بـ 15 دقيقة.";
-
-            return redirect()->route('appointments.show', $appointment)
-                ->with('success', $successMessage);
-
-        } catch (\Exception $e) {
-            Log::error('Error confirming cash payment option:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'appointment_id' => $appointment->id
-            ]);
-
-            return back()->withErrors(['error' => 'حدث خطأ أثناء تأكيد خيار الدفع النقدي، يرجى المحاولة مرة أخرى.']);
-        }
-    }
 
     /**
      * Get available time slots for a specific doctor and date.

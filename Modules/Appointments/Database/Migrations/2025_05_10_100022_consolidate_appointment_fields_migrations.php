@@ -19,24 +19,16 @@ return new class extends Migration
                 $table->decimal('fees', 10, 2)->nullable()->after('notes');
             }
 
-            if (!Schema::hasColumn('appointments', 'is_paid')) {
-                $table->boolean('is_paid')->default(false)->after('fees');
-            }
-
             if (!Schema::hasColumn('appointments', 'is_important')) {
-                $table->boolean('is_important')->default(false)->after('is_paid');
+                $table->boolean('is_important')->default(false)->after('fees');
             }
 
             if (!Schema::hasColumn('appointments', 'waiting_time')) {
                 $table->integer('waiting_time')->nullable()->after('fees')->comment('Waiting time in minutes');
             }
 
-            if (!Schema::hasColumn('appointments', 'payment_method')) {
-                $table->string('payment_method')->nullable()->after('is_paid');
-            }
-
             if (!Schema::hasColumn('appointments', 'payment_id')) {
-                $table->string('payment_id')->nullable()->after('payment_method');
+                $table->string('payment_id')->nullable()->after('waiting_time');
             }
         });
     }
@@ -50,10 +42,8 @@ return new class extends Migration
             // Drop all columns that were added in this migration
             $columns = [
                 'fees',
-                'is_paid',
                 'is_important',
                 'waiting_time',
-                'payment_method',
                 'payment_id'
             ];
 

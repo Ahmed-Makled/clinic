@@ -1073,7 +1073,15 @@ class DoctorsController extends Controller
         // Filter by payment status
         if ($request->filled('payment_status')) {
             $isPaid = $request->payment_status === 'paid';
-            $query->where('is_paid', $isPaid);
+            if ($isPaid) {
+                $query->whereHas('payment', function ($q) {
+                    $q->where('status', 'completed');
+                });
+            } else {
+                $query->whereDoesntHave('payment', function ($q) {
+                    $q->where('status', 'completed');
+                });
+            }
         }
 
         $appointments = $query->orderBy('scheduled_at')->paginate(15);
