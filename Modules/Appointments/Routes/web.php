@@ -9,13 +9,13 @@ Route::middleware(['web', 'auth:web'])->group(function () {
     Route::post('/appointments', [AppointmentsController::class, 'store'])->name('appointments.store');
     Route::put('/appointments/{appointment}/cancel', [AppointmentsController::class, 'cancel'])->name('appointments.cancel');
     Route::post('/appointments/{appointment}/confirm-cash', [AppointmentsController::class, 'confirmCashPayment'])->name('appointments.confirm-cash');
+    Route::get('/appointments/{appointment}', [AppointmentsController::class, 'show'])->name('appointments.show');
 });
 
 // Admin routes
 Route::middleware(['web', 'auth:web', 'role:Admin'])->group(function () {
     Route::resource('appointments', AppointmentsController::class)->except(['store', 'show']);
     Route::get('/appointments/available-slots', [AppointmentsController::class, 'getAvailableSlots'])->name('appointments.available-slots');
-        Route::get('/appointments/{appointment}', [AppointmentsController::class, 'show'])->name('appointments.show');
     Route::put('/appointments/{appointment}/complete', [AppointmentsController::class, 'complete'])->name('appointments.complete');
     Route::put('/appointments/{appointment}/mark-as-paid', [AppointmentsController::class, 'markAsPaid'])->name('appointments.mark-as-paid');
     Route::put('/appointments/{appointment}/mark-as-unpaid', [AppointmentsController::class, 'markAsUnpaid'])->name('appointments.mark-as-unpaid');

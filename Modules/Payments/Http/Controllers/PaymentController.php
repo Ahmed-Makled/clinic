@@ -7,7 +7,6 @@ use Modules\Appointments\Entities\Appointment;
 use Modules\Payments\Entities\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
@@ -59,8 +58,8 @@ class PaymentController extends Controller
                     ]
                 ],
                 'mode' => 'payment',
-                'success_url' => route('payments.success', ['appointment' => $appointment->id]),
-                'cancel_url' => route('payments.cancel', ['appointment' => $appointment->id]),
+                'success_url' => route('payments.stripe.success') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('payments.stripe.cancel') . '?appointment_id=' . $appointment->id,
                 'client_reference_id' => $payment->transaction_id,
                 'metadata' => [
                     'appointment_id' => $appointment->id,
@@ -89,45 +88,7 @@ class PaymentController extends Controller
         }
     }
 
-    /**
-     * Handle successful payment
-     */
-    public function success(Request $request, Appointment $appointment)
-    {
-        DB::transaction(function () use ($appointment) {
-            // Update the payment record to completed
-            $payment = Payment::where('appointment_id', $appointment->id)->first();
-            if ($payment) {
-                $payment->update([
-                    'status' => 'completed',
-                    'paid_at' => now()
-                ]);
-            }
-
-            // Update the appointment with the payment reference
-            $appointment->update(['payment_id' => $payment->id]);
-        });
-
-        return view('payments::success', [
-            'appointment' => $appointment
-        ]);
-    }
-
-    /**
-     * Handle cancelled payment
-     */
-    public function cancel(Request $request, Appointment $appointment)
-    {
-        // Update the payment record to failed
-        $payment = Payment::where('appointment_id', $appointment->id)->first();
-        if ($payment) {
-            $payment->update(['status' => 'failed']);
-        }
-
-        return view('payments::cancel', [
-            'appointment' => $appointment
-        ]);
-    }
+    // We've removed the success and cancel methods as they're now handled by StripeController
 
     /**
      * Handle Stripe webhook

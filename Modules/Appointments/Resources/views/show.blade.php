@@ -174,8 +174,8 @@
                             <!-- أزرار الإجراءات في الهيدر -->
                             @if($appointment->status === 'scheduled')
                                 <div class="header-actions">
-                                    @if(!$appointment->is_paid && $appointment->payment_method !== 'cash')
-                                        <a href="{{ route('payments..checkout', $appointment) }}" class="btn btn-primary me-2">
+                                    @if(!$appointment->is_paid && (!$appointment->payment || $appointment->payment->payment_method !== 'cash'))
+                                        <a href="{{ route('payments.checkout', $appointment) }}" class="btn btn-primary me-2">
                                             <i class="bi bi-credit-card-2-front me-2"></i>
                                             دفع الآن
                                         </a>
@@ -262,12 +262,12 @@
                             </div>
 
                           <!-- إضافة بطاقة إحصائية منفصلة لطريقة الدفع -->
-                          @if($appointment->payment_method)
+                          @if($appointment->payment && $appointment->payment->payment_method)
                           <div class="stat-card">
                               <div class="stat-icon payment">
-                                  @if($appointment->payment_method == 'stripe')
+                                  @if($appointment->payment->payment_method == 'stripe')
                                       <i class="bi bi-credit-card-2-front"></i>
-                                  @elseif($appointment->payment_method == 'cash')
+                                  @elseif($appointment->payment->payment_method == 'cash')
                                       <i class="bi bi-cash"></i>
                                   @else
                                       <i class="bi bi-wallet2"></i>
@@ -276,9 +276,9 @@
                               <div class="stat-details">
                                   <div class="stat-label">طريقة الدفع</div>
                                   <div class="stat-value">
-                                      @if($appointment->payment_method == 'stripe')
+                                      @if($appointment->payment->payment_method == 'stripe')
                                           الدفع ببطاقة الائتمان
-                                      @elseif($appointment->payment_method == 'cash')
+                                      @elseif($appointment->payment->payment_method == 'cash')
                                           الدفع نقدًا عند الوصول
 
                                       @endif
@@ -328,7 +328,7 @@
                                         <span class="instruction-icon"><i class="bi bi-file-earmark-medical"></i></span>
                                         <span>يجب إحضار البطاقة الشخصية وأي تقارير طبية سابقة إن وجدت</span>
                                     </li>
-                                    @if($appointment->payment_method == 'cash')
+                                    @if($appointment->payment && $appointment->payment->payment_method == 'cash')
                                     <li>
                                         <span class="instruction-icon"><i class="bi bi-cash"></i></span>
                                         <span>يرجى إحضار المبلغ المطلوب نقداً ({{ $appointment->fees }} ج.م)</span>

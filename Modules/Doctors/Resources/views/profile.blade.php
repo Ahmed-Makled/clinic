@@ -870,23 +870,9 @@
                                                                                             <div class="empty-notes text-center py-4">
                                                                                                 <i class="bi bi-journal"></i>
                                                                                                 <p>لا توجد ملاحظات مسجلة لهذا الحجز</p>
-                                                                                                @if($appointment->status == 'scheduled')
-                                                                                                <button class="btn btn-sm btn-outline-primary mt-2">
-                                                                                                    <i class="bi bi-plus-circle me-1"></i>
-                                                                                                    إضافة ملاحظة
-                                                                                                </button>
-                                                                                                @endif
                                                                                             </div>
                                                                                         @endif
 
-                                                                                        @if($appointment->status == 'scheduled' && $appointment->notes)
-                                                                                        <div class="text-start mt-3">
-                                                                                            <button class="btn btn-sm btn-outline-primary">
-                                                                                                <i class="bi bi-pencil me-1"></i>
-                                                                                                تعديل الملاحظات
-                                                                                            </button>
-                                                                                        </div>
-                                                                                        @endif
                                                                                     </div>
                                                                                 </div>
                                                                             </div>

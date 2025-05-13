@@ -61,7 +61,7 @@ class Appointment extends Model
         'fees',
         'waiting_time',
         'is_important',
-        'payment_id'  // Updated to only include payment_id as FK
+        'payment_id'
     ];
 
     /**
@@ -72,11 +72,10 @@ class Appointment extends Model
     protected $casts = [
         'scheduled_at' => 'datetime',
         'fees' => 'decimal:2',
-        'is_paid' => 'boolean',
         'is_important' => 'boolean',
         'waiting_time' => 'integer',
-        'payment_method' => 'string',
-        'payment_id' => 'string'
+        'payment_id' => 'integer',
+        'is_paid' => 'boolean'
     ];
 
     /**
@@ -114,6 +113,24 @@ class Appointment extends Model
             if (!$appointment->fees) {
                 $doctor = Doctor::find($appointment->doctor_id);
                 $appointment->fees = $doctor->consultation_fee;
+            }
+        });
+
+        // When updating an appointment with a payment, update is_paid status
+        static::updating(function ($appointment) {
+            if ($appointment->isDirty('payment_id') && $appointment->payment_id) {
+                $payment = Payment::find($appointment->payment_id);
+                if ($payment) {
+                    $appointment->is_paid = $payment->status === 'completed';
+                }
+            }
+        });
+
+        // When saving or updating an appointment, sync the is_paid field with payment status
+        static::saving(function ($appointment) {
+            if ($appointment->payment_id) {
+                $isPaid = $appointment->payment && $appointment->payment->isCompleted();
+                $appointment->is_paid = $isPaid;
             }
         });
     }
@@ -223,24 +240,24 @@ class Appointment extends Model
     }
 
     /**
-     * Determine if the appointment is paid.
+     * Note: This method is kept for backward compatibility, but we now use the is_paid database column
+     * that is automatically kept in sync with the payment status through database triggers and model events.
      *
      * @return bool
+     * @deprecated Use the is_paid column directly instead
      */
     public function getIsPaidAttribute(): bool
     {
-        return $this->payment && $this->payment->isCompleted();
+        // If the relationship is loaded, use it for the calculation
+        if ($this->relationLoaded('payment')) {
+            return $this->payment && $this->payment->isCompleted();
+        }
+
+        // Otherwise use the stored value
+        return (bool) $this->attributes['is_paid'];
     }
 
-    /**
-     * Get the payment method used for this appointment.
-     *
-     * @return string|null
-     */
-    public function getPaymentMethodAttribute(): ?string
-    {
-        return $this->payment ? $this->payment->payment_method : null;
-    }
+    // Payment method accessor removed as it's now handled directly by the relationship
 
     /**
      * Scope a query to only include upcoming appointments.

@@ -7,14 +7,12 @@ use Modules\Payments\Http\Controllers\StripeController;
 
 // Payment routes that require authentication
 Route::middleware(['web', 'auth:web'])->group(function () {
-    // Checkout and payment result routes
+    // Checkout route
     Route::get('/payments/checkout/{appointment}', [PaymentController::class, 'checkout'])->name('payments.checkout');
-    Route::get('/payments/success/{appointment}', [PaymentController::class, 'success'])->name('payments.success');
-    Route::get('/payments/cancel/{appointment}', [PaymentController::class, 'cancel'])->name('payments.cancel');
 });
 
 // Webhook route (no auth needed as it's called by Stripe)
-Route::post('/stripe/webhook', [PaymentController::class, 'handleWebhook'])->name('stripe.webhook');
+Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook'])->name('stripe.webhook');
 
 Route::middleware(['auth'])->group(function () {
     // Regular payment routes (redirected to PaymentController since PaymentsController was removed)

@@ -3,6 +3,8 @@
 namespace Modules\Payments\Http\Controllers;
 
 use Modules\Appointments\Entities\Appointment;
+use Modules\Payments\Entities\Payment;
+use Modules\Doctors\Entities\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
@@ -24,9 +26,23 @@ class StripeController extends Controller
     public function checkout(Appointment $appointment)
     {
         // Eager load the doctor relationship
-        $appointment->load(['doctor', 'patient']);
-
+        $appointment->load(['doctor', 'patient']);        // Check if appointment already has a completed payment
         if ($appointment->is_paid) {
+            return redirect()->route('appointments.show', $appointment)->with('info', 'تم دفع رسوم الحجز بالفعل');
+        }
+
+        // Double-check with Payment model as well
+        $payment = Payment::where('appointment_id', $appointment->id)
+            ->where('status', 'completed')
+            ->first();
+
+        if ($payment) {
+            // Update the appointment if payment exists but appointment is not marked as paid
+            $appointment->is_paid = true;
+            $appointment->payment_method = $payment->payment_method;
+            $appointment->payment_id = $payment->id;
+            $appointment->save();
+
             return redirect()->route('appointments.show', $appointment)->with('info', 'تم دفع رسوم الحجز بالفعل');
         }
 
@@ -103,7 +119,7 @@ class StripeController extends Controller
         }
 
         // Get the doctor and verify it exists
-        $doctor = \App\Models\Doctor::find($validated['doctor_id']);
+        $doctor = Doctor::find($validated['doctor_id']);
         if (!$doctor) {
             return redirect()->back()->with('error', 'لم يتم العثور على بيانات الطبيب المطلوب');
         }
@@ -200,16 +216,34 @@ class StripeController extends Controller
                     ->with('error', 'لم نتمكن من العثور على الحجز المرتبط بعملية الدفع.');
             }
 
-            // Update appointment payment status
+            // Create or update payment record
+            $payment = Payment::firstOrCreate(
+                ['appointment_id' => $appointment->id],
+                [
+                    'amount' => $appointment->fees,
+                    'currency' => config('stripe.currency', 'egp'),
+                    'status' => 'pending',
+                    'payment_method' => 'stripe',
+                    'transaction_id' => Payment::generateTransactionId()
+                ]
+            );
+
+            // Update payment status to completed
+            $payment->update([
+                'status' => 'completed',
+                'payment_id' => $session->id
+            ]);
+
+            // Update appointment with payment_id and payment status
+            $appointment->payment_id = $payment->id;
             $appointment->is_paid = true;
             $appointment->payment_method = 'stripe';
-            $appointment->payment_id = $session->id;
             $appointment->save();
 
             Log::info('Payment marked as successful for appointment #' . $appointment->id);
 
-            // Redirect to success page
-            return redirect()->route('payments.success', ['appointment' => $appointment->id]);
+            // Redirect to success page with appointment
+            return view('payments::success', ['appointment' => $appointment]);
 
         } catch (\Exception $e) {
             // Log detailed error information
@@ -230,7 +264,25 @@ class StripeController extends Controller
         if ($appointmentId) {
             $appointment = Appointment::find($appointmentId);
             if ($appointment) {
-                return redirect()->route('payments.cancel', ['appointment' => $appointment->id]);
+                // Update or create a payment record
+                $payment = Payment::firstOrCreate(
+                    ['appointment_id' => $appointment->id],
+                    [
+                        'amount' => $appointment->fees,
+                        'currency' => config('stripe.currency', 'egp'),
+                        'status' => 'pending',
+                        'payment_method' => 'stripe',
+                        'transaction_id' => Payment::generateTransactionId()
+                    ]
+                );
+
+                // Update payment status to failed
+                $payment->update([
+                    'status' => 'failed',
+                ]);
+
+                // Return the cancel view directly
+                return view('payments::cancel', ['appointment' => $appointment]);
             }
         }
 
@@ -268,10 +320,29 @@ class StripeController extends Controller
 
                 if (isset($session->metadata->appointment_id)) {
                     $appointment = Appointment::find($session->metadata->appointment_id);
-                    if ($appointment && !$appointment->is_paid) {
+                    if ($appointment) {
+                        // Create or update payment record
+                        $payment = Payment::firstOrCreate(
+                            ['appointment_id' => $appointment->id],
+                            [
+                                'amount' => $appointment->fees,
+                                'currency' => config('stripe.currency', 'egp'),
+                                'status' => 'pending',
+                                'payment_method' => 'stripe',
+                                'transaction_id' => Payment::generateTransactionId()
+                            ]
+                        );
+
+                        // Update payment status to completed
+                        $payment->update([
+                            'status' => 'completed',
+                            'payment_id' => $session->id
+                        ]);
+
+                        // Update appointment with payment_id and payment status
+                        $appointment->payment_id = $payment->id;
                         $appointment->is_paid = true;
                         $appointment->payment_method = 'stripe';
-                        $appointment->payment_id = $session->id;
                         $appointment->save();
 
                         Log::info('Payment completed via webhook for appointment #' . $appointment->id);

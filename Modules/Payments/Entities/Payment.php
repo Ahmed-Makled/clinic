@@ -21,18 +21,14 @@ class Payment extends Model
         'status',
         'payment_method',
         'payment_id',
-        'transaction_id',
-        'metadata',
-        'paid_at'
+        'transaction_id'
     ];
 
     /**
      * The attributes that should be cast.
      */
     protected $casts = [
-        'amount' => 'decimal:2',
-        'metadata' => 'array',
-        'paid_at' => 'datetime',
+        'amount' => 'decimal:2'
     ];
 
     /**
