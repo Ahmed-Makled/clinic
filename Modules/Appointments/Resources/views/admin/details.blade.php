@@ -152,7 +152,7 @@
                         </div>
                         <div class="card-body">
                             @php
-                                $existingRating = \App\Models\DoctorRating::where('appointment_id', $appointment->id)
+                                $existingRating = \Modules\Doctors\Entities\DoctorRating::where('appointment_id', $appointment->id)
                                     ->where('patient_id', $appointment->patient_id)
                                     ->first();
                             @endphp
@@ -547,11 +547,11 @@
 
         .star-label.selected,
         .star-label:hover,
-        .star-label:hover ~ .star-label {
+        .star-label:hover~.star-label {
             color: #ffc107;
         }
 
-        input[name="rating"]:checked ~ label {
+        input[name="rating"]:checked~label {
             color: #ffc107;
         }
 
@@ -645,70 +645,70 @@
 @endsection
 
 @push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // التعامل مع زر تعديل التقييم
-        const editRatingBtn = document.getElementById('editRatingBtn');
-        const editRatingForm = document.getElementById('editRatingForm');
-        const cancelEditBtn = document.getElementById('cancelEditBtn');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // التعامل مع زر تعديل التقييم
+            const editRatingBtn = document.getElementById('editRatingBtn');
+            const editRatingForm = document.getElementById('editRatingForm');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
 
-        if (editRatingBtn && editRatingForm && cancelEditBtn) {
-            editRatingBtn.addEventListener('click', function() {
-                editRatingForm.style.display = 'block';
-                editRatingBtn.style.display = 'none';
-            });
+            if (editRatingBtn && editRatingForm && cancelEditBtn) {
+                editRatingBtn.addEventListener('click', function () {
+                    editRatingForm.style.display = 'block';
+                    editRatingBtn.style.display = 'none';
+                });
 
-            cancelEditBtn.addEventListener('click', function() {
-                editRatingForm.style.display = 'none';
-                editRatingBtn.style.display = 'inline-flex';
-            });
-        }
+                cancelEditBtn.addEventListener('click', function () {
+                    editRatingForm.style.display = 'none';
+                    editRatingBtn.style.display = 'inline-flex';
+                });
+            }
 
-        // التعامل مع نظام النجوم لإضافة تقييم جديد
-        const starLabels = document.querySelectorAll('.stars:not(.rated-form) .star-label');
-        const ratingValueDisplay = document.getElementById('rating-value');
+            // التعامل مع نظام النجوم لإضافة تقييم جديد
+            const starLabels = document.querySelectorAll('.stars:not(.rated-form) .star-label');
+            const ratingValueDisplay = document.getElementById('rating-value');
 
-        if (starLabels.length > 0 && ratingValueDisplay) {
-            starLabels.forEach(label => {
-                label.addEventListener('click', function() {
-                    const ratingValue = this.previousElementSibling.value;
-                    const ratingText = ratingValue === '1' ? 'نجمة واحدة' : `${ratingValue} نجوم`;
-                    ratingValueDisplay.textContent = ratingText;
+            if (starLabels.length > 0 && ratingValueDisplay) {
+                starLabels.forEach(label => {
+                    label.addEventListener('click', function () {
+                        const ratingValue = this.previousElementSibling.value;
+                        const ratingText = ratingValue === '1' ? 'نجمة واحدة' : `${ratingValue} نجوم`;
+                        ratingValueDisplay.textContent = ratingText;
 
-                    // تحديد النجوم المحددة
-                    starLabels.forEach(innerLabel => {
-                        if (innerLabel.previousElementSibling.value <= ratingValue) {
-                            innerLabel.classList.add('selected');
-                        } else {
-                            innerLabel.classList.remove('selected');
-                        }
+                        // تحديد النجوم المحددة
+                        starLabels.forEach(innerLabel => {
+                            if (innerLabel.previousElementSibling.value <= ratingValue) {
+                                innerLabel.classList.add('selected');
+                            } else {
+                                innerLabel.classList.remove('selected');
+                            }
+                        });
                     });
                 });
-            });
-        }
+            }
 
-        // التعامل مع نظام النجوم لتعديل التقييم
-        const starLabelsEdit = document.querySelectorAll('#editRatingForm .star-label');
-        const ratingValueDisplayEdit = document.getElementById('rating-value-edit');
+            // التعامل مع نظام النجوم لتعديل التقييم
+            const starLabelsEdit = document.querySelectorAll('#editRatingForm .star-label');
+            const ratingValueDisplayEdit = document.getElementById('rating-value-edit');
 
-        if (starLabelsEdit.length > 0 && ratingValueDisplayEdit) {
-            starLabelsEdit.forEach(label => {
-                label.addEventListener('click', function() {
-                    const ratingValue = this.previousElementSibling.value;
-                    const ratingText = ratingValue === '1' ? 'نجمة واحدة' : `${ratingValue} نجوم`;
-                    ratingValueDisplayEdit.textContent = ratingText;
+            if (starLabelsEdit.length > 0 && ratingValueDisplayEdit) {
+                starLabelsEdit.forEach(label => {
+                    label.addEventListener('click', function () {
+                        const ratingValue = this.previousElementSibling.value;
+                        const ratingText = ratingValue === '1' ? 'نجمة واحدة' : `${ratingValue} نجوم`;
+                        ratingValueDisplayEdit.textContent = ratingText;
 
-                    // تحديد النجوم المحددة
-                    starLabelsEdit.forEach(innerLabel => {
-                        if (innerLabel.previousElementSibling.value <= ratingValue) {
-                            innerLabel.classList.add('selected');
-                        } else {
-                            innerLabel.classList.remove('selected');
-                        }
+                        // تحديد النجوم المحددة
+                        starLabelsEdit.forEach(innerLabel => {
+                            if (innerLabel.previousElementSibling.value <= ratingValue) {
+                                innerLabel.classList.add('selected');
+                            } else {
+                                innerLabel.classList.remove('selected');
+                            }
+                        });
                     });
                 });
-            });
-        }
-    });
-</script>
+            }
+        });
+    </script>
 @endpush

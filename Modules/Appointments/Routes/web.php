@@ -3,17 +3,30 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Appointments\Http\Controllers\AppointmentsController;
 
-// Public routes that require authentication
-Route::middleware(['web', 'auth:web'])->group(function () {
-    Route::get('/appointments/book/{doctor}', [AppointmentsController::class, 'book'])->name('appointments.book');
-    Route::post('/appointments', [AppointmentsController::class, 'store'])->name('appointments.store');
-    Route::put('/appointments/{appointment}/cancel', [AppointmentsController::class, 'cancel'])->name('appointments.cancel');
-    Route::get('/appointments/{appointment}', [AppointmentsController::class, 'show'])->name('appointments.show');
-});
-
-// Admin routes
-Route::middleware(['web', 'auth:web', 'role:Admin'])->group(function () {
-    Route::resource('appointments', AppointmentsController::class)->except(['store', 'show']);
-    Route::get('/appointments/available-slots', [AppointmentsController::class, 'getAvailableSlots'])->name('appointments.available-slots');
-    Route::put('/appointments/{appointment}/complete', [AppointmentsController::class, 'complete'])->name('appointments.complete');
+Route::prefix('appointments')->name('appointments.')->middleware(['web'])->group(function () {
+    // Public routes accessible to any authenticated user
+    Route::middleware(['auth:web'])->group(function () {
+        // Booking routes
+        Route::get('/book/{doctor}', [AppointmentsController::class, 'book'])->name('book');
+        Route::post('/', [AppointmentsController::class, 'store'])->name('store');
+        Route::put('/{appointment}/cancel', [AppointmentsController::class, 'cancel'])->name('cancel');
+        
+        Route::get('/{appointment}', [AppointmentsController::class, 'show'])->name('show')->where('appointment', '[0-9]+');
+    });
+    
+    // Admin only routes
+    Route::middleware(['auth:web', 'role:Admin'])->group(function () {
+        // List all appointments (index)
+        Route::get('/', [AppointmentsController::class, 'index'])->name('index');
+        
+        // Admin specific actions - These specific routes must come before parameter routes
+        Route::get('/create', [AppointmentsController::class, 'create'])->name('create');
+        Route::get('/available-slots', [AppointmentsController::class, 'getAvailableSlots'])->name('available-slots');
+        
+        // Parameter-based routes
+        Route::get('/{appointment}/edit', [AppointmentsController::class, 'edit'])->name('edit');
+        Route::put('/{appointment}', [AppointmentsController::class, 'update'])->name('update');
+        Route::delete('/{appointment}', [AppointmentsController::class, 'destroy'])->name('destroy');
+        Route::put('/{appointment}/complete', [AppointmentsController::class, 'complete'])->name('complete');
+    });
 });

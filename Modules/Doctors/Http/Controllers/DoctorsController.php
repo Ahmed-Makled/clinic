@@ -698,7 +698,7 @@ class DoctorsController extends Controller
         ]);
 
         // التحقق من أن المستخدم الحالي هو صاحب الحجز
-        $appointment = \App\Models\Appointment::find($validated['appointment_id']);
+        $appointment = \Modules\Appointments\Entities\Appointment::find($validated['appointment_id']);
 
         // التحقق من وجود الحجز وأن المستخدم هو صاحب الحجز
         if (!$appointment || $appointment->patient_id != auth()->user()->patient->id) {
@@ -716,7 +716,7 @@ class DoctorsController extends Controller
         }
 
         // التحقق من عدم وجود تقييم سابق لنفس الحجز
-        $existingRating = Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
+        $existingRating = \Modules\Doctors\Entities\DoctorRating::where('doctor_id', $doctor->id)
             ->where('patient_id', auth()->user()->patient->id)
             ->where('appointment_id', $validated['appointment_id'])
             ->first();
@@ -731,7 +731,7 @@ class DoctorsController extends Controller
             $message = 'تم تحديث تقييمك بنجاح';
         } else {
             // إنشاء تقييم جديد
-            Modules\Doctors\Entities\DoctorRating::create([
+            \Modules\Doctors\Entities\DoctorRating::create([
                 'doctor_id' => $doctor->id,
                 'patient_id' => auth()->user()->patient->id,
                 'appointment_id' => $validated['appointment_id'],

@@ -561,7 +561,7 @@
                                                                 @if($appointment->status == 'completed')
                                                                     <!-- Verificar si ya existe una valoración para esta cita -->
                                                                     @php
-                                                                        $existingRating = \App\Models\DoctorRating::where('doctor_id', $appointment->doctor->id)
+                                                                        $existingRating = \Modules\Doctors\Entities\DoctorRating::where('doctor_id', $appointment->doctor->id)
                                                                             ->where('patient_id', $appointment->patient_id)
                                                                             ->where('appointment_id', $appointment->id)
                                                                             ->first();
