@@ -270,19 +270,18 @@
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label for="categories" class="form-label">التخصصات *</label>
-                                            <select name="categories[]" id="categories" class="form-select"
-                                                >
+                                            <label for="category_id" class="form-label">التخصص *</label>
+                                            <select name="category_id" id="category_id" class="form-select">
                                                 <option value="">اختر التخصص</option>
                                                 @foreach($categories as $category)
                                                     <option value="{{ $category->id }}"
-                                                        {{ old('categories', $doctor->category_id == $category->id) ? 'selected' : '' }}>
+                                                        {{ old('category_id', $doctor->category_id) == $category->id ? 'selected' : '' }}>
                                                         {{ $category->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                             <small class="text-muted">المجالات الطبية العامة مثل (طب أطفال - جراحة - باطنة)</small>
-                                            @error('categories')
+                                            @error('category_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -1846,7 +1845,7 @@
     }
 
     .completed-badge {
-        color: var (--success-color);
+        color: var(--success-color);
     }
 
     .cancelled-badge {

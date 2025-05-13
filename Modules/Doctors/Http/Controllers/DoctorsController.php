@@ -20,6 +20,7 @@ use Modules\Doctors\Notifications\DoctorDeletedNotification;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Notifications\AppointmentCompletedNotification;
 
 class DoctorsController extends Controller
 {
@@ -854,7 +855,7 @@ class DoctorsController extends Controller
             'phone' => ['required', 'string', 'unique:users,phone_number,'.$user->id],
             'title' => ['required', 'string', 'max:100'],
             'specialization' => ['required', 'string', 'max:100'],
-            'categories' => ['required', 'array', 'exists:categories,id'],
+            'category_id' => ['required', 'exists:categories,id'],
             'experience_years' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string', 'max:1000'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
@@ -883,7 +884,7 @@ class DoctorsController extends Controller
             'phone.unique' => 'رقم الهاتف مستخدم بالفعل',
             'title.required' => 'المسمى الوظيفي مطلوب',
             'specialization.required' => 'التخصص مطلوب',
-            'categories.required' => 'التخصصات مطلوبة',
+            'category_id.required' => 'التخصص مطلوب',
             'experience_years.required' => 'سنوات الخبرة مطلوبة',
             'address.required' => 'العنوان مطلوب',
             'consultation_fee.required' => 'سعر الكشف مطلوب',
@@ -923,8 +924,10 @@ class DoctorsController extends Controller
                 $doctor->save();
             }
 
-            // Sync categories
-            $doctor->categories()->sync($request->categories);
+            // Update category
+            if (!empty($validated['category_id'])) {
+                $doctor->update(['category_id' => $validated['category_id']]);
+            }
 
             // Update schedules
             $days = [
@@ -1107,9 +1110,12 @@ class DoctorsController extends Controller
 
         try {
             $appointment->update(['status' => 'completed']);
+            
+            // Re-fetch appointment to ensure correct type
+            $refreshedAppointment = Appointment::find($appointment->id);
 
-            // Notify patient
-            $appointment->patient->user->notify(new \App\Notifications\AppointmentCompletedNotification($appointment));
+            // Notify patient - use the App namespace notification class to match frontend expectations
+            $refreshedAppointment->patient->user->notify(new AppointmentCompletedNotification($refreshedAppointment));
 
             return redirect()->back()->with('success', 'تم تحديث الحجز كمكتمل بنجاح');
         } catch (\Exception $e) {

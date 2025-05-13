@@ -2,6 +2,52 @@
 
 @section('content')
     <div class="container mt-5 py-5">
+        <div class="row">
+            <div class="col-12  ">
+                  @if (session('success'))
+                        <div class="alert-card success mb-4">
+                            <div class="alert-icon">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <div class="alert-content">
+                                <h6 class="alert-heading">تمت العملية بنجاح!</h6>
+                                <p class="mb-0">{!! session('success') !!}</p>
+                            </div>
+                            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    @endif
+                    @if (session('error'))
+                        <div class="alert-card error mb-4">
+                            <div class="alert-icon">
+                                <i class="bi bi-exclamation-triangle"></i>
+                            </div>
+                            <div class="alert-content">
+                                <h6 class="alert-heading">حدث خطأ!</h6>
+                                <p class="mb-0">{!! session('error') !!}</p>
+                            </div>
+                            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    @endif
+                    @if (session('info'))
+                        <div class="alert-card info mb-4">
+                            <div class="alert-icon">
+                                <i class="bi bi-info-circle"></i>
+                            </div>
+                            <div class="alert-content">
+                                <h6 class="alert-heading">معلومات!</h6>
+                                <p class="mb-0">{!! session('info') !!}</p>
+                            </div>
+                            <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    @endif
+            </div>
+        </div>
         <div class="row g-4">
             <!-- Search Filters -->
             <div class="col-lg-3">
@@ -160,17 +206,10 @@
 
                                                     <div class="d-flex justify-content-between align-items-center">
 
-                                                        <div>
-                                                            <a
-                                                                class="btn btn-outline-primary btn-lg rounded-3 btn-sm">
-                                                                <i class="bi bi-calendar-check me-2"></i>
-                                                                اتصل احجز
-                                                            </a>
-                                                        </div>
 
-                                                        <div>
+                                                        <div class="w-100">
                                                             <a href="{{ route('appointments.book', $doctor) }}"
-                                                                class="btn btn-primary btn-lg rounded-3 btn-sm ">
+                                                                class="btn btn-primary w-100 rounded-3 btn-sm  ">
                                                                 <i class="bi bi-calendar-check me-2"></i>
                                                                 احجز موعد
                                                             </a>
@@ -493,18 +532,6 @@
                 }
             }
 
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translate(-50%, -10px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translate(-50%, 0);
-                }
-            }
-
             /* تحسين التصميم على الشاشات الصغيرة */
             @media (max-width: 768px) {
                 .rating-badge {
@@ -630,7 +657,8 @@
 
                 /* View Switcher Styles */
                 .doctors-container {
-                    transition: all 0.3s ease;
+                    transition: opacity 0.3s ease;
+                    opacity: 1;
                 }
 
                 /* Grid View Styles */
@@ -774,22 +802,35 @@
                 if (!doctorsContainer) return
                 // Load saved view preference from localStorage
                 const savedView = localStorage.getItem('doctorsViewPreference') || 'grid';
-                setViewMode(savedView);
+                
+                // Initial view setup without animation
+                doctorsContainer.classList.remove('grid-view', 'list-view');
+                doctorsContainer.classList.add(`${savedView}-view`);
+                gridViewBtn.classList.toggle('active', savedView === 'grid');
+                listViewBtn.classList.toggle('active', savedView === 'list');
 
                 gridViewBtn.addEventListener('click', () => setViewMode('grid'));
                 listViewBtn.addEventListener('click', () => setViewMode('list'));
 
                 function setViewMode(mode) {
-
-                    doctorsContainer.classList.remove('grid-view', 'list-view');
-                    doctorsContainer.classList.add(`${mode}-view`);
-
-                    // Update buttons active state
-                    gridViewBtn.classList.toggle('active', mode === 'grid');
-                    listViewBtn.classList.toggle('active', mode === 'list');
-
-                    // Save preference
-                    localStorage.setItem('doctorsViewPreference', mode);
+                    // Fade out
+                    doctorsContainer.style.opacity = '0';
+                    
+                    // Switch view after a short delay
+                    setTimeout(() => {
+                        doctorsContainer.classList.remove('grid-view', 'list-view');
+                        doctorsContainer.classList.add(`${mode}-view`);
+                        
+                        // Update buttons active state
+                        gridViewBtn.classList.toggle('active', mode === 'grid');
+                        listViewBtn.classList.toggle('active', mode === 'list');
+                        
+                        // Fade back in
+                        doctorsContainer.style.opacity = '1';
+                        
+                        // Save preference
+                        localStorage.setItem('doctorsViewPreference', mode);
+                    }, 150);
                 }
             });
         </script>

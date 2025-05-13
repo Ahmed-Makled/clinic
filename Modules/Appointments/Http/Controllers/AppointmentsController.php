@@ -502,6 +502,20 @@ class AppointmentsController extends Controller
      */
     public function book(Doctor $doctor)
     {
+        // التحقق من تسجيل دخول المستخدم
+        if (!auth()->check()) {
+            return redirect()->route('login')
+                ->with('error', 'يجب تسجيل الدخول أولاً لتتمكن من حجز موعد');
+        }
+
+        $user = auth()->user();
+        
+        // إذا كان المستخدم ليس آدمن وليس مريض
+        if (!$user->hasRole('Admin') && !$user->isPatient()) {
+            return back()
+                ->with('error', 'عذراً، فقط المرضى يمكنهم حجز الحجوزات');
+        }
+        
         // Get selected date or default to today
         $selectedDate = request('date') ?? now()->format('Y-m-d');
         $selectedDateObj = Carbon::parse($selectedDate);
