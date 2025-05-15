@@ -1,0 +1,66 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+' Define actors
+actor Patient
+actor Doctor
+actor Admin
+
+' Define system boundary
+package "Clinic Management System" {
+    
+    ' Patient Use Cases
+    usecase UC_P1 as "UC-P1: Patient Registration"
+    usecase UC_P2 as "UC-P2: Search for Doctors"
+    usecase UC_P3 as "UC-P3: Book Appointment"
+    usecase UC_P4 as "UC-P4: Manage Appointments"
+    usecase UC_P5 as "UC-P5: Rate Doctor"
+    usecase UC_P6 as "UC-P6: Update Medical Profile"
+
+    ' Doctor Use Cases
+    usecase UC_D1 as "UC-D1: Doctor Registration"
+    usecase UC_D2 as "UC-D2: Set Availability Schedule"
+    usecase UC_D3 as "UC-D3: Manage Doctor Appointments"
+    usecase UC_D4 as "UC-D4: View Patient History"
+    usecase UC_D5 as "UC-D5: Create Prescription"
+    usecase UC_D6 as "UC-D6: View Ratings and Feedback"
+
+    ' Admin Use Cases
+    usecase UC_A1 as "UC-A1: Approve Doctor Registration"
+    usecase UC_A2 as "UC-A2: Generate System Reports"
+    usecase UC_A3 as "UC-A3: Manage System Settings"
+    usecase UC_A4 as "UC-A4: Manage Medical Specialties"
+    usecase UC_A5 as "UC-A5: Resolve Disputes"
+    usecase UC_A6 as "UC-A6: Monitor System Performance"
+}
+
+' Actor -> Use Cases
+Patient --> UC_P1
+Patient --> UC_P2
+Patient --> UC_P3
+Patient --> UC_P4
+Patient --> UC_P5
+Patient --> UC_P6
+
+Doctor --> UC_D1
+Doctor --> UC_D2
+Doctor --> UC_D3
+Doctor --> UC_D4
+Doctor --> UC_D5
+Doctor --> UC_D6
+
+Admin --> UC_A1
+Admin --> UC_A2
+Admin --> UC_A3
+Admin --> UC_A4
+Admin --> UC_A5
+Admin --> UC_A6
+
+' Include relationships
+UC_P3 --> UC_P4 : <<include>>
+
+' Instead of Doctor including Admin’s use case, show the result:
+UC_D1 --> UC_A1 : <<request approval>>
+
+@enduml
