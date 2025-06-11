@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg position-fixed w-100 top-0">
+<nav class="navbar navbar-expand-lg position-fixed w-100 top-0 py-1">
     <div class="container">
         <a class="navbar-brand fw-bold ms-0 me-4" href="{{ route('home') }}">
             <img src="{{ asset('images/logo-clinic.png') }}" class="logo-img" alt="Logo" />
@@ -62,7 +62,7 @@
                                     </a>
                                 @endif
                             </li>
-                            
+
                             @if(auth()->user()->hasRole('Patient'))
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile') }}#appointments" id="navbar-appointments-link">

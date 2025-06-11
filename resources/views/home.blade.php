@@ -3,7 +3,7 @@
 @section('content')
     <header class="header position-relative vh-100">
         <div class="overlay position-absolute w-100 h-100 d-flex align-items-center">
-            <div class="container mt-4 py-5 text-white">
+            <div class="container mt-5 py-5 text-white">
                 <div class="row justify-content-center">
                     <div class="col-md-9 text-center">
                         <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown">
