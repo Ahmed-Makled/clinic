@@ -224,9 +224,118 @@
                         @endforeach
                     </div>
 
-                    <div class="mt-5">
-                        {{ $doctors->withQueryString()->links() }}
-                    </div>
+                    @if($doctors->hasPages())
+                        <div class="pagination-wrapper mt-5">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <div class="pagination-info">
+                                        <span class="text-muted">
+                                            عرض {{ $doctors->firstItem() }} إلى {{ $doctors->lastItem() }} من أصل {{ $doctors->total() }} نتيجة
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <nav aria-label="Page navigation" class="d-flex justify-content-end">
+                                        <ul class="pagination custom-pagination mb-0">
+                                            {{-- First Page Link --}}
+                                            @if (!$doctors->onFirstPage())
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $doctors->url(1) }}" title="الصفحة الأولى">
+                                                        <i class="bi bi-chevron-double-right"></i>
+                                                    </a>
+                                                </li>
+                                            @endif
+
+                                            {{-- Previous Page Link --}}
+                                            @if ($doctors->onFirstPage())
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">
+                                                        <i class="bi bi-chevron-right"></i>
+                                                    </span>
+                                                </li>
+                                            @else
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $doctors->previousPageUrl() }}" title="الصفحة السابقة">
+                                                        <i class="bi bi-chevron-right"></i>
+                                                    </a>
+                                                </li>
+                                            @endif
+
+                                            {{-- Pagination Elements --}}
+                                            @php
+                                                $start = max($doctors->currentPage() - 2, 1);
+                                                $end = min($doctors->currentPage() + 2, $doctors->lastPage());
+
+                                                $showStartDots = $start > 2;
+                                                $showEndDots = $end < $doctors->lastPage() - 1;
+                                            @endphp
+
+                                            {{-- Always show first page if not in range --}}
+                                            @if ($start > 1)
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $doctors->url(1) }}">1</a>
+                                                </li>
+                                                @if ($showStartDots)
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link dots">...</span>
+                                                    </li>
+                                                @endif
+                                            @endif
+
+                                            {{-- Page Numbers --}}
+                                            @for ($page = $start; $page <= $end; $page++)
+                                                @if ($page == $doctors->currentPage())
+                                                    <li class="page-item active">
+                                                        <span class="page-link">{{ $page }}</span>
+                                                    </li>
+                                                @else
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ $doctors->url($page) }}">{{ $page }}</a>
+                                                    </li>
+                                                @endif
+                                            @endfor
+
+                                            {{-- Always show last page if not in range --}}
+                                            @if ($end < $doctors->lastPage())
+                                                @if ($showEndDots)
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link dots">...</span>
+                                                    </li>
+                                                @endif
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $doctors->url($doctors->lastPage()) }}">{{ $doctors->lastPage() }}</a>
+                                                </li>
+                                            @endif
+
+                                            {{-- Next Page Link --}}
+                                            @if ($doctors->hasMorePages())
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $doctors->nextPageUrl() }}" title="الصفحة التالية">
+                                                        <i class="bi bi-chevron-left"></i>
+                                                    </a>
+                                                </li>
+                                            @else
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">
+                                                        <i class="bi bi-chevron-left"></i>
+                                                    </span>
+                                                </li>
+                                            @endif
+
+                                            {{-- Last Page Link --}}
+                                            @if ($doctors->hasMorePages())
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $doctors->url($doctors->lastPage()) }}" title="الصفحة الأخيرة">
+                                                        <i class="bi bi-chevron-double-left"></i>
+                                                    </a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 @else
                     <div class="text-center py-5">
                         <i class="bi bi-search text-primary mb-4" style="font-size: 4rem;"></i>
@@ -428,7 +537,7 @@
                 font-weight: 600;
                 font-size: 1.1rem;
                 color: var(--bs-primary);
-                box-shadow: 0 2px 4px rgba(13, 110, 253, 0.1);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
             }
 
@@ -627,134 +736,377 @@
             }
 
             @media (max-width: 768px) {
-
-                .doctors-container.grid-view .row.align-items-center,
-                .doctors-container.list-view .row.align-items-center {
-                    flex-direction: column;
-                    text-align: center;
+                .doctor-image-wrapper {
+                    width: 100px;
+                    height: 100px;
                 }
 
 
-            }
-
-            /* Responsive Styles */
-            @media (max-width: 1200px) {
-                .doctors-container.grid-view {
-                    grid-template-columns: repeat(2, 1fr);
+                .book-btn {
+                    width: 100%;
+                    margin-top: 1rem;
                 }
             }
 
-            @media (max-width: 992px) {
-                .doctors-container.grid-view {
-                    grid-template-columns: repeat(2, 1fr);
+            .doctor-description {
+                font-size: 1rem;
+                line-height: 1.6;
+                color: var(--bs-gray-600);
+                padding: 0.5rem 1rem;
+                background-color: var(--bs-light);
+                border-radius: 8px;
+                margin: 0.5rem 0;
+                text-align: start;
+            }
+
+            .doctor-description i {
+                font-size: 1.1rem;
+            }
+
+            /* Add text truncation for long descriptions */
+            @media (max-width: 768px) {
+                .doctor-description {
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
+            }
+
+            .rating-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                background: linear-gradient(145deg, var(--bs-primary-subtle), var(--bs-light));
+                padding: 0.5rem 1rem;
+                border-radius: 1rem;
+                font-weight: 600;
+                font-size: 1.1rem;
+                color: var(--bs-primary);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+
+            .rating-badge i {
+                color: #ffc107;
+                font-size: 1.2rem;
+                animation: star-pulse 2s infinite;
+            }
+
+            .rating-score {
+                color: var(--bs-primary);
+                font-weight: 700;
+            }
+
+            .rating-count {
+                position: relative;
+                cursor: pointer;
+                padding: 0.3rem 0.6rem;
+                border-radius: 0.5rem;
+                transition: all 0.2s ease;
+            }
+
+            .rating-details {
+                display: none;
+                position: absolute;
+                top: calc(100% + 10px);
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: white;
+                padding: 1.2rem;
+                border-radius: 1rem;
+                box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.15);
+                z-index: 10;
+                width: 250px;
+                border: 1px solid var(--bs-primary-subtle);
+            }
+
+            .rating-details:before {
+                content: '';
+                position: absolute;
+                top: -8px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-bottom: 8px solid white;
+            }
+
+
+            .progress-container {
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .progress-container:last-child {
+                margin-bottom: 0;
+            }
+
+            .progress-label {
+                flex: 0 0 2rem;
+                font-weight: 600;
+                color: var(--bs-gray-700);
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .progress {
+                flex: 1;
+                background-color: var(--bs-light);
+                border-radius: 1rem;
+                overflow: hidden;
+            }
+
+            .progress-bar {
+                transition: width 1s ease;
+                background: linear-gradient(90deg, #ffc107, #ffcd39);
+            }
+
+            .progress-value {
+                flex: 0 0 3rem;
+                text-align: right;
+                font-weight: 500;
+                color: var(--bs-gray-600);
+            }
+
+            @keyframes star-pulse {
+                0% {
+                    transform: scale(1);
+                }
+
+                50% {
+                    transform: scale(1.2);
+                }
+
+                100% {
+                    transform: scale(1);
+                }
+            }
+
+            /* تحسين التصميم على الشاشات الصغيرة */
+            @media (max-width: 768px) {
+                .rating-badge {
+                    font-size: 1rem;
+                    padding: 0.4rem 0.8rem;
+                }
+
+                .rating-details {
+                    width: 200px;
+                    padding: 1rem;
+                }
+
+                .progress-container {
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+                }
+            }
+
+            .rating-text {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.2rem;
+                font-size: 1.1rem;
+            }
+
+            .rating-text i {
+                color: #ffc107;
+            }
+
+            .rating-text .rating-score {
+                font-weight: 600;
+                color: #0d6efd;
+            }
+
+            .rating-text .text-muted {
+                font-size: 0.95rem;
             }
 
             @media (max-width: 768px) {
-                .doctors-container.grid-view {
-                    grid-template-columns: 1fr;
+                .rating-text {
+                    font-size: 1rem;
                 }
 
-                /* View Switcher Styles */
-                .doctors-container {
-                    transition: opacity 0.3s ease;
-                    opacity: 1;
+                .rating-text .text-muted {
+                    font-size: 0.9rem;
                 }
+            }
 
-                /* Grid View Styles */
-                .doctors-container.grid-view {
-                    display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 1.5rem;
-                }
+            /* View Switcher Styles */
+            .view-switcher .btn {
+                padding: 0.5rem 1rem;
+                transition: all 0.3s ease;
+            }
 
-                .doctors-container.grid-view .col-12 {
-                    width: 100%;
-                    padding: 0;
-                }
+            .view-switcher .btn i {
+                font-size: 1.2rem;
+            }
 
-                .doctors-container.grid-view .card-body {
-                    flex-direction: column;
-                }
+            .view-switcher .btn.active {
+                background-color: var(--bs-primary);
+                color: white;
+            }
 
-                .doctors-container.grid-view .row.align-items-center {
-                    flex-direction: column;
-                    text-align: center;
-                }
+            /* Grid View Styles */
+            .doctors-container.grid-view {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
 
-                .doctors-container.grid-view .doctor-image-wrapper {
-                    width: 150px;
-                    height: 150px;
-                }
+            .doctors-container.grid-view .col-12 {
+                width: 50%;
+            }
 
-                .doctors-container.grid-view .doctor-info {
-                    width: 100%;
-                }
+            .doctors-container.grid-view .doctor-card {
+                height: 100%;
+            }
 
-                /* List View Styles */
-                .doctors-container.list-view {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.5rem;
-                }
+            .doctors-container.grid-view .row {
+                flex-direction: column;
+                text-align: center
+            }
 
-                .doctors-container.list-view .col-12 {
-                    width: 100%;
-                    padding: 0;
-                }
+            /* List View Styles */
+            .doctors-container.list-view {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
 
-                .doctors-container.list-view .row.align-items-center {
-                    flex-direction: row;
-                }
+            .doctors-container.list-view .col-12 {
+                width: 100%;
+            }
 
-                .doctors-container.list-view .doctor-image-wrapper {
-                    width: 120px;
-                    height: 120px;
-                }
+            .pagination-wrapper {
+                padding-top: 1.5rem;
+                border-top: 1px solid var(--bs-gray-200);
+                background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+                border-radius: 0.5rem;
+                padding: 1.5rem;
+                margin-top: 2rem;
+            }
 
-                /* Responsive Styles */
-                @media (max-width: 992px) {
-                    .doctors-container.grid-view {
-                        grid-template-columns: 1fr;
-                    }
-                }
+            .pagination-info {
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
 
-                @media (max-width: 768px) {
+            .custom-pagination {
+                margin: 0;
+                gap: 0.25rem;
+            }
 
-                    .doctors-container.grid-view .row.align-items-center,
-                    .doctors-container.list-view .row.align-items-center {
-                        flex-direction: column;
-                        text-align: center;
-                    }
+            .custom-pagination .page-item {
+                margin: 0;
+            }
 
-                }
+            .custom-pagination .page-link {
+                border: 1px solid var(--bs-gray-300);
+                color: var(--bs-gray-700);
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+                font-weight: 500;
+                border-radius: 0.375rem;
+                transition: all 0.15s ease-in-out;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 2.5rem;
+                height: 2.5rem;
+                background: white;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            }
 
-                /* Additional Grid View Styles */
-                .doctors-container.grid-view .doctor-info {
-                    text-align: center;
-                }
+            .custom-pagination .page-item:first-child .page-link,
+            .custom-pagination .page-item:last-child .page-link {
+                min-width: 2.5rem;
+            }
 
-                .doctors-container.grid-view .d-flex.justify-content-between {
-                    flex-direction: column;
+            .custom-pagination .page-item.active .page-link {
+                background: linear-gradient(135deg, var(--bs-primary) 0%, #0056b3 100%);
+                border-color: var(--bs-primary);
+                color: white;
+                box-shadow: 0 4px 8px rgba(var(--bs-primary-rgb), 0.3);
+                transform: translateY(-1px);
+            }
+
+            .custom-pagination .page-link:hover:not(.disabled) {
+                background: var(--bs-primary);
+                border-color: var(--bs-primary);
+                color: white;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(var(--bs-primary-rgb), 0.2);
+            }
+
+            .custom-pagination .page-item.disabled .page-link {
+                background-color: var(--bs-gray-100);
+                border-color: var(--bs-gray-200);
+                color: var(--bs-gray-400);
+                cursor: not-allowed;
+                box-shadow: none;
+                transform: none;
+            }
+
+            .custom-pagination .page-link.dots {
+                border: none;
+                background: transparent;
+                box-shadow: none;
+                color: var(--bs-gray-500);
+                cursor: default;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+            }
+
+            .custom-pagination .page-item.disabled .page-link.dots {
+                background: transparent;
+                border: none;
+            }
+
+            .custom-pagination .page-link i {
+                font-size: 0.75rem;
+                line-height: 1;
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .pagination-wrapper .row {
+                    flex-direction: column-reverse;
                     gap: 1rem;
                 }
 
-                .doctors-container.grid-view .d-flex.flex-wrap.gap-4 {
+                .pagination-wrapper .col-md-6 {
+                    text-align: center;
+                }
+
+                .custom-pagination {
                     justify-content: center;
+                    flex-wrap: wrap;
                 }
 
-
-                /* Additional List View Styles */
-                .doctors-container.list-view .d-flex.justify-content-between {
-                    flex-direction: row;
+                .custom-pagination .page-link {
+                    padding: 0.375rem 0.5rem;
+                    min-width: 2rem;
+                    height: 2rem;
+                    font-size: 0.8rem;
                 }
 
-
-                .doctors-container.list-view .doctor-speciality,
-                .doctors-container.list-view .doctor-description,
-                .doctors-container.list-view .text-muted {
-                    text-align: start;
+                .pagination-info {
+                    font-size: 0.8rem;
                 }
+            }
+
+            @media (max-width: 576px) {
+                .custom-pagination .page-item:not(.active):not(:first-child):not(:last-child):not(:nth-child(2)):not(:nth-last-child(2)) {
+                    display: none;
+                }
+            }
+
+            /* ...existing code... */
         </style>
     @endpush
 
@@ -802,7 +1154,7 @@
                 if (!doctorsContainer) return
                 // Load saved view preference from localStorage
                 const savedView = localStorage.getItem('doctorsViewPreference') || 'grid';
-                
+
                 // Initial view setup without animation
                 doctorsContainer.classList.remove('grid-view', 'list-view');
                 doctorsContainer.classList.add(`${savedView}-view`);
@@ -815,19 +1167,19 @@
                 function setViewMode(mode) {
                     // Fade out
                     doctorsContainer.style.opacity = '0';
-                    
+
                     // Switch view after a short delay
                     setTimeout(() => {
                         doctorsContainer.classList.remove('grid-view', 'list-view');
                         doctorsContainer.classList.add(`${mode}-view`);
-                        
+
                         // Update buttons active state
                         gridViewBtn.classList.toggle('active', mode === 'grid');
                         listViewBtn.classList.toggle('active', mode === 'list');
-                        
+
                         // Fade back in
                         doctorsContainer.style.opacity = '1';
-                        
+
                         // Save preference
                         localStorage.setItem('doctorsViewPreference', mode);
                     }, 150);

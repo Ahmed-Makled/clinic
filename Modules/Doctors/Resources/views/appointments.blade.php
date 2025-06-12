@@ -295,9 +295,118 @@
                             </table>
                         </div>
 
-                        <div class="p-3 pagination-container">
-                            {{ $appointments->withQueryString()->links() }}
-                        </div>
+                        @if($appointments->hasPages())
+                            <div class="pagination-wrapper p-3">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <div class="pagination-info">
+                                            <span class="text-muted">
+                                                عرض {{ $appointments->firstItem() }} إلى {{ $appointments->lastItem() }} من أصل {{ $appointments->total() }} نتيجة
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <nav aria-label="Page navigation" class="d-flex justify-content-end">
+                                            <ul class="pagination custom-pagination mb-0">
+                                                {{-- First Page Link --}}
+                                                @if (!$appointments->onFirstPage())
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ $appointments->url(1) }}" title="الصفحة الأولى">
+                                                            <i class="bi bi-chevron-double-right"></i>
+                                                        </a>
+                                                    </li>
+                                                @endif
+
+                                                {{-- Previous Page Link --}}
+                                                @if ($appointments->onFirstPage())
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">
+                                                            <i class="bi bi-chevron-right"></i>
+                                                        </span>
+                                                    </li>
+                                                @else
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ $appointments->previousPageUrl() }}" title="الصفحة السابقة">
+                                                            <i class="bi bi-chevron-right"></i>
+                                                        </a>
+                                                    </li>
+                                                @endif
+
+                                                {{-- Pagination Elements --}}
+                                                @php
+                                                    $start = max($appointments->currentPage() - 2, 1);
+                                                    $end = min($appointments->currentPage() + 2, $appointments->lastPage());
+
+                                                    $showStartDots = $start > 2;
+                                                    $showEndDots = $end < $appointments->lastPage() - 1;
+                                                @endphp
+
+                                                {{-- Always show first page if not in range --}}
+                                                @if ($start > 1)
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ $appointments->url(1) }}">1</a>
+                                                    </li>
+                                                    @if ($showStartDots)
+                                                        <li class="page-item disabled">
+                                                            <span class="page-link dots">...</span>
+                                                        </li>
+                                                    @endif
+                                                @endif
+
+                                                {{-- Page Numbers --}}
+                                                @for ($page = $start; $page <= $end; $page++)
+                                                    @if ($page == $appointments->currentPage())
+                                                        <li class="page-item active">
+                                                            <span class="page-link">{{ $page }}</span>
+                                                        </li>
+                                                    @else
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="{{ $appointments->url($page) }}">{{ $page }}</a>
+                                                        </li>
+                                                    @endif
+                                                @endfor
+
+                                                {{-- Always show last page if not in range --}}
+                                                @if ($end < $appointments->lastPage())
+                                                    @if ($showEndDots)
+                                                        <li class="page-item disabled">
+                                                            <span class="page-link dots">...</span>
+                                                        </li>
+                                                    @endif
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ $appointments->url($appointments->lastPage()) }}">{{ $appointments->lastPage() }}</a>
+                                                    </li>
+                                                @endif
+
+                                                {{-- Next Page Link --}}
+                                                @if ($appointments->hasMorePages())
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ $appointments->nextPageUrl() }}" title="الصفحة التالية">
+                                                            <i class="bi bi-chevron-left"></i>
+                                                        </a>
+                                                    </li>
+                                                @else
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">
+                                                            <i class="bi bi-chevron-left"></i>
+                                                        </span>
+                                                    </li>
+                                                @endif
+
+                                                {{-- Last Page Link --}}
+                                                @if ($appointments->hasMorePages())
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ $appointments->url($appointments->lastPage()) }}" title="الصفحة الأخيرة">
+                                                            <i class="bi bi-chevron-double-left"></i>
+                                                        </a>
+                                                    </li>
+                                                @endif
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @else
                         <div class="empty-state">
                             <div class="empty-icon">
@@ -1017,32 +1126,128 @@
 
 
     /* === الترقيم === */
-    .pagination-container {
-        display: flex;
-        justify-content: center;
+    .pagination-wrapper {
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--bs-gray-200);
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        border-radius: 0 0 0.5rem 0.5rem;
+        padding: 1.5rem;
+        margin: 0 -1.5rem -1.5rem -1.5rem;
     }
 
-    .pagination {
-        display: flex;
-        justify-content: center;
+    .pagination-info {
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .custom-pagination {
+        margin: 0;
         gap: 0.25rem;
     }
 
-    .pagination .page-item.active .page-link {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
+    .custom-pagination .page-item {
+        margin: 0;
     }
 
-    .pagination .page-link {
-        border-radius: 6px;
-        color: var(--text-medium);
-        transition: all 0.2s ease;
+    .custom-pagination .page-link {
+        border: 1px solid var(--bs-gray-300);
+        color: var(--bs-gray-700);
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        border-radius: 0.375rem;
+        transition: all 0.15s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2.5rem;
+        height: 2.5rem;
+        background: white;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
-    .pagination .page-link:hover {
-        background-color: var (--primary-light);
-        color: var(--primary-color);
-        z-index: 1;
+    .custom-pagination .page-item:first-child .page-link,
+    .custom-pagination .page-item:last-child .page-link {
+        min-width: 2.5rem;
+    }
+
+    .custom-pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, var(--bs-primary) 0%, #0056b3 100%);
+        border-color: var(--bs-primary);
+        color: white;
+        box-shadow: 0 4px 8px rgba(var(--bs-primary-rgb), 0.3);
+        transform: translateY(-1px);
+    }
+
+    .custom-pagination .page-link:hover:not(.disabled) {
+        background: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(var(--bs-primary-rgb), 0.2);
+    }
+
+    .custom-pagination .page-item.disabled .page-link {
+        background-color: var(--bs-gray-100);
+        border-color: var(--bs-gray-200);
+        color: var(--bs-gray-400);
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+
+    .custom-pagination .page-link.dots {
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        color: var(--bs-gray-500);
+        cursor: default;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+    }
+
+    .custom-pagination .page-item.disabled .page-link.dots {
+        background: transparent;
+        border: none;
+    }
+
+    .custom-pagination .page-link i {
+        font-size: 0.75rem;
+        line-height: 1;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .pagination-wrapper .row {
+            flex-direction: column-reverse;
+            gap: 1rem;
+        }
+
+        .pagination-wrapper .col-md-6 {
+            text-align: center;
+        }
+
+        .custom-pagination {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .custom-pagination .page-link {
+            padding: 0.375rem 0.5rem;
+            min-width: 2rem;
+            height: 2rem;
+            font-size: 0.8rem;
+        }
+
+        .pagination-info {
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .custom-pagination .page-item:not(.active):not(:first-child):not(:last-child):not(:nth-child(2)):not(:nth-last-child(2)) {
+            display: none;
+        }
     }
 
     /* === روابط === */

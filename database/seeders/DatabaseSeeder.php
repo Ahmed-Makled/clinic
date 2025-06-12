@@ -22,8 +22,8 @@ class DatabaseSeeder extends Seeder
         }
 
         // Add test data seeder
-        if ($this->command->confirm('Do you want to seed test data (20 specialties, 50 doctors, 50 patients, 20 appointments with ratings)?', false)) {
-            $this->call(ClinicTestDataSeeder::class);
+        if ($this->command->confirm('Do you want to seed test data ?', false)) {
+            $this->call(LargeScaleDataSeeder::class);
         }
     }
 }
