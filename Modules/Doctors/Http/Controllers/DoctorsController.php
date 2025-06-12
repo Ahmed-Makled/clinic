@@ -21,6 +21,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Notifications\AppointmentCompletedNotification;
+use Modules\Appointments\Notifications\AppointmentCancelledNotification;
 
 class DoctorsController extends Controller
 {
@@ -1095,7 +1096,7 @@ class DoctorsController extends Controller
     /**
      * Mark an appointment as completed
      *
-     * @param \App\Models\Appointment $appointment
+     * @param \Modules\Appointments\Entities\Appointment $appointment
      * @return \Illuminate\Http\RedirectResponse
      */
     public function completeAppointment(Appointment $appointment)
@@ -1105,28 +1106,54 @@ class DoctorsController extends Controller
 
         // Check if the appointment belongs to the logged in doctor
         if ($appointment->doctor_id !== $doctor->id) {
-            return redirect()->back()->with('error', 'ليس لديك صلاحية للوصول إلى هذا الحجز');
+            return redirect()->route('doctors.profile')
+                ->with('error', 'ليس لديك صلاحية للوصول إلى هذا الحجز')
+                ->with('redirect_to_hash', 'appointments');
         }
 
         try {
+            // التحقق من أن موعد الحجز قد حان أو مر
+            $now = Carbon::now();
+            $appointmentTime = $appointment->scheduled_at;
+
+            if ($now->isBefore($appointmentTime)) {
+                $timeRemaining = $appointmentTime->diffForHumans($now);
+                return redirect()->back()->with('error', "لا يمكن إتمام الحجز قبل موعد الحجز المحدد. الموعد {$timeRemaining}");
+            }
+
             $appointment->update(['status' => 'completed']);
 
-            // Re-fetch appointment to ensure correct type
-            $refreshedAppointment = Appointment::find($appointment->id);
+            // Notify patient - use the updated appointment object directly
+            $appointment->patient->user->notify(new AppointmentCompletedNotification($appointment));
 
-            // Notify patient - use the App namespace notification class to match frontend expectations
-            $refreshedAppointment->patient->user->notify(new AppointmentCompletedNotification($refreshedAppointment));
-
-            return redirect()->back()->with('success', 'تم تحديث الحجز كمكتمل بنجاح');
+            // Check the source parameter to determine redirect destination
+            $source = request()->input('source');
+            if ($source === 'profile_appointments') {
+                return redirect()->route('doctors.profile')
+                    ->with('success', 'تم تحديث الحجز كمكتمل بنجاح')
+                    ->with('redirect_to_hash', 'appointments');
+            } else {
+                return redirect()->route('doctors.appointments')
+                    ->with('success', 'تم تحديث الحجز كمكتمل بنجاح');
+            }
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'حدث خطأ أثناء تحديث حالة الحجز: ' . $e->getMessage());
+            // Check the source parameter to determine redirect destination
+            $source = request()->input('source');
+            if ($source === 'profile_appointments') {
+                return redirect()->route('doctors.profile')
+                    ->with('error', 'حدث خطأ أثناء تحديث حالة الحجز: ' . $e->getMessage())
+                    ->with('redirect_to_hash', 'appointments');
+            } else {
+                return redirect()->route('doctors.appointments')
+                    ->with('error', 'حدث خطأ أثناء تحديث حالة الحجز: ' . $e->getMessage());
+            }
         }
     }
 
     /**
      * Mark an appointment as cancelled
      *
-     * @param \App\Models\Appointment $appointment
+     * @param \Modules\Appointments\Entities\Appointment $appointment
      * @return \Illuminate\Http\RedirectResponse
      */
     public function cancelAppointment(Appointment $appointment)
@@ -1136,18 +1163,38 @@ class DoctorsController extends Controller
 
         // Check if the appointment belongs to the logged in doctor
         if ($appointment->doctor_id !== $doctor->id) {
-            return redirect()->back()->with('error', 'ليس لديك صلاحية للوصول إلى هذا الحجز');
+            return redirect()->route('doctors.profile')
+                ->with('error', 'ليس لديك صلاحية للوصول إلى هذا الحجز')
+                ->with('redirect_to_hash', 'appointments');
         }
 
         try {
             $appointment->update(['status' => 'cancelled']);
 
             // Notify patient
-            $appointment->patient->user->notify(new \App\Notifications\AppointmentCancelledNotification($appointment));
+            $appointment->patient->user->notify(new AppointmentCancelledNotification($appointment));
 
-            return redirect()->back()->with('success', 'تم إلغاء الحجز بنجاح');
+            // Check the source parameter to determine redirect destination
+            $source = request()->input('source');
+            if ($source === 'profile_appointments') {
+                return redirect()->route('doctors.profile')
+                    ->with('success', 'تم إلغاء الحجز بنجاح')
+                    ->with('redirect_to_hash', 'appointments');
+            } else {
+                return redirect()->route('doctors.appointments')
+                    ->with('success', 'تم إلغاء الحجز بنجاح');
+            }
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'حدث خطأ أثناء إلغاء الحجز: ' . $e->getMessage());
+            // Check the source parameter to determine redirect destination
+            $source = request()->input('source');
+            if ($source === 'profile_appointments') {
+                return redirect()->route('doctors.profile')
+                    ->with('error', 'حدث خطأ أثناء إلغاء الحجز: ' . $e->getMessage())
+                    ->with('redirect_to_hash', 'appointments');
+            } else {
+                return redirect()->route('doctors.appointments')
+                    ->with('error', 'حدث خطأ أثناء إلغاء الحجز: ' . $e->getMessage());
+            }
         }
     }
 

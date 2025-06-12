@@ -404,6 +404,17 @@ class AppointmentsController extends Controller
     public function complete(Appointment $appointment)
     {
         try {
+            // التحقق من أن موعد الحجز قد حان أو مر
+            $now = Carbon::now();
+            $appointmentTime = $appointment->scheduled_at;
+
+            if ($now->isBefore($appointmentTime)) {
+                $timeRemaining = $appointmentTime->diffForHumans($now);
+                return back()->withErrors([
+                    'error' => "لا يمكن إتمام الحجز قبل موعد الحجز المحدد. الموعد {$timeRemaining}"
+                ]);
+            }
+
             $oldStatus = $appointment->status;
             $appointment->update([
                 'status' => 'completed'
@@ -509,13 +520,13 @@ class AppointmentsController extends Controller
         }
 
         $user = auth()->user();
-        
+
         // إذا كان المستخدم ليس آدمن وليس مريض
         if (!$user->hasRole('Admin') && !$user->isPatient()) {
             return back()
                 ->with('error', 'عذراً، فقط المرضى يمكنهم حجز الحجوزات');
         }
-        
+
         // Get selected date or default to today
         $selectedDate = request('date') ?? now()->format('Y-m-d');
         $selectedDateObj = Carbon::parse($selectedDate);
