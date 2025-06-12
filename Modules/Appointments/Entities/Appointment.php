@@ -2,8 +2,8 @@
 
 namespace Modules\Appointments\Entities;
 
-use Modules\Core\Traits\HasStatus;
-use Modules\Core\Traits\Searchable;
+use App\Traits\HasStatus;
+use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;

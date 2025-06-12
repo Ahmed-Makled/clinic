@@ -4,7 +4,7 @@ namespace Modules\Auth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Modules\Doctors\Entities\Doctor;
-use App\Notifications\IncompleteProfileNotification;
+use Modules\Doctors\Notifications\IncompleteProfileNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -68,6 +68,19 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('status', 'تم تسجيل الخروج بنجاح');
+        return redirect()->route('login')->with('status', 'تم تسجيل الخروج بنجاح');
+    }
+
+    public function logoutGet(Request $request)
+    {
+        // Handle GET requests to logout by actually logging out
+        if (Auth::check()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')->with('status', 'تم تسجيل الخروج بنجاح');
+        }
+
+        return redirect()->route('login')->with('info', 'تم تسجيل الخروج بالفعل');
     }
 }

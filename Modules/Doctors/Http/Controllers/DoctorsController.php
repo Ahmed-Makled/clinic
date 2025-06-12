@@ -1110,7 +1110,7 @@ class DoctorsController extends Controller
 
         try {
             $appointment->update(['status' => 'completed']);
-            
+
             // Re-fetch appointment to ensure correct type
             $refreshedAppointment = Appointment::find($appointment->id);
 
@@ -1173,9 +1173,9 @@ class DoctorsController extends Controller
         foreach ($doctors as $doctor) {
             $missingData = [];
 
-            if (!$doctor->image) {
-                $missingData[] = 'صورة الطبيب';
-            }
+            // if (!$doctor->image) {
+            //     $missingData[] = 'صورة الطبيب';
+            // }
 
             if (empty($doctor->category_id)) {
                 $missingData[] = 'التخصصات';
@@ -1202,10 +1202,10 @@ class DoctorsController extends Controller
             $doctor->setAttribute('missing_data', $missingData);
 
             // تحديث حقل اكتمال الملف الشخصي إذا كانت البيانات مكتملة ولكن الحقل يشير إلى غير ذلك
-            // if (empty($missingData) && (!$doctor->is_profile_completed || is_null($doctor->is_profile_completed))) {
-            //     // Actualizar solo el campo is_profile_completed
-            //     Doctor::where('id', $doctor->id)->update(['is_profile_completed' => true]);
-            // }
+            if (empty($missingData) && (!$doctor->is_profile_completed || is_null($doctor->is_profile_completed))) {
+                // Actualizar solo el campo is_profile_completed
+                Doctor::where('id', $doctor->id)->update(['is_profile_completed' => true]);
+            }
         }
 
         $categories = Category::active()->get();

@@ -15,14 +15,14 @@
     </li>
     <li class="breadcrumb-item active">بيانات غير مكتملة</li>
 @endsection
-@section('actions')
+{{-- @section('actions')
     <div class="d-flex gap-2">
         <a href="{{ route('doctors.update_completion_status') }}" class="btn btn-warning btn-sm px-3">
             <i class="bi bi-arrow-repeat me-1"></i> تحديث حالة الاكتمال
         </a>
 
     </div>
-@endsection
+@endsection --}}
 
 
 @section('content')

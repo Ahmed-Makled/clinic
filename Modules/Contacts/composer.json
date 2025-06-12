@@ -1,0 +1,27 @@
+{
+    "name": "nwidart/contacts",
+    "description": "Contact management module for the clinic system",
+    "type": "nwidart-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ahmed Makled",
+            "email": "info@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Contacts\\Providers\\ContactsServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Contacts\\": ""
+        }
+    },
+    "require": {},
+    "require-dev": {}
+}

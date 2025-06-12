@@ -7,6 +7,5 @@
     "Appointments": true,
     "Dashboard": true,
     "Payments": true,
-    "Contacts": true,
-    "Core": true
+    "Contacts": true
 }

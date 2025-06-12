@@ -3,13 +3,14 @@
 namespace Modules\Auth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Modules\Users\Entities\User;
 
 class ResetPasswordController extends Controller
 {
-    use ResetsPasswords;
-
     protected $redirectTo = '/';
 
     public function showResetForm(Request $request)
@@ -23,15 +24,24 @@ class ResetPasswordController extends Controller
         ]);
     }
 
-    protected function sendResetResponse(Request $request, $response)
+    public function reset(Request $request)
     {
-        return redirect($this->redirectPath())
-            ->with('status', 'تم إعادة تعيين كلمة المرور بنجاح');
-    }
+        $request->validate($this->rules(), $this->validationErrorMessages());
 
-    protected function sendResetFailedResponse(Request $request, $response)
-    {
-        return back()->withErrors(['email' => 'رابط إعادة تعيين كلمة المرور غير صالح']);
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+                    ? redirect($this->redirectTo)->with('status', 'تم إعادة تعيين كلمة المرور بنجاح')
+                    : back()->withErrors(['email' => 'رابط إعادة تعيين كلمة المرور غير صالح']);
     }
 
     protected function rules()

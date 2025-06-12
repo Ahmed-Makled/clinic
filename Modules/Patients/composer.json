@@ -1,0 +1,27 @@
+{
+    "name": "nwidart/patients",
+    "description": "Patient management module for the clinic system",
+    "type": "nwidart-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ahmed Makled",
+            "email": "info@example.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Patients\\Providers\\PatientsServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Patients\\": ""
+        }
+    },
+    "require": {},
+    "require-dev": {}
+}
