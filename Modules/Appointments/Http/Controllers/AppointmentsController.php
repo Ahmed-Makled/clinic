@@ -107,9 +107,9 @@ class AppointmentsController extends Controller
         $user = auth()->user();
 
         // إذا كان المستخدم ليس آدمن وليس مريض
-        if (!$user->hasRole('Admin') && !$user->isPatient()) {
+        if (!$user->isPatient()) {
             return back()
-                ->with('error', 'عذراً، فقط المرضى يمكنهم حجز الحجوزات');
+                ->with('error', 'عذراً، فقط المرضى يمكنهم حجز موعد');
         }
 
         // التحقق من وجود ملف المريض إذا كان المستخدم ليس آدمن
@@ -522,9 +522,9 @@ class AppointmentsController extends Controller
         $user = auth()->user();
 
         // إذا كان المستخدم ليس آدمن وليس مريض
-        if (!$user->hasRole('Admin') && !$user->isPatient()) {
+        if ( !$user->isPatient()) {
             return back()
-                ->with('error', 'عذراً، فقط المرضى يمكنهم حجز الحجوزات');
+                ->with('error', 'عذراً، فقط المرضى يمكنهم حجز موعد');
         }
 
         // Get selected date or default to today

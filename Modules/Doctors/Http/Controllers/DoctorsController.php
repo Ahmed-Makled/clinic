@@ -122,7 +122,6 @@ class DoctorsController extends Controller
             'phone' => ['required', 'string', 'unique:users,phone_number'],
             'password' => ['required', 'string', 'min:8'],
             'title' => ['required', 'string', 'max:100'],
-            'specialization' => ['required', 'string', 'max:100'],
             'category_id' => ['required', 'exists:categories,id'], // تعديل من مصفوفة تخصصات إلى تخصص واحد
             'gender' => ['required', Rule::in(['ذكر', 'انثي'])],
             'experience_years' => ['required', 'integer', 'min:0'],
@@ -156,7 +155,6 @@ class DoctorsController extends Controller
             'password.required' => 'كلمة المرور مطلوبة',
             'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
             'title.required' => 'المسمى الوظيفي مطلوب',
-            'specialization.required' => 'التخصص مطلوب',
             'category_id.required' => 'التخصص مطلوب', // تعديل الرسالة
             'category_id.exists' => 'التخصص المختار غير موجود', // تعديل الرسالة
             'gender.required' => 'النوع مطلوب',
@@ -199,7 +197,6 @@ class DoctorsController extends Controller
 
             // التحقق من وجود جميع الحقول المطلوبة لتحديد اكتمال الملف الشخصي
             $hasAllRequiredFields = !empty($validated['title']) &&
-                                   !empty($validated['specialization']) &&
                                    !empty($validated['experience_years']) &&
                                    !empty($validated['address']) &&
                                    !empty($validated['governorate_id']) &&
@@ -220,7 +217,6 @@ class DoctorsController extends Controller
                 'user_id' => $user->id,
                 'name' => $validated['name'],
                 'title' => $validated['title'],
-                'specialization' => $validated['specialization'],
                 'description' => $validated['description'],
                 'consultation_fee' => $validated['consultation_fee'],
                 'waiting_time' => $validated['waiting_time'],
@@ -294,7 +290,6 @@ class DoctorsController extends Controller
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:100'],
-            'specialization' => ['required', 'string', 'max:100'],
             'category_id' => ['required', 'exists:categories,id'], // تعديل من مصفوفة تخصصات إلى تخصص واحد
             'gender' => ['required', Rule::in(['ذكر', 'انثي'])],
             'experience_years' => ['required', 'integer', 'min:0'],
@@ -320,7 +315,6 @@ class DoctorsController extends Controller
             'degree' => ['nullable', 'string', 'max:100']
         ], [
             'title.required' => 'المسمى الوظيفي مطلوب',
-            'specialization.required' => 'التخصص مطلوب',
             'category_id.required' => 'التخصص مطلوب', // تعديل الرسالة
             'category_id.exists' => 'التخصص المختار غير موجود', // تعديل الرسالة
             'gender.required' => 'النوع مطلوب',
@@ -361,7 +355,6 @@ class DoctorsController extends Controller
 
             $doctor->update([
                 'title' => $validated['title'],
-                'specialization' => $validated['specialization'],
                 'experience_years' => $validated['experience_years'],
                 'description' => $validated['description'],
                 'consultation_fee' => $validated['consultation_fee'],
@@ -855,7 +848,6 @@ class DoctorsController extends Controller
             'email' => ['required', 'email', 'unique:users,email,'.$user->id],
             'phone' => ['required', 'string', 'unique:users,phone_number,'.$user->id],
             'title' => ['required', 'string', 'max:100'],
-            'specialization' => ['required', 'string', 'max:100'],
             'category_id' => ['required', 'exists:categories,id'],
             'experience_years' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -884,7 +876,6 @@ class DoctorsController extends Controller
             'phone.required' => 'رقم الهاتف مطلوب',
             'phone.unique' => 'رقم الهاتف مستخدم بالفعل',
             'title.required' => 'المسمى الوظيفي مطلوب',
-            'specialization.required' => 'التخصص مطلوب',
             'category_id.required' => 'التخصص مطلوب',
             'experience_years.required' => 'سنوات الخبرة مطلوبة',
             'address.required' => 'العنوان مطلوب',
@@ -906,7 +897,6 @@ class DoctorsController extends Controller
             $doctor->update([
                 'name' => $validated['name'],
                 'title' => $validated['title'],
-                'specialization' => $validated['specialization'],
                 'experience_years' => $validated['experience_years'],
                 'description' => $validated['description'],
                 'consultation_fee' => $validated['consultation_fee'],

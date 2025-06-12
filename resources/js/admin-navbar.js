@@ -52,6 +52,12 @@ document.addEventListener('DOMContentLoaded', function () {
         async loadNotifications() {
             try {
                 const response = await fetch('/api/notifications');
+
+                if (response.status === 419) {
+                    window.location.href = '/login';
+                    return;
+                }
+
                 const data = await response.json();
 
                 if (!data.notifications.length) {
@@ -135,13 +141,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
         async markAsRead(id) {
             try {
-                await fetch(`/api/notifications/${id}/mark-as-read`, {
+                const response = await fetch(`/api/notifications/${id}/mark-as-read`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     }
                 });
+
+                if (response.status === 419) {
+                    window.location.href = '/login';
+                    return;
+                }
+
                 await this.loadNotifications();
             } catch (error) {
                 console.error('Error marking notification as read:', error);
@@ -150,13 +162,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
         async markAllAsRead() {
             try {
-                await fetch('/api/notifications/mark-all-read', {
+                const response = await fetch('/api/notifications/mark-all-read', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     }
                 });
+
+                if (response.status === 419) {
+                    window.location.href = '/login';
+                    return;
+                }
+
                 await this.loadNotifications();
             } catch (error) {
                 console.error('Error marking all notifications as read:', error);

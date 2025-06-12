@@ -139,16 +139,7 @@
                             @enderror
                         </div>
 
-                        <div class="col-md-6 col-12 mb-3">
-                            <label class="form-label" for="specialization">التخصص الدقيق *</label>
-                            <input type="text" class="form-control @error('specialization') is-invalid @enderror"
-                                id="specialization" name="specialization" value="{{ old('specialization') }}"
-                                placeholder="مثال: جراحة عامة، باطنة، أطفال" required>
-                            <small class="text-muted">التخصص الدقيق ضمن المجال الطبي مثل (جراحة تجميل، أمراض قلب، حساسية أطفال)</small>
-                            @error('specialization')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label" for="experience_years">سنوات الخبرة *</label>

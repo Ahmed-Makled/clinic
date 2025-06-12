@@ -38,7 +38,6 @@ class Doctor extends Model
         'gender',           // الجنس: ذكر، أنثى
         'status',           // حالة الحساب: نشط أو غير نشط
         'title',            // المسمى الوظيفي: استشاري، أخصائي، طبيب
-        'specialization',    // التخصص الدقيق: مثلاً للأطفال سلوكيات، أو مخ وأعصاب
         'is_profile_completed',
         'rating_avg'
     ];
@@ -312,7 +311,6 @@ class Doctor extends Model
     {
         // التحقق من وجود البيانات الأساسية
         $hasBasicInfo = !empty($this->title) &&
-                        !empty($this->specialization) &&
                         !empty($this->experience_years) &&
                         !empty($this->address) &&
                         !empty($this->governorate_id) &&
@@ -346,10 +344,6 @@ class Doctor extends Model
 
         if (empty($this->title)) {
             $missingData[] = 'المسمى الوظيفي';
-        }
-
-        if (empty($this->specialization)) {
-            $missingData[] = 'التخصص الدقيق';
         }
 
         if (empty($this->experience_years)) {

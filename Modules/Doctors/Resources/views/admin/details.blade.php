@@ -213,15 +213,7 @@
                         </div>
                     </div>
 
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="bi bi-clipboard2-pulse"></i>
-                        </div>
-                        <div class="info-content">
-                            <label>التخصص الدقيق</label>
-                            <span class="info-value">{{ $doctor->specialization ?? 'غير محدد' }}</span>
-                        </div>
-                    </div>
+
 
                     <div class="info-item">
                         <div class="info-icon">

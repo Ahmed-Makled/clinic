@@ -1556,6 +1556,44 @@
         });
     </script>
 
+    <script>
+        // Global error handler for CSRF token issues (419 errors)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intercept all fetch requests to handle 419 errors globally
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+                return originalFetch.apply(this, args)
+                    .then(response => {
+                        if (response.status === 419) {
+                            // CSRF token expired, redirect to login
+                            window.location.href = '{{ route("login") }}';
+                            return Promise.reject(new Error('CSRF token expired'));
+                        }
+                        return response;
+                    });
+            };
+
+            // Handle XMLHttpRequest errors (for jQuery AJAX)
+            $(document).ajaxError(function(event, xhr, settings) {
+                if (xhr.status === 419) {
+                    window.location.href = '{{ route("login") }}';
+                }
+            });
+
+            // Also handle it for forms that might submit directly
+            $(document).on('submit', 'form', function(e) {
+                // Check if CSRF token exists
+                const token = $('meta[name="csrf-token"]').attr('content');
+                const formToken = $(this).find('input[name="_token"]').val();
+
+                if (!token && !formToken) {
+                    e.preventDefault();
+                    window.location.href = '{{ route("login") }}';
+                }
+            });
+        });
+    </script>
+
     @stack('scripts')
 
 </body>

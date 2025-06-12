@@ -334,7 +334,7 @@
                                                         <i class="bi bi-info-circle-fill text-info fs-4 me-3"></i>
                                                         <div>
                                                             <h5 class="alert-heading mb-1">مطلوب استكمال البيانات</h5>
-                                                            <p class="mb-0">من فضلك قم بإكمال بياناتك الطبية لتتمكن من حجز الحجوزات
+                                                            <p class="mb-0">من فضلك قم بإكمال بياناتك الطبية لتتمكن من حجز موعد
                                                             </p>
                                                         </div>
                                                     </div>
@@ -485,7 +485,7 @@
                                                                             </td>
                                                                             <td>
                                                                                 <span class="specialization-badge">
-                                                                                    {{ $appointment->doctor->specialization }}
+                                                                                    {{ $appointment->doctor->category->name ?? 'غير محدد' }}
                                                                                 </span>
                                                                             </td>
                                                                             <td>
@@ -611,7 +611,7 @@
                                                                                                     </h5>
                                                                                                     <div class="d-flex align-items-center gap-2">
                                                                                                         <div class="specialization-badge">
-                                                                                                            {{ $appointment->doctor->specialization }}
+                                                                                                            {{ $appointment->doctor->category->name ?? 'غير محدد' }}
                                                                                                         </div>
                                                                                                         <div class="rating-mini">
                                                                                                             @for ($i = 1; $i <= 5; $i++)

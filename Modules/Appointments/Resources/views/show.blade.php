@@ -433,7 +433,7 @@
                                     {{ $appointment->doctor->name }}
                                 </h5>
                                 <div class="specialization-badge">
-                                    {{ $appointment->doctor->specialization }}
+                                    {{ $appointment->doctor->category->name ?? 'غير محدد' }}
                                 </div>
                             </div>
                         </div>

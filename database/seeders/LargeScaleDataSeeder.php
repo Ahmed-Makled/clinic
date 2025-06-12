@@ -292,7 +292,6 @@ class LargeScaleDataSeeder extends Seeder
                     'user_id' => $user->id,
                     'name' => $user->name,
                     'title' => $titles[array_rand($titles)],
-                    'specialization' => $category->name,
                     'description' => 'طبيب متخصص في ' . $category->name . ' مع سنوات من الخبرة في تقديم أفضل الخدمات الطبية للمرضى.',
                     'consultation_fee' => rand(200, 800),
                     'waiting_time' => rand(15, 45),
