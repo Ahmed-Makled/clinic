@@ -18,7 +18,7 @@ class ResetPasswordController extends Controller
         $token = $request->route()->parameter('token');
 
         return view('auth::passwords.reset', [
-            'title' => 'إعادة تعيين كلمة المرور',
+            'title' => 'إعادة تعيين كلمة المرور - Clinic Master',
             'token' => $token,
             'email' => $request->email
         ]);

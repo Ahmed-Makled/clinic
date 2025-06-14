@@ -1116,10 +1116,27 @@
                 const governorateSelect = document.getElementById('governorate_id');
                 const citySelect = document.getElementById('city_id');
                 const selectedCityId = '{{ request('city_id') }}';
+                const selectedGovernorateId = '{{ request('governorate_id') }}';
+                const governorates = @json($governorates);
+
+                // Load all cities from governorates data
+                function loadAllCities() {
+                    citySelect.innerHTML = '<option value="">كل المدن</option>';
+
+                    governorates.forEach(governorate => {
+                        if (governorate.cities) {
+                            governorate.cities.forEach(city => {
+                                const selected = city.id == selectedCityId ? 'selected' : '';
+                                citySelect.innerHTML += `<option value="${city.id}" ${selected}>${city.name}</option>`;
+                            });
+                        }
+                    });
+                }
 
                 async function loadCities(governorateId) {
                     if (!governorateId) {
-                        citySelect.innerHTML = '<option value="">كل المدن</option>';
+                        // If no governorate selected, show all cities
+                        loadAllCities();
                         return;
                     }
 
@@ -1134,11 +1151,18 @@
                         });
                     } catch (error) {
                         console.error('Error loading cities:', error);
+                        // Fallback to loading all cities
+                        loadAllCities();
                     }
                 }
 
-                if (governorateSelect.value) {
-                    loadCities(governorateSelect.value);
+                // Initialize cities based on current state
+                if (selectedGovernorateId) {
+                    // If governorate is selected, load its cities
+                    loadCities(selectedGovernorateId);
+                } else {
+                    // Load all cities by default (including when only city is selected)
+                    loadAllCities();
                 }
 
                 governorateSelect.addEventListener('change', (e) => loadCities(e.target.value));

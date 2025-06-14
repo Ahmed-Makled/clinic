@@ -12,7 +12,9 @@ class RegisterController extends Controller
 {
     public function showRegistrationForm()
     {
-        return view('auth::register');
+        return view('auth::register', [
+            'title' => 'إنشاء حساب جديد - Clinic Master'
+        ]);
     }
 
     public function register(Request $request)

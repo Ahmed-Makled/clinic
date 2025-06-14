@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'تسجيل الدخول')
-
 @push('styles')
     <style>
         .login-wrapper {

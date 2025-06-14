@@ -15,7 +15,7 @@ class ContactsController extends Controller
     public function index()
     {
         return view('contacts::index', [
-            'title' => 'Contact Us',
+            'title' => 'اتصل بنا - Clinic Master',
             'classes' => 'bg-white'
         ]);
     }
@@ -87,8 +87,8 @@ class ContactsController extends Controller
         $contacts = Contact::latest()->paginate(10);
 
         return view('contacts::admin.index', [
-            'contacts' => $contacts,
-            'title' => 'إدارة رسائل الاتصال'
+            'title' => 'إدارة رسائل الاتصال - Clinic Master',
+            'contacts' => $contacts
         ]);
     }
 }

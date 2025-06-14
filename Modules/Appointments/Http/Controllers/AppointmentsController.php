@@ -81,7 +81,13 @@ class AppointmentsController extends Controller
         $appointments = $query->orderBy('scheduled_at', 'desc')->paginate(15);
         $doctors = Doctor::all();
 
-        return view('appointments::admin.index', compact('appointments', 'doctors', 'stats', 'request'));
+        return view('appointments::admin.index', [
+            'title' => 'إدارة المواعيد - Clinic Master',
+            'appointments' => $appointments,
+            'doctors' => $doctors,
+            'stats' => $stats,
+            'request' => $request
+        ]);
     }
 
     public function create()
@@ -90,9 +96,9 @@ class AppointmentsController extends Controller
         $patients = Patient::all();
 
         return view('appointments::admin.create', [
+            'title' => 'إضافة حجز جديد - Clinic Master',
             'doctors' => $doctors,
-            'patients' => $patients,
-            'title' => 'إضافة حجز جديد'
+            'patients' => $patients
         ]);
     }
 
@@ -255,14 +261,14 @@ class AppointmentsController extends Controller
         // استخدام قالب مختلف حسب نوع المستخدم
         if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Doctor')) {
             return view('appointments::admin.details', [
+                'title' => 'تفاصيل الحجز - Clinic Master',
                 'appointment' => $appointment,
-                'title' => 'تفاصيل الحجز',
                 'existingRating' => $existingRating
             ]);
         } else {
             return view('appointments::show', [
+                'title' => 'تفاصيل الموعد - Clinic Master',
                 'appointment' => $appointment,
-                'title' => 'تفاصيل الحجز',
                 'existingRating' => $existingRating
             ]);
         }
@@ -274,10 +280,10 @@ class AppointmentsController extends Controller
         $patients = Patient::all();
 
         return view('appointments::admin.edit', [
+            'title' => 'تعديل الحجز - Clinic Master',
             'appointment' => $appointment,
             'doctors' => $doctors,
-            'patients' => $patients,
-            'title' => 'تعديل الحجز'
+            'patients' => $patients
         ]);
     }
 
@@ -555,7 +561,14 @@ class AppointmentsController extends Controller
         if (!$schedule) {
             $availableSlots = [];
             session()->flash('schedule_error', 'لا توجد مواعيد متاحة في هذا اليوم.');
-            return view('appointments::book', compact('doctor', 'availableSlots', 'selectedDate', 'schedules', 'days'));
+            return view('appointments::book', [
+                'title' => 'حجز موعد - Clinic Master',
+                'doctor' => $doctor,
+                'availableSlots' => $availableSlots,
+                'selectedDate' => $selectedDate,
+                'schedules' => $schedules,
+                'days' => $days
+            ]);
         }
 
         if (!$schedule->slot_duration) {
@@ -565,7 +578,14 @@ class AppointmentsController extends Controller
         // Get available slots for this schedule
         $availableSlots = $doctor->getAvailableSlots($selectedDate);
 
-        return view('appointments::book', compact('doctor', 'availableSlots', 'selectedDate', 'schedules', 'days'));
+        return view('appointments::book', [
+            'title' => 'حجز موعد - Clinic Master',
+            'doctor' => $doctor,
+            'availableSlots' => $availableSlots,
+            'selectedDate' => $selectedDate,
+            'schedules' => $schedules,
+            'days' => $days
+        ]);
     }
 
 

@@ -104,14 +104,24 @@ class DoctorsController extends Controller
             ]
         ];
 
-        return view('doctors::admin.index', compact('doctors', 'categories', 'governorates', 'stats'));
+        return view('doctors::admin.index', [
+            'title' => 'إدارة الأطباء - Clinic Master',
+            'doctors' => $doctors,
+            'categories' => $categories,
+            'governorates' => $governorates,
+            'stats' => $stats
+        ]);
     }
 
     public function create()
     {
         $categories = Category::active()->get();
         $governorates = Governorate::with('cities')->get();
-        return view('doctors::admin.create', compact('categories', 'governorates'));
+        return view('doctors::admin.create', [
+            'title' => 'إضافة طبيب جديد - Clinic Master',
+            'categories' => $categories,
+            'governorates' => $governorates
+        ]);
     }
 
     public function store(Request $request)
@@ -283,7 +293,12 @@ class DoctorsController extends Controller
         $doctor->load(['schedules']); // تحميل جداول الحجوزات
         $categories = Category::all();
         $governorates = Governorate::with('cities')->get();
-        return view('doctors::admin.edit', compact('doctor', 'categories', 'governorates'));
+        return view('doctors::admin.edit', [
+            'title' => 'تعديل بيانات الطبيب - Clinic Master',
+            'doctor' => $doctor,
+            'categories' => $categories,
+            'governorates' => $governorates
+        ]);
     }
 
     public function update(Request $request, Doctor $doctor)
@@ -569,20 +584,21 @@ class DoctorsController extends Controller
             ];
         }
 
-        return view('doctors::admin.details', compact(
-            'doctor',
-            'appointments',
-            'completedAppointments',
-            'cancelledAppointments',
-            'completedGrowthRate',
-            'feeComparisonRate',
-            'totalEarnings',
-            'earningsGrowthRate',
-            'ratings',
-            'ratingsCount',
-            'avgRating',
-            'ratingStats'
-        ));
+        return view('doctors::admin.details', [
+            'title' => 'تفاصيل الطبيب - Clinic Master',
+            'doctor' => $doctor,
+            'appointments' => $appointments,
+            'completedAppointments' => $completedAppointments,
+            'cancelledAppointments' => $cancelledAppointments,
+            'completedGrowthRate' => $completedGrowthRate,
+            'feeComparisonRate' => $feeComparisonRate,
+            'totalEarnings' => $totalEarnings,
+            'earningsGrowthRate' => $earningsGrowthRate,
+            'ratings' => $ratings,
+            'ratingsCount' => $ratingsCount,
+            'avgRating' => $avgRating,
+            'ratingStats' => $ratingStats
+        ]);
     }
 
     public function search(Request $request)
@@ -609,7 +625,12 @@ class DoctorsController extends Controller
         $categories = Category::where('status', true)->get();
         $governorates = Governorate::all();
 
-        return view('doctors::search', compact('doctors', 'categories', 'governorates'));
+        return view('doctors::search', [
+            'title' => 'البحث عن الأطباء - Clinic Master',
+            'doctors' => $doctors,
+            'categories' => $categories,
+            'governorates' => $governorates
+        ]);
     }
 
     protected function handleImageUpdate(Doctor $doctor, $newImage)
@@ -829,7 +850,13 @@ class DoctorsController extends Controller
         $governorates = Governorate::with('cities')->get();
         $categories = Category::active()->get();
 
-        return view('doctors::profile', compact('doctor', 'stats', 'governorates', 'categories'));
+        return view('doctors::profile', [
+            'title' => 'الملف الشخصي - Clinic Master',
+            'doctor' => $doctor,
+            'stats' => $stats,
+            'governorates' => $governorates,
+            'categories' => $categories
+        ]);
     }
 
     /**
@@ -1080,7 +1107,11 @@ class DoctorsController extends Controller
 
         $appointments = $query->orderBy('scheduled_at')->paginate(15);
 
-        return view('doctors::appointments', compact('doctor', 'appointments'));
+        return view('doctors::appointments', [
+            'title' => 'المواعيد - Clinic Master',
+            'doctor' => $doctor,
+            'appointments' => $appointments
+        ]);
     }
 
     /**
@@ -1247,7 +1278,11 @@ class DoctorsController extends Controller
 
         $categories = Category::active()->get();
 
-        return view('doctors::admin.incomplete_profiles', compact('doctors', 'categories'));
+        return view('doctors::admin.incomplete_profiles', [
+            'title' => 'الملفات غير المكتملة - Clinic Master',
+            'doctors' => $doctors,
+            'categories' => $categories
+        ]);
     }
 
     /**

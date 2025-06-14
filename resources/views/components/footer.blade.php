@@ -1,128 +1,414 @@
-<footer class="footer mt-auto py-5">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-lg-4 col-md-6">
-                <h5 class="footer-heading mb-4">روابط المرضى</h5>
-                <ul class="footer-links">
-                    <li><a href="{{ route('appointments.index') }}">مواعيدي</a></li>
-                    <li><a href="{{ route('search') }}">البحث عن طبيب</a></li>
-                    <li><a href="{{ route('specialties.index') }}">التخصصات الطبية</a></li>
-                    <li><a href="">السجل الطبي</a></li>
-                    <li><a href="">التأمين الطبي</a></li>
-                </ul>
-            </div>
+<footer class="modern-footer">
+    <div class="footer-content">
+        <!-- الجزء الرئيسي -->
+        <div class="footer-main">
+            <div class="container">
+                <div class="row">
+                    <!-- معلومات العيادة -->
+                    <div class="col-lg-5 col-md-6 mb-4">
+                        <div class="clinic-info">
+                            <div class="logo-section mb-3">
+                                <i class="fas fa-heart text-primary me-2"></i>
+                                <h4 class="clinic-name">Clinic Master</h4>
+                            </div>
+                            <p class="clinic-description">
+                                منصة شاملة تربط بين المرضى والأطباء لتوفير أفضل رعاية صحية. نهدف
+                                إلى تسهيل الوصول للخدمات الطبية المتميزة وجعل الصحة في متناول
+                                الجميع.
+                            </p>
+                            <div class="rating-section">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span class="rating-text">معتمد وآمن</span>
+                                <div class="stars">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <span class="rating-value">4.8/5 تقييم</span>
+                                </div>
+                            </div>
+                            <!-- الأيقونات الاجتماعية -->
+                            <div class="social-media mt-4">
+                                <a href="#" class="social-link facebook"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="social-link twitter"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="social-link pinterest"><i class="fab fa-pinterest"></i></a>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="col-lg-4 col-md-6">
-                <h5 class="footer-heading mb-4">روابط الأطباء</h5>
-                <ul class="footer-links">
-                    <li><a href="">انضم كطبيب</a></li>
-                    <li><a href="">لوحة تحكم الطبيب</a></li>
-                    <li><a href="">إدارة الحجوزات</a></li>
-                    <li><a href="">قائمة المرضى</a></li>
-                    <li><a href="">الملف الشخصي</a></li>
-                </ul>
-            </div>
+                    <!-- معلومات التواصل -->
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <h5 class="footer-title">تواصل معنا</h5>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <div class="contact-icon email">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <span class="contact-label">البريد الإلكتروني</span>
+                                    <span class="contact-value">info@clinicmaster.com</span>
+                                </div>
+                            </div>
 
-            <div class="col-lg-4 col-md-12">
-                <h5 class="footer-heading mb-4">المساعدة والموارد</h5>
-                <ul class="footer-links">
-                    <li><a href="{{ route('about') }}">عن المنصة</a></li>
-                    <li><a href="{{ route('contact') }}">اتصل بنا</a></li>
-                    <li><a href="{{ route('about') }}">الأسئلة الشائعة</a></li>
-                    <li><a href="{{ route('about') }}">سياسة الخصوصية</a></li>
-                    <li><a href="{{ route('about') }}">الشروط والأحكام</a></li>
-                </ul>
+                            <div class="contact-item">
+                                <div class="contact-icon phone">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <span class="contact-label">الهاتف</span>
+                                    <span class="contact-value">01500555949</span>
+                                </div>
+                            </div>
 
-                <div class="social-icons mt-4">
-                    <h6 class="text-muted mb-3">تابعنا على</h6>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="social-icon" title="فيسبوك">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-icon" title="تويتر">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-icon" title="انستجرام">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="social-icon" title="لينكد إن">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
+                            <div class="contact-item">
+                                <div class="contact-icon location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <span class="contact-label">العنوان</span>
+                                    <span class="contact-value">القاهرة، مصر</span>
+                                </div>
+                            </div>
+
+                            <div class="contact-item">
+                                <div class="contact-icon clock">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <span class="contact-label">ساعات العمل</span>
+                                    <span class="contact-value">خدمة متاحة 24/7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- الروابط السريعة -->
+                    <div class="col-lg-4 col-md-12 mb-4">
+                        <h5 class="footer-title">روابط سريعة</h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <ul class="quick-links">
+                                    <li><a href="{{ route('search') }}">الأطباء</a></li>
+                                    <li><a href="{{ route('specialties.index') }}">التخصصات</a></li>
+                                    <li><a href="{{ route('appointments.index') }}">حجز موعد</a></li>
+                                    <li><a href="">من نحن</a></li>
+                                    <li><a href="">الأسئلة الشائعة</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-6">
+                                <ul class="quick-links">
+                                    <li><a href="">الدعم الفني</a></li>
+                                    <li><a href="">الشروط والأحكام</a></li>
+                                    <li><a href="">سياسة الخصوصية</a></li>
+                                    <li><a href="{{ route('contact') }}">اتصل بنا</a></li>
+                                    <li><a href="">من أجل صحة أفضل</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="footer-bottom text-center mt-5 pt-4 border-top">
-            <p class="mb-0">© {{ date('Y') }} جميع الحقوق محفوظة</p>
+        <!-- الجزء السفلي -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="copyright">© {{ date('Y') }} Clinic Master. جميع الحقوق محفوظة.</p>
+                    <div class="footer-badge">
+                        <i class="fas fa-heart text-danger"></i>
+                        <span>مطور بواسطة تيم كلينك ماستر    </span>
+                        <span class=mx-2>|</span>
+                        <span>من أجل صحة أفضل</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </footer>
 
 <style>
-    .footer {
-        background-color: #f8f9fa;
+    .modern-footer {
+        background: linear-gradient(135deg, #1a1d29 0%, #2d3748 100%);
+        color: #e2e8f0;
+        margin-top: auto;
     }
 
-    .footer-heading {
-        color: #2d3748;
-        font-weight: 600;
+    .footer-content {
+        position: relative;
+    }
+
+    .footer-main {
+        padding: 4rem 0 2rem;
+        position: relative;
+    }
+
+    .footer-main::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #4a5568, transparent);
+    }
+
+    /* معلومات العيادة */
+    .clinic-info .logo-section {
+        display: flex;
+        align-items: center;
+    }
+
+    .clinic-name {
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin: 0;
         font-family: "Cairo", "Tajawal", sans-serif;
     }
 
-    .footer-links {
+    .clinic-description {
+        color: #a0aec0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .rating-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .rating-text {
+        color: #68d391;
+        font-weight: 500;
+    }
+
+    .stars {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .rating-value {
+        color: #fbb6ce;
+        font-size: 0.9rem;
+    }
+
+    /* الأيقونات الاجتماعية */
+    .social-media {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .social-link {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+    }
+
+    .social-link.facebook {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+    }
+
+    .social-link.twitter {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+
+    .social-link.pinterest {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+    }
+
+    .social-link:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    /* عنوان الأقسام */
+    .footer-title {
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        font-family: "Cairo", "Tajawal", sans-serif;
+    }
+
+    /* معلومات التواصل */
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .contact-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1rem;
+    }
+
+    .contact-icon.email {
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
+        color: white;
+    }
+
+    .contact-icon.phone {
+        background: linear-gradient(135deg, #10b981, #047857);
+        color: white;
+    }
+
+    .contact-icon.location {
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
+    }
+
+    .contact-icon.clock {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+    }
+
+    .contact-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .contact-label {
+        color: #a0aec0;
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .contact-value {
+        color: #e2e8f0;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    /* الروابط السريعة */
+    .quick-links {
         list-style: none;
         padding: 0;
         margin: 0;
     }
 
-    .footer-links li {
+    .quick-links li {
         margin-bottom: 0.75rem;
     }
 
-    .footer-links a {
-        color: #4a5568;
+    .quick-links a {
+        color: #a0aec0;
         text-decoration: none;
-        transition: color 0.2s ease;
+        transition: all 0.2s ease;
         font-size: 0.95rem;
+        position: relative;
+        padding-right: 1rem;
     }
 
-    .footer-links a:hover {
-        color: #0d6efd;
+    .quick-links a::before {
+        content: '▸';
+        position: absolute;
+        right: 0;
+        color: #4a5568;
+        transition: color 0.2s ease;
     }
 
-    .social-icons {
-        display: flex;
-        flex-direction: column;
+    .quick-links a:hover {
+        color: #60a5fa;
+        transform: translateX(-5px);
     }
 
-    .social-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: white;
+    .quick-links a:hover::before {
+        color: #60a5fa;
+    }
+
+    /* الجزء السفلي */
+    .footer-bottom {
+        background: rgba(0,0,0,0.2);
+        padding: 1.5rem 0;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .copyright {
+        color: #a0aec0;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .footer-badge {
         display: flex;
         align-items: center;
-        justify-content: center;
-        color: #4a5568;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        gap: 0.5rem;
+        color: #a0aec0;
+        font-size: 0.9rem;
     }
 
-    .social-icon:hover {
-        transform: translateY(-3px);
-        color: #0d6efd;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    .footer-badge .fas.fa-heart {
+        font-size: 1rem;
+        animation: heartbeat 2s ease-in-out infinite;
     }
 
-    .footer-bottom {
-        color: #718096;
+    @keyframes heartbeat {
+        0%, 50%, 100% { transform: scale(1); }
+        25%, 75% { transform: scale(1.1); }
     }
 
+    /* الاستجابة */
     @media (max-width: 768px) {
-        .social-icons {
-            margin-top: 2rem;
+        .footer-main {
+            padding: 3rem 0 1.5rem;
+        }
+
+        .clinic-info {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .social-media {
+            justify-content: center;
+        }
+
+        .footer-bottom .d-flex {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .contact-item {
+            justify-content: center;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .clinic-name {
+            font-size: 1.3rem;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
         }
     }
 </style>

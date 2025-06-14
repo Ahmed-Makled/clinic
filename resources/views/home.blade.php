@@ -6,12 +6,15 @@
             <div class="container mt-5 py-5 text-white">
                 <div class="row justify-content-center">
                     <div class="col-md-9 text-center">
-                        <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown">
-                            اسهل طريقة لحجز احسن واكبر
-                            <span class="text-primary position-relative text-glow">دكاترة</span>
-                            في مصر
+                        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeInDown">
+                            ✨ <span class="text-primary position-relative text-white">Clinic Master</span> ✨
                         </h1>
-                        <p class="lead mb-5 animate__animated animate__fadeInUp opacity-90">احجز أونلاين أو كلم 77777</p>
+                        <p class="lead mb-3 animate__animated animate__fadeInUp opacity-90" style="animation-delay: 0.3s;">
+                            ابحث عن طبيبك المناسب واحجز موعدك بسهولة
+                        </p>
+                        <p class="h5 mb-5 animate__animated animate__fadeInUp opacity-85" style="animation-delay: 0.5s;">
+                            منصة شاملة تربط بين المرضى والأطباء لتوفير أفضل رعاية صحية مع تجربة استخدام سهلة وآمنة
+                        </p>
                     </div>
                 </div>
 
@@ -27,100 +30,83 @@
                 </div>
 
                 <div class="tabs shadow bg-white text-dark rounded-xl animate__animated animate__fadeInUp">
-                    <div class="d-flex">
-                        <div class="w-50 pt-4">
-                            <div class="line text-center fw-bold pb-4 cursor-pointer transition" data-tab-name="call">
-                                <span>
-                                    <i class="bi bi-telephone-fill fs-4 d-block mb-2 text-primary"></i>
-                                    مكالمة دكتور<br>
-                                    <small class="text-muted">كشف عبر مكاملة مع الدكتور</small>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="w-50 pt-4">
-                            <div class="line active text-center fw-bold pb-4 cursor-pointer transition"
-                                data-tab-name="reserve">
-                                <span>
-                                    <i class="bi bi-calendar-plus-fill fs-4 d-block mb-2 text-primary"></i>
-                                    احجز دكتور<br>
-                                    <small class="text-muted">الفحص او الاجراء</small>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tabs-container">
-                        <div class="p-5 text-center" style="display: none" id="call">
-                            <h4 class="mb-4">مكالمة مع دكتور</h4>
-                            <button class="btn btn-primary btn-lg rounded-pill px-5">
-                                <i class="bi bi-telephone-fill me-2"></i> اتصل الآن
-                            </button>
+                    <div class="p-4">
+                        <div class="text-center mb-4">
+                            <h4 class="fw-bold text-primary mb-2">ابحث عن طبيبك المثالي</h4>
+                            <p class="text-muted">استخدم الفلتر أدناه للعثور على الطبيب المناسب لك</p>
                         </div>
 
-                        <div class="p-4" id="reserve">
-                            <form id="search" action="{{ route('search') }}" method="GET">
-                                <div class="row g-4">
-                                    <div class="col-md">
-                                        <div class="border rounded p-3 h-100 search-box">
-                                            <label class="mb-3 text-muted">
-                                                <i class="bi bi-search me-2"></i>أنا أبحث عن طبيب
-                                            </label>
-                                            <select name="category" id="category" class="form-select form-select-lg">
-                                                <option value="">إختر التخصص</option>
-                                                @foreach($categories as $category)
-                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md">
-                                        <div class="border rounded p-3 h-100 search-box">
-                                            <label class="mb-3 text-muted">
-                                                <i class="bi bi-geo-alt me-2"></i>فى محافظة
-                                            </label>
-                                            <select name="governorate_id" id="governorate_id"
-                                                class="form-select form-select-lg">
-                                                <option value="">اختر المحافظة</option>
-                                                @foreach($governorates as $governorate)
-                                                    <option value="{{ $governorate->id }}" data-icon="bi-pin-map" {{ old('governorate_id') == $governorate->id ? 'selected' : '' }}>
-                                                        {{ $governorate->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md">
-                                        <div class="border rounded p-3 h-100 search-box">
-                                            <label class="mb-3 text-muted">
-                                                <i class="bi bi-pin-map me-2"></i>المدينة
-                                            </label>
-                                            <select name="city_id" id="city_id" class="form-select form-select-lg">
-                                                <option value="">اختر المدينة</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md">
-                                        <div class="border rounded p-3 h-100 search-box">
-                                            <label class="mb-3 text-muted">
-                                                <i class="bi bi-person-vcard me-2"></i>الأطباء
-                                            </label>
-                                            <select name="doctors" id="doctors" class="form-select form-select-lg">
-                                                <option value="">إختر الطبيب</option>
-                                                @foreach($doctors as $doctor)
-                                                    <option value="{{ $doctor->id }}">{{ $doctor->name }}</option>
-                                                @endforeach
-                                            </select>
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-auto d-flex align-items-end">
-                                        <button type="submit" class="btn btn-primary btn-lg px-5 h-75">
-                                            بحث <i class="bi bi-search ms-2"></i>
-                                        </button>
+                        <form id="search" action="{{ route('search') }}" method="GET">
+                            <div class="row g-3">
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="search-box-container">
+                                        <label class="form-label fw-bold text-dark mb-2">
+                                            <i class="fas fa-stethoscope text-primary me-2"></i>
+                                            التخصص
+                                        </label>
+                                        <select name="category" id="category" class="form-select form-select-lg search-box">
+                                            <option value="">اختر التخصص</option>
+                                            @foreach($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="search-box-container">
+                                        <label class="form-label fw-bold text-dark mb-2">
+                                            <i class="fas fa-map-marker-alt text-success me-2"></i>
+                                            المحافظة
+                                        </label>
+                                        <select name="governorate_id" id="governorate_id"
+                                            class="form-select form-select-lg search-box">
+                                            <option value="">اختر المحافظة</option>
+                                            @foreach($governorates as $governorate)
+                                                <option value="{{ $governorate->id }}" {{ old('governorate_id') == $governorate->id ? 'selected' : '' }}>
+                                                    {{ $governorate->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="search-box-container">
+                                        <label class="form-label fw-bold text-dark mb-2">
+                                            <i class="fas fa-city text-info me-2"></i>
+                                            المدينة
+                                        </label>
+                                        <select name="city_id" id="city_id" class="form-select form-select-lg search-box">
+                                            <option value="">اختر المدينة</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="search-box-container">
+                                        <label class="form-label fw-bold text-dark mb-2">
+                                            <i class="fas fa-user-md text-purple me-2"></i>
+                                            الأطباء
+                                        </label>
+                                        <select name="doctors" id="doctors" class="form-select form-select-lg search-box">
+                                            <option value="">اختر الطبيب</option>
+                                            @foreach($doctors as $doctor)
+                                                <option value="{{ $doctor->id }}">{{ $doctor->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit"
+                                    class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm hover-scale-lg">
+                                    <i class="fas fa-search me-2"></i>
+                                    ابحث عن طبيب الآن
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -165,12 +151,14 @@
                     إزاى تحجز معانا
                     <span class="section-underline"></span>
                 </h2>
-                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">اتبع الخطوات البسيطة دي عشان تحجز مع افضل دكتور</p>
+                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">اتبع الخطوات البسيطة دي عشان تحجز مع
+                    افضل دكتور</p>
             </div>
 
             <div class="row g-4">
                 <div class="col-lg-4">
-                    <div class="booking-step shadow rounded-4 bg-white text-center p-4 h-100 position-relative animate__animated animate__fadeInUp" data-wow-delay="0.1s">
+                    <div class="booking-step shadow rounded-4 bg-white text-center p-4 h-100 position-relative animate__animated animate__fadeInUp"
+                        data-wow-delay="0.1s">
                         <div class="step-number">1</div>
                         <div class="icon-box mb-4 mx-auto">
                             <div class="icon-circle">
@@ -193,7 +181,8 @@
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="booking-step shadow rounded-4 bg-white text-center p-4 h-100 position-relative animate__animated animate__fadeInUp" data-wow-delay="0.3s">
+                    <div class="booking-step shadow rounded-4 bg-white text-center p-4 h-100 position-relative animate__animated animate__fadeInUp"
+                        data-wow-delay="0.3s">
                         <div class="step-number">2</div>
                         <div class="icon-box mb-4 mx-auto">
                             <div class="icon-circle">
@@ -216,7 +205,8 @@
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="booking-step shadow rounded-4 bg-white text-center p-4 h-100 position-relative animate__animated animate__fadeInUp" data-wow-delay="0.5s">
+                    <div class="booking-step shadow rounded-4 bg-white text-center p-4 h-100 position-relative animate__animated animate__fadeInUp"
+                        data-wow-delay="0.5s">
                         <div class="step-number">3</div>
                         <div class="icon-box mb-4 mx-auto">
                             <div class="icon-circle">
@@ -257,19 +247,22 @@
                     ليه تختار منصتنا؟
                     <span class="section-underline"></span>
                 </h2>
-                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">نقدم لك خدمات طبية متكاملة من خلال نخبة من أفضل الأطباء والمستشفيات</p>
+                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">نقدم لك خدمات طبية متكاملة من خلال
+                    نخبة من أفضل الأطباء والمستشفيات</p>
             </div>
 
             <div class="row g-4">
                 <div class="col-md-6 col-lg-3">
-                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp" data-delay="0.1s">
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp"
+                        data-delay="0.1s">
                         <div class="icon-box mb-4 mx-auto">
                             <div class="icon-circle">
                                 <i class="bi bi-shield-check fs-1 text-primary"></i>
                             </div>
                         </div>
                         <h5 class="mb-3 fw-bold">دكاترة معتمدين</h5>
-                        <p class="text-muted mb-3">نضمن لك التعامل مع أطباء مُرخصين ومعتمدين من وزارة الصحة، بخبرة لا تقل عن 3 سنوات في مجالهم</p>
+                        <p class="text-muted mb-3">نضمن لك التعامل مع أطباء مُرخصين ومعتمدين من وزارة الصحة، بخبرة لا تقل عن
+                            3 سنوات في مجالهم</p>
                         <div class="feature-details">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -284,14 +277,16 @@
                 </div>
 
                 <div class="col-md-6 col-lg-3">
-                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp" data-delay="0.3s">
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp"
+                        data-delay="0.3s">
                         <div class="icon-box mb-4 mx-auto">
                             <div class="icon-circle">
                                 <i class="bi bi-clock-history fs-1 text-primary"></i>
                             </div>
                         </div>
                         <h5 class="mb-3 fw-bold">حجز سريع</h5>
-                        <p class="text-muted mb-3">احجز موعدك في أقل من دقيقة واحدة، وتلقى تأكيداً فورياً عبر الرسائل النصية والبريد الإلكتروني</p>
+                        <p class="text-muted mb-3">احجز موعدك في أقل من دقيقة واحدة، وتلقى تأكيداً فورياً عبر الرسائل النصية
+                            والبريد الإلكتروني</p>
                         <div class="feature-details">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -306,14 +301,16 @@
                 </div>
 
                 <div class="col-md-6 col-lg-3">
-                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp" data-delay="0.5s">
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp"
+                        data-delay="0.5s">
                         <div class="icon-box mb-4 mx-auto">
                             <div class="icon-circle">
                                 <i class="bi bi-geo-alt fs-1 text-primary"></i>
                             </div>
                         </div>
                         <h5 class="mb-3 fw-bold">عيادات في كل مكان</h5>
-                        <p class="text-muted mb-3">نمتلك شبكة واسعة من العيادات والمستشفيات في جميع محافظات مصر، اختر الأقرب لك بكل سهولة</p>
+                        <p class="text-muted mb-3">نمتلك شبكة واسعة من العيادات والمستشفيات في جميع محافظات مصر، اختر الأقرب
+                            لك بكل سهولة</p>
                         <div class="feature-details">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -328,14 +325,16 @@
                 </div>
 
                 <div class="col-md-6 col-lg-3">
-                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp" data-delay="0.7s">
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp"
+                        data-delay="0.7s">
                         <div class="icon-box mb-4 mx-auto">
                             <div class="icon-circle">
                                 <i class="bi bi-headset fs-1 text-primary"></i>
                             </div>
                         </div>
                         <h5 class="mb-3 fw-bold">دعم على مدار اليوم</h5>
-                        <p class="text-muted mb-3">فريق دعم متخصص متاح 24/7 للإجابة على استفساراتك ومساعدتك في أي وقت تحتاج فيه للمساعدة</p>
+                        <p class="text-muted mb-3">فريق دعم متخصص متاح 24/7 للإجابة على استفساراتك ومساعدتك في أي وقت تحتاج
+                            فيه للمساعدة</p>
                         <div class="feature-details">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -353,14 +352,16 @@
             <!-- صف إضافي للميزات -->
             <div class="row g-4 mt-3">
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp" data-delay="0.8s">
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm h-100 animate__animated animate__fadeInUp"
+                        data-delay="0.8s">
                         <div class="icon-box mb-4 mx-auto">
                             <div class="icon-circle">
                                 <i class="bi bi-star fs-1 text-primary"></i>
                             </div>
                         </div>
                         <h5 class="mb-3 fw-bold">تقييمات حقيقية</h5>
-                        <p class="text-muted mb-3">تقييمات واقعية من مرضى حقيقيين تساعدك على اختيار الطبيب المناسب بثقة وشفافية</p>
+                        <p class="text-muted mb-3">تقييمات واقعية من مرضى حقيقيين تساعدك على اختيار الطبيب المناسب بثقة
+                            وشفافية</p>
                         <div class="feature-details">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -375,14 +376,16 @@
                 </div>
 
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm ه-100 animate__animated animate__fadeInUp" data-delay="1s">
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm ه-100 animate__animated animate__fadeInUp"
+                        data-delay="1s">
                         <div class="icon-box mb-4 mx-auto">
                             <div class="icon-circle">
                                 <i class="bi bi-wallet2 fs-1 text-primary"></i>
                             </div>
                         </div>
                         <h5 class="mb-3 fw-bold">أسعار تنافسية</h5>
-                        <p class="text-muted mb-3">أسعار مناسبة وشفافة لجميع الخدمات الطبية، مع إمكانية الدفع بطرق متعددة وخصومات دورية</p>
+                        <p class="text-muted mb-3">أسعار مناسبة وشفافة لجميع الخدمات الطبية، مع إمكانية الدفع بطرق متعددة
+                            وخصومات دورية</p>
                         <div class="feature-details">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -397,14 +400,16 @@
                 </div>
 
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm ه-100 animate__animated animate__fadeInUp" data-delay="1.2s">
+                    <div class="feature-card bg-white text-center p-4 rounded-4 shadow-sm ه-100 animate__animated animate__fadeInUp"
+                        data-delay="1.2s">
                         <div class="icon-box mb-4 mx-auto">
                             <div class="icon-circle">
                                 <i class="bi bi-journal-medical fs-1 text-primary"></i>
                             </div>
                         </div>
                         <h5 class="mb-3 fw-bold">ملفات طبية آمنة</h5>
-                        <p class="text-muted mb-3">احتفظ بملفك الطبي بشكل آمن ومشفر، وتتبع تاريخ الزيارات والعلاجات بسهولة</p>
+                        <p class="text-muted mb-3">احتفظ بملفك الطبي بشكل آمن ومشفر، وتتبع تاريخ الزيارات والعلاجات بسهولة
+                        </p>
                         <div class="feature-details">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -421,7 +426,8 @@
 
             <!-- زر الحجز -->
             <div class="text-center mt-5 animate__animated animate__fadeInUp">
-                <a href="{{ route('search') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm hover-scale-lg">
+                <a href="{{ route('search') }}"
+                    class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm hover-scale-lg">
                     <i class="bi bi-calendar-check me-2"></i> احجز موعدك الآن
                 </a>
             </div>
@@ -437,7 +443,8 @@
                     شركاؤنا
                     <span class="section-underline"></span>
                 </h2>
-                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">نتعاون مع أفضل المستشفيات والمراكز الطبية في مصر والعالم العربي</p>
+                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">نتعاون مع أفضل المستشفيات والمراكز
+                    الطبية في مصر والعالم العربي</p>
             </div>
 
             <!-- للشاشات المتوسطة والكبيرة -->
@@ -445,32 +452,38 @@
                 <div class="row justify-content-center align-items-center">
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                            <img src="https://placehold.co/200x100/4e73df/ffffff?text=Medlife" alt="Medlife Hospital" class="img-fluid">
+                            <img src="https://placehold.co/200x100/4e73df/ffffff?text=Medlife" alt="Medlife Hospital"
+                                class="img-fluid">
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                            <img src="https://placehold.co/200x100/20c997/ffffff?text=HealthPlus" alt="HealthPlus" class="img-fluid">
+                            <img src="https://placehold.co/200x100/20c997/ffffff?text=HealthPlus" alt="HealthPlus"
+                                class="img-fluid">
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                            <img src="https://placehold.co/200x100/fd7e14/ffffff?text=MediCare" alt="MediCare" class="img-fluid">
+                            <img src="https://placehold.co/200x100/fd7e14/ffffff?text=MediCare" alt="MediCare"
+                                class="img-fluid">
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                            <img src="https://placehold.co/200x100/e83e8c/ffffff?text=AlShifa" alt="AlShifa Hospital" class="img-fluid">
+                            <img src="https://placehold.co/200x100/e83e8c/ffffff?text=AlShifa" alt="AlShifa Hospital"
+                                class="img-fluid">
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                            <img src="https://placehold.co/200x100/6f42c1/ffffff?text=MediTech" alt="MediTech" class="img-fluid">
+                            <img src="https://placehold.co/200x100/6f42c1/ffffff?text=MediTech" alt="MediTech"
+                                class="img-fluid">
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                            <img src="https://placehold.co/200x100/dc3545/ffffff?text=NileCare" alt="NileCare" class="img-fluid">
+                            <img src="https://placehold.co/200x100/dc3545/ffffff?text=NileCare" alt="NileCare"
+                                class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -478,22 +491,26 @@
                 <div class="row justify-content-center align-items-center mt-4">
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                            <img src="https://placehold.co/200x100/6610f2/ffffff?text=AlAmal" alt="AlAmal Center" class="img-fluid">
+                            <img src="https://placehold.co/200x100/6610f2/ffffff?text=AlAmal" alt="AlAmal Center"
+                                class="img-fluid">
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                            <img src="https://placehold.co/200x100/198754/ffffff?text=EgyptMed" alt="EgyptMed" class="img-fluid">
+                            <img src="https://placehold.co/200x100/198754/ffffff?text=EgyptMed" alt="EgyptMed"
+                                class="img-fluid">
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                            <img src="https://placehold.co/200x100/0d6efd/ffffff?text=CairoHealth" alt="CairoHealth" class="img-fluid">
+                            <img src="https://placehold.co/200x100/0d6efd/ffffff?text=CairoHealth" alt="CairoHealth"
+                                class="img-fluid">
                         </div>
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-4 mb-4">
                         <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                            <img src="https://placehold.co/200x100/fd7e14/ffffff?text=SmartCare" alt="SmartCare" class="img-fluid">
+                            <img src="https://placehold.co/200x100/fd7e14/ffffff?text=SmartCare" alt="SmartCare"
+                                class="img-fluid">
                         </div>
                     </div>
                 </div>
@@ -507,26 +524,14 @@
                             <div class="row g-2">
                                 <div class="col-6">
                                     <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                                        <img src="https://placehold.co/200x100/4e73df/ffffff?text=Medlife" alt="Medlife Hospital" class="img-fluid">
+                                        <img src="https://placehold.co/200x100/4e73df/ffffff?text=Medlife"
+                                            alt="Medlife Hospital" class="img-fluid">
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                                        <img src="https://placehold.co/200x100/20c997/ffffff?text=HealthPlus" alt="HealthPlus" class="img-fluid">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                                        <img src="https://placehold.co/200x100/fd7e14/ffffff?text=MediCare" alt="MediCare" class="img-fluid">
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                                        <img src="https://placehold.co/200x100/e83e8c/ffffff?text=AlShifa" alt="AlShifa Hospital" class="img-fluid">
+                                        <img src="https://placehold.co/200x100/20c997/ffffff?text=HealthPlus"
+                                            alt="HealthPlus" class="img-fluid">
                                     </div>
                                 </div>
                             </div>
@@ -535,26 +540,14 @@
                             <div class="row g-2">
                                 <div class="col-6">
                                     <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                                        <img src="https://placehold.co/200x100/6f42c1/ffffff?text=MediTech" alt="MediTech" class="img-fluid">
+                                        <img src="https://placehold.co/200x100/fd7e14/ffffff?text=MediCare" alt="MediCare"
+                                            class="img-fluid">
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                                        <img src="https://placehold.co/200x100/dc3545/ffffff?text=NileCare" alt="NileCare" class="img-fluid">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                                        <img src="https://placehold.co/200x100/6610f2/ffffff?text=AlAmal" alt="AlAmal Center" class="img-fluid">
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                                        <img src="https://placehold.co/200x100/198754/ffffff?text=EgyptMed" alt="EgyptMed" class="img-fluid">
+                                        <img src="https://placehold.co/200x100/e83e8c/ffffff?text=AlShifa"
+                                            alt="AlShifa Hospital" class="img-fluid">
                                     </div>
                                 </div>
                             </div>
@@ -563,23 +556,62 @@
                             <div class="row g-2">
                                 <div class="col-6">
                                     <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                                        <img src="https://placehold.co/200x100/0d6efd/ffffff?text=CairoHealth" alt="CairoHealth" class="img-fluid">
+                                        <img src="https://placehold.co/200x100/6f42c1/ffffff?text=MediTech" alt="MediTech"
+                                            class="img-fluid">
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="partner-logo p-3 text-center shadow-hover rounded-3">
-                                        <img src="https://placehold.co/200x100/fd7e14/ffffff?text=SmartCare" alt="SmartCare" class="img-fluid">
+                                        <img src="https://placehold.co/200x100/dc3545/ffffff?text=NileCare" alt="NileCare"
+                                            class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/6610f2/ffffff?text=AlAmal"
+                                            alt="AlAmal Center" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/198754/ffffff?text=EgyptMed" alt="EgyptMed"
+                                            class="img-fluid">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/0d6efd/ffffff?text=CairoHealth"
+                                            alt="CairoHealth" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="partner-logo p-3 text-center shadow-hover rounded-3">
+                                        <img src="https://placehold.co/200x100/fd7e14/ffffff?text=SmartCare" alt="SmartCare"
+                                            class="img-fluid">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="carousel-indicators position-relative mt-3">
-                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="0" class="active bg-primary" aria-current="true"></button>
-                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="1" class="bg-primary"></button>
-                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="2" class="bg-primary"></button>
-                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="3" class="bg-primary"></button>
-                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="4" class="bg-primary"></button>
+                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="0"
+                            class="active bg-primary" aria-current="true"></button>
+                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="1"
+                            class="bg-primary"></button>
+                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="2"
+                            class="bg-primary"></button>
+                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="3"
+                            class="bg-primary"></button>
+                        <button type="button" data-bs-target="#partnersCarousel" data-bs-slide-to="4"
+                            class="bg-primary"></button>
                     </div>
                 </div>
             </div>
@@ -595,7 +627,8 @@
                     آراء المرضى
                     <span class="section-underline"></span>
                 </h2>
-                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">شاهد تجارب مرضانا مع أطبائنا المميزين</p>
+                <p class="text-muted w-75 mx-auto animate__animated animate__fadeInUp">شاهد تجارب مرضانا مع أطبائنا المميزين
+                </p>
             </div>
 
             <!-- تصميم جديد باستخدام سلايدر أفقي -->
@@ -626,12 +659,15 @@
                                 </div>
                                 <div class="testimonial-text mb-4">
                                     <p class="mb-0">
-                                        "تجربتي مع دكتور أحمد كانت ممتازة، كان متعاون جدًا ومتفهم لحالتي. استطاع تشخيص مشكلتي بدقة ووصف العلاج المناسب. موقع شركتكم سهل جدًا في الاستخدام وحجز الميعاد كان سهل وسريع."
+                                        "تجربتي مع دكتور أحمد كانت ممتازة، كان متعاون جدًا ومتفهم لحالتي. استطاع تشخيص
+                                        مشكلتي بدقة ووصف العلاج المناسب. موقع شركتكم سهل جدًا في الاستخدام وحجز الميعاد كان
+                                        سهل وسريع."
                                     </p>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <div class="testimonial-img me-3">
-                                        <img src="https://randomuser.me/api/portraits/men/45.jpg" class="rounded-circle" width="60" height="60" alt="مريض">
+                                        <img src="https://randomuser.me/api/portraits/men/45.jpg" class="rounded-circle"
+                                            width="60" height="60" alt="مريض">
                                     </div>
                                     <div>
                                         <h5 class="mb-0 fw-bold">محمد أحمد</h5>
@@ -654,12 +690,14 @@
                                 </div>
                                 <div class="testimonial-text mb-4">
                                     <p class="mb-0">
-                                        "أنا سعيدة جداً بخدمات العيادة، الدكتورة ليلى كانت محترمة جداً والعيادة نظيفة ومجهزة بأحدث الأجهزة. أنصح بشدة بالحجز من خلال موقعكم لسهولة الحجز ودقة الحجوزات."
+                                        "أنا سعيدة جداً بخدمات العيادة، الدكتورة ليلى كانت محترمة جداً والعيادة نظيفة ومجهزة
+                                        بأحدث الأجهزة. أنصح بشدة بالحجز من خلال موقعكم لسهولة الحجز ودقة الحجوزات."
                                     </p>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <div class="testimonial-img me-3">
-                                        <img src="https://randomuser.me/api/portraits/women/32.jpg" class="rounded-circle" width="60" height="60" alt="مريضة">
+                                        <img src="https://randomuser.me/api/portraits/women/32.jpg" class="rounded-circle"
+                                            width="60" height="60" alt="مريضة">
                                     </div>
                                     <div>
                                         <h5 class="mb-0 fw-bold">سارة محمود</h5>
@@ -682,12 +720,14 @@
                                 </div>
                                 <div class="testimonial-text mb-4">
                                     <p class="mb-0">
-                                        "تطبيقكم جميل جدًا وسهل الاستعمال، سهلتولي حجز ميعاد مع الدكتور بسهولة. الأطباء محترفين والحجوزات دقيقة وفي الوقت المحدد. شكرًا لكم على المجهود الرائع."
+                                        "تطبيقكم جميل جدًا وسهل الاستعمال، سهلتولي حجز ميعاد مع الدكتور بسهولة. الأطباء
+                                        محترفين والحجوزات دقيقة وفي الوقت المحدد. شكرًا لكم على المجهود الرائع."
                                     </p>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <div class="testimonial-img me-3">
-                                        <img src="https://randomuser.me/api/portraits/men/36.jpg" class="rounded-circle" width="60" height="60" alt="مريض">
+                                        <img src="https://randomuser.me/api/portraits/men/36.jpg" class="rounded-circle"
+                                            width="60" height="60" alt="مريض">
                                     </div>
                                     <div>
                                         <h5 class="mb-0 fw-bold">خالد محمد</h5>
@@ -708,7 +748,8 @@
             </div>
 
             <div class="text-center mt-5">
-                <a href="{{ route('search') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm animate__animated animate__fadeInUp">
+                <a href="{{ route('search') }}"
+                    class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-sm animate__animated animate__fadeInUp">
                     <i class="bi bi-calendar-check me-2"></i> احجز الآن وكن جزءًا من قصص النجاح
                 </a>
             </div>
@@ -782,7 +823,7 @@
 
             .booking-step .step-number {
                 position: absolute;
-                top:20px ;
+                top: 20px;
                 right: 20px;
                 background: var(--bs-primary);
                 color: white;
@@ -916,63 +957,234 @@
                 transform: translateY(-2px);
             }
 
-            /* تصميمات لقسم الدكاترة المميزين */
-            .doctor-card {
+            /* تحسينات للـ header الجديد */
+            .search-box-container {
                 transition: all 0.3s ease;
             }
 
-            .doctor-card:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+            .search-box-container:hover {
+                transform: translateY(-2px);
             }
 
-            .doc-image-container {
-                height: 200px;
-                overflow: hidden;
+            .search-box {
+                border: 2px solid #e9ecef;
+                border-radius: 12px;
+                padding: 12px 16px;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                background-color: #f8f9fa;
+            }
+
+            .search-box:focus {
+                border-color: var(--bs-primary);
+                box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+                background-color: white;
+                transform: translateY(-1px);
+            }
+
+            .search-box:hover {
+                border-color: var(--bs-primary);
+                background-color: white;
+            }
+
+            .form-label {
+                font-size: 0.95rem;
+                margin-bottom: 8px;
+            }
+
+            .form-label i {
+                font-size: 1.1rem;
+            }
+
+            .text-purple {
+                color: #6f42c1 !important;
+            }
+
+            /* تحسين العنوان الرئيسي */
+            .display-3 {
+                font-size: calc(1.525rem + 3.3vw);
+                font-weight: 700;
+                letter-spacing: -0.5px;
+            }
+
+            .text-glow {
+                text-shadow: 0 0 20px rgba(13, 110, 253, 0.3);
+            }
+
+            /* تحسين نموذج البحث */
+            .tabs {
+                backdrop-filter: blur(10px);
+                /* background: rgba(255, 255, 255, 0.95) !important; */
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            /* تحسين الأزرار */
+            .btn-primary {
+                background: linear-gradient(135deg, #0d6efd 0%, #0c63e4 100%);
+                border: none;
+                box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+                transition: all 0.3s ease;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(13, 110, 253, 0.4);
+                background: linear-gradient(135deg, #0c63e4 0%, #0b5ed7 100%);
+            }
+
+            /* تحسين التخطيط العام */
+            .header .container {
+                max-width: 1200px;
+            }
+
+            /* تحسين الريسبونسف */
+            @media (max-width: 768px) {
+                .display-3 {
+                    font-size: 2.5rem;
+                }
+
+                .search-box-container {
+                    margin-bottom: 1rem;
+                }
+
+                .btn-lg {
+                    padding: 12px 30px;
+                    font-size: 1rem;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .display-3 {
+                    font-size: 2rem;
+                }
+
+                .tabs {
+                    margin: 0 -15px;
+                    border-radius: 0;
+                }
+            }
+
+            /* تصميمات سيكشن "ليه تختار منصتنا؟" */
+            .features {
+                background-color: #f8f9fa;
                 position: relative;
+                overflow: hidden;
+                padding: 80px 0;
             }
 
-            .doc-img {
-                height: 100%;
-                object-fit: cover;
-                transition: all 0.5s ease;
-            }
-
-            .doctor-card:hover .doc-img {
-                transform: scale(1.05);
-            }
-
-            .featured-badge {
-                font-size: 0.8rem;
-                opacity: 0.9;
-            }
-
-            .doctor-overlay {
+            .features::before {
+                content: '';
                 position: absolute;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                opacity: 0;
-                transition: opacity 0.3s ease;
+                background: url('{{ asset("images/pattern-bg.png") }}') center/cover;
+                opacity: 0.03;
+                z-index: 0;
+            }
+
+            .features .container {
+                position: relative;
+                z-index: 1;
+            }
+
+            .feature-card {
+                transition: all 0.35s ease;
+                border-top: 4px solid transparent;
+                overflow: hidden;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-10px);
+                border-top: 4px solid var(--bs-primary);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+            }
+
+            .icon-circle {
+                width: 90px;
+                height: 90px;
+                background-color: rgba(13, 110, 253, 0.1);
+                border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                margin: 0 auto;
+                transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             }
 
-            .doctor-card:hover .doctor-overlay {
-                opacity: 1;
+            .feature-card:hover .icon-circle {
+                background-color: var(--bs-primary);
+                transform: scale(1.1) rotate(10deg);
+                box-shadow: 0 10px 20px rgba(13, 110, 253, 0.3);
             }
 
-            .doctor-actions {
-                text-align: center;
+            .feature-card:hover .icon-circle i {
+                color: white !important;
+                transform: scale(1.2);
             }
 
-            .doctor-actions a {
-                display: block;
-                margin-bottom: 0.5rem;
+            .icon-circle i {
+                transition: all 0.3s ease;
             }
+
+            .feature-details {
+                border-top: 1px dashed #ddd;
+                padding-top: 15px;
+                margin-top: auto;
+                text-align: right;
+            }
+
+            .feature-card h5 {
+                position: relative;
+                display: inline-block;
+            }
+
+            .feature-card:hover h5 {
+                color: var(--bs-primary);
+            }
+
+            /* تصميم قسم الإحصائيات */
+            .stats-bar {
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+                margin-top: 50px;
+            }
+
+            .stats-counter {
+                padding: 20px 0;
+            }
+
+            .stats-icon {
+                transition: all 0.3s ease;
+            }
+
+            .stats-data:hover .stats-icon {
+                transform: scale(1.2);
+            }
+
+            .counter {
+                font-size: 2.5rem;
+                background: linear-gradient(45deg, var(--bs-primary), #0c63e4);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                margin-bottom: 0;
+            }
+
+            .animate__animated[data-delay] {
+                animation-delay: var(--delay);
+            }
+
+            @media (max-width: 768px) {
+                .counter {
+                    font-size: 2rem;
+                }
+
+                .feature-card {
+                    margin-bottom: 15px;
+                }
+            }
+
 
             /* تصميمات شعارات الشركاء */
             .partner-logo {
@@ -1053,6 +1265,7 @@
                     opacity: 0;
                     transform: translateY(10px);
                 }
+
                 to {
                     opacity: 1;
                     transform: translateY(0);
@@ -1081,12 +1294,12 @@
             /* تحسينات جديدة لقسم الشركاء */
             .shadow-hover {
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
             }
 
             .shadow-hover:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
             }
 
             .partner-logo img {
@@ -1322,6 +1535,9 @@
 
             .testimonial-card:hover .testimonial-img img {
                 transform: scale(1.1);
+
+
+
             }
 
             /* أزرار التنقل */
@@ -1393,6 +1609,7 @@
 
                 .slider-next {
                     right: 10px;
+
                 }
             }
 
@@ -1411,129 +1628,7 @@
 
                 .slider-next {
                     right: 5px;
-                }
-            }
 
-            // ...existing code...
-
-            /* تصميمات سيكشن "ليه تختار منصتنا؟" */
-            .features {
-                background-color: #f8f9fa;
-                position: relative;
-                overflow: hidden;
-                padding: 80px 0;
-            }
-
-            .features::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: url('{{ asset("images/pattern-bg.png") }}') center/cover;
-                opacity: 0.03;
-                z-index: 0;
-            }
-
-            .features .container {
-                position: relative;
-                z-index: 1;
-            }
-
-            .feature-card {
-                transition: all 0.35s ease;
-                border-top: 4px solid transparent;
-                overflow: hidden;
-            }
-
-            .feature-card:hover {
-                transform: translateY(-10px);
-                border-top: 4px solid var(--bs-primary);
-                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
-            }
-
-            .icon-circle {
-                width: 90px;
-                height: 90px;
-                background-color: rgba(13, 110, 253, 0.1);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 0 auto;
-                transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            }
-
-            .feature-card:hover .icon-circle {
-                background-color: var(--bs-primary);
-                transform: scale(1.1) rotate(10deg);
-                box-shadow: 0 10px 20px rgba(13, 110, 253, 0.3);
-            }
-
-            .feature-card:hover .icon-circle i {
-                color: white !important;
-                transform: scale(1.2);
-            }
-
-            .icon-circle i {
-                transition: all 0.3s ease;
-            }
-
-            .feature-details {
-                border-top: 1px dashed #ddd;
-                padding-top: 15px;
-                margin-top: auto;
-                text-align: right;
-            }
-
-            .feature-card h5 {
-                position: relative;
-                display: inline-block;
-            }
-
-            .feature-card:hover h5 {
-                color: var(--bs-primary);
-            }
-
-            /* تصميم قسم الإحصائيات */
-            .stats-bar {
-                border-top: 1px solid rgba(0, 0, 0, 0.05);
-                margin-top: 50px;
-            }
-
-            .stats-counter {
-                padding: 20px 0;
-            }
-
-            .stats-icon {
-                transition: all 0.3s ease;
-            }
-
-            .stats-data:hover .stats-icon {
-                transform: scale(1.2);
-            }
-
-            .counter {
-                font-size: 2.5rem;
-                background: linear-gradient(45deg, var(--bs-primary), #0c63e4);
-                -webkit-background-clip: text;
-                background-clip: text;
-                color: transparent;
-                margin-bottom: 0;
-            }
-
-            .animate__animated[data-delay] {
-                animation-delay: var(--delay);
-            }
-
-            @media (max-width: 768px) {
-                .counter {
-                    font-size: 2rem;
-                }
-
-                .feature-card {
-                    margin-bottom: 15px;
                 }
             }
         </style>
@@ -1543,24 +1638,47 @@
         <script>
             $(document).ready(function () {
                 // Function to load doctors based on filters
-                function loadDoctors(governorateId = '', cityId = '') {
+                function loadDoctors(governorateId = '', cityId = '', categoryId = '') {
                     const doctors = @json($doctors);
                     const doctorsSelect = $('#doctors');
 
-                    doctorsSelect.empty().append('<option value="">إختر الطبيب</option>');
+                    // Clear previous options
+                    doctorsSelect.empty().append('<option value="">اختر الطبيب</option>');
 
                     let filteredDoctors = doctors;
 
-                    if (governorateId) {
-                        filteredDoctors = doctors.filter(doctor => doctor.governorate_id == governorateId);
-                        if (cityId) {
-                            filteredDoctors = filteredDoctors.filter(doctor => doctor.city_id == cityId);
-                        }
+                    // Filter by category (specialty) first
+                    if (categoryId) {
+                        filteredDoctors = filteredDoctors.filter(doctor => {
+                            return doctor.category_id == categoryId;
+                        });
                     }
 
+                    // Filter by governorate
+                    if (governorateId) {
+                        filteredDoctors = filteredDoctors.filter(doctor => {
+                            return doctor.governorate_id == governorateId;
+                        });
+                    }
+
+                    // Filter by city (independent of governorate selection)
+                    if (cityId) {
+                        filteredDoctors = filteredDoctors.filter(doctor => {
+                            return doctor.city_id == cityId;
+                        });
+                    }
+
+                    // Add filtered doctors to select
                     filteredDoctors.forEach(function (doctor) {
                         doctorsSelect.append(new Option(doctor.name, doctor.id));
                     });
+
+                    // Debug info
+                    console.log('Total doctors:', doctors.length);
+                    console.log('Filtered doctors:', filteredDoctors.length);
+                    console.log('Category ID:', categoryId);
+                    console.log('Governorate ID:', governorateId);
+                    console.log('City ID:', cityId);
                 }
 
                 // Function to load all cities
@@ -1580,35 +1698,71 @@
                 // إضافة كود التعامل مع المحافظات والمدن
                 $('#governorate_id').on('change', function () {
                     const governorateId = $(this).val();
-                    const cities = @json($governorates->pluck('cities', 'id'));
+                    const governorates = @json($governorates);
                     const citySelect = $('#city_id');
 
-                    if (!governorateId) {
-                        // If no governorate is selected, show all cities
-                        loadAllCities();
-                    } else {
-                        // If governorate is selected, show only its cities
-                        citySelect.empty().append('<option value="">اختر المدينة</option>');
-                        if (cities[governorateId]) {
-                            cities[governorateId].forEach(function (city) {
+                    // Clear cities dropdown
+                    citySelect.empty().append('<option value="">اختر المدينة</option>');
+
+                    if (governorateId) {
+                        // Find selected governorate and load its cities
+                        const selectedGovernorate = governorates.find(gov => gov.id == governorateId);
+                        if (selectedGovernorate && selectedGovernorate.cities) {
+                            selectedGovernorate.cities.forEach(function (city) {
                                 citySelect.append(new Option(city.name, city.id));
                             });
                         }
+                    } else {
+                        // If no governorate selected, show all cities
+                        loadAllCities();
                     }
 
+                    // Reset city selection
+                    citySelect.val('');
+
                     // Update doctors when governorate changes
-                    loadDoctors(governorateId);
+                    loadDoctors(governorateId, '', $('#category').val());
                 });
 
                 // Update doctors when city changes
                 $('#city_id').on('change', function () {
                     const governorateId = $('#governorate_id').val();
                     const cityId = $(this).val();
-                    loadDoctors(governorateId, cityId);
+                    const categoryId = $('#category').val();
+
+                    // If a city is selected, automatically update governorate if not already selected
+                    if (cityId && !governorateId) {
+                        const cities = @json($cities);
+                        const governorates = @json($governorates);
+
+                        // Find which governorate this city belongs to
+                        let cityGovernorateId = null;
+                        for (let gov of governorates) {
+                            if (gov.cities && gov.cities.some(city => city.id == cityId)) {
+                                cityGovernorateId = gov.id;
+                                break;
+                            }
+                        }
+
+                        // If we found the governorate, select it
+                        if (cityGovernorateId) {
+                            $('#governorate_id').val(cityGovernorateId);
+                        }
+                    }
+
+                    loadDoctors(governorateId, cityId, categoryId);
+                });
+
+                // Update doctors when category (specialty) changes
+                $('#category').on('change', function () {
+                    const categoryId = $(this).val();
+                    const governorateId = $('#governorate_id').val();
+                    const cityId = $('#city_id').val();
+                    loadDoctors(governorateId, cityId, categoryId);
                 });
 
                 // Initial load of all doctors
-                loadDoctors();
+                loadDoctors('', '', '');
 
                 // إذا كان هناك قيمة محفوظة للمحافظة، قم بتحميل مدنها
                 const oldGovernorate = $('#governorate_id').val();
@@ -1618,8 +1772,10 @@
                     // اختيار المدينة المحفوظة إن وجدت
                     const oldCity = "{{ old('city_id') }}";
                     if (oldCity) {
-                        $('#city_id').val(oldCity);
-                        $('#city_id').trigger('change');
+                        setTimeout(() => {
+                            $('#city_id').val(oldCity);
+                            $('#city_id').trigger('change');
+                        }, 100);
                     }
                 }
 
@@ -1640,7 +1796,7 @@
 
                 // تأثير العداد للإحصائيات
                 function animateCounters() {
-                    $('.counter').each(function() {
+                    $('.counter').each(function () {
                         const $this = $(this);
                         const countTo = $this.text().replace(/\D/g, '');
 
@@ -1649,7 +1805,7 @@
                         }, {
                             duration: 2000,
                             easing: 'swing',
-                            step: function() {
+                            step: function () {
                                 $this.text(Math.floor(this.countNum).toLocaleString() + '+');
                             }
                         });
@@ -1666,12 +1822,12 @@
                     });
                 });
 
-                $('.stats-bar').each(function() {
+                $('.stats-bar').each(function () {
                     observer.observe(this);
                 });
 
                 // فلترة الأطباء بحسب التخصص
-                $('.doctors-filter-buttons button').on('click', function() {
+                $('.doctors-filter-buttons button').on('click', function () {
                     const filter = $(this).data('filter');
 
                     // تنشيط الزر المختار
@@ -1702,13 +1858,13 @@
                     threshold: 0.1
                 });
 
-                $('.doctor-card').each(function() {
+                $('.doctor-card').each(function () {
                     doctorsObserver.observe(this);
                 });
             });
 
             // سكريبت السلايدر الأفقي للتقييمات
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const track = document.querySelector('.testimonials-track');
                 const slides = document.querySelectorAll('.testimonial-slide');
                 const prevButton = document.querySelector('.slider-prev');
@@ -1760,7 +1916,7 @@
                 }
 
                 // تحديث السلايدر عند تغيير حجم النافذة
-                window.addEventListener('resize', function() {
+                window.addEventListener('resize', function () {
                     updateSlidesToShow();
                     moveToSlide(currentSlide);
                 });
@@ -1770,20 +1926,20 @@
 
                 // أزرار التنقل
                 if (prevButton) {
-                    prevButton.addEventListener('click', function() {
+                    prevButton.addEventListener('click', function () {
                         moveToSlide(currentSlide - 1);
                     });
                 }
 
                 if (nextButton) {
-                    nextButton.addEventListener('click', function() {
+                    nextButton.addEventListener('click', function () {
                         moveToSlide(currentSlide + 1);
                     });
                 }
 
                 // مؤشرات السلايدر
                 indicators.forEach((indicator, index) => {
-                    indicator.addEventListener('click', function() {
+                    indicator.addEventListener('click', function () {
                         moveToSlide(index);
                     });
                 });
@@ -1837,7 +1993,7 @@
                 }
 
                 // تلقائي التنقل كل 5 ثوانٍ
-                setInterval(function() {
+                setInterval(function () {
                     if (!isDragging) {
                         moveToSlide(currentSlide + 1);
                     }

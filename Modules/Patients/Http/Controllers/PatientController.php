@@ -48,12 +48,17 @@ class PatientController extends Controller
         $query->latest();
 
         $patients = $query->paginate(10)->withQueryString();
-        return view('patients::admin.index', compact('patients'));
+        return view('patients::admin.index', [
+            'title' => 'إدارة المرضى - Clinic Master',
+            'patients' => $patients
+        ]);
     }
 
     public function create()
     {
-        return view('patients::admin.create');
+        return view('patients::admin.create', [
+            'title' => 'إضافة مريض جديد - Clinic Master'
+        ]);
     }
 
     public function store(Request $request)
@@ -115,7 +120,10 @@ class PatientController extends Controller
     public function edit(User $patient)
     {
         $patient->load('patient');
-        return view('patients::admin.edit', compact('patient'));
+        return view('patients::admin.edit', [
+            'title' => 'تعديل بيانات المريض - Clinic Master',
+            'patient' => $patient
+        ]);
     }
 
     public function update(Request $request, User $patient)
@@ -198,6 +206,9 @@ class PatientController extends Controller
     public function details(User $patient)
     {
         $patient->load('patient');
-        return view('patients::admin.details', compact('patient'));
+        return view('patients::admin.details', [
+            'title' => 'تفاصيل المريض - Clinic Master',
+            'patient' => $patient
+        ]);
     }
 }

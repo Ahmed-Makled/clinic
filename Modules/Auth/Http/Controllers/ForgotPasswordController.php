@@ -11,7 +11,7 @@ class ForgotPasswordController extends Controller
     public function showLinkRequestForm()
     {
         return view('auth::passwords.email', [
-            'title' => 'نسيت كلمة المرور'
+            'title' => 'نسيت كلمة المرور - Clinic Master'
         ]);
     }
 

@@ -10,6 +10,7 @@ Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/search', [PageController::class, 'search'])->name('search');
 
 Route::get('/governorates/{governorate}/cities', [PageController::class, 'getCities'])->name('governorates.cities');
+Route::get('/cities', [PageController::class, 'getAllCities'])->name('cities.all');
 Route::get('/doctors/filter', [DoctorsController::class, 'filter'])->name('doctors.filter');
 
 Route::middleware(['auth:web'])->group(function () {

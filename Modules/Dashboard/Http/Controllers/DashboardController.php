@@ -38,7 +38,12 @@ class DashboardController extends Controller
 
         $activities = $this->getRecentActivities();
 
-        return view('dashboard::admin.index', compact('stats', 'chartData', 'activities'));
+        return view('dashboard::admin.index', [
+            'title' => 'لوحة التحكم - Clinic Master',
+            'stats' => $stats,
+            'chartData' => $chartData,
+            'activities' => $activities
+        ]);
     }
 
     private function getUsersStats()
