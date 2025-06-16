@@ -10,7 +10,7 @@ class SpecialtyController extends Controller
 {
     public function index()
     {
-        $specialties = Category::withCount('doctors')->paginate(15);
+        $specialties = Category::withCount('doctors')->orderBy('created_at', 'desc')->paginate(15);
         return view('specialties::admin.index', [
             'specialties' => $specialties,
             'title' => 'التخصصات'
