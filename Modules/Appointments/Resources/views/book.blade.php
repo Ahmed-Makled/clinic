@@ -405,7 +405,7 @@
                         <div class="d-flex align-items-center justify-content-center gap-3 p-3 bg-light rounded-3">
                             <i class="bi bi-shield-check text-success" style="font-size: 2rem;"></i>
                             <div class="text-start">
-                                <h6 class="mb-1">احجز أونلاين، ادفع في العيادة!</h6>
+                                <h6 class="mb-1">احجز أونلاين، ادفع في اونلاين!</h6>
                                 <small class="text-muted">الدكتور يشترط الحجز المسبق</small>
                             </div>
                         </div>
