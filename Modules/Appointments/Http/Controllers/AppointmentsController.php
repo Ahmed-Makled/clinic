@@ -112,14 +112,14 @@ class AppointmentsController extends Controller
 
         $user = auth()->user();
 
-        // إذا كان المستخدم ليس آدمن وليس مريض
-        if (!$user->isPatient()) {
+        // التحقق من الصلاحيات: إما مريض أو إدارة
+        if (!$user->isPatient() && !$user->hasRole('Admin')) {
             return back()
-                ->with('error', 'عذراً، فقط المرضى يمكنهم حجز موعد');
+                ->with('error', 'عذراً، فقط المرضى والإدارة يمكنهم حجز موعد');
         }
 
-        // التحقق من وجود ملف المريض إذا كان المستخدم ليس آدمن
-        if (!$user->hasRole('Admin')) {
+        // التحقق من وجود ملف المريض فقط إذا كان المستخدم مريضًا (وليس إدارة)
+        if ($user->isPatient() && !$user->hasRole('Admin')) {
             $patient = $user->patient;
             if (!$patient) {
                 // نحفظ البيانات في الجلسة لاستعادتها لاحقًا
@@ -612,6 +612,55 @@ class AppointmentsController extends Controller
         return response()->json([
             'success' => true,
             'slots' => $availableSlots,
+        ]);
+    }
+
+    /**
+     * Get available dates for a doctor in a specific month
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAvailableDates(Request $request)
+    {
+        $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+            'year' => 'required|integer|min:2024',
+            'month' => 'required|integer|min:1|max:12',
+        ]);
+
+        $doctor = Doctor::findOrFail($request->doctor_id);
+        $year = $request->year;
+        $month = $request->month;
+
+        // Get available dates for the doctor in the specified month
+        $availableDates = [];
+
+        // Create start and end dates for the month
+        $startDate = Carbon::create($year, $month, 1);
+        $endDate = $startDate->copy()->endOfMonth();
+        $today = Carbon::today();
+
+        // Loop through each day of the month
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            // Skip past dates
+            if ($date->lt($today)) {
+                continue;
+            }
+
+            $dateString = $date->format('Y-m-d');
+            $availableSlots = $doctor->getAvailableSlots($dateString);
+
+            // If there are available slots for this date, add it to the array
+            if (!empty($availableSlots)) {
+                $availableDates[] = $dateString;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'dates' => $availableDates,
+            'count' => count($availableDates),
         ]);
     }
 }
