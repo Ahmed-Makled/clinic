@@ -45,6 +45,10 @@
                             <option value="confirmed" {{ request('status_filter') === 'confirmed' ? 'selected' : '' }}>مؤكد</option>
                             <option value="completed" {{ request('status_filter') === 'completed' ? 'selected' : '' }}>مكتمل</option>
                             <option value="cancelled" {{ request('status_filter') === 'cancelled' ? 'selected' : '' }}>ملغي</option>
+                            @if(app()->environment('local'))
+                                <option disabled>---- Database Values ----</option>
+                                <option value="scheduled" {{ request('status_filter') === 'scheduled' ? 'selected' : '' }}>scheduled (DB value)</option>
+                            @endif
                         </select>
                     </div>
 
@@ -86,6 +90,14 @@
             </div>
 
             <div class="table-responsive">
+                @if(app()->environment('local') && request()->filled('status_filter'))
+                    <div class="alert alert-info">
+                        <strong>Debug Info:</strong>
+                        Applied Filter: {{ request('status_filter') }} |
+                        Mapped Status: {{ isset($statusMap[request('status_filter')]) ? $statusMap[request('status_filter')] : request('status_filter') }} |
+                        Results Count: {{ $stats['current_filter_count'] ?? 0 }}
+                    </div>
+                @endif
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>

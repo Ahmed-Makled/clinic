@@ -1103,7 +1103,7 @@
                             </button>
                         </div>
                     @endif
-                    @if (session('error'))
+                    {{-- @if (session('error'))
                         <div class="alert-card error mb-4">
                             <div class="alert-icon">
                                 <i class="bi bi-exclamation-triangle"></i>
@@ -1116,7 +1116,7 @@
                                 <i class="bi bi-x"></i>
                             </button>
                         </div>
-                    @endif
+                    @endif --}}
                     @if (session('info'))
                         <div class="alert-card info mb-4">
                             <div class="alert-icon">

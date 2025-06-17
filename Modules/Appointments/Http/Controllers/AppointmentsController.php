@@ -50,7 +50,16 @@ class AppointmentsController extends Controller
 
         // تصفية حسب الحالة
         if ($request->filled('status_filter')) {
-            $query->where('status', $request->status_filter);
+            // Map the status from the UI to the actual database values
+            $statusMap = [
+                'pending' => 'scheduled',
+                'confirmed' => 'scheduled', // Currently both map to scheduled
+                'completed' => 'completed',
+                'cancelled' => 'cancelled'
+            ];
+
+            $status = $statusMap[$request->status_filter] ?? $request->status_filter;
+            $query->where('status', $status);
         }
 
         // تصفية حسب الطبيب
@@ -60,7 +69,7 @@ class AppointmentsController extends Controller
 
         // البحث حسب اسم المريض
         if ($request->filled('search')) {
-            $query->whereHas('patient', function($q) use ($request) {
+            $query->whereHas('patient.user', function ($q) use ($request) {
                 $q->where('name', 'LIKE', '%' . $request->search . '%');
             });
         }
@@ -68,24 +77,35 @@ class AppointmentsController extends Controller
         // الإحصائيات المالية والعامة
         $stats = [
             'total_fees' => Appointment::sum('fees'),
-            'paid_fees' => Appointment::whereHas('payment', function($query) {
+            'paid_fees' => Appointment::whereHas('payment', function ($query) {
                 $query->where('status', 'completed');
             })->sum('fees'),
-            'unpaid_fees' => Appointment::whereDoesntHave('payment', function($query) {
+            'unpaid_fees' => Appointment::whereDoesntHave('payment', function ($query) {
                 $query->where('status', 'completed');
             })->sum('fees'),
             'total_appointments' => Appointment::count(),
-            'today_appointments' => Appointment::today()->count()
+            'today_appointments' => Appointment::today()->count(),
+            // Add filter stats for debugging
+            'current_filter_count' => $query->count()
         ];
 
-        $appointments = $query->orderBy('scheduled_at', 'desc')->paginate(15);
+        $appointments = $query->orderBy('created_at', 'desc')->paginate(15);
         $doctors = Doctor::all();
+
+        // Status mapping for debugging
+        $statusMap = [
+            'pending' => 'scheduled',
+            'confirmed' => 'scheduled',
+            'completed' => 'completed',
+            'cancelled' => 'cancelled'
+        ];
 
         return view('appointments::admin.index', [
             'title' => 'إدارة المواعيد - Clinic Master',
             'appointments' => $appointments,
             'doctors' => $doctors,
             'stats' => $stats,
+            'statusMap' => $statusMap,
             'request' => $request
         ]);
     }
@@ -112,14 +132,17 @@ class AppointmentsController extends Controller
 
         $user = auth()->user();
 
-        // إذا كان المستخدم ليس آدمن وليس مريض
-        if (!$user->isPatient()) {
-            return back()
-                ->with('error', 'عذراً، فقط المرضى يمكنهم حجز موعد');
+        // إذا كان المستخدم مسؤولا، فيسمح له بإنشاء المواعيد
+        if ($user->hasRole('Admin')) {
+            // المسؤول يمكنه إنشاء المواعيد بدون قيود
         }
-
-        // التحقق من وجود ملف المريض إذا كان المستخدم ليس آدمن
-        if (!$user->hasRole('Admin')) {
+        // إذا كان المستخدم ليس مسؤولاً وليس مريضاً
+        else if (!$user->isPatient()) {
+            return back()
+                ->with('error', 'عذراً، فقط المرضى أو المسؤولون يمكنهم حجز موعد');
+        }
+        // التحقق من وجود ملف المريض إذا كان المستخدم مريضاً عادياً
+        else {
             $patient = $user->patient;
             if (!$patient) {
                 // نحفظ البيانات في الجلسة لاستعادتها لاحقًا
@@ -141,7 +164,8 @@ class AppointmentsController extends Controller
             'notes' => 'nullable|string|max:1000'
         ];
 
-        // Add patient_id validation for admin creation
+        // تحقق من معرف المريض
+        // المسؤول يجب أن يحدد المريض من القائمة
         if ($user->hasRole('Admin')) {
             $rules['patient_id'] = 'required|exists:patients,id';
         }
@@ -149,6 +173,8 @@ class AppointmentsController extends Controller
         $messages = [
             'doctor_id.required' => 'يجب اختيار الطبيب',
             'doctor_id.exists' => 'الطبيب المحدد غير متوفر',
+            'patient_id.required' => 'يجب اختيار المريض',
+            'patient_id.exists' => 'المريض المحدد غير متوفر',
             'appointment_date.required' => 'يجب اختيار تاريخ الحجز',
             'appointment_date.date' => 'صيغة التاريخ غير صحيحة',
             'appointment_date.after_or_equal' => 'لا يمكن حجز موعد في تاريخ سابق',
@@ -158,6 +184,15 @@ class AppointmentsController extends Controller
         ];
 
         try {
+
+            // التحقق من وجود معرف المريض إذا كان المستخدم مسؤولاً
+            if ($user->hasRole('Admin') && !$request->has('patient_id')) {
+                return back()
+                    ->withErrors(['patient_id' => 'يجب اختيار المريض'])
+                    ->withInput()
+                    ->with('error', 'يرجى اختيار المريض');
+            }
+
             $validator = Validator::make($request->all(), $rules, $messages);
 
             if ($validator->fails()) {
@@ -197,10 +232,28 @@ class AppointmentsController extends Controller
                 ])->withInput();
             }
 
-            // Create the appointment
+            // تحديد معرف المريض
+            $patientId = null;
+            if ($user->hasRole('Admin')) {
+                // للمسؤول، استخدم معرف المريض من النموذج
+                if (isset($validated['patient_id'])) {
+                    $patientId = $validated['patient_id'];
+                } else {
+                    // خطأ: لم يتم توفير معرف المريض
+                    return back()
+                        ->withErrors(['patient_id' => 'يجب اختيار المريض'])
+                        ->withInput()
+                        ->with('error', 'يرجى اختيار المريض');
+                }
+            } else {
+                // للمريض، استخدم معرف المريض المرتبط بالمستخدم
+                $patientId = $user->patient->id;
+            }
+
+            // إنشاء الموعد
             $appointment = Appointment::create([
                 'doctor_id' => $validated['doctor_id'],
-                'patient_id' => $user->hasRole('Admin') ? $validated['patient_id'] : $user->patient->id,
+                'patient_id' => $patientId,
                 'scheduled_at' => $scheduledAt,
                 'status' => 'scheduled',
                 'notes' => $validated['notes'] ?? null,
@@ -213,7 +266,7 @@ class AppointmentsController extends Controller
             $doctor->user->notify(new NewAppointmentNotification($appointment));
 
             // Notify Admin about the new appointment
-            User::role('Admin')->each(function($admin) use ($appointment) {
+            User::role('Admin')->each(function ($admin) use ($appointment) {
                 $admin->notify(new NewAppointmentNotification($appointment));
             });
 
@@ -372,7 +425,7 @@ class AppointmentsController extends Controller
 
             // Send notifications if status changed
             if ($oldStatus !== $validated['status']) {
-                $notification = match($validated['status']) {
+                $notification = match ($validated['status']) {
                     'completed' => new AppointmentCompletedNotification($appointment),
                     'cancelled' => new AppointmentCancelledNotification($appointment),
                     default => null
@@ -528,7 +581,7 @@ class AppointmentsController extends Controller
         $user = auth()->user();
 
         // إذا كان المستخدم ليس آدمن وليس مريض
-        if ( !$user->isPatient()) {
+        if (!$user->isPatient()) {
             return back()
                 ->with('error', 'عذراً، فقط المرضى يمكنهم حجز موعد');
         }
@@ -612,6 +665,29 @@ class AppointmentsController extends Controller
         return response()->json([
             'success' => true,
             'slots' => $availableSlots,
+        ]);
+    }
+
+    /**
+     * الحصول على الأيام المتاحة للطبيب
+     */
+    public function getDoctorAvailableDays(Request $request)
+    {
+        $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+        ]);
+
+        $doctor = Doctor::findOrFail($request->doctor_id);
+
+        // الحصول على أيام العمل من جدول الطبيب
+        $availableDays = $doctor->schedules()
+            ->where('is_active', true)
+            ->pluck('day')
+            ->toArray();
+
+        return response()->json([
+            'success' => true,
+            'availableDays' => $availableDays,
         ]);
     }
 }
