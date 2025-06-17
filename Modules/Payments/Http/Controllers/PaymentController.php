@@ -27,8 +27,6 @@ class PaymentController extends Controller
         // Eager load the doctor relationship
         $appointment->load(['doctor', 'patient', 'payment']);
 
-        // For online payments, we no longer check for existing payments
-        // This allows multiple payments for the same appointment
 
         return view('payments::.checkout', compact('appointment'));
     }
@@ -77,7 +75,6 @@ class PaymentController extends Controller
 
             return redirect($checkout_session->url);
         } catch (ApiErrorException $e) {
-            Log::error('Payment session creation failed: ' . $e->getMessage());
             return back()->with('error', 'حدث خطأ أثناء إنشاء جلسة الدفع. يرجى المحاولة مرة أخرى.');
         }
     }
@@ -154,10 +151,8 @@ class PaymentController extends Controller
 
             return redirect($checkout_session->url);
         } catch (ApiErrorException $e) {
-            Log::error('Payment session creation failed: ' . $e->getMessage());
             return back()->with('error', 'حدث خطأ أثناء إنشاء جلسة الدفع. يرجى المحاولة مرة أخرى.');
         } catch (\Exception $e) {
-            Log::error('Error in payment process: ' . $e->getMessage());
             return back()->with('error', 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقاً.');
         }
     }
@@ -170,32 +165,27 @@ class PaymentController extends Controller
         try {
             // Verify session_id is present
             if (!$request->has('session_id')) {
-                Log::error('Missing session_id in payment success callback');
                 return redirect('/appointments')
                     ->with('error', 'بيانات الدفع غير مكتملة. يرجى التحقق من حالة الحجز الخاص بك.');
             }
 
             $sessionId = $request->get('session_id');
-            Log::info('Processing successful payment with session: ' . $sessionId);
 
             // Retrieve session data from Stripe
             $session = Session::retrieve($sessionId);
 
             // Check if session contains appointment ID in metadata
             if (!isset($session->metadata->appointment_id)) {
-                Log::error('No appointment_id in session metadata: ' . $sessionId);
                 return redirect('/appointments')
                     ->with('warning', 'لم نتمكن من تحديد الحجز المرتبط بعملية الدفع. يرجى التحقق من حالة حجوزاتك.');
             }
 
             $appointmentId = $session->metadata->appointment_id;
-            Log::info('Found appointment ID: ' . $appointmentId . ' in session: ' . $sessionId);
 
             // Find appointment
             $appointment = Appointment::find($appointmentId);
 
             if (!$appointment) {
-                Log::error('Appointment not found: ' . $appointmentId);
                 return redirect('/appointments')
                     ->with('error', 'لم نتمكن من العثور على الحجز المرتبط بعملية الدفع.');
             }
@@ -216,19 +206,14 @@ class PaymentController extends Controller
                 'payment_id' => $session->id
             ]);
 
-            // We're not updating the appointment since we've removed payment fields
             // The payment connection is tracked from the Payment model
 
-            Log::info('Payment marked as successful for appointment #' . $appointment->id);
 
             // Redirect to success page with appointment
             return view('payments::success', ['appointment' => $appointment]);
 
         } catch (\Exception $e) {
             // Log detailed error information
-            Log::error('Error in payment success callback: ' . $e->getMessage());
-            Log::error('Error trace: ' . $e->getTraceAsString());
-
             return redirect('/appointments')
                 ->with('error', 'حدث خطأ في معالجة نتيجة الدفع الخاصة بك. يرجى الاتصال بالدعم.');
         }
@@ -290,7 +275,6 @@ class PaymentController extends Controller
                 $event = json_decode($payload, true);
             }
         } catch (\Exception $e) {
-            Log::error('Payment webhook error: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 400);
         }
 
@@ -321,12 +305,10 @@ class PaymentController extends Controller
                         // We're not updating the appointment since we've removed payment fields
                         // The payment connection is tracked from the Payment model
 
-                        Log::info('Payment completed via webhook for appointment #' . $appointment->id);
                     }
                 }
                 break;
             default:
-                Log::info('Unhandled event type: ' . $event->type);
         }
 
         return response()->json(['status' => 'success']);

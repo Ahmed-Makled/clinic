@@ -42,7 +42,7 @@ class Appointment extends Model
      * The status colors for UI display.
      */
     const STATUS_COLORS = [
-        'scheduled' => 'primary',  // سيستخدم اللون البنفسجي الذي قمنا بتعريفه في CSS
+        'scheduled' => 'primary',
         'completed' => 'success',
         'cancelled' => 'danger'
     ];
@@ -106,7 +106,6 @@ class Appointment extends Model
     protected static function booted()
     {
         static::creating(function ($appointment) {
-            // عند إنشاء حجز جديد، نقوم بتعيين الرسوم تلقائياً من سعر الكشف المحدد للطبيب
             if (!$appointment->fees) {
                 $doctor = Doctor::find($appointment->doctor_id);
                 $appointment->fees = $doctor->consultation_fee;
