@@ -1,0 +1,131 @@
+@startuml Admin_Manage_Specialties_Activity
+
+skinparam Activity {
+    BackgroundColor #3498db
+    BorderColor #000000
+    FontColor #ffffff
+    FontSize 12
+    FontName Arial
+}
+
+skinparam ActivityDiamond {
+    BackgroundColor #e8f4fd
+    BorderColor #000000
+    FontColor #000000
+    FontSize 11
+    FontName Arial
+}
+
+skinparam Note {
+    BackgroundColor #f8f9fa
+    BorderColor #000000
+    FontColor #000000
+    FontSize 10
+}
+
+|Admin|
+start
+
+:Admin logs into system;
+
+:Navigate to Specialty Management;
+
+:View Specialties List
+- Shows doctor count per specialty
+- Search by name
+- Filter by status;
+
+:Apply Search/Filter if needed;
+
+:Select Action;
+
+if (Create New Specialty?) then (Yes)
+    :Fill Specialty Creation Form
+    - Specialty name
+    - Description
+    - Status (Active/Inactive);
+    
+    :Validate Form Data;
+    
+    if (Valid Data?) then (Yes)
+        :Check Name Uniqueness;
+        
+        if (Name Available?) then (Yes)
+            :Create Specialty;
+            :Generate Slug;
+            :Show Success Message;
+        else (No)
+            :Show Duplicate Name Error;
+        endif
+    else (No)
+        :Show Validation Errors;
+    endif
+    
+elseif (Edit Specialty?) then (Yes)
+    :Select Specialty to Edit;
+    
+    :Load Edit Form with Current Data;
+    
+    :Modify Specialty Information
+    - Update name
+    - Update description
+    - Change status;
+    
+    :Validate Updated Data;
+    
+    if (Valid Data?) then (Yes)
+        :Check Name Uniqueness (excluding current);
+        
+        if (Name Available?) then (Yes)
+            :Update Specialty;
+            :Update Slug if name changed;
+            :Show Success Message;
+        else (No)
+            :Show Duplicate Name Error;
+        endif
+    else (No)
+        :Show Validation Errors;
+    endif
+    
+elseif (Delete Specialty?) then (Yes)
+    :Select Specialty to Delete;
+    
+    :Check if Specialty has Doctors;
+    
+    if (Has Associated Doctors?) then (Yes)
+        :Show Error Message
+        "Cannot delete specialty
+        linked to doctors";
+    else (No)
+        :Show Delete Confirmation;
+        
+        if (Confirm Delete?) then (Yes)
+            :Delete Specialty;
+            :Show Success Message;
+        else (No)
+            :Cancel Delete Operation;
+        endif
+    endif
+    
+else (Search/Filter)
+    :Apply Search Criteria
+    - By specialty name
+    - By status (Active/Inactive);
+    
+    :Display Filtered Results;
+endif
+
+:Return to Specialties List;
+
+stop
+
+' Map/Legend positioned at bottom right
+legend right
+**Map/Legend:**
+○ Start/End Points
+◇ Decision Points  
+□ Activities
+→ Flow Direction
+endlegend
+
+@enduml 

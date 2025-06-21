@@ -1,0 +1,55 @@
+@startuml Patient_Use_Cases
+!theme plain
+skinparam backgroundColor white
+skinparam usecaseBorderColor black
+skinparam usecaseBackgroundColor #e8f4fd
+skinparam actorBorderColor black
+skinparam actorBackgroundColor #3498db
+skinparam packageBorderColor black
+skinparam packageBackgroundColor white
+skinparam arrowColor black
+skinparam usecaseFontColor black
+skinparam actorFontColor white
+skinparam packageFontColor black
+skinparam usecaseFontSize 10
+skinparam actorFontSize 12
+skinparam packageFontSize 12
+skinparam titleFontSize 16
+skinparam titleFontColor black
+skinparam usecaseBorderThickness 2
+skinparam actorBorderThickness 2
+skinparam packageBorderThickness 2
+skinparam arrowThickness 2
+skinparam shadowing false
+
+title Figure 2: Patient Use Case Diagram
+
+left to right direction
+
+actor "Patient" as Patient #3498db
+
+package "Clinic Management System" {
+    
+    usecase "Create an Account\n(UC-1)" as UC1
+    usecase "Login\n(UC-2)" as UC2
+    usecase "Search Doctors\n(UC-3)" as UC3
+    usecase "Book Appointment\n(UC-4)" as UC4
+    usecase "Make Payment\n(UC-5)" as UC5
+    usecase "View History\n(UC-6)" as UC6
+    usecase "Cancel Appointment\n(UC-7)" as UC7
+    usecase "Rate Doctor\n(UC-8)" as UC8
+    usecase "Logout\n(UC-9)" as UC9
+}
+
+' Patient connections
+Patient --> UC1
+Patient --> UC2
+Patient --> UC3
+Patient --> UC4
+Patient --> UC5
+Patient --> UC6
+Patient --> UC7
+Patient --> UC8
+Patient --> UC9
+
+@enduml 

@@ -1,0 +1,100 @@
+@startuml Admin_Manage_Users_Activity
+
+skinparam Activity {
+    BackgroundColor #3498db
+    BorderColor #000000
+    FontColor #ffffff
+    FontSize 12
+    FontName Arial
+}
+
+skinparam ActivityDiamond {
+    BackgroundColor #e8f4fd
+    BorderColor #000000
+    FontColor #000000
+    FontSize 11
+    FontName Arial
+}
+
+skinparam Note {
+    BackgroundColor #f8f9fa
+    BorderColor #000000
+    FontColor #000000
+    FontSize 10
+}
+
+|Admin|
+start
+
+:Admin logs into system;
+
+:Navigate to User Management;
+
+:View Users List;
+
+:Apply Search/Filter if needed;
+
+:Select Action;
+
+if (Create New User?) then (Yes)
+    :Fill User Creation Form;
+    :Select Role (Admin/Doctor/Patient);
+    :Enter User Details;
+    :Submit Form;
+    if (Valid Data?) then (Yes)
+        :Create User Account;
+        :Show Success Message;
+    else (No)
+        :Show Error Message;
+    endif
+    
+elseif (Edit User?) then (Yes)
+    :Select User to Edit;
+    :Load Edit Form;
+    :Modify User Information;
+    :Submit Changes;
+    if (Valid Data?) then (Yes)
+        :Update User;
+        :Show Success Message;
+    else (No)
+        :Show Error Message;
+    endif
+    
+elseif (View User Details?) then (Yes)
+    :Select User;
+    :Display User Information;
+    
+elseif (Delete User?) then (Yes)
+    :Select User to Delete;
+    :Show Confirmation Dialog;
+    if (Confirm Delete?) then (Yes)
+        :Delete User;
+        :Show Success Message;
+    else (No)
+        :Cancel Operation;
+    endif
+    
+elseif (Toggle Status?) then (Yes)
+    :Select User;
+    :Toggle Active/Inactive Status;
+    :Show Status Change Message;
+    
+else (Search/Filter)
+    :Apply Search Criteria;
+    :Display Filtered Results;
+endif
+
+:Return to Users List;
+
+stop
+
+' Map/Legend positioned at bottom right
+legend right
+**Map/Legend:**
+○ Start/End Points
+◇ Decision Points  
+□ Activities
+→ Flow Direction
+endlegend
+
+@enduml 

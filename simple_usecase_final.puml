@@ -1,0 +1,39 @@
+@startuml
+    top to bottom direction
+
+actor Patient
+actor "Payment Gateway" as PG
+
+rectangle "Clinic Management System" {
+  usecase "Register Account" as UC1
+  usecase "Login/Logout" as UC2
+  usecase "Manage Profile" as UC3
+  usecase "Search Doctors" as UC4
+  usecase "Book Appointment" as UC5
+  usecase "View Appointments" as UC6
+  usecase "Cancel Appointment" as UC7
+  usecase "Make Payment" as UC8
+  usecase "Rate Doctor" as UC9
+  usecase "View Medical History" as UC10
+}
+
+Patient --> UC1
+Patient --> UC2
+Patient --> UC3
+Patient --> UC4
+Patient --> UC5
+Patient --> UC6
+Patient --> UC7
+Patient --> UC8
+Patient --> UC9
+Patient --> UC10
+
+UC3 ..> UC2 : <<extend>>
+UC5 ..> UC8 : <<include>>
+UC7 ..> UC8 : <<include>>
+UC6 ..> UC2 : <<include>>
+UC9 ..> UC10 : <<include>>
+
+UC8 --> PG
+
+@enduml 

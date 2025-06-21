@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Complete Appointment - Use Case Table</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-accent: #eff6ff;
+            --border-color: #e5e7eb;
+            --shadow-light: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-medium: 0 4px 6px rgba(0,0,0,0.07);
+            --shadow-heavy: 0 10px 15px rgba(0,0,0,0.1);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            overflow-x: hidden;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            padding: 25mm 20mm;
+            background: var(--bg-primary);
+            box-shadow: var(--shadow-heavy);
+            border-radius: 12px;
+            position: relative;
+            page-break-after: always;
+        }
+
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: 12px 12px 0 0;
+        }
+
+        h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 30px 0 20px 0;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 25px 0 15px 0;
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+            color: var(--text-primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 11pt;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .use-case-box {
+            border: 1px solid #000;
+            padding: 15px;
+            margin: 15px 0;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .section-number {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .numbered-list {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .numbered-list li {
+            margin: 8px 0;
+        }
+
+        @media print {
+            .page {
+                box-shadow: none;
+                margin: 0;
+                padding: 20mm;
+                width: 210mm;
+                min-height: 297mm;
+            }
+            @page {
+                size: A4;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <h1>Doctor Complete Appointment Use Case</h1>
+        
+        <div class="use-case-box">
+            <h3>Use Case 7: Doctor Complete Appointment (UC-007)</h3>
+            <table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+                <tr><td style="background-color: #000; color: white; font-weight: bold; padding: 10px; text-align: center; border: 1px solid #000;" colspan="2">Use Case 7 - (UC-007)<br>Doctor Complete Appointment</td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;">Related Requirements</td><td style="padding: 8px; border: 1px solid #000;">FR-014, FR-015, FR-016</td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;">Initiating Actor:</td><td style="padding: 8px; border: 1px solid #000;">Doctor</td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;">Actor's Goal:</td><td style="padding: 8px; border: 1px solid #000;">Mark a scheduled appointment as completed after providing medical consultation to the patient</td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;">Participating Actors:</td><td style="padding: 8px; border: 1px solid #000;">Patient, Notification System, Database System</td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;">Preconditions:</td><td style="padding: 8px; border: 1px solid #000;">
+                    • Doctor is logged in and authenticated<br>
+                    • Appointment exists with status "scheduled"<br>
+                    • Current time is at or after the scheduled appointment time<br>
+                    • Doctor has permission to modify the appointment
+                </td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;">Postconditions:</td><td style="padding: 8px; border: 1px solid #000;">
+                    • Appointment status is updated to "completed"<br>
+                    • Patient receives completion notification<br>
+                    • System records completion timestamp<br>
+                    • Doctor's statistics are updated<br>
+                    • Audit trail is logged
+                </td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;" colspan="2">Flow of Events for Main Success Scenario:</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #000;" colspan="2">
+                    ——→ 1. Doctor accesses appointments dashboard from profile or dedicated appointments page.<br>
+                    ←—— 2. System displays list of today's appointments with current status and patient information.<br>
+                    ——→ 3. Doctor selects specific appointment to complete from the scheduled appointments list.<br>
+                    ←—— 4. System validates appointment ownership and displays appointment details including patient info, scheduled time, and current status.<br>
+                    ——→ 5. Doctor clicks "Complete Appointment" button to mark appointment as finished.<br>
+                    ←—— 6. System validates that current time is at or after the scheduled appointment time.<br>
+                    ←—— 7. System updates appointment status from "scheduled" to "completed" in the database.<br>
+                    ←—— 8. System records completion timestamp and updates doctor's performance statistics.<br>
+                    ←—— 9. System sends automatic notification to patient confirming appointment completion.<br>
+                    ←—— 10. System redirects doctor back to appointments list with success confirmation message.
+                </td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;" colspan="2">Flow of Events for Extensions (Alternate Scenarios):</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #000;" colspan="2">
+                    <strong>6a. Appointment scheduled for future time:</strong><br>
+                    ←—— System detects appointment time hasn't arrived yet.<br>
+                    ←—— System displays error message: "Cannot complete future appointment. Time remaining: [X]"<br>
+                    ←—— System returns doctor to appointments list without changes.<br><br>
+                    
+                    <strong>4a. Appointment doesn't belong to current doctor:</strong><br>
+                    ←—— System validates appointment ownership and detects mismatch.<br>
+                    ←—— System displays error message: "You don't have permission to access this appointment"<br>
+                    ←—— System redirects doctor to their profile page.<br><br>
+                    
+                    <strong>3a. Appointment already completed:</strong><br>
+                    ←—— System detects appointment status is already "completed"<br>
+                    ←—— System displays information message with completion details.<br>
+                    ←—— System shows completion timestamp and prevents further actions.<br><br>
+                    
+                    <strong>3b. Appointment is cancelled:</strong><br>
+                    ←—— System detects appointment status is "cancelled"<br>
+                    ←—— System displays error message: "Cannot complete cancelled appointment"<br>
+                    ←—— System suggests rescheduling options or returns to appointments list.<br><br>
+                    
+                    <strong>7a. Database update fails:</strong><br>
+                    ←—— System encounters database error during status update.<br>
+                    ←—— System rolls back any partial changes and logs error details.<br>
+                    ←—— System displays user-friendly error message: "Error updating appointment status"<br>
+                    ←—— System allows doctor to retry the operation.<br><br>
+                    
+                    <strong>9a. Notification system unavailable:</strong><br>
+                    ←—— System completes appointment status update successfully.<br>
+                    ←—— System fails to send notification to patient but logs the failure.<br>
+                    ←—— System displays warning message about notification failure.<br>
+                    ←—— System continues with normal flow and shows success message.
+                </td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;" colspan="2">Business Rules:</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #000;" colspan="2">
+                    • BR-001: Only the assigned doctor can complete their own appointments<br>
+                    • BR-002: Appointments can only be completed at or after the scheduled time<br>
+                    • BR-003: Only appointments with "scheduled" status can be completed<br>
+                    • BR-004: System must maintain audit trail of all appointment status changes<br>
+                    • BR-005: Patient notification must be sent upon successful completion<br>
+                    • BR-006: Doctor statistics must be updated to reflect completed appointments
+                </td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;" colspan="2">Special Requirements:</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #000;" colspan="2">
+                    • SR-001: Response time must be under 2 seconds for appointment completion<br>
+                    • SR-002: System must handle concurrent appointment modifications gracefully<br>
+                    • SR-003: All actions must be logged for security and audit purposes<br>
+                    • SR-004: User interface must provide clear visual feedback for all actions<br>
+                    • SR-005: System must work across different devices (desktop, mobile, tablet)
+                </td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;" colspan="2">Technology and Data Variations:</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #000;" colspan="2">
+                    • TV-001: System supports completion from both doctor profile page and dedicated appointments page<br>
+                    • TV-002: Appointment data includes doctor_id, patient_id, scheduled_at, status, and fees<br>
+                    • TV-003: Notifications sent via email and in-app notification systems<br>
+                    • TV-004: Carbon library used for accurate date/time validation<br>
+                    • TV-005: Laravel's Eloquent ORM handles database transactions
+                </td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;" colspan="2">Frequency of Occurrence:</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #000;" colspan="2">
+                    High frequency - Multiple times per day per doctor, potentially hundreds of times per day across the entire system during peak operational hours.
+                </td></tr>
+                <tr><td style="font-weight: bold; padding: 8px; border: 1px solid #000;" colspan="2">Open Issues:</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #000;" colspan="2">
+                    • Future enhancement: Add capability to add medical notes during completion<br>
+                    • Future enhancement: Enable patient rating system after appointment completion<br>
+                    • Consider adding appointment completion confirmation dialog for better user experience<br>
+                    • Evaluate need for bulk appointment completion functionality for efficient workflow
+                </td></tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 

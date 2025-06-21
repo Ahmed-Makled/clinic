@@ -1,0 +1,80 @@
+@startuml Patient_Appointment_Payment_Activity
+!theme plain
+skinparam backgroundColor white
+skinparam activityBorderColor black
+skinparam activityBackgroundColor #3498db
+skinparam startColor black
+skinparam endColor black
+skinparam decisionBorderColor black
+skinparam decisionBackgroundColor white
+skinparam arrowColor black
+skinparam activityFontColor white
+skinparam decisionFontColor black
+skinparam activityFontSize 11
+skinparam decisionFontSize 10
+skinparam titleFontSize 16
+skinparam titleFontColor black
+skinparam activityBorderThickness 2
+skinparam decisionBorderThickness 2
+skinparam arrowThickness 2
+skinparam shadowing false
+
+title Figure 14: Patient Appointment & Payment Flow
+
+start
+
+:View Search Results\nPage;
+
+:Click "Book Appointment"\nButton on Doctor Card;
+
+:Navigate to Doctor\nBooking Page;
+
+:View Doctor Information\nand Available Slots;
+
+:Choose Appointment\nDate from Calendar;
+
+:Select Available\nTime Slot;
+
+:Enter Additional\nNotes (Optional);
+
+:Click "Confirm\nAppointment";
+
+:Navigate to Appointment\nDetails Page;
+
+:Click "Payment Now"\nButton;
+
+:Redirect to Stripe\nCheckout Page;
+
+:Enter Card Details:
+• Card Number
+• Expiry Date
+• CVV Code;
+
+:Confirm Payment\nAmount;
+
+:Submit Payment;
+
+if (Payment Successful?) then (no)
+  :Show Payment\nFailed Message;
+  
+  :Return to\nPayment Page;
+  
+  stop
+else (yes)
+  :Payment Completed;
+  
+  :Show Payment\nSuccess Page;
+endif
+
+:View Final\nAppointment Details;
+
+stop
+
+legend right
+● Start/End
+⬜ Activity
+◆ Decision
+→ Flow
+endlegend
+
+@enduml 

@@ -1,0 +1,78 @@
+@startuml
+top to bottom direction
+skinparam packageStyle rectangle
+
+actor Patient
+actor "Payment Gateway" as PG
+
+rectangle "Clinic Management System" {
+  package "Authentication" {
+    usecase "Register Account" as register
+    usecase "Login" as login
+  }
+  
+  package "Doctor Services" {
+    usecase "Browse Doctors" as browse
+    usecase "Search Doctors" as search
+    usecase "View Doctor Profile" as viewProfile
+    usecase "Rate Doctor" as rate
+  }
+  
+  package "Appointment Management" {
+    usecase "Book Appointment" as book
+    usecase "View Appointments" as viewAppt
+    usecase "Cancel Appointment" as cancel
+  }
+  
+  package "Profile & Support" {
+    usecase "Update Profile" as update
+    usecase "View Medical History" as history
+    usecase "Submit Complaint" as complaint
+  }
+  
+  package "Payment" {
+    usecase "Make Payment" as payment
+  }
+}
+
+Patient --> register
+Patient --> login
+Patient --> browse
+Patient --> search
+Patient --> viewProfile
+Patient --> book
+Patient --> viewAppt
+Patient --> update
+Patient --> cancel
+Patient --> rate
+Patient --> complaint
+Patient --> history
+
+' Login requirements
+update ..> login : <<include>>
+cancel ..> login : <<include>>
+rate ..> login : <<include>>
+book ..> login : <<include>>
+viewAppt ..> login : <<include>>
+complaint ..> login : <<include>>
+history ..> login : <<include>>
+
+' Functional relationships
+book ..> payment : <<include>>
+cancel ..> payment : <<include>>
+book ..> viewProfile : <<include>>
+search ..> browse : <<extend>>
+
+payment --> PG
+
+note right
+Legend:
+Actor = System User
+(Use Case) = Function
+--> = Association
+..> = Include/Extend
+<<include>> = Required functionality
+<<extend>> = Optional functionality
+end note
+
+@enduml 

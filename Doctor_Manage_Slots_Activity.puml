@@ -1,0 +1,80 @@
+@startuml Doctor_Manage_Slots_Activity
+!theme plain
+skinparam backgroundColor white
+skinparam activityBorderColor black
+skinparam activityBackgroundColor #3498db
+skinparam startColor black
+skinparam endColor black
+skinparam decisionBorderColor black
+skinparam decisionBackgroundColor white
+skinparam arrowColor black
+skinparam activityFontColor white
+skinparam decisionFontColor black
+skinparam activityFontSize 11
+skinparam decisionFontSize 10
+skinparam titleFontSize 16
+skinparam titleFontColor black
+skinparam activityBorderThickness 2
+skinparam decisionBorderThickness 2
+skinparam arrowThickness 2
+skinparam shadowing false
+
+title Figure 17: Doctor Manage Schedule Slots Flow
+
+start
+
+:Access Doctor\nProfile;
+
+:Navigate to Schedule\nSection;
+
+:View Weekly Schedule\nTable;
+
+:Select Day of Week;
+
+if (Day Available?) then (Set Available)
+  :Enable Day\nCheckbox;
+  
+  :Set Start Time;
+  
+  :Set End Time;
+  
+  if (End Time > Start Time?) then (yes)
+    :Save Time Slot;
+  else (no)
+    :Show Error:\n"End time must be after start time";
+    
+    stop
+  endif
+
+else (Set Unavailable)
+  :Disable Day\nCheckbox;
+  
+  :Clear Time Fields;
+  
+  :Mark Day as\nUnavailable;
+endif
+
+:Update Schedule\nDatabase;
+
+:Generate Available\nSlots (30 min intervals);
+
+:Show Success\nMessage;
+
+:Refresh Schedule\nDisplay;
+
+if (More Days to Configure?) then (yes)
+  :Select Next Day;
+else (no)
+  :Complete Schedule\nSetup;
+endif
+
+stop
+
+legend right
+● Start/End
+⬜ Activity
+◆ Decision
+→ Flow
+endlegend
+
+@enduml 

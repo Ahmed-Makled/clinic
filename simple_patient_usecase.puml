@@ -1,0 +1,53 @@
+@startuml
+!theme plain
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+}
+skinparam actor {
+    BackgroundColor White
+    BorderColor Black
+}
+
+left to right direction
+
+actor Patient
+
+rectangle "Clinic Management System" {
+    usecase "Register Account"
+    usecase "Login/Logout" 
+    usecase "Update Profile"
+    usecase "Search Doctors"
+    usecase "Book Appointment"
+    usecase "View Appointments"
+    usecase "Cancel Appointment"
+    usecase "Make Payment"
+    usecase "Rate Doctor"
+    usecase "View Medical History"
+    usecase "Submit Complaint"
+}
+
+actor "Payment Gateway" as PG
+
+Patient --> "Register Account"
+Patient --> "Login/Logout"
+Patient --> "Update Profile"
+Patient --> "Search Doctors"
+Patient --> "Book Appointment"
+Patient --> "View Appointments"
+Patient --> "Cancel Appointment"
+Patient --> "Make Payment"
+Patient --> "Rate Doctor"
+Patient --> "View Medical History"
+Patient --> "Submit Complaint"
+
+"Update Profile" ..> "Login/Logout" : <<extend>>
+"Book Appointment" ..> "Make Payment" : <<include>>
+"Cancel Appointment" ..> "Make Payment" : <<include>>
+"View Appointments" ..> "Login/Logout" : <<include>>
+"Rate Doctor" ..> "View Medical History" : <<include>>
+
+"Make Payment" --> PG : <<uses>>
+
+@enduml 

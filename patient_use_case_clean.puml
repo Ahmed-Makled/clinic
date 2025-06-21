@@ -1,0 +1,97 @@
+@startuml
+!theme plain
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    FontSize 10
+}
+skinparam actor {
+    BackgroundColor White
+    BorderColor Black
+}
+
+left to right direction
+
+actor Patient
+
+rectangle "Clinic Management System" {
+    ' Top row - Authentication
+    usecase "Register Account" as UC1
+    usecase "Login/Logout" as UC2
+    usecase "Update Profile" as UC3
+    
+    UC1 -[hidden]- UC2
+    UC2 -[hidden]- UC3
+    
+    ' Middle row - Doctor & Appointment Services
+    usecase "Search Doctors" as UC4
+    usecase "Book Appointment" as UC5
+    usecase "View Appointments" as UC6
+    
+    UC4 -[hidden]- UC5
+    UC5 -[hidden]- UC6
+    
+    ' Bottom row - Actions & Support
+    usecase "Cancel Appointment" as UC7
+    usecase "Make Payment" as UC8
+    usecase "Rate Doctor" as UC9
+    
+    UC7 -[hidden]- UC8
+    UC8 -[hidden]- UC9
+    
+    ' Additional services
+    usecase "View Medical History" as UC10
+    usecase "Submit Complaint" as UC11
+    
+    UC10 -[hidden]- UC11
+    
+    ' Vertical alignment
+    UC1 -[hidden]down- UC4
+    UC2 -[hidden]down- UC5
+    UC3 -[hidden]down- UC6
+    UC4 -[hidden]down- UC7
+    UC5 -[hidden]down- UC8
+    UC6 -[hidden]down- UC9
+    UC7 -[hidden]down- UC10
+    UC8 -[hidden]down- UC11
+}
+
+actor "Payment Gateway" as PG
+
+' Authentication & Profile
+Patient --> UC1
+Patient --> UC2
+Patient --> UC3
+
+' Doctor Services
+Patient --> UC4
+
+' Appointment Management
+Patient --> UC5
+Patient --> UC6
+Patient --> UC7
+
+' Payment & Rating
+Patient --> UC8
+Patient --> UC9
+
+' History & Support
+Patient --> UC10
+Patient --> UC11
+
+UC3 ..> UC2 : <<extend>>
+UC5 ..> UC8 : <<include>>
+UC7 ..> UC8 : <<include>>
+UC6 ..> UC2 : <<include>>
+UC9 ..> UC10 : <<include>>
+
+UC8 --> PG : <<uses>>
+
+note bottom
+--> = Association
+..> = Include (mandatory)
+..> = Extend (optional)
+--> = External Interface
+end note
+
+@enduml 

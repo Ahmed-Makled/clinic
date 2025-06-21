@@ -1,0 +1,59 @@
+@startuml Admin_Manage_ContactUs_Activity
+
+skinparam Activity {
+    BackgroundColor #3498db
+    BorderColor #000000
+    FontColor #ffffff
+    FontSize 12
+    FontName Arial
+}
+
+skinparam ActivityDiamond {
+    BackgroundColor #e8f4fd
+    BorderColor #000000
+    FontColor #000000
+    FontSize 11
+    FontName Arial
+}
+
+skinparam Note {
+    BackgroundColor #f8f9fa
+    BorderColor #000000
+    FontColor #000000
+    FontSize 10
+}
+
+|Admin|
+start
+
+:Admin logs into system;
+
+:Navigate to Contact Messages;
+
+:View Contact Messages List
+- Name
+- Email
+- Subject
+- Message preview
+- Date received;
+
+:Review Contact Messages;
+
+if (Navigate to other pages?) then (Yes)
+    :Select Page Number;
+    :Load Selected Page;
+else (No)
+    :Return to Dashboard;
+    stop
+endif
+
+' Map/Legend positioned at bottom right
+legend right
+**Map/Legend:**
+○ Start/End Points
+◇ Decision Points  
+□ Activities
+→ Flow Direction
+endlegend
+
+@enduml 

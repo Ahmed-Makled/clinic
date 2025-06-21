@@ -1,0 +1,81 @@
+@startuml Doctor_Manage_Appointments_Activity
+!theme plain
+skinparam backgroundColor white
+skinparam activityBorderColor black
+skinparam activityBackgroundColor #3498db
+skinparam startColor black
+skinparam endColor black
+skinparam decisionBorderColor black
+skinparam decisionBackgroundColor white
+skinparam arrowColor black
+skinparam activityFontColor white
+skinparam decisionFontColor black
+skinparam activityFontSize 11
+skinparam decisionFontSize 10
+skinparam titleFontSize 16
+skinparam titleFontColor black
+skinparam activityBorderThickness 2
+skinparam decisionBorderThickness 2
+skinparam arrowThickness 2
+skinparam shadowing false
+
+title Figure 16: Doctor Manage Appointments Flow
+
+start
+
+:Go to Home Page;
+
+:Click Name on Navbar;
+
+:Select Manage\nAppointment;
+
+:View Appointments\nList;
+
+if (Apply Filters?) then (yes)
+  :Set Filters:
+  • Status
+  • Date Range
+  • Patient Name;
+  
+  :Filter Results;
+endif
+
+:Select Appointment;
+
+fork
+  :View Details;
+  :Show Appointment\nDetails;
+fork again
+  :Complete Appointment;
+  if (Status = Scheduled?) then (yes)
+    :Mark as Completed;
+  else (no)
+    :Show Error Message;
+    stop
+  endif
+fork again
+  :Cancel Appointment;
+  if (Status = Scheduled?) then (yes)
+    :Mark as Cancelled;
+  else (no)
+    :Show Error Message;
+    stop
+  endif
+end fork
+
+:Update Database;
+
+:Show Success Message;
+
+:Refresh List;
+
+stop
+
+legend right
+● Start/End
+⬜ Activity
+◆ Decision
+→ Flow
+endlegend
+
+@enduml 

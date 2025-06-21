@@ -1,0 +1,162 @@
+@startuml Admin_Login_Monitoring_Activity
+
+skinparam Activity {
+    BackgroundColor #3498db
+    BorderColor #000000
+    FontColor #ffffff
+    FontSize 12
+    FontName Arial
+}
+
+skinparam ActivityDiamond {
+    BackgroundColor #e8f4fd
+    BorderColor #000000
+    FontColor #000000
+    FontSize 11
+    FontName Arial
+}
+
+skinparam Note {
+    BackgroundColor #f8f9fa
+    BorderColor #000000
+    FontColor #000000
+    FontSize 10
+}
+
+|Admin|
+
+start
+
+:Admin logs into system;
+
+:Navigate to Login Monitoring Dashboard;
+
+:View Login Monitoring Interface
+- Recent login activities
+- Active user sessions  
+- Failed login attempts
+- Security alerts;
+
+:Select Monitoring Action;
+
+if (View Login Logs?) then (Yes)
+    :Display Login History Table
+    - Username/Email
+    - Login timestamp
+    - IP address
+    - Device/Browser
+    - Login status;
+    
+    :Apply Filters if needed
+    - Date range filter
+    - User type filter
+    - Status filter (Success/Failed)
+    - IP address filter;
+    
+    :Export filtered data if required;
+    
+elseif (Monitor Active Sessions?) then (Yes)
+    :Display Active Sessions List
+    - Current logged users
+    - Session duration
+    - Last activity time
+    - Device information;
+    
+    if (Suspicious Session Detected?) then (Yes)
+        :Highlight suspicious session
+        - Multiple locations
+        - Unusual login times
+        - Extended session duration;
+        
+        if (Take Action?) then (Yes)
+            :Select Action Type;
+            
+            if (Force Logout?) then (Yes)
+                :Terminate user session;
+                :Send notification to user;
+                :Log security action;
+            elseif (Block Account?) then (Yes)
+                :Suspend user account;
+                :Send alert notification;
+                :Log suspension action;
+            else (Monitor Only)
+                :Add to watchlist;
+                :Set monitoring alert;
+            endif
+        endif
+    endif
+    
+elseif (Security Alerts?) then (Yes)
+    :Display Security Alert Dashboard
+    - Failed login attempts
+    - Brute force attempts
+    - Unusual access patterns
+    - Blocked IP addresses;
+    
+    :Review Alert Details;
+    
+    if (Critical Alert?) then (Yes)
+        :Show Alert Details
+        - Alert type
+        - Affected users
+        - Threat level
+        - Recommended actions;
+        
+        if (Immediate Action Required?) then (Yes)
+            :Execute Security Response
+            - Block IP addresses
+            - Suspend accounts
+            - Send admin notifications
+            - Update security rules;
+            
+            :Log security response;
+        endif
+    endif
+    
+else (Generate Reports)
+    :Select Report Type
+    - Login activity report
+    - Security incident report
+    - User access report
+    - System performance report;
+    
+    :Configure Report Parameters
+    - Date range selection
+    - User categories
+    - Report format (PDF/Excel/CSV)
+    - Email recipients;
+    
+    :Generate and Export Report;
+    
+    :Schedule automated reports if needed;
+endif
+
+:Update monitoring dashboard;
+
+:Review system health status
+- Server performance
+- Database connections
+- Response times
+- Error rates;
+
+if (Continue Monitoring?) then (Yes)
+    :Refresh monitoring data;
+    :Check for new alerts;
+else (No)
+    :Save monitoring session log;
+    :Logout from system;
+    stop
+endif
+
+stop
+
+' Map/Legend positioned at bottom right
+legend right
+**Map/Legend:**
+○ Start/End Points
+◇ Decision Points  
+□ Activities
+→ Flow Direction
+endlegend
+
+@enduml 

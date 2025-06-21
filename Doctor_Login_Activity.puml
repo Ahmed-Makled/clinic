@@ -1,0 +1,59 @@
+@startuml Doctor_Login_Activity
+!theme plain
+skinparam backgroundColor white
+skinparam activityBorderColor black
+skinparam activityBackgroundColor #3498db
+skinparam startColor black
+skinparam endColor black
+skinparam decisionBorderColor black
+skinparam decisionBackgroundColor white
+skinparam arrowColor black
+skinparam activityFontColor white
+skinparam decisionFontColor black
+skinparam activityFontSize 11
+skinparam decisionFontSize 10
+skinparam titleFontSize 16
+skinparam titleFontColor black
+skinparam activityBorderThickness 2
+skinparam decisionBorderThickness 2
+skinparam arrowThickness 2
+skinparam shadowing false
+
+title Figure 15: Doctor Login Flow
+
+start
+
+:Visit Login Page;
+
+:Enter Email\nand Password;
+
+:Click Login Button;
+
+if (Credentials Valid?) then (no)
+  :Show Error Message;
+  
+  :Return to Login Page;
+  
+  stop
+else (yes)
+  :Login Successful;
+  
+  if (Profile Complete?) then (no)
+    :Redirect to Profile\nCompletion Page;
+    
+    stop
+  else (yes)
+    :Access Doctor\nDashboard;
+  endif
+endif
+
+stop
+
+legend right
+● Start/End
+⬜ Activity
+◆ Decision
+→ Flow
+endlegend
+
+@enduml 

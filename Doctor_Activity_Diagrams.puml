@@ -1,0 +1,150 @@
+@startuml Doctor_Activity_Diagrams
+!theme plain
+skinparam backgroundColor white
+skinparam activityBorderColor black
+skinparam activityBackgroundColor #3498db
+skinparam startColor black
+skinparam endColor black
+skinparam decisionBorderColor black
+skinparam decisionBackgroundColor white
+skinparam arrowColor black
+skinparam activityFontColor white
+skinparam decisionFontColor black
+skinparam activityFontSize 11
+skinparam decisionFontSize 10
+skinparam titleFontSize 16
+skinparam titleFontColor black
+skinparam activityBorderThickness 2
+skinparam decisionBorderThickness 2
+skinparam arrowThickness 2
+skinparam shadowing false
+
+title Figure 11: Doctor Activity Flow
+
+start
+
+:Navigate to Clinic\nWebsite Homepage;
+
+if (Has Account?) then (no)
+  :Contact Clinic\nAdministration;
+  
+  :Request Account Creation:
+  • Send Email/Call
+  • Provide Credentials
+  • Submit Documents;
+  
+  :Wait for Admin to\nCreate Account;
+  
+  :Receive Login\nCredentials;
+endif
+
+:Navigate to\nLogin Page;
+
+:Enter Login\nCredentials;
+
+:Submit Login Form;
+
+if (Profile Complete?) then (no)
+  :Complete Professional\nProfile;
+  
+  :Fill Required Information:
+  • Medical Title
+  • Specialty Category
+  • Experience Years
+  • Consultation Fee
+  • Address & Location
+  • Medical Degree
+  • Professional Description;
+  
+  :Upload Profile Image\n(Optional);
+  
+  :Set Weekly Schedule:
+  • Available Days
+  • Working Hours
+  • Time Slots;
+  
+  :Submit Complete\nProfile;
+  
+  if (Profile Data Valid?) then (no)
+    :Correct Profile Data;
+    stop
+  endif
+endif
+
+:Access Doctor\nDashboard;
+
+:Select Action\nfrom Menu;
+
+if (Manage Profile?) then (yes)
+  :Update Profile\nInformation;
+  
+  :Modify Schedule\nif Needed;
+  
+  :Change Profile\nImage;
+  
+  :Submit Changes;
+
+elseif (View Appointments?) then (yes)
+  :View Appointment List;
+  
+  if (Complete Appointment?) then (yes)
+    :Select Appointment\nto Complete;
+    
+    :Mark as Completed;
+    
+  elseif (Cancel Appointment?) then (yes)
+    :Select Appointment\nto Cancel;
+    
+    :Provide Cancellation\nReason;
+    
+    :Confirm Cancellation;
+    
+  elseif (View Patient Details?) then (yes)
+    :Select Patient\nAppointment;
+    
+    :Review Patient Information:
+    • Medical History
+    • Contact Details
+    • Previous Appointments
+    • Appointment Notes;
+  endif
+
+elseif (Manage Schedule?) then (yes)
+  :Update Weekly\nAvailability;
+  
+  :Set Working Hours\nfor Each Day;
+  
+  :Define Time Slots;
+  
+  :Save Schedule\nChanges;
+
+elseif (View Statistics?) then (yes)
+  :Review Statistics:
+  • Total Appointments
+  • Completed Visits
+  • Patient Ratings
+  • Monthly Revenue
+  • Upcoming Schedule;
+
+elseif (Update Password?) then (yes)
+  :Enter Current\nPassword;
+  
+  :Enter New Password;
+  
+  :Confirm New Password;
+  
+  :Submit Password\nChange;
+endif
+
+:Logout from\nSystem;
+
+stop
+
+legend right
+● Start/End
+⬜ Activity
+◆ Decision
+→ Flow
+endlegend
+
+@enduml 

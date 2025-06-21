@@ -1,0 +1,102 @@
+@startuml Patient_Login_Register_Activity
+!theme plain
+skinparam backgroundColor white
+skinparam activityBorderColor black
+skinparam activityBackgroundColor #3498db
+skinparam startColor black
+skinparam endColor black
+skinparam decisionBorderColor black
+skinparam decisionBackgroundColor white
+skinparam arrowColor black
+skinparam activityFontColor white
+skinparam decisionFontColor black
+skinparam activityFontSize 11
+skinparam decisionFontSize 10
+skinparam titleFontSize 16
+skinparam titleFontColor black
+skinparam activityBorderThickness 2
+skinparam decisionBorderThickness 2
+skinparam arrowThickness 2
+skinparam shadowing false
+
+title Figure 12: Patient Login & Registration Flow
+
+start
+
+:Navigate to Clinic\nWebsite Homepage;
+
+if (Has Account?) then (no)
+  :Click Register\nButton;
+  
+  :Fill Registration Form:
+  • Full Name
+  • Email Address
+  • Phone Number
+  • Password
+  • Confirm Password;
+  
+  :Submit Registration;
+  
+  if (Registration Data Valid?) then (no)
+    :View Validation\nErrors;
+    
+    :Correct Registration\nData;
+    
+    stop
+  else (yes)
+    :Account Created\nSuccessfully;
+    
+    :Auto Login to\nSystem;
+  endif
+else (yes)
+  :Click Login\nButton;
+  
+  :Enter Login Credentials:
+  • Email/Phone
+  • Password;
+  
+  :Submit Login Form;
+  
+  if (Login Credentials Valid?) then (no)
+    :View Login\nError Message;
+    
+    if (Forgot Password?) then (yes)
+      :Click Forgot\nPassword Link;
+      
+      :Enter Email\nAddress;
+      
+      :Submit Reset\nRequest;
+      
+      :Check Email for\nReset Link;
+      
+      :Click Reset Link\nfrom Email;
+      
+      :Enter New Password;
+      
+      :Confirm New Password;
+      
+      :Submit Password\nReset;
+      
+      :Login with New\nPassword;
+    else (no)
+      :Try Login\nAgain;
+      
+      stop
+    endif
+  endif
+endif
+
+:Successfully\nLogged In;
+
+:Redirect to Patient\nDashboard/Homepage;
+
+stop
+
+legend right
+● Start/End
+⬜ Activity
+◆ Decision
+→ Flow
+endlegend
+
+@enduml 

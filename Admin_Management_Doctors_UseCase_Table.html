@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Management Doctors - Use Case Table</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --border-color: #e5e7eb;
+            --shadow-heavy: 0 10px 15px rgba(0,0,0,0.1);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            padding: 25mm 20mm;
+            background: var(--bg-primary);
+            box-shadow: var(--shadow-heavy);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: 12px 12px 0 0;
+        }
+
+        h1 {
+            font-size: 20pt;
+            font-weight: bold;
+            margin: 30px 0 20px 0;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        h3 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 11pt;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .use-case-box {
+            border: 1px solid #000;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+        }
+
+        .document-info {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #eff6ff;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .arrow {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        @media print {
+            .page {
+                box-shadow: none;
+                margin: 0;
+                padding: 20mm;
+                width: 210mm;
+                min-height: 297mm;
+            }
+            
+            @page {
+                size: A4;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="document-info">
+            <h2>Clinic Management System</h2>
+            <p>Software Engineering Documentation</p>
+            <p>Cairo University - Faculty of Science</p>
+        </div>
+
+        <h1>Admin Management Doctors Use Case</h1>
+        
+        <div class="use-case-box">
+            <h3>Use Case 7: Admin Management Doctors (UC-007)</h3>
+            <table>
+                <tr><td style="background-color: #000; color: white; font-weight: bold;" colspan="2">Use Case 7 - (UC-007)<br>Admin Management Doctors</td></tr>
+                <tr><td style="font-weight: bold;">Related Requirements</td><td>FR-004, FR-014, FR-021</td></tr>
+                <tr><td style="font-weight: bold;">Initiating Actor:</td><td>Administrator</td></tr>
+                <tr><td style="font-weight: bold;">Actor's Goal:</td><td>Manage doctor accounts, approve registrations, monitor performance, and maintain doctor database integrity</td></tr>
+                <tr><td style="font-weight: bold;">Participating Actors:</td><td>Doctor, Email System, Notification System</td></tr>
+                <tr><td style="font-weight: bold;">Preconditions:</td><td>Administrator is logged in with admin privileges and doctor management permissions</td></tr>
+                <tr><td style="font-weight: bold;">Postconditions:</td><td>Doctor accounts are properly managed, verified, and system integrity is maintained</td></tr>
+                <tr><td style="font-weight: bold;" colspan="2">Flow of Events for Main Success Scenario:</td></tr>
+                <tr><td colspan="2">
+                    ——→ 1. Administrator accesses doctor management dashboard.<br>
+                    ←—— 2. System displays list of all doctors with status, specialties, and statistics.<br>
+                    ——→ 3. Administrator selects doctor to manage or reviews pending registrations.<br>
+                    ←—— 4. System shows detailed doctor profile with credentials and verification status.<br>
+                    ——→ 5. Administrator performs action (approve, suspend, activate, update specialties).<br>
+                    ←—— 6. System validates action and updates doctor status in database.<br>
+                    ←—— 7. System sends notification to doctor about status change.<br>
+                    ←—— 8. System logs administrative action for audit trail.
+                </td></tr>
+                <tr><td style="font-weight: bold;" colspan="2">Flow of Events for Extensions (Alternate Scenarios):</td></tr>
+                <tr><td colspan="2">
+                    3. Administrator reviews new doctor registration.<br>
+                    ←—— System displays registration details and required documents.<br>
+                    ——→ 4. Administrator verifies medical credentials and certifications.<br>
+                    ←—— 5. System provides verification tools and external database access.<br>
+                    ——→ 6. Administrator approves or rejects registration with reasons.<br>
+                    ←—— 7. System updates status and notifies doctor of decision.<br><br>
+                    5. Administrator attempts to suspend doctor with active appointments.<br>
+                    ←—— System shows warning about active appointments and suggests alternatives.<br>
+                    ——→ 6. Administrator chooses to reschedule appointments or proceed with suspension.<br>
+                    ←—— 7. System handles appointments appropriately and completes action.<br><br>
+                    4. Doctor profile contains incomplete or invalid information.<br>
+                    ←—— System highlights missing fields and validation errors.<br>
+                    ——→ 5. Administrator contacts doctor for required information updates.<br>
+                    ←—— 6. System tracks communication and pending requirements.
+                </td></tr>
+            </table>
+        </div>
+
+        <div style="margin-top: 30px; padding: 15px; background-color: #f0f9ff; border-radius: 8px;">
+            <h3 style="color: #0369a1; margin-bottom: 10px;">Key Administrative Functions:</h3>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+                <li><strong>Registration Management:</strong> Approve/reject new doctor applications</li>
+                <li><strong>Account Status Control:</strong> Activate, suspend, or deactivate doctor accounts</li>
+                <li><strong>Credential Verification:</strong> Validate medical licenses and certifications</li>
+                <li><strong>Profile Maintenance:</strong> Update doctor information and specialties</li>
+                <li><strong>Performance Monitoring:</strong> Track doctor activities and patient feedback</li>
+                <li><strong>Appointment Coordination:</strong> Handle scheduling conflicts during status changes</li>
+                <li><strong>Audit Trail Management:</strong> Maintain comprehensive logs of all administrative actions</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center; font-size: 10pt; color: #6b7280;">
+            <p>Generated as part of Clinic Management System Documentation</p>
+            <p>Academic Year 2024-2025 | Cairo University</p>
+        </div>
+    </div>
+</body>
+</html> 

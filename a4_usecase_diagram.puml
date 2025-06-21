@@ -1,0 +1,88 @@
+@startuml
+!define RECTANGLE_WIDTH 800
+!define RECTANGLE_HEIGHT 600
+
+scale 1.2
+skinparam dpi 300
+skinparam defaultFontSize 12
+skinparam usecase {
+  BackgroundColor White
+  BorderColor Black
+  FontSize 11
+  ArrowColor Black
+  ArrowThickness 2
+}
+skinparam actor {
+  BackgroundColor White
+  BorderColor Black
+  FontSize 12
+}
+skinparam rectangle {
+  BackgroundColor White
+  BorderColor Black
+  FontSize 14
+}
+skinparam arrow {
+  Color Black
+  Thickness 2
+}
+skinparam note {
+  BackgroundColor LightYellow
+  BorderColor Black
+}
+
+title "Patient Use Case Diagram - Clinic Management System"
+
+left to right direction
+
+actor "Patient" as P
+actor "Payment Gateway" as PG
+
+rectangle "Clinic Management System" as CMS {
+  usecase "Register Account" as UC1
+  usecase "Login/Logout" as UC2
+  usecase "Manage Profile" as UC3
+  usecase "Search Doctors" as UC4
+  usecase "Book Appointment" as UC5
+  usecase "View Appointments" as UC6
+  usecase "Cancel Appointment" as UC7
+  usecase "Make Payment" as UC8
+  usecase "Rate Doctor" as UC9
+  usecase "View Medical History" as UC10
+}
+
+' Authentication & Registration
+P --> UC1 : "registers"
+P --> UC2 : "authenticates"
+
+' Profile Management
+P --> UC3 : "manages"
+
+' Doctor Services
+P --> UC4 : "searches"
+
+' Appointment Services
+P --> UC5 : "books"
+P --> UC6 : "views"
+P --> UC7 : "cancels"
+
+' Payment & Rating
+P --> UC8 : "pays"
+P --> UC9 : "rates"
+
+' History
+P --> UC10 : "reviews"
+
+' System Dependencies
+UC3 .up.> UC2 : <<extend>>
+UC5 .down.> UC8 : <<include>>
+UC7 .down.> UC8 : <<include>>
+UC6 .right.> UC2 : <<include>>
+UC9 .left.> UC10 : <<include>>
+
+' External Integration
+UC8 -right-> PG : <<uses>>
+
+note bottom : "Use Case Diagram showing Patient interactions with Clinic Management System"
+
+@enduml 

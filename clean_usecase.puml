@@ -1,0 +1,39 @@
+@startuml
+
+actor Patient
+
+rectangle "Clinic Management System" {
+  (Register Account)
+  (Login/Logout)
+  (Manage Profile)
+  (Search Doctors)
+  (Book Appointment)
+  (View Appointments)
+  (Cancel Appointment)
+  (Make Payment)
+  (View Appointments History)
+  (Rate Doctor)
+}
+
+actor "Payment Gateway" as PG
+
+Patient --> (Register Account)
+Patient --> (Login/Logout)
+Patient --> (Manage Profile)
+Patient --> (Search Doctors)
+Patient --> (Book Appointment)
+Patient --> (View Appointments)
+Patient --> (Cancel Appointment)
+Patient --> (Make Payment)
+Patient --> (View Appointments History)
+Patient --> (Rate Doctor)
+
+(Manage Profile) ..> (Login/Logout) : <<extend>>
+(Book Appointment) ..> (Make Payment) : <<include>>
+(Cancel Appointment) ..> (Make Payment) : <<include>>
+(View Appointments History) ..> (Login/Logout) : <<include>>
+(Rate Doctor) ..> (View Appointments History) : <<include>>
+
+(Make Payment) --> PG : <<uses>>
+
+@enduml 

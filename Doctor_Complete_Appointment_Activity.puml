@@ -1,0 +1,162 @@
+@startuml Doctor_Complete_Appointment_Activity
+
+skinparam Activity {
+    BackgroundColor #3498db
+    BorderColor #000000
+    FontColor #ffffff
+    FontSize 12
+    FontName Arial
+}
+
+skinparam ActivityDiamond {
+    BackgroundColor #e8f4fd
+    BorderColor #000000
+    FontColor #000000
+    FontSize 11
+    FontName Arial
+}
+
+skinparam Note {
+    BackgroundColor #f8f9fa
+    BorderColor #000000
+    FontColor #000000
+    FontSize 10
+}
+
+|Doctor|
+start
+
+:Doctor logs into system;
+
+:Navigate to Appointments Dashboard;
+
+:View Today's Appointments List
+- Scheduled appointments
+- Appointment times
+- Patient information
+- Appointment status;
+
+:Select appointment to complete;
+
+if (Appointment Status?) then (Scheduled)
+    :View Appointment Details
+    - Patient information
+    - Appointment time
+    - Medical notes
+    - Payment status;
+    
+    :Check appointment timing;
+    
+    if (Appointment Time Valid?) then (Yes)
+        :Confirm appointment completion;
+        
+        if (Add Medical Notes?) then (Yes)
+            :Open Medical Notes Form
+            - Diagnosis information
+            - Treatment provided
+            - Medications prescribed
+            - Follow-up instructions;
+            
+            :Enter medical consultation details;
+            
+            :Save medical notes;
+        endif
+        
+        if (Patient Rating System?) then (Yes)
+            :Enable patient rating
+            - Allow patient to rate doctor
+            - Rate consultation quality
+            - Provide feedback;
+        endif
+        
+        :Update appointment status to 'Completed';
+        
+        :Record completion timestamp;
+        
+        :Send completion notification to patient
+        - Appointment completed message
+        - Medical summary if available
+        - Next appointment suggestions;
+        
+        :Update doctor's statistics
+        - Completed appointments count
+        - Patient satisfaction metrics
+        - Revenue tracking;
+        
+        if (Payment Status?) then (Pending)
+            :Mark payment as completed;
+            :Update financial records;
+        endif
+        
+        :Generate appointment completion report
+        - Consultation summary
+        - Treatment provided
+        - Follow-up recommendations;
+        
+        :Log completion activity
+        - Doctor action
+        - Completion timestamp
+        - System audit trail;
+        
+        :Show success message
+        "Appointment completed successfully";
+        
+    else (No - Future appointment)
+        :Show error message
+        "Cannot complete future appointment
+        Wait until appointment time";
+        
+        :Return to appointments list;
+        stop
+    endif
+    
+elseif (Already Completed) then
+    :Show information message
+    "Appointment already completed";
+    
+    :Display completion details
+    - Completion date/time
+    - Medical notes
+    - Treatment summary;
+    
+elseif (Cancelled) then
+    :Show error message
+    "Cannot complete cancelled appointment";
+    
+    :Suggest rescheduling options;
+    
+else (Invalid Status)
+    :Show system error
+    "Invalid appointment status";
+endif
+
+:Update appointments dashboard;
+
+:Refresh appointment statistics;
+
+if (Complete Another Appointment?) then (Yes)
+    :Return to appointments list;
+else (No)
+    :Navigate to doctor dashboard;
+    
+    :View updated statistics
+    - Daily completed appointments
+    - Patient satisfaction scores
+    - Revenue generated;
+    
+    :Logout from system;
+    stop
+endif
+
+stop
+
+' Map/Legend positioned at bottom right
+legend right
+**Map/Legend:**
+○ Start/End Points
+◇ Decision Points  
+□ Activities
+→ Flow Direction
+endlegend
+
+@enduml 
