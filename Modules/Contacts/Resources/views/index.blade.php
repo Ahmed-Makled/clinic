@@ -5,6 +5,8 @@
     .contact-section {
         padding: 60px 0;
         min-height: 100vh;
+        direction: rtl;
+        text-align: right;
     }
 
     .contact-header {
@@ -222,8 +224,8 @@
     <div class="container">
         <!-- Header -->
         <div class="contact-header">
-            <h1 class="contact-title">{{ __('Contact Us') }}</h1>
-            <p class="contact-subtitle">{{ __('Get in touch with our medical experts. We\'re here to help you with any questions or concerns.') }}</p>
+            <h1 class="contact-title">{{ __('اتصل بنا') }}</h1>
+            <p class="contact-subtitle">{{ __('تواصل مع خبرائنا الطبيين. نحن هنا لمساعدتك في أي أسئلة أو استفسارات.') }}</p>
         </div>
 
         <div class="row">
@@ -245,8 +247,8 @@
                     @endif
 
                     <div class="mb-4">
-                        <h3 class="mb-2" style="color: #2d3748; font-weight: 600; font-size: 1.25rem;">{{ __('Send us a Message') }}</h3>
-                        <p style="color: #718096; font-size: 0.95rem;">{{ __('Fill out the form below and we\'ll get back to you as soon as possible.') }}</p>
+                        <h3 class="mb-2" style="color: #2d3748; font-weight: 600; font-size: 1.25rem;">{{ __('أرسل لنا رسالة') }}</h3>
+                        <p style="color: #718096; font-size: 0.95rem;">{{ __('املأ النموذج أدناه وسنرد عليك في أقرب وقت ممكن.') }}</p>
                     </div>
 
                     <form action="{{ route('contact.store') }}" method="POST" class="contact-form">
@@ -254,8 +256,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="name">{{ __('Your Name') }}</label>
-                                    <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="{{ __('Enter your name') }}">
+                                    <label class="form-label" for="name">{{ __('الاسم') }}</label>
+                                    <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="{{ __('أدخل اسمك') }}">
                                     @error('name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -263,8 +265,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label" for="email">{{ __('Your Email') }}</label>
-                                    <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="{{ __('Enter your email') }}">
+                                    <label class="form-label" for="email">{{ __('البريد الإلكتروني') }}</label>
+                                    <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="{{ __('أدخل بريدك الإلكتروني') }}">
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -273,16 +275,16 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="subject">{{ __('Subject') }}</label>
-                            <input type="text" name="subject" id="subject" class="form-control @error('subject') is-invalid @enderror" value="{{ old('subject') }}" placeholder="{{ __('Enter subject') }}">
+                            <label class="form-label" for="subject">{{ __('الموضوع') }}</label>
+                            <input type="text" name="subject" id="subject" class="form-control @error('subject') is-invalid @enderror" value="{{ old('subject') }}" placeholder="{{ __('أدخل الموضوع') }}">
                             @error('subject')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="message">{{ __('Your Message') }}</label>
-                            <textarea name="message" id="message" class="form-control @error('message') is-invalid @enderror" placeholder="{{ __('Enter your message') }}">{{ old('message') }}</textarea>
+                            <label class="form-label" for="message">{{ __('رسالتك') }}</label>
+                            <textarea name="message" id="message" class="form-control @error('message') is-invalid @enderror" placeholder="{{ __('أدخل رسالتك') }}">{{ old('message') }}</textarea>
                             @error('message')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -290,7 +292,7 @@
 
                         <button type="submit" class="btn btn-send">
                             <i class="bi bi-send me-2"></i>
-                            {{ __('Send Message') }}
+                            {{ __('إرسال الرسالة') }}
                         </button>
                     </form>
                 </div>
@@ -299,15 +301,15 @@
             <!-- Contact Information -->
             <div class="col-lg-4">
                 <div class="contact-info-card">
-                    <h4 class="contact-info-title">{{ __('Contact Information') }}</h4>
+                    <h4 class="contact-info-title">{{ __('معلومات الاتصال') }}</h4>
 
                     <div class="contact-info-item">
                         <div class="contact-info-icon">
                             <i class="bi bi-geo-alt"></i>
                         </div>
                         <div class="contact-info-content">
-                            <h6>{{ __('Address') }}</h6>
-                            <p>{{ __('123 Main St, Cairo, Egypt') }}</p>
+                            <h6>{{ __('العنوان') }}</h6>
+                            <p>{{ __('123 شارع رئيسي، القاهرة، مصر') }}</p>
                         </div>
                     </div>
 
@@ -316,7 +318,7 @@
                             <i class="bi bi-telephone"></i>
                         </div>
                         <div class="contact-info-content">
-                            <h6>{{ __('Phone') }}</h6>
+                            <h6>{{ __('الهاتف') }}</h6>
                             <p>{{ __('+20 123 456 789') }}</p>
                         </div>
                     </div>
@@ -326,7 +328,7 @@
                             <i class="bi bi-envelope"></i>
                         </div>
                         <div class="contact-info-content">
-                            <h6>{{ __('Email') }}</h6>
+                            <h6>{{ __('البريد الإلكتروني') }}</h6>
                             <p>{{ __('info@clinic.com') }}</p>
                         </div>
                     </div>
@@ -336,8 +338,8 @@
                             <i class="bi bi-clock"></i>
                         </div>
                         <div class="contact-info-content">
-                            <h6>{{ __('Working Hours') }}</h6>
-                            <p>{{ __('Mon - Fri: 9:00 AM - 6:00 PM') }}</p>
+                            <h6>{{ __('ساعات العمل') }}</h6>
+                            <p>{{ __('الاثنين - الجمعة: 9:00 صباحًا - 6:00 مساءً') }}</p>
                         </div>
                     </div>
 
