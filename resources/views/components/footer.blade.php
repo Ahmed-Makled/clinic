@@ -5,7 +5,7 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <!-- معلومات العيادة -->
-                    <div class="col-lg-6 col-md-6 mb-4">
+                    <div class="col-lg-4 col-md-6 mb-4">
                         <div class="clinic-info">
                             <div class="logo-section mb-3">
                                 <i class="fas fa-heart text-primary me-2"></i>
@@ -34,7 +34,7 @@
                     </div>
 
                     <!-- معلومات التواصل -->
-                    <div class="col-lg-6 col-md-6 mb-4">
+                    <div class="col-lg-4 col-md-6 mb-4">
                         <h5 class="footer-title">تواصل معنا</h5>
                         <div class="contact-info">
                             <div class="contact-item">
@@ -74,6 +74,46 @@
                                 <div class="contact-details">
                                     <span class="contact-label">ساعات العمل</span>
                                     <span class="contact-value">خدمة متاحة 24/7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    <!-- معلومات الفريق -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <h5 class="footer-title">فريق المشروع</h5>
+                        <div class="team-info">
+                            <div class="team-item">
+                                <div class="team-icon submitted">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="team-details">
+                                    <span class="team-label">Submitted by</span>
+                                    <div class="team-members">
+                                        <span class="team-member">1. Wael Mohamed Abo-Samra</span>
+                                        <span class="team-member">2. Ahmed Nabieh Makled</span>
+                                        <span class="team-member">3. Mohamed Yahia Sayed</span>
+                                        <span class="team-member">4. Hemdan Souedy Mohamed</span>
+                                        <span class="team-member">5. Amany Samy Mohamed</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="team-item">
+                                <div class="team-icon supervised">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div class="team-details">
+                                    <span class="team-label">Supervised by</span>
+                                    <span class="team-value supervisor">Dr. Zeinab Ezz-Elarab</span>
+                                </div>
+                            </div>
+
+                            <div class="team-item">
+                                <div class="team-icon location-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="team-details">
+                                    <span class="team-label">المكان والسنة</span>
+                                    <span class="team-value">Cairo, Egypt - 2025</span>
                                 </div>
                             </div>
                         </div>
@@ -277,6 +317,79 @@
         font-size: 0.95rem;
     }
 
+    /* معلومات الفريق */
+    .team-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .team-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .team-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1rem;
+    }
+
+    .team-icon.submitted {
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
+        color: white;
+    }
+
+    .team-icon.supervised {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+    }
+
+    .team-icon.location-icon {
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
+    }
+
+    .team-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .team-label {
+        color: #a0aec0;
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .team-value {
+        color: #e2e8f0;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .team-value.supervisor {
+        color: #fbbf24;
+        font-weight: 600;
+    }
+
+    .team-members {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .team-member {
+        color: #e2e8f0;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-bottom: 0.2rem;
+    }
+
     /* الجزء السفلي */
     .footer-bottom {
         background: rgba(0,0,0,0.2);
@@ -330,6 +443,11 @@
         }
 
         .contact-item {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .team-item {
             justify-content: center;
             text-align: center;
         }

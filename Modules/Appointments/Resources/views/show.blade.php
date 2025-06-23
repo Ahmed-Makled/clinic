@@ -145,10 +145,6 @@
                                 <i class="bi bi-envelope-fill"></i>
                                 <span>support@clinic.com</span>
                             </a>
-                            <a href="#" class="support-option">
-                                <i class="bi bi-chat-dots-fill"></i>
-                                <span>محادثة مباشرة</span>
-                            </a>
                         </div>
                     </div>
                 </div>
