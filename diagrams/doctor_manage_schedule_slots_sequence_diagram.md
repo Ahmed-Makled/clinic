@@ -10,86 +10,75 @@ sequenceDiagram
     participant AuthSystem as Authentication System  
     participant DoctorModel as Doctor Model
     participant DoctorSchedule
-    participant SlotGenerator as Slot Generator
     participant AppointmentModel as Appointment Model
     participant Database
-    participant ValidationSystem as Validation System
+
     
-    Doctor-->>+DoctorController: Access profile schedule section
-    DoctorController-->>+AuthSystem: validateDoctorAuth()
+    Doctor->>+DoctorController: Access profile schedule section
+    DoctorController->>+AuthSystem: validateDoctorAuth()
     AuthSystem-->>-DoctorController: Doctor authentication confirmed
     
-    DoctorController-->>+DoctorModel: getDoctorProfile(doctorId)
-    DoctorModel-->>+Database: Query doctor information
+    DoctorController->>+DoctorModel: getDoctorProfile(doctorId)
+    DoctorModel->>+Database: Query doctor information
     Database-->>-DoctorModel: Return doctor data
     DoctorModel-->>-DoctorController: Doctor profile data
     
-    DoctorController-->>+DoctorSchedule: getCurrentSchedules(doctorId)
-    DoctorSchedule-->>+Database: Query existing schedules
+    DoctorController->>+DoctorSchedule: getCurrentSchedules(doctorId)
+    DoctorSchedule->>+Database: Query existing schedules
     Database-->>-DoctorSchedule: Return weekly schedule data
     DoctorSchedule-->>-DoctorController: Current schedule configuration
     
     DoctorController-->>Doctor: Display weekly schedule interface
-    Note over Doctor,DoctorController: Shows: 7-day table with<br/>availability checkboxes and time inputs
     
     alt View Current Schedule
-        Doctor-->>DoctorController: Request schedule overview
-        DoctorController-->>+DoctorSchedule: getWeeklyAvailability(doctorId)
-        DoctorSchedule-->>+Database: Query all active schedules
+        Doctor->>DoctorController: Request schedule overview
+        DoctorController->>+DoctorSchedule: getWeeklyAvailability(doctorId)
+        DoctorSchedule->>+Database: Query all active schedules
         Database-->>-DoctorSchedule: Return schedule details
         DoctorSchedule-->>-DoctorController: Weekly availability data
         DoctorController-->>Doctor: Display schedule overview
-        Note over Doctor,DoctorController: Shows: active days, time ranges,<br/>total available hours per week
     end
     
     alt Configure Day Availability
-        Doctor-->>DoctorController: Toggle day availability
-        DoctorController-->>+ValidationSystem: validateDaySelection(dayName)
-        ValidationSystem-->>-DoctorController: Day validation result
+        Doctor->>DoctorController: Toggle day availability
+        DoctorController->>DoctorController: validateDaySelection(dayName)
         
         alt Day Enabled
-            Doctor-->>DoctorController: Set start time
-            Doctor-->>DoctorController: Set end time
+            Doctor->>DoctorController: Set start time
+            Doctor->>DoctorController: Set end time
             
-            DoctorController-->>+ValidationSystem: validateTimeRange(startTime, endTime)
-            ValidationSystem-->>ValidationSystem: checkTimeLogic(start < end)
-            ValidationSystem-->>ValidationSystem: checkBusinessHours(8AM-6PM)
-            ValidationSystem-->>-DoctorController: Time validation result
+            DoctorController->>DoctorController: validateTimeRange(startTime, endTime)
+            DoctorController->>DoctorController: checkTimeLogic(start < end)
+            DoctorController->>DoctorController: checkBusinessHours(8AM-6PM)
             
             alt Valid Time Range
-                DoctorController-->>+SlotGenerator: generateTimeSlots(startTime, endTime, interval=30min)
-                SlotGenerator-->>SlotGenerator: calculateSlots(30minute intervals)
-                SlotGenerator-->>-DoctorController: Available time slots list
+                DoctorController->>DoctorController: generateTimeSlots(startTime, endTime, interval=30min)
                 DoctorController-->>Doctor: Display preview of generated slots
-                Note over Doctor,DoctorController: Shows: 30-minute intervals<br/>from start to end time
             else Invalid Time Range
                 DoctorController-->>Doctor: Display time validation error
-                Note over Doctor,DoctorController: Error: "End time must be after start time"
             end
         else Day Disabled
-            DoctorController-->>DoctorController: clearDayTimeInputs()
+            DoctorController->>DoctorController: clearDayTimeInputs()
             DoctorController-->>Doctor: Disable time input fields
         end
     end
     
     alt Update Schedule Configuration
-        Doctor-->>DoctorController: Submit schedule changes
-        DoctorController-->>+ValidationSystem: validateCompleteSchedule(scheduleData)
-        ValidationSystem-->>ValidationSystem: checkMinimumWorkingDays()
-        ValidationSystem-->>ValidationSystem: validateAllTimeRanges()
-        ValidationSystem-->>-DoctorController: Schedule validation result
+        Doctor->>DoctorController: Submit schedule changes
+        DoctorController->>DoctorController: validateCompleteSchedule(scheduleData)
+        DoctorController->>DoctorController: checkMinimumWorkingDays()
+        DoctorController->>DoctorController: validateAllTimeRanges()
         
         alt Schedule Valid
-            DoctorController-->>+DoctorModel: updateSchedule(doctorId, newScheduleData)
-            DoctorModel-->>+DoctorSchedule: deleteExistingSchedules(doctorId)
-            DoctorSchedule-->>+Database: Delete current doctor schedules
+            DoctorController->>+DoctorModel: updateSchedule(doctorId, newScheduleData)
+            DoctorModel->>+DoctorSchedule: deleteExistingSchedules(doctorId)
+            DoctorSchedule->>+Database: Delete current doctor schedules
             Database-->>-DoctorSchedule: Confirm schedule deletion
             DoctorSchedule-->>-DoctorModel: Deletion confirmed
             
-            DoctorModel-->>+DoctorSchedule: createNewSchedules(scheduleData)
+            DoctorModel->>+DoctorSchedule: createNewSchedules(scheduleData)
             loop For each enabled day
-                DoctorSchedule-->>+Database: Insert schedule record
-                Note over DoctorSchedule,Database: Insert: doctor_id, day,<br/>start_time, end_time, is_active=true
+                DoctorSchedule->>+Database: Insert schedule record
                 Database-->>-DoctorSchedule: Confirm schedule creation
             end
             DoctorSchedule-->>-DoctorModel: All schedules created
@@ -99,43 +88,38 @@ sequenceDiagram
             DoctorController-->>Doctor: Refresh schedule display
         else Schedule Invalid
             DoctorController-->>Doctor: Display validation errors
-            Note over Doctor,DoctorController: Errors: missing times,<br/>conflicting schedules, minimum days
         end
     end
     
     alt Check Slot Availability
-        Doctor-->>DoctorController: Preview available slots for date
-        DoctorController-->>+DoctorModel: getAvailableSlots(doctorId, selectedDate)
-        DoctorModel-->>+DoctorSchedule: getScheduleForDay(dayOfWeek)
-        DoctorSchedule-->>+Database: Query day schedule
+        Doctor->>DoctorController: Preview available slots for date
+        DoctorController->>+DoctorModel: getAvailableSlots(doctorId, selectedDate)
+        DoctorModel->>+DoctorSchedule: getScheduleForDay(dayOfWeek)
+        DoctorSchedule->>+Database: Query day schedule
         Database-->>-DoctorSchedule: Return day schedule
         DoctorSchedule-->>-DoctorModel: Day schedule data
         
-        DoctorModel-->>+SlotGenerator: generateDaySlots(schedule, date)
-        SlotGenerator-->>SlotGenerator: createTimeSlots(30min intervals)
-        SlotGenerator-->>-DoctorModel: Generated time slots
+        DoctorModel->>DoctorModel: generateDaySlots(schedule, date)
         
-        DoctorModel-->>+AppointmentModel: getBookedSlots(doctorId, date)
-        AppointmentModel-->>+Database: Query scheduled appointments
+        DoctorModel->>+AppointmentModel: getBookedSlots(doctorId, date)
+        AppointmentModel->>+Database: Query scheduled appointments
         Database-->>-AppointmentModel: Return booked appointments
         AppointmentModel-->>-DoctorModel: Booked time slots
         
-        DoctorModel-->>DoctorModel: filterAvailableSlots(generated - booked)
+        DoctorModel->>DoctorModel: filterAvailableSlots(generated - booked)
         DoctorModel-->>-DoctorController: Available slots for date
         DoctorController-->>Doctor: Display available slots preview
-        Note over Doctor,DoctorController: Shows: available slots count,<br/>next available time, booking capacity
     end
     
     alt Bulk Schedule Operations
-        Doctor-->>DoctorController: Apply template to multiple days
-        DoctorController-->>+ValidationSystem: validateScheduleTemplate(templateData)
-        ValidationSystem-->>-DoctorController: Template validation result
+        Doctor->>DoctorController: Apply template to multiple days
+        DoctorController->>DoctorController: validateScheduleTemplate(templateData)
         
         alt Template Valid
-            DoctorController-->>+DoctorModel: applyScheduleTemplate(doctorId, template, selectedDays)
+            DoctorController->>+DoctorModel: applyScheduleTemplate(doctorId, template, selectedDays)
             loop For each selected day
-                DoctorModel-->>+DoctorSchedule: updateDaySchedule(day, templateTimes)
-                DoctorSchedule-->>+Database: Update/Create day schedule
+                DoctorModel->>+DoctorSchedule: updateDaySchedule(day, templateTimes)
+                DoctorSchedule->>+Database: Update/Create day schedule
                 Database-->>-DoctorSchedule: Confirm day update
                 DoctorSchedule-->>-DoctorModel: Day updated
             end
@@ -146,10 +130,10 @@ sequenceDiagram
         end
     end
     
-    Doctor-->>DoctorController: Save final schedule configuration
-    DoctorController-->>+DoctorModel: finalizeScheduleChanges(doctorId)
-    DoctorModel-->>DoctorModel: updateProfileCompletionStatus()
-    DoctorModel-->>+Database: Update doctor profile completion
+    Doctor->>DoctorController: Save final schedule configuration
+    DoctorController->>+DoctorModel: finalizeScheduleChanges(doctorId)
+    DoctorModel->>DoctorModel: updateProfileCompletionStatus()
+    DoctorModel->>+Database: Update doctor profile completion
     Database-->>-DoctorModel: Confirm profile update
     DoctorModel-->>-DoctorController: Schedule finalization complete
     DoctorController-->>Doctor: Display final confirmation
@@ -160,27 +144,27 @@ sequenceDiagram
 ## Mermaid Symbols Legend
 
 ### Arrow Types (أنواع الأسهم):
-- **`-->>`** : Dashed arrow (سهم منقط) - للرسائل غير المتزامنة أو المعلوماتية
-- **`->>`** : Solid arrow (سهم متصل) - للرسائل المتزامنة أو الطلبات المباشرة
-- **`-->>-`** : Dashed arrow with deactivation (سهم منقط مع إنهاء التفعيل) - إرجاع النتيجة وإنهاء العملية
+- **`->>`** : Solid arrow (سهم متصل) - للطلبات والاستدعاءات (Requests/Calls)
+- **`-->>`** : Dashed arrow (سهم منقط) - للاستجابات وإرجاع النتائج (Responses/Returns)
 - **`->>+`** : Solid arrow with activation (سهم متصل مع تفعيل) - بداية عملية جديدة
+- **`-->>-`** : Dashed arrow with deactivation (سهم منقط مع إنهاء التفعيل) - إرجاع النتيجة وإنهاء العملية
 
 ### Control Flow (تحكم في التدفق):
 - **`alt`** : Alternative (البديل) - يمثل شرط if/else
 - **`else`** : Otherwise (وإلا) - الحالة البديلة في الشرط
 - **`end`** : End block (نهاية الكتلة) - إنهاء كتلة التحكم
 - **`loop`** : Loop block (حلقة تكرار) - للعمليات المتكررة
-- **`Note over`** : Note (ملاحظة) - لإضافة معلومات توضيحية
 
 ### Activation Symbols (رموز التفعيل):
 - **`+`** : Activate lifeline (تفعيل خط الحياة) - بداية معالجة في المكون
 - **`-`** : Deactivate lifeline (إلغاء تفعيل خط الحياة) - انتهاء المعالجة في المكون
 
 ### Practical Examples من المخطط:
-1. **`Doctor-->>+DoctorController`** : الطبيب يرسل طلب للكنترولر ويبدأ تفعيله
-2. **`loop For each enabled day`** : حلقة تكرار لكل يوم مفعل في الجدول
-3. **`alt Day Enabled`** : إذا تم تفعيل اليوم في الجدول
-4. **`Note over Doctor,DoctorController`** : ملاحظة توضيحية عبر عدة مكونات
+1. **`Doctor->>+DoctorController`** : الطبيب يرسل طلب للكنترولر ويبدأ تفعيله (Request)
+2. **`DoctorController-->>Doctor`** : الكنترولر يرد على الطبيب (Response)
+3. **`loop For each enabled day`** : حلقة تكرار لكل يوم مفعل في الجدول
+4. **`alt Day Enabled`** : إذا تم تفعيل اليوم في الجدول
+5. **`DoctorController->>DoctorController`** : عملية داخلية في نفس المكون
 
 ## Diagram Explanation
 
@@ -188,14 +172,12 @@ This sequence diagram illustrates the doctor schedule slots management workflow 
 
 ### Key Components:
 - **Doctor**: The healthcare professional managing their schedule
-- **DoctorController**: Main controller handling doctor operations (`Modules\Doctors\Http\Controllers\DoctorsController`)
+- **DoctorController**: Main controller handling doctor operations (`Modules\Doctors\Http\Controllers\DoctorsController`) - includes internal validation logic
 - **Authentication System**: Validates doctor access and permissions
 - **Doctor Model**: Data model for doctor entities (`Modules\Doctors\Entities\Doctor`)
 - **DoctorSchedule**: Manages doctor schedule data (`Modules\Doctors\Entities\DoctorSchedule`)
-- **Slot Generator**: Generates available time slots with 30-minute intervals
 - **Appointment Model**: Handles existing appointment data for slot availability
 - **Database**: Persistent data storage system
-- **Validation System**: Validates schedule data and business rules
 
 ### Key Workflows:
 

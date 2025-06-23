@@ -33,24 +33,23 @@ start
 
 if (Day Available?) then (Set Available)
   :Enable Day\nCheckbox;
-  
+
   :Set Start Time;
-  
+
   :Set End Time;
-  
+
   if (End Time > Start Time?) then (yes)
     :Save Time Slot;
   else (no)
     :Show Error:\n"End time must be after start time";
-    
-    stop
+
   endif
 
 else (Set Unavailable)
   :Disable Day\nCheckbox;
-  
+
   :Clear Time Fields;
-  
+
   :Mark Day as\nUnavailable;
 endif
 
@@ -77,4 +76,4 @@ legend right
 → Flow
 endlegend
 
-@enduml 
+@enduml

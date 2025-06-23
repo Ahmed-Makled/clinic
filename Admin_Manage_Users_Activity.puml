@@ -36,7 +36,8 @@ start
 
 :Select Action;
 
-if (Create New User?) then (Yes)
+fork
+    :Create New User;
     :Fill User Creation Form;
     :Select Role (Admin/Doctor/Patient);
     :Enter User Details;
@@ -47,8 +48,9 @@ if (Create New User?) then (Yes)
     else (No)
         :Show Error Message;
     endif
-    
-elseif (Edit User?) then (Yes)
+
+fork again
+    :Edit User;
     :Select User to Edit;
     :Load Edit Form;
     :Modify User Information;
@@ -59,12 +61,14 @@ elseif (Edit User?) then (Yes)
     else (No)
         :Show Error Message;
     endif
-    
-elseif (View User Details?) then (Yes)
+
+fork again
+    :View User Details;
     :Select User;
     :Display User Information;
-    
-elseif (Delete User?) then (Yes)
+
+fork again
+    :Delete User;
     :Select User to Delete;
     :Show Confirmation Dialog;
     if (Confirm Delete?) then (Yes)
@@ -73,16 +77,19 @@ elseif (Delete User?) then (Yes)
     else (No)
         :Cancel Operation;
     endif
-    
-elseif (Toggle Status?) then (Yes)
+
+fork again
+    :Toggle Status;
     :Select User;
     :Toggle Active/Inactive Status;
     :Show Status Change Message;
-    
-else (Search/Filter)
+
+fork again
+    :Search/Filter;
     :Apply Search Criteria;
     :Display Filtered Results;
-endif
+
+end fork
 
 :Return to Users List;
 
@@ -92,9 +99,9 @@ stop
 legend right
 **Map/Legend:**
 ○ Start/End Points
-◇ Decision Points  
+◇ Decision Points
 □ Activities
 → Flow Direction
 endlegend
 
-@enduml 
+@enduml

@@ -31,17 +31,15 @@ start
 
 if (Credentials Valid?) then (no)
   :Show Error Message;
-  
+
   :Return to Login Page;
-  
-  stop
+
 else (yes)
   :Login Successful;
-  
+
   if (Profile Complete?) then (no)
     :Redirect to Profile\nCompletion Page;
-    
-    stop
+
   else (yes)
     :Access Doctor\nDashboard;
   endif
@@ -56,4 +54,4 @@ legend right
 → Flow
 endlegend
 
-@enduml 
+@enduml

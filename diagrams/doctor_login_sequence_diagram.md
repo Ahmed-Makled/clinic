@@ -14,16 +14,15 @@ sequenceDiagram
     participant DoctorSchedule
     participant CategoryModel as Category Model
     participant Database
-    participant AdminUser as Admin
     
-    Doctor-->>+AuthSystem: Visit login page
+    Doctor->>+AuthSystem: Visit login page
     AuthSystem-->>-Doctor: Display login form
     
-    Doctor-->>+AuthSystem: Submit login credentials
-    AuthSystem-->>+LoginController: login(email, password)
+    Doctor->>+AuthSystem: Submit login credentials
+    AuthSystem->>+LoginController: login(email, password)
     
-    LoginController-->>+User: verifyCredentials(email, password)
-    User-->>+Database: Query user credentials
+    LoginController->>+User: verifyCredentials(email, password)
+    User->>+Database: Query user credentials
     Database-->>-User: Return user data
     User-->>-LoginController: Authentication result
     
@@ -31,52 +30,49 @@ sequenceDiagram
         LoginController-->>AuthSystem: Return authentication errors
         AuthSystem-->>Doctor: Display login errors
     else Authentication Successful
-        LoginController-->>+User: checkUserRole()
+        LoginController->>+User: checkUserRole()
         User-->>-LoginController: Return role ('Doctor')
         
-        LoginController-->>+DoctorModel: getDoctorProfile(userId)
-        DoctorModel-->>+Database: Query doctor profile
+        LoginController->>+DoctorModel: getDoctorProfile(userId)
+        DoctorModel->>+Database: Query doctor profile
         Database-->>-DoctorModel: Return doctor data
         DoctorModel-->>-LoginController: Doctor profile data
         
-        LoginController-->>+DoctorModel: isProfileCompleted()
-        DoctorModel-->>DoctorModel: checkBasicInfo(title, experience, address)
-        DoctorModel-->>DoctorModel: checkCategoryAssignment()
-        DoctorModel-->>+DoctorSchedule: hasActiveSchedule()
-        DoctorSchedule-->>+Database: Query doctor schedules
+        LoginController->>+DoctorModel: isProfileCompleted()
+        DoctorModel->>DoctorModel: checkBasicInfo(title, experience, address)
+        DoctorModel->>DoctorModel: checkCategoryAssignment()
+        DoctorModel->>+DoctorSchedule: hasActiveSchedule()
+        DoctorSchedule->>+Database: Query doctor schedules
         Database-->>-DoctorSchedule: Return schedule data
         DoctorSchedule-->>-DoctorModel: Schedule availability status
         DoctorModel-->>-LoginController: Profile completion status
         
         alt Profile Incomplete
-            LoginController-->>+DoctorModel: getIncompleteProfileNotification()
+            LoginController->>+DoctorModel: getIncompleteProfileNotification()
             DoctorModel-->>-LoginController: Missing profile data list
             LoginController-->>AuthSystem: Redirect to profile completion
             AuthSystem-->>Doctor: Display profile completion form
             
-            Doctor-->>+DoctorController: Access profile completion
-            DoctorController-->>+CategoryModel: getAvailableCategories()
-            CategoryModel-->>+Database: Query medical categories
+            Doctor->>+DoctorController: Access profile completion
+            DoctorController->>+CategoryModel: getAvailableCategories()
+            CategoryModel->>+Database: Query medical categories
             Database-->>-CategoryModel: Return categories list
             CategoryModel-->>-DoctorController: Categories data
             DoctorController-->>-Doctor: Display profile form with categories
             
-            Doctor-->>+DoctorController: Submit professional details
-            Note over Doctor,DoctorController: Professional info: title, specialty,<br/>experience years, consultation fee,<br/>address, working schedule
+            Doctor->>+DoctorController: Submit professional details
             
-            DoctorController-->>+DoctorModel: updateProfile(doctorId, professionalData)
-            DoctorModel-->>DoctorModel: validateProfessionalData()
-            DoctorModel-->>+DoctorSchedule: updateSchedule(scheduleData)
-            DoctorSchedule-->>+Database: Update doctor schedules
+            DoctorController->>+DoctorModel: updateProfile(doctorId, professionalData)
+            DoctorModel->>DoctorModel: validateProfessionalData()
+            DoctorModel->>+DoctorSchedule: updateSchedule(scheduleData)
+            DoctorSchedule->>+Database: Update doctor schedules
             Database-->>-DoctorSchedule: Confirm schedule update
             DoctorSchedule-->>-DoctorModel: Schedule update confirmation
-            DoctorModel-->>+Database: Update doctor profile
+            DoctorModel->>+Database: Update doctor profile
             Database-->>-DoctorModel: Confirm profile update
-            DoctorModel-->>DoctorModel: setProfileCompleted(true)
+            DoctorModel->>DoctorModel: setProfileCompleted(true)
             DoctorModel-->>-DoctorController: Profile completion successful
             
-            DoctorController-->>+AdminUser: notifyNewDoctorProfile(doctorData)
-            AdminUser-->>-DoctorController: Notification sent
             DoctorController-->>-Doctor: Profile completed successfully
             
         else Profile Complete
@@ -86,16 +82,16 @@ sequenceDiagram
     end
     LoginController-->>-AuthSystem: Complete login process
     
-    Doctor-->>+DoctorController: Access appointments management
-    DoctorController-->>+DoctorModel: getScheduledAppointments(doctorId)
-    DoctorModel-->>+Database: Query doctor appointments
+    Doctor->>+DoctorController: Access appointments management
+    DoctorController->>+DoctorModel: getScheduledAppointments(doctorId)
+    DoctorModel->>+Database: Query doctor appointments
     Database-->>-DoctorModel: Return appointments data
     DoctorModel-->>-DoctorController: Appointments list
     DoctorController-->>-Doctor: Display appointments interface
     
-    Doctor-->>+DoctorController: Update schedule availability
-    DoctorController-->>+DoctorSchedule: modifySchedule(doctorId, newSchedule)
-    DoctorSchedule-->>+Database: Update schedule data
+    Doctor->>+DoctorController: Update schedule availability
+    DoctorController->>+DoctorSchedule: modifySchedule(doctorId, newSchedule)
+    DoctorSchedule->>+Database: Update schedule data
     Database-->>-DoctorSchedule: Confirm schedule changes
     DoctorSchedule-->>-DoctorController: Schedule updated
     DoctorController-->>-Doctor: Schedule modification successful
@@ -105,27 +101,26 @@ sequenceDiagram
 ## Mermaid Symbols Legend
 
 ### Arrow Types (أنواع الأسهم):
-- **`-->>`** : Dashed arrow (سهم منقط) - للرسائل غير المتزامنة أو المعلوماتية
-- **`->>`** : Solid arrow (سهم متصل) - للرسائل المتزامنة أو الطلبات المباشرة
-- **`-->>-`** : Dashed arrow with deactivation (سهم منقط مع إنهاء التفعيل) - إرجاع النتيجة وإنهاء العملية
+- **`->>`** : Solid arrow (سهم متصل) - للطلبات والاستدعاءات (Requests/Calls)
+- **`-->>`** : Dashed arrow (سهم منقط) - للاستجابات وإرجاع النتائج (Responses/Returns)
 - **`->>+`** : Solid arrow with activation (سهم متصل مع تفعيل) - بداية عملية جديدة
+- **`-->>-`** : Dashed arrow with deactivation (سهم منقط مع إنهاء التفعيل) - إرجاع النتيجة وإنهاء العملية
 
 ### Control Flow (تحكم في التدفق):
 - **`alt`** : Alternative (البديل) - يمثل شرط if/else
 - **`else`** : Otherwise (وإلا) - الحالة البديلة في الشرط
 - **`end`** : End block (نهاية الكتلة) - إنهاء كتلة التحكم
-- **`Note over`** : Note (ملاحظة) - لإضافة معلومات توضيحية
 
 ### Activation Symbols (رموز التفعيل):
 - **`+`** : Activate lifeline (تفعيل خط الحياة) - بداية معالجة في المكون
 - **`-`** : Deactivate lifeline (إلغاء تفعيل خط الحياة) - انتهاء المعالجة في المكون
 
 ### Practical Examples من المخطط:
-1. **`Doctor-->>+AuthSystem`** : الطبيب يرسل طلب للنظام ويبدأ تفعيله
-2. **`AuthSystem-->>-Doctor`** : النظام يرد على الطبيب وينهي التفعيل
-3. **`alt Authentication Failed`** : إذا فشل تسجيل الدخول
-4. **`else Authentication Successful`** : وإلا إذا نجح تسجيل الدخول
-5. **`DoctorModel-->>DoctorModel`** : عملية داخلية في المكون نفسه (self-call)
+1. **`Doctor->>+AuthSystem`** : الطبيب يرسل طلب للنظام ويبدأ تفعيله (Request)
+2. **`AuthSystem-->>-Doctor`** : النظام يرد على الطبيب وينهي التفعيل (Response)
+3. **`LoginController->>+User`** : تفعيل المكون لبداية العملية (Activation)
+4. **`User-->>-LoginController`** : إنهاء العملية وإرجاع النتيجة (Deactivation)
+5. **`DoctorModel->>DoctorModel`** : عملية داخلية في المكون نفسه (self-call)
 
 ## Diagram Explanation
 
@@ -141,7 +136,6 @@ This sequence diagram illustrates the doctor login workflow in our clinic system
 - **DoctorSchedule**: Manages doctor availability schedules (`Modules\Doctors\Entities\DoctorSchedule`)
 - **Category Model**: Handles medical specialties (`Modules\Specialties\Entities\Category`)
 - **Database**: Persistent data storage system
-- **Admin**: System administrator for profile approval notifications
 
 ### Key Steps:
 
@@ -168,7 +162,6 @@ This sequence diagram illustrates the doctor login workflow in our clinic system
      - Practice address and location
      - Weekly availability schedule
    - System validates and saves professional data
-   - Admin receives notification of new doctor profile
    - Profile is marked as completed
 
 4. **Dashboard Access (if profile complete)**
@@ -194,7 +187,6 @@ The diagram uses activation boxes (the vertical bars) to show when each componen
 
 ### Key Differences from Patient Flow:
 - **Role-Based Redirection**: Doctors require professional profile completion
-- **Admin Notifications**: New doctor profiles trigger admin review notifications
 - **Schedule Management**: Doctors must set up availability schedules
 - **Professional Verification**: Additional validation for medical credentials
 - **Specialty Assignment**: Doctors must be assigned to medical categories

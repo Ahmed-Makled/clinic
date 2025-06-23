@@ -39,17 +39,18 @@ start
 
 :Select Action;
 
-if (Create New Specialty?) then (Yes)
+fork
+    :Create New Specialty;
     :Fill Specialty Creation Form
     - Specialty name
     - Description
     - Status (Active/Inactive);
-    
+
     :Validate Form Data;
-    
+
     if (Valid Data?) then (Yes)
         :Check Name Uniqueness;
-        
+
         if (Name Available?) then (Yes)
             :Create Specialty;
             :Generate Slug;
@@ -60,22 +61,23 @@ if (Create New Specialty?) then (Yes)
     else (No)
         :Show Validation Errors;
     endif
-    
-elseif (Edit Specialty?) then (Yes)
+
+fork again
+    :Edit Specialty;
     :Select Specialty to Edit;
-    
+
     :Load Edit Form with Current Data;
-    
+
     :Modify Specialty Information
     - Update name
     - Update description
     - Change status;
-    
+
     :Validate Updated Data;
-    
+
     if (Valid Data?) then (Yes)
         :Check Name Uniqueness (excluding current);
-        
+
         if (Name Available?) then (Yes)
             :Update Specialty;
             :Update Slug if name changed;
@@ -86,19 +88,20 @@ elseif (Edit Specialty?) then (Yes)
     else (No)
         :Show Validation Errors;
     endif
-    
-elseif (Delete Specialty?) then (Yes)
+
+fork again
+    :Delete Specialty;
     :Select Specialty to Delete;
-    
+
     :Check if Specialty has Doctors;
-    
+
     if (Has Associated Doctors?) then (Yes)
         :Show Error Message
         "Cannot delete specialty
         linked to doctors";
     else (No)
         :Show Delete Confirmation;
-        
+
         if (Confirm Delete?) then (Yes)
             :Delete Specialty;
             :Show Success Message;
@@ -106,14 +109,16 @@ elseif (Delete Specialty?) then (Yes)
             :Cancel Delete Operation;
         endif
     endif
-    
-else (Search/Filter)
+
+fork again
+    :Search/Filter;
     :Apply Search Criteria
     - By specialty name
     - By status (Active/Inactive);
-    
+
     :Display Filtered Results;
-endif
+
+end fork
 
 :Return to Specialties List;
 
@@ -123,9 +128,9 @@ stop
 legend right
 **Map/Legend:**
 ○ Start/End Points
-◇ Decision Points  
+◇ Decision Points
 □ Activities
 → Flow Direction
 endlegend
 
-@enduml 
+@enduml

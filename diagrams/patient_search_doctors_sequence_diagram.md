@@ -13,60 +13,60 @@ sequenceDiagram
     participant Category as Category Model
     participant Database
     
-    Patient-->>+SearchPage: Visit search page
-    SearchPage-->>+PageController: getSearchPage()
-    PageController-->>+Category: getActiveCategories()
-    Category-->>+Database: Query categories
+    Patient->>+SearchPage: Visit search page
+    SearchPage->>+PageController: getSearchPage()
+    PageController->>+Category: getActiveCategories()
+    Category->>+Database: Query categories
     Database-->>-Category: Return categories
     Category-->>-PageController: Categories list
-    PageController-->>+Doctor: getActiveDoctors()
-    Doctor-->>+Database: Query doctors with filters
+    PageController->>+Doctor: getActiveDoctors()
+    Doctor->>+Database: Query doctors with filters
     Database-->>-Doctor: Return doctors
     Doctor-->>-PageController: Doctors list
     PageController-->>-SearchPage: Page data
     SearchPage-->>-Patient: Display search page with filters
     
-    Patient-->>+SearchPage: Apply search filters (category, location, etc.)
-    SearchPage-->>+PageController: search(request)
+    Patient->>+SearchPage: Apply search filters (category, location, etc.)
+    SearchPage->>+PageController: search(request)
     
     alt Has Category Filter
-        PageController-->>+Doctor: filterByCategory(categoryId)
-        Doctor-->>+Database: Query doctors by category
+        PageController->>+Doctor: filterByCategory(categoryId)
+        Doctor->>+Database: Query doctors by category
         Database-->>-Doctor: Return filtered doctors
         Doctor-->>-PageController: Category filtered results
     else Has Governorate Filter
-        PageController-->>+Doctor: filterByGovernorate(governorateId)
-        Doctor-->>+Database: Query doctors by governorate
+        PageController->>+Doctor: filterByGovernorate(governorateId)
+        Doctor->>+Database: Query doctors by governorate
         Database-->>-Doctor: Return filtered doctors
         Doctor-->>-PageController: Governorate filtered results
     else Has City Filter
-        PageController-->>+Doctor: filterByCity(cityId)
-        Doctor-->>+Database: Query doctors by city
+        PageController->>+Doctor: filterByCity(cityId)
+        Doctor->>+Database: Query doctors by city
         Database-->>-Doctor: Return filtered doctors
         Doctor-->>-PageController: City filtered results
     else Multiple Filters
-        PageController-->>+Doctor: applyMultipleFilters(filters)
-        Doctor-->>+Database: Query with multiple conditions
+        PageController->>+Doctor: applyMultipleFilters(filters)
+        Doctor->>+Database: Query with multiple conditions
         Database-->>-Doctor: Return filtered doctors
         Doctor-->>-PageController: Combined filtered results
     end
     
-    PageController-->>+Doctor: paginateResults(12)
+    PageController->>+Doctor: paginateResults(12)
     Doctor-->>-PageController: Paginated doctors
     PageController-->>-SearchPage: Search results
     SearchPage-->>-Patient: Display doctor cards with pagination
     
-    Patient-->>+SearchPage: View doctor details
-    SearchPage-->>+DoctorsController: showDoctor(doctorId)
-    DoctorsController-->>+Doctor: getDoctorDetails(doctorId)
-    Doctor-->>+Database: Query doctor full profile
+    Patient->>+SearchPage: View doctor details
+    SearchPage->>+DoctorsController: showDoctor(doctorId)
+    DoctorsController->>+Doctor: getDoctorDetails(doctorId)
+    Doctor->>+Database: Query doctor full profile
     Database-->>-Doctor: Return doctor data
     Doctor-->>-DoctorsController: Doctor profile
     DoctorsController-->>-SearchPage: Doctor details page
     SearchPage-->>-Patient: Display doctor profile
     
-    Patient-->>+SearchPage: Change view mode (grid/list)
-    SearchPage-->>SearchPage: toggleViewMode()
+    Patient->>+SearchPage: Change view mode (grid/list)
+    SearchPage->>SearchPage: toggleViewMode()
     SearchPage-->>-Patient: Updated view layout
     
 ```
@@ -74,8 +74,8 @@ sequenceDiagram
 ## Mermaid Symbols Legend
 
 ### Arrow Types:
-- **`-->>`** : Dashed arrow - للرسائل غير المتزامنة أو المعلوماتية
-- **`->>`** : Solid arrow - للرسائل المتزامنة أو الطلبات المباشرة
+- **`->>`** : Solid arrow - للطلبات المباشرة والاستدعاءات
+- **`-->>`** : Dashed arrow - للاستجابات وإرجاع النتائج
 - **`-->>-`** : Dashed arrow with deactivation - إرجاع النتيجة وإنهاء العملية
 - **`->>+`** : Solid arrow with activation - بداية عملية جديدة
 
@@ -89,12 +89,12 @@ sequenceDiagram
 - **`-`** : Deactivate lifeline - انتهاء المعالجة في المكون
 
 ### Practical Examples:
-1. **`Patient-->>+SearchPage`** : المريض يطلب صفحة البحث
-2. **`SearchPage-->>-Patient`** : الصفحة ترد على المريض وتنهي التفعيل
+1. **`Patient->>+SearchPage`** : المريض يطلب صفحة البحث (طلب)
+2. **`SearchPage-->>-Patient`** : الصفحة ترد على المريض وتنهي التفعيل (استجابة)
 3. **`alt Has Category Filter`** : إذا كان هناك فلتر للتخصص
 4. **`else Has Governorate Filter`** : وإلا إذا كان هناك فلتر للمحافظة
 5. **`else Has City Filter`** : وإلا إذا كان هناك فلتر للمدينة
-6. **`Doctor-->>Doctor`** : عملية داخلية في نموذج الطبيب
+6. **`Doctor->>Doctor`** : عملية داخلية في نموذج الطبيب
 
 ## Diagram Explanation
 

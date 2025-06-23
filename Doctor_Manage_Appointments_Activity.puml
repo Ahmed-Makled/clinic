@@ -36,7 +36,7 @@ if (Apply Filters?) then (yes)
   • Status
   • Date Range
   • Patient Name;
-  
+
   :Filter Results;
 endif
 
@@ -51,7 +51,6 @@ fork again
     :Mark as Completed;
   else (no)
     :Show Error Message;
-    stop
   endif
 fork again
   :Cancel Appointment;
@@ -59,7 +58,6 @@ fork again
     :Mark as Cancelled;
   else (no)
     :Show Error Message;
-    stop
   endif
 end fork
 
@@ -78,4 +76,4 @@ legend right
 → Flow
 endlegend
 
-@enduml 
+@enduml

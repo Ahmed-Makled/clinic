@@ -11,54 +11,43 @@ sequenceDiagram
     participant AppointmentModel as Appointment Model
     participant PatientModel as Patient Model
     participant PaymentModel as Payment Model
-    participant NotificationSystem as Notification System
     participant Database
-    participant PatientUser as Patient User
     
-    Doctor-->>+DoctorController: Access appointments dashboard
-    DoctorController-->>+AuthSystem: validateDoctorAuth()
+    Doctor->>+DoctorController: Access appointments dashboard
+    DoctorController->>+AuthSystem: validateDoctorAuth()
     AuthSystem-->>-DoctorController: Doctor authentication confirmed
     
-    DoctorController-->>+AppointmentModel: getAppointmentsByDoctor(doctorId, filters)
-    AppointmentModel-->>+Database: Query appointments with filters
-    Note over AppointmentModel,Database: Filters: status, date range,<br/>patient name, payment status
+    DoctorController->>+AppointmentModel: getAppointmentsByDoctor(doctorId, filters)
+    AppointmentModel->>+Database: Query appointments with filters
     Database-->>-AppointmentModel: Return filtered appointments
     AppointmentModel-->>-DoctorController: Appointments list with patient data
     
     DoctorController-->>Doctor: Display appointments dashboard
-    Note over Doctor,DoctorController: Shows: scheduled, completed,<br/>cancelled appointments with filters
     
     alt View Appointment Details
-        Doctor-->>DoctorController: Select appointment for details
-        DoctorController-->>+AppointmentModel: getAppointmentDetails(appointmentId)
-        AppointmentModel-->>+Database: Query appointment with relationships
+        Doctor->>DoctorController: Select appointment for details
+        DoctorController->>+AppointmentModel: getAppointmentDetails(appointmentId)
+        AppointmentModel->>+Database: Query appointment with relationships
         Database-->>-AppointmentModel: Return appointment with patient/payment data
         AppointmentModel-->>-DoctorController: Complete appointment details
         DoctorController-->>Doctor: Display appointment details modal
-        Note over Doctor,DoctorController: Shows: patient info, time,<br/>fees, payment status, notes
     end
     
     alt Complete Appointment Flow
-        Doctor-->>DoctorController: Complete appointment action
-        DoctorController-->>+AppointmentModel: validateAppointmentOwnership(appointmentId, doctorId)
+        Doctor->>DoctorController: Complete appointment action
+        DoctorController->>+AppointmentModel: validateAppointmentOwnership(appointmentId, doctorId)
         AppointmentModel-->>-DoctorController: Ownership validation result
         
         alt Ownership Valid
-            DoctorController-->>+AppointmentModel: validateAppointmentTiming(scheduledAt)
-            AppointmentModel-->>AppointmentModel: checkIfTimeHasPassed()
+            DoctorController->>+AppointmentModel: validateAppointmentTiming(scheduledAt)
+            AppointmentModel->>AppointmentModel: checkIfTimeHasPassed()
             AppointmentModel-->>-DoctorController: Timing validation result
             
             alt Time Valid (appointment time has passed)
-                DoctorController-->>+AppointmentModel: updateAppointmentStatus(appointmentId, 'completed')
-                AppointmentModel-->>+Database: Update appointment status
+                DoctorController->>+AppointmentModel: updateAppointmentStatus(appointmentId, 'completed')
+                AppointmentModel->>+Database: Update appointment status
                 Database-->>-AppointmentModel: Confirm status update
                 AppointmentModel-->>-DoctorController: Update successful
-                
-                DoctorController-->>+NotificationSystem: sendCompletionNotification(appointment)
-                NotificationSystem-->>+PatientUser: AppointmentCompletedNotification
-                Note over NotificationSystem,PatientUser: Email & Database notification:<br/>appointment completed
-                PatientUser-->>-NotificationSystem: Notification delivered
-                NotificationSystem-->>-DoctorController: Notification sent
                 
                 DoctorController-->>Doctor: Display success message
             else Time Invalid (appointment time not yet reached)
@@ -70,21 +59,15 @@ sequenceDiagram
     end
     
     alt Cancel Appointment Flow
-        Doctor-->>DoctorController: Cancel appointment action
-        DoctorController-->>+AppointmentModel: validateAppointmentOwnership(appointmentId, doctorId)
+        Doctor->>DoctorController: Cancel appointment action
+        DoctorController->>+AppointmentModel: validateAppointmentOwnership(appointmentId, doctorId)
         AppointmentModel-->>-DoctorController: Ownership validation result
         
         alt Ownership Valid
-            DoctorController-->>+AppointmentModel: updateAppointmentStatus(appointmentId, 'cancelled')
-            AppointmentModel-->>+Database: Update appointment status
+            DoctorController->>+AppointmentModel: updateAppointmentStatus(appointmentId, 'cancelled')
+            AppointmentModel->>+Database: Update appointment status
             Database-->>-AppointmentModel: Confirm status update
             AppointmentModel-->>-DoctorController: Update successful
-            
-            DoctorController-->>+NotificationSystem: sendCancellationNotification(appointment)
-            NotificationSystem-->>+PatientUser: AppointmentCancelledNotification
-            Note over NotificationSystem,PatientUser: Email & Database notification:<br/>appointment cancelled
-            PatientUser-->>-NotificationSystem: Notification delivered
-            NotificationSystem-->>-DoctorController: Notification sent
             
             DoctorController-->>Doctor: Display cancellation success message
         else Ownership Invalid
@@ -93,28 +76,26 @@ sequenceDiagram
     end
     
     alt Filter Appointments
-        Doctor-->>DoctorController: Apply appointment filters
-        Note over Doctor,DoctorController: Filter options: status, date range,<br/>patient name, appointment ID
-        DoctorController-->>+AppointmentModel: getFilteredAppointments(doctorId, filterCriteria)
-        AppointmentModel-->>+Database: Query with applied filters
+        Doctor->>DoctorController: Apply appointment filters
+        DoctorController->>+AppointmentModel: getFilteredAppointments(doctorId, filterCriteria)
+        AppointmentModel->>+Database: Query with applied filters
         Database-->>-AppointmentModel: Return filtered results
         AppointmentModel-->>-DoctorController: Filtered appointments list
         DoctorController-->>Doctor: Display filtered results
     end
     
     alt Check Payment Status
-        Doctor-->>DoctorController: View payment information
-        DoctorController-->>+PaymentModel: getPaymentStatus(appointmentId)
-        PaymentModel-->>+Database: Query payment records
+        Doctor->>DoctorController: View payment information
+        DoctorController->>+PaymentModel: getPaymentStatus(appointmentId)
+        PaymentModel->>+Database: Query payment records
         Database-->>-PaymentModel: Return payment data
         PaymentModel-->>-DoctorController: Payment status (paid/unpaid)
         DoctorController-->>Doctor: Display payment information
-        Note over Doctor,DoctorController: Shows: payment method,<br/>transaction ID, payment status
     end
     
-    Doctor-->>DoctorController: Refresh appointments dashboard
-    DoctorController-->>+AppointmentModel: getCurrentAppointments(doctorId)
-    AppointmentModel-->>+Database: Query latest appointment data
+    Doctor->>DoctorController: Refresh appointments dashboard
+    DoctorController->>+AppointmentModel: getCurrentAppointments(doctorId)
+    AppointmentModel->>+Database: Query latest appointment data
     Database-->>-AppointmentModel: Return updated appointments
     AppointmentModel-->>-DoctorController: Updated appointments list
     DoctorController-->>Doctor: Display refreshed dashboard
@@ -125,26 +106,26 @@ sequenceDiagram
 ## Mermaid Symbols Legend
 
 ### Arrow Types (أنواع الأسهم):
-- **`-->>`** : Dashed arrow (سهم منقط) - للرسائل غير المتزامنة أو المعلوماتية
-- **`->>`** : Solid arrow (سهم متصل) - للرسائل المتزامنة أو الطلبات المباشرة
-- **`-->>-`** : Dashed arrow with deactivation (سهم منقط مع إنهاء التفعيل) - إرجاع النتيجة وإنهاء العملية
+- **`->>`** : Solid arrow (سهم متصل) - للطلبات والاستدعاءات (Requests/Calls)
+- **`-->>`** : Dashed arrow (سهم منقط) - للاستجابات وإرجاع النتائج (Responses/Returns)
 - **`->>+`** : Solid arrow with activation (سهم متصل مع تفعيل) - بداية عملية جديدة
+- **`-->>-`** : Dashed arrow with deactivation (سهم منقط مع إنهاء التفعيل) - إرجاع النتيجة وإنهاء العملية
 
 ### Control Flow (تحكم في التدفق):
 - **`alt`** : Alternative (البديل) - يمثل شرط if/else
 - **`else`** : Otherwise (وإلا) - الحالة البديلة في الشرط  
 - **`end`** : End block (نهاية الكتلة) - إنهاء كتلة التحكم
-- **`Note over`** : Note (ملاحظة) - لإضافة معلومات توضيحية
 
 ### Activation Symbols (رموز التفعيل):
 - **`+`** : Activate lifeline (تفعيل خط الحياة) - بداية معالجة في المكون
 - **`-`** : Deactivate lifeline (إلغاء تفعيل خط الحياة) - انتهاء المعالجة في المكون
 
 ### Practical Examples من المخطط:
-1. **`Doctor-->>+DoctorController`** : الطبيب يرسل طلب للكنترولر ويبدأ تفعيله
-2. **`DoctorController-->>-Doctor`** : الكنترولر يرد على الطبيب وينهي التفعيل
+1. **`Doctor->>+DoctorController`** : الطبيب يرسل طلب للكنترولر ويبدأ تفعيله (Request)
+2. **`DoctorController-->>Doctor`** : الكنترولر يرد على الطبيب (Response)
 3. **`alt View Appointment Details`** : إذا اختار الطبيب عرض تفاصيل الحجز
-4. **`Note over Doctor,DoctorController`** : ملاحظة توضيحية تشمل عدة مكونات
+4. **`AppointmentModel->>AppointmentModel`** : عملية داخلية في نفس المكون (self-call)
+5. **`Database-->>-AppointmentModel`** : إرجاع البيانات وإنهاء التفعيل
 
 ## Diagram Explanation
 
@@ -157,9 +138,7 @@ This sequence diagram illustrates the doctor appointment management workflow in 
 - **Appointment Model**: Data model for appointment entities (`Modules\Appointments\Entities\Appointment`)
 - **Patient Model**: Data model for patient information (`Modules\Patients\Entities\Patient`)
 - **Payment Model**: Handles payment status and information (`Modules\Payments\Entities\Payment`)
-- **Notification System**: Manages patient notifications for appointment changes
 - **Database**: Persistent data storage system
-- **Patient User**: The patient receiving notifications about appointment changes
 
 ### Key Workflows:
 
@@ -179,14 +158,12 @@ This sequence diagram illustrates the doctor appointment management workflow in 
    - System validates appointment ownership and timing constraints
    - Only appointments whose scheduled time has passed can be completed
    - Status is updated to 'completed' in database
-   - Patient receives automatic notification via email and database notification
    - Success confirmation is displayed to doctor
 
 4. **Cancel Appointment Flow**
    - Doctor initiates appointment cancellation
    - System validates appointment ownership
    - Appointment status is updated to 'cancelled'
-   - Patient receives automatic cancellation notification
    - Cancellation confirmation is displayed to doctor
 
 5. **Payment Status Monitoring**
@@ -203,7 +180,6 @@ This sequence diagram illustrates the doctor appointment management workflow in 
 - **Advanced Filtering**: By status, date range, patient name, appointment ID, and payment status
 - **Bulk Operations**: Viewing multiple appointments with status indicators
 - **Real-time Updates**: Dashboard reflects immediate changes after actions
-- **Notification Tracking**: System confirms successful notification delivery to patients
 
 ### Security & Validation:
 - **Ownership Validation**: Ensures doctors can only manage their own appointments
@@ -215,12 +191,7 @@ This sequence diagram illustrates the doctor appointment management workflow in 
 The system handles three appointment statuses:
 - **Scheduled** (قيد الانتظار): Active appointments awaiting completion
 - **Completed** (مكتمل): Successfully finished appointments
-- **Cancelled** (ملغي): Cancelled appointments with automatic patient notification
-
-### Notification System:
-- **AppointmentCompletedNotification**: Sent when appointment is marked complete
-- **AppointmentCancelledNotification**: Sent when appointment is cancelled
-- **Multi-channel Delivery**: Email and database notifications for reliable delivery
+- **Cancelled** (ملغي): Cancelled appointments
 
 ### Integration Points:
 - **Payment System**: Real-time payment status from Stripe
@@ -228,4 +199,4 @@ The system handles three appointment statuses:
 - **Schedule Management**: Integration with doctor availability schedules
 
 ### Note:
-The system ensures data integrity through transaction management and provides comprehensive audit trails for all appointment status changes. All patient communications are automated to maintain consistent service quality. 
+The system ensures data integrity through transaction management and provides comprehensive audit trails for all appointment status changes. Patient notifications are handled by background services separate from the doctor workflow. 

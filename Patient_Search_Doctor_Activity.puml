@@ -36,10 +36,17 @@ start
 
 if (Results Found?) then (no)
   :Show "No Doctors Found";
-  stop
 else (yes)
   :View Doctors List;
 endif
+
+fork
+  :Sort Results by Rating;
+fork again
+  :Sort Results by Price;
+fork again
+  :Filter by Availability;
+end fork
 
 :Select Doctor;
 
@@ -49,7 +56,6 @@ if (Book Appointment?) then (yes)
   :Proceed to Booking;
 else (no)
   :Return to Search;
-  stop
 endif
 
 stop
@@ -61,4 +67,4 @@ legend right
 → Flow
 endlegend
 
-@enduml 
+@enduml

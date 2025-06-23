@@ -51,9 +51,9 @@ endif
 legend right
 **Map/Legend:**
 ○ Start/End Points
-◇ Decision Points  
+◇ Decision Points
 □ Activities
 → Flow Direction
 endlegend
 
-@enduml 
+@enduml

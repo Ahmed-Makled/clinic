@@ -14,14 +14,14 @@ sequenceDiagram
     participant PatientModel as Patient Model
     participant Database
     
-    Patient-->>+AuthSystem: Visit registration page
+    Patient->>+AuthSystem: Visit registration page
     AuthSystem-->>-Patient: Display registration form
     
-    Patient-->>+AuthSystem: Submit registration form
-    AuthSystem-->>+RegisterController: register(name, email, phone, password)
+    Patient->>+AuthSystem: Submit registration form
+    AuthSystem->>+RegisterController: register(name, email, phone, password)
     
-    RegisterController-->>+User: validateCredentials(email, phone)
-    User-->>+Database: Check existing users
+    RegisterController->>+User: validateCredentials(email, phone)
+    User->>+Database: Check existing users
     Database-->>-User: Return query results
     User-->>-RegisterController: Validation result
     
@@ -29,37 +29,37 @@ sequenceDiagram
         RegisterController-->>-AuthSystem: Return validation errors
         AuthSystem-->>Patient: Display validation errors
     else Validation Passed
-        RegisterController-->>+User: create(name, email, phone, password)
-        User-->>User: hashPassword(password)
-        User-->>User: assignRole('Patient')
-        User-->>+Database: Insert new user
+        RegisterController->>+User: create(name, email, phone, password)
+        User->>User: hashPassword(password)
+        User->>User: assignRole('Patient')
+        User->>+Database: Insert new user
         Database-->>-User: Confirm user creation
         User-->>-RegisterController: Return created user
         
-        RegisterController-->>+AuthSystem: login(user)
+        RegisterController->>+AuthSystem: login(user)
         AuthSystem-->>-Patient: Redirect to dashboard
-        AuthSystem-->>-RegisterController: Login successful
+        AuthSystem->>-RegisterController: Login successful
     end
     
-    Patient-->>+AuthSystem: Login with credentials (later sessions)
-    AuthSystem-->>+LoginController: login(email, password)
-    LoginController-->>+User: verifyCredentials(email, password)
-    User-->>+Database: Query user credentials
+    Patient->>+AuthSystem: Login with credentials (later sessions)
+    AuthSystem->>+LoginController: login(email, password)
+    LoginController->>+User: verifyCredentials(email, password)
+    User->>+Database: Query user credentials
     Database-->>-User: Return user data
     User-->>-LoginController: Authentication result
     LoginController-->>-AuthSystem: Authentication successful
     AuthSystem-->>-Patient: Redirect to patient dashboard
     
-    Patient-->>+PatientController: Access profile completion form
-    PatientController-->>+PatientModel: getProfile(patientId)
-    PatientModel-->>+Database: Query patient profile
+    Patient->>+PatientController: Access profile completion form
+    PatientController->>+PatientModel: getProfile(patientId)
+    PatientModel->>+Database: Query patient profile
     Database-->>-PatientModel: Return profile data
     PatientModel-->>-PatientController: Profile data
     PatientController-->>-Patient: Display profile form
     
-    Patient-->>+PatientController: Submit medical history & personal details
-    PatientController-->>+PatientModel: updateProfile(patientId, details)
-    PatientModel-->>+Database: Update patient profile
+    Patient->>+PatientController: Submit medical history & personal details
+    PatientController->>+PatientModel: updateProfile(patientId, details)
+    PatientModel->>+Database: Update patient profile
     Database-->>-PatientModel: Confirm profile update
     PatientModel-->>-PatientController: Profile updated
     PatientController-->>-Patient: Profile completion successful
@@ -69,8 +69,8 @@ sequenceDiagram
 ## Mermaid Symbols Legend
 
 ### Arrow Types (أنواع الأسهم):
-- **`-->>`** : Dashed arrow (سهم منقط) - للرسائل غير المتزامنة أو المعلوماتية
-- **`->>`** : Solid arrow (سهم متصل) - للرسائل المتزامنة أو الطلبات المباشرة
+- **`->>`** : Solid arrow (سهم متصل) - للطلبات المباشرة والاستدعاءات
+- **`-->>`** : Dashed arrow (سهم منقط) - للاستجابات وإرجاع النتائج
 - **`-->>-`** : Dashed arrow with deactivation (سهم منقط مع إنهاء التفعيل) - إرجاع النتيجة وإنهاء العملية
 - **`->>+`** : Solid arrow with activation (سهم متصل مع تفعيل) - بداية عملية جديدة
 
@@ -84,11 +84,11 @@ sequenceDiagram
 - **`-`** : Deactivate lifeline (إلغاء تفعيل خط الحياة) - انتهاء المعالجة في المكون
 
 ### Practical Examples من المخطط:
-1. **`Patient-->>+AuthSystem`** : المريض يرسل طلب للنظام ويبدأ تفعيله
-2. **`AuthSystem-->>-Patient`** : النظام يرد على المريض وينهي التفعيل
+1. **`Patient->>+AuthSystem`** : المريض يرسل طلب للنظام ويبدأ تفعيله (طلب)
+2. **`AuthSystem-->>-Patient`** : النظام يرد على المريض وينهي التفعيل (استجابة)
 3. **`alt Validation Failed`** : إذا فشل التحقق من البيانات
 4. **`else Validation Passed`** : وإلا إذا نجح التحقق من البيانات
-5. **`User-->>User`** : عملية داخلية في المكون نفسه (self-call)
+5. **`User->>User`** : عملية داخلية في المكون نفسه (self-call)
 
 ## Diagram Explanation
 

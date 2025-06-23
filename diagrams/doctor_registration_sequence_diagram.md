@@ -44,7 +44,7 @@ sequenceDiagram
     AdminUser->>DoctorController: Review doctor profile
     AdminUser->>DoctorController: Approve doctor profile
     DoctorController->>DoctorModel: updateStatus(doctorId, 'active')
-    DoctorModel->>Doctor: Send approval notification
+    DoctorModel-->>Doctor: Send approval notification
     
     DoctorModel-->>DoctorController: is_profile_completed = true
     DoctorController-->>Doctor: Profile activated & visible to patients
