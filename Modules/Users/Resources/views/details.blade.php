@@ -167,7 +167,11 @@
                         <div class="info-content">
                             <label>التخصص</label>
                             <span class="info-value">
-                                {{ $user->doctor->categories->pluck('name')->implode(', ') ?? 'غير محدد' }}
+                                @php
+                                    $categories = optional($user->doctor->categories);
+                                    $categoryNames = $categories->isNotEmpty() ? $categories->pluck('name')->implode(', ') : 'غير محدد';
+                                @endphp
+                                {{ $categoryNames }}
                             </span>
                         </div>
                     </div>

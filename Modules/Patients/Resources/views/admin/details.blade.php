@@ -195,7 +195,11 @@
                                             <div>
                                                 <h4 class="doctor-name">د. {{ $appointment->doctor->name }}</h4>
                                                 <div class="doctor-specialties">
-                                                    {{ $appointment->doctor->categories->pluck('name')->implode(' ، ') }}
+                                                    @php
+                                                        $categories = optional($appointment->doctor->categories);
+                                                        $categoryNames = $categories->isNotEmpty() ? $categories->pluck('name')->implode(' ، ') : 'غير محدد';
+                                                    @endphp
+                                                    {{ $categoryNames }}
                                                 </div>
                                             </div>
                                         </div>
