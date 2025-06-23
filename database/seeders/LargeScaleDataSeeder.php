@@ -200,11 +200,26 @@ class LargeScaleDataSeeder extends Seeder
         foreach ($chunks as $chunk) {
             $data = [];
             foreach ($chunk as $specialty) {
+                // Generate slug with fallback for Arabic text
+                $slug = \Illuminate\Support\Str::slug($specialty['name']);
+
+                // If slug is empty (common with Arabic text), create a transliterated version
+                if (empty($slug)) {
+                    // Simple transliteration for Arabic characters
+                    $transliterated = $this->transliterateArabic($specialty['name']);
+                    $slug = \Illuminate\Support\Str::slug($transliterated);
+                }
+
+                // If still empty, use a random string
+                if (empty($slug)) {
+                    $slug = 'category-' . \Illuminate\Support\Str::random(8);
+                }
+
                 $data[] = [
                     'name' => $specialty['name'],
                     'description' => $specialty['description'],
                     'status' => true,
-                    'slug' => \Illuminate\Support\Str::slug($specialty['name']),
+                    'slug' => $slug,
                     'created_at' => now(),
                     'updated_at' => now()
                 ];
@@ -609,5 +624,30 @@ class LargeScaleDataSeeder extends Seeder
         }
 
         $this->command->info("Created {$paymentsCreated} payments out of target {$targetPayments}");
+    }
+
+    /**
+     * Transliterate Arabic text to Latin characters for slug generation
+     */
+    private function transliterateArabic(string $text): string
+    {
+        $arabicToLatin = [
+            'ا' => 'a', 'أ' => 'a', 'إ' => 'a', 'آ' => 'aa', 'ب' => 'b', 'ت' => 't', 'ث' => 'th',
+            'ج' => 'j', 'ح' => 'h', 'خ' => 'kh', 'د' => 'd', 'ذ' => 'dh', 'ر' => 'r', 'ز' => 'z',
+            'س' => 's', 'ش' => 'sh', 'ص' => 's', 'ض' => 'd', 'ط' => 't', 'ظ' => 'z', 'ع' => 'a',
+            'غ' => 'gh', 'ف' => 'f', 'ق' => 'q', 'ك' => 'k', 'ل' => 'l', 'م' => 'm', 'ن' => 'n',
+            'ه' => 'h', 'و' => 'w', 'ي' => 'y', 'ة' => 'h', 'ى' => 'a', 'ء' => 'a',
+            'َ' => 'a', 'ُ' => 'u', 'ِ' => 'i', 'ً' => 'an', 'ٌ' => 'un', 'ٍ' => 'in',
+            'ْ' => '', 'ّ' => '', '،' => ',', '؛' => ';', '؟' => '?'
+        ];
+
+        $transliterated = strtr($text, $arabicToLatin);
+
+        // Remove any remaining non-ASCII characters and clean up
+        $transliterated = preg_replace('/[^\x00-\x7F]/', '', $transliterated);
+        $transliterated = preg_replace('/\s+/', ' ', $transliterated);
+        $transliterated = trim($transliterated);
+
+        return $transliterated;
     }
 }

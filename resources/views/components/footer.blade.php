@@ -3,9 +3,9 @@
         <!-- الجزء الرئيسي -->
         <div class="footer-main">
             <div class="container">
-                <div class="row">
+                <div class="row justify-content-center">
                     <!-- معلومات العيادة -->
-                    <div class="col-lg-5 col-md-6 mb-4">
+                    <div class="col-lg-6 col-md-6 mb-4">
                         <div class="clinic-info">
                             <div class="logo-section mb-3">
                                 <i class="fas fa-heart text-primary me-2"></i>
@@ -34,7 +34,7 @@
                     </div>
 
                     <!-- معلومات التواصل -->
-                    <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="col-lg-6 col-md-6 mb-4">
                         <h5 class="footer-title">تواصل معنا</h5>
                         <div class="contact-info">
                             <div class="contact-item">
@@ -75,31 +75,6 @@
                                     <span class="contact-label">ساعات العمل</span>
                                     <span class="contact-value">خدمة متاحة 24/7</span>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- الروابط السريعة -->
-                    <div class="col-lg-4 col-md-12 mb-4">
-                        <h5 class="footer-title">روابط سريعة</h5>
-                        <div class="row">
-                            <div class="col-6">
-                                <ul class="quick-links">
-                                    <li><a href="{{ route('search') }}">الأطباء</a></li>
-                                    <li><a href="{{ route('specialties.index') }}">التخصصات</a></li>
-                                    <li><a href="{{ route('appointments.index') }}">حجز موعد</a></li>
-                                    <li><a href="">من نحن</a></li>
-                                    <li><a href="">الأسئلة الشائعة</a></li>
-                                </ul>
-                            </div>
-                            <div class="col-6">
-                                <ul class="quick-links">
-                                    <li><a href="">الدعم الفني</a></li>
-                                    <li><a href="">الشروط والأحكام</a></li>
-                                    <li><a href="">سياسة الخصوصية</a></li>
-                                    <li><a href="{{ route('contact') }}">اتصل بنا</a></li>
-                                    <li><a href="">من أجل صحة أفضل</a></li>
-                                </ul>
                             </div>
                         </div>
                     </div>
@@ -300,43 +275,6 @@
         color: #e2e8f0;
         font-weight: 500;
         font-size: 0.95rem;
-    }
-
-    /* الروابط السريعة */
-    .quick-links {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .quick-links li {
-        margin-bottom: 0.75rem;
-    }
-
-    .quick-links a {
-        color: #a0aec0;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        font-size: 0.95rem;
-        position: relative;
-        padding-right: 1rem;
-    }
-
-    .quick-links a::before {
-        content: '▸';
-        position: absolute;
-        right: 0;
-        color: #4a5568;
-        transition: color 0.2s ease;
-    }
-
-    .quick-links a:hover {
-        color: #60a5fa;
-        transform: translateX(-5px);
-    }
-
-    .quick-links a:hover::before {
-        color: #60a5fa;
     }
 
     /* الجزء السفلي */

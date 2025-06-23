@@ -41,10 +41,10 @@ class ContactsController extends Controller
         // حفظ رسالة الاتصال في قاعدة البيانات
         Contact::create($validated);
 
-        // إرسال إشعار بريد إلكتروني مع معالجة الأخطاء
+        // إرسال إشعار بريد إلكتروني مع معالجة الأخطاء (بشكل صامت)
         try {
             // إنشاء رسالة بريد إلكتروني منظمة
-            $emailContent = view('emails.contact', [
+            $emailContent = view('contacts::emails.contact', [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'subject' => $validated['subject'],
@@ -52,28 +52,21 @@ class ContactsController extends Controller
             ])->render();
 
             Mail::html($emailContent, function($message) use ($validated) {
-                $message->to(config('contacts.admin_email', 'ahmed.makled@roboost.app'))
+                $message->to(env('CONTACT_ADMIN_EMAIL', 'ahmed.makled@live.com'))
                         ->subject('رسالة جديدة من نموذج الاتصال: ' . $validated['subject'])
                         ->from($validated['email'], $validated['name']);
             });
 
             \Illuminate\Support\Facades\Log::info('Contact email sent successfully from: ' . $validated['email']);
         } catch (\Exception $e) {
+            // تسجيل الخطأ في اللوغ فقط بدون إظهار رسالة للمستخدم
             \Illuminate\Support\Facades\Log::error('فشل في إرسال البريد الإلكتروني: ' . $e->getMessage(), [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'error' => $e->getMessage()
             ]);
 
-            $errorMessage = 'عذراً، حدث خطأ أثناء إرسال رسالتك. ';
-            if (str_contains($e->getMessage(), 'Connection could not be established')) {
-                $errorMessage .= 'تعذر الاتصال بخادم البريد الإلكتروني.';
-            } elseif (str_contains($e->getMessage(), 'Invalid credentials')) {
-                $errorMessage .= 'خطأ في إعدادات البريد الإلكتروني.';
-            }
-            $errorMessage .= ' يرجى المحاولة مرة أخرى لاحقاً.';
-
-            return redirect()->back()->with('error', $errorMessage)->withInput();
+            // لا نظهر رسالة خطأ للمستخدم، نكمل العملية بشكل طبيعي
         }
 
         return redirect()->back()->with('success', 'تم إرسال رسالتك بنجاح. سنقوم بالرد عليك في أقرب وقت.');
