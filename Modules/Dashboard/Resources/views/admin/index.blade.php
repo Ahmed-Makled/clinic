@@ -289,7 +289,7 @@
                                 <div class="notification-content">
                                     <h6 class="mb-1">مواعيد في الانتظار</h6>
                                     <p class="mb-2">{{ $stats['pending_appointments'] }} حجز في قائمة الانتظار</p>
-                                    <a href="{{ route('appointments.index', ['status' => 'pending']) }}"
+                                    <a href="{{ route('appointments.index', ['status_filter' => 'pending']) }}"
                                        class="btn btn-sm btn-warning">عرض الحجوزات</a>
                                 </div>
                             </div>
