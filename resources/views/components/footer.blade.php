@@ -24,12 +24,7 @@
                                     <span class="rating-value">4.8/5 تقييم</span>
                                 </div>
                             </div>
-                            <!-- الأيقونات الاجتماعية -->
-                            <div class="social-media mt-4">
-                                <a href="#" class="social-link facebook"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#" class="social-link twitter"><i class="fab fa-twitter"></i></a>
-                                <a href="#" class="social-link pinterest"><i class="fab fa-pinterest"></i></a>
-                            </div>
+
                         </div>
                     </div>
 

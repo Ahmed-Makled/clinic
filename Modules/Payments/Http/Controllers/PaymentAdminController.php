@@ -15,7 +15,7 @@ class PaymentAdminController extends Controller
     public function index(Request $request)
     {
         $query = Payment::query()
-            ->with(['appointment.doctor', 'appointment.patient'])
+            ->with(['appointment.doctor', 'appointment.patient.user'])
             ->latest('created_at');
 
         // Filter by status if provided
@@ -38,11 +38,11 @@ class PaymentAdminController extends Controller
         }
 
         // Search by transaction ID or appointment patient name
-        if ($request->has('search') && $request->search) {
+        if ($request->has(key: 'search') && $request->search) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('transaction_id', 'like', "%{$search}%")
-                  ->orWhereHas('appointment.patient', function($q) use ($search) {
+                  ->orWhereHas('appointment.patient.user', function($q) use ($search) {
                       $q->where('name', 'like', "%{$search}%");
                   });
             });
@@ -70,7 +70,7 @@ class PaymentAdminController extends Controller
      */
     public function show(Payment $payment)
     {
-        $payment->load(['appointment.doctor', 'appointment.patient']);
+        $payment->load(['appointment.doctor', 'appointment.patient.user']);
 
         return view('payments::admin.show', [
             'payment' => $payment
@@ -114,7 +114,7 @@ class PaymentAdminController extends Controller
      */
     public function export(Request $request)
     {
-        $query = Payment::with(['appointment.doctor', 'appointment.patient'])
+        $query = Payment::with(['appointment.doctor', 'appointment.patient.user'])
             ->latest('created_at');
 
         // Apply filters
@@ -168,7 +168,7 @@ class PaymentAdminController extends Controller
                     $payment->payment_method,
                     $payment->transaction_id,
                     $payment->appointment->doctor->name ?? 'غير متوفر',
-                    $payment->appointment->patient->name ?? 'غير متوفر',
+                    $payment->appointment->patient->user->name ?? 'غير متوفر',
                     $payment->paid_at ? $payment->paid_at->format('Y-m-d H:i:s') : 'غير متوفر',
                     $payment->created_at->format('Y-m-d H:i:s')
                 ]);

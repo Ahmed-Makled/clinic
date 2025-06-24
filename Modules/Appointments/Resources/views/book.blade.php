@@ -100,7 +100,7 @@
                             </h5>
                             <div class="section-content">
                                 <div class="rating-overview">
-                                    <div class="rating-summary text-center mb-4">
+                                    {{-- <div class="rating-summary text-center mb-4">
                                         <div class="rating-score">{{ number_format($doctor->rating, 1) }}</div>
                                         <div class="rating-stars">
                                             @for ($i = 0; $i < 5; $i++)
@@ -116,7 +116,7 @@
                                         <div class="rating-count text-muted">
                                             {{ $doctor->ratings_count ?? 0 }} تقييم
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="rating-bars">
                                         @for ($i = 5; $i >= 1; $i--)

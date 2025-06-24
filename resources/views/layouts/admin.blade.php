@@ -1032,7 +1032,7 @@
 
 
                         <!-- Notifications -->
-                        <div class="dropdown">
+                        {{-- <div class="dropdown">
                             <button class="btn notification-btn" type="button" data-bs-toggle="dropdown"
                                 data-bs-auto-close="outside" aria-label="الإشعارات">
                                 <i class="bi bi-bell"></i>
@@ -1050,7 +1050,7 @@
                                     <!-- Notifications will be inserted here -->
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <!-- User Profile -->
                         <div class="dropdown">

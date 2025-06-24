@@ -183,7 +183,7 @@
                                                             </div>
                                                             <div class="d-flex align-items-center ">
                                                                 <i class="bi bi-clock-fill text-warning me-2"></i>
-                                                                <span>10 دقيقة</span>
+                                                                <span>{{$doctor->waiting_time}} دقيقة</span>
                                                             </div>
                                                         </div>
                                                         <div class="d-flex align-items-center text-muted">

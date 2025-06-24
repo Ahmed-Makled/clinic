@@ -43,7 +43,9 @@ class DoctorSchedule extends Model
         $slots = [];
         $startTime = new DateTime($date->format('Y-m-d ') . $this->start_time->format('H:i'));
         $endTime = new DateTime($date->format('Y-m-d ') . $this->end_time->format('H:i'));
-        $interval = new DateInterval('PT30M'); // Fixed 30-minute interval
+          // Use doctor's waiting_time dynamically, fallback to 30 minutes if not set
+        $waitingTimeMinutes = $this->doctor->waiting_time ?? 30;
+        $interval = new DateInterval('PT' . $waitingTimeMinutes . 'M');
 
         while ($startTime < $endTime) {
             $slots[] = $startTime->format('H:i');

@@ -1065,17 +1065,37 @@
 
             .password-input {
                 position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+            .password-input .form-control {
+                padding-right: 45px; /* Make space for the toggle button */
             }
 
             .password-toggle {
                 position: absolute;
                 top: 50%;
-                right: 10px;
+                right: 12px;
                 transform: translateY(-50%);
                 background: none;
                 border: none;
                 color: #6c757d;
                 cursor: pointer;
+                z-index: 10;
+                padding: 4px;
+                border-radius: 4px;
+                transition: all 0.2s ease;
+            }
+
+            .password-toggle:hover {
+                color: #495057;
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+
+            .password-toggle:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
             }
 
             .form-actions {
@@ -1577,24 +1597,6 @@
                         e.preventDefault();
                         if (confirm('هل أنت متأكد من إلغاء هذا الحجز؟')) {
                             this.submit();
-                        }
-                    });
-                });
-
-                // Manejar la visualización de contraseñas
-                document.querySelectorAll('.password-toggle').forEach(toggle => {
-                    toggle.addEventListener('click', function () {
-                        const input = this.previousElementSibling;
-                        const icon = this.querySelector('i');
-
-                        if (input.type === 'password') {
-                            input.type = 'text';
-                            icon.classList.remove('bi-eye');
-                            icon.classList.add('bi-eye-slash');
-                        } else {
-                            input.type = 'password';
-                            icon.classList.remove('bi-eye-slash');
-                            icon.classList.add('bi-eye');
                         }
                     });
                 });
