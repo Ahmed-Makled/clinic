@@ -98,7 +98,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
-                                    <span class="transaction-id">#{{ $payment->transaction_id }}</span>
+                                    <span class="transaction-id">{{ $payment->transaction_id }}</span>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
